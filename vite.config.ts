@@ -7,7 +7,8 @@ import { resolve } from "node:path";
 
 // https://vitejs.dev/config/
 export default defineConfig((configEnv) => {
-  void configEnv;
+  const { command } = configEnv;
+  const isBuild = command === "build";
 
   return {
     plugins: [react()],
@@ -32,7 +33,7 @@ export default defineConfig((configEnv) => {
     },
 
     // Base URL
-    base: "./",
+    base: isBuild ? "./" : "/mui",
 
     // ** Build
     build: build(configEnv),

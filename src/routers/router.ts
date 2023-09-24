@@ -1,5 +1,8 @@
 // Router Imports
-import { createHashRouter } from "react-router-dom";
+import { createHashRouter, createBrowserRouter } from "react-router-dom";
 import { routes } from "./router-routes";
 
-export const router = createHashRouter(routes);
+const isBuild = import.meta.env.PROD;
+export const router = isBuild
+  ? createHashRouter(routes)
+  : createBrowserRouter(routes, { basename: "/mui" });
