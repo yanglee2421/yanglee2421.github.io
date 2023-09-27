@@ -2,7 +2,7 @@
 import { useEffect, useState } from "react";
 
 // Assets Imports
-import bg from "@/assets/images/snow-village.jpg";
+import bg from "@/assets/images/frame.png";
 
 // Fabric Imports
 import { fabric } from "fabric";
@@ -15,18 +15,36 @@ export function Fabric() {
       const img = await new Promise<fabric.Image>((res) => {
         fabric.Image.fromURL(bg, res);
       });
-      console.log("img", img);
 
       const text = new fabric.Text("hello world");
-      console.log("text", text);
 
       const group = new fabric.Group([img, text]);
-      console.log("group", group);
 
-      text.set({ top: group.height + text.top - text.height });
+      const groupHeight = group.height || 0;
+      const textTop = text.top || 0;
+      const textHeight = text.height || 0;
+      text.set({ top: groupHeight + textTop - textHeight });
 
       const dataURL = group.toDataURL({});
       setImg(dataURL);
+
+      // const blob = await new Promise<Blob>((res, rej) => {
+      //   group.toCanvasElement().toBlob(
+      //     (blob) => {
+      //       blob ? res(blob) : rej(null);
+      //     },
+      //     "image/jpeg",
+      //     0.95
+      //   );
+      // });
+
+      // const href = URL.createObjectURL(blob);
+      // const a = document.createElement("a");
+      // a.href = href;
+      // a.download = `${Date.now()}.jpg`;
+      // a.click();
+      // a.remove();
+      // URL.revokeObjectURL(href);
     })();
   }, []);
 
