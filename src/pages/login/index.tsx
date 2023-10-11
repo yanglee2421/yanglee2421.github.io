@@ -21,6 +21,7 @@ import { ItemCheckbox, ItemPasswd, ItemText } from "@/components";
 
 // Login Imports
 import { useLogin, useUsrPost } from "@/hooks";
+import React, { useDeferredValue, useMemo, useState } from "react";
 
 export function Component() {
   // Form Hooks
@@ -50,9 +51,21 @@ export function Component() {
     signIn({ ...usr, role: "admin", loginAt: 0 });
   });
 
+  const [count, setCount] = useState(0);
+  const deferredCount = useDeferredValue(count);
+  const slowEl = useMemo(() => {
+    return <SlowInput>{deferredCount}</SlowInput>;
+  }, [deferredCount]);
+  const handleClick = () => {
+    setCount((p) => p + 1);
+  };
+
   return (
     <Box display={"flex"} height={"100%"}>
       <Box flex={1}>
+        <button onClick={handleClick}>+1</button>
+        <p>normal: {count}</p>
+        {slowEl}
         <ul>
           <li>xasd</li>
           <li>xasd</li>
@@ -67,7 +80,7 @@ export function Component() {
         width={"100%"}
         maxWidth={["none", 450]}
         paddingX={4}
-        boxShadow={(theme) => theme.shadows[1]}
+        boxShadow={(theme) => Reflect.get(Object(theme.shadows), 1)}
       >
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
           <FormProvider {...formCtx}>
@@ -145,4 +158,13 @@ export function Component() {
       </Box>
     </Box>
   );
+}
+
+function SlowInput(props: React.PropsWithChildren) {
+  const beginTime = Date.now();
+  while (true) {
+    const time = Date.now() - beginTime;
+    if (time > 1000 * 2) break;
+  }
+  return <p {...props}></p>;
 }
