@@ -23,6 +23,7 @@ import { ItemCheckbox, ItemPasswd, ItemText } from "@/components";
 
 // Login Imports
 import { useLogin, useUsrPost } from "@/hooks";
+import React, { useDeferredValue, useMemo, useState } from "react";
 
 export function Component() {
   // Form Hooks
@@ -146,4 +147,13 @@ export function Component() {
       </Box>
     </Box>
   );
+}
+
+function SlowInput(props: React.PropsWithChildren) {
+  const beginTime = Date.now();
+  while (true) {
+    const time = Date.now() - beginTime;
+    if (time > 1000 * 2) break;
+  }
+  return <p {...props}></p>;
 }
