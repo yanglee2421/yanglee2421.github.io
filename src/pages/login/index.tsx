@@ -7,6 +7,8 @@ import {
   IconButton,
   Link,
   Typography,
+  useMediaQuery,
+  useTheme,
 } from "@mui/material";
 import { Google, GitHub, FacebookOutlined, Twitter } from "@mui/icons-material";
 import { LoadingButton } from "@mui/lab";
@@ -50,16 +52,15 @@ export function Component() {
     signIn({ ...usr, role: "admin", loginAt: 0 });
   });
 
+  const theme = useTheme();
+  const isSm = useMediaQuery(theme.breakpoints.down("md"));
+
+  const list = ["xs", "sm", "md", "lg", "xl"];
+  void list;
+
   return (
     <Box display={"flex"} height={"100%"}>
-      <Box flex={1}>
-        <ul>
-          <li>xasd</li>
-          <li>xasd</li>
-          <li>xasd</li>
-        </ul>
-        <img src="" alt="" />
-      </Box>
+      <Box flex={1}>{isSm && <p>small</p>}</Box>
       <Box
         display={"flex"}
         flexDirection={"column"}
@@ -67,7 +68,7 @@ export function Component() {
         width={"100%"}
         maxWidth={["none", 450]}
         paddingX={4}
-        boxShadow={(theme) => theme.shadows[1]}
+        boxShadow={(theme) => Reflect.get(Object(theme.shadows), 1)}
       >
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
           <FormProvider {...formCtx}>
