@@ -57,6 +57,14 @@ export const routes: RouteObject[] = [
           return import("@/pages/fabric");
         },
       },
+      {
+        id: "scrollbar",
+        path: "scrollbar",
+        handle: { title: "scrollbar" },
+        lazy() {
+          return import("@/pages/scrollbar");
+        },
+      },
     ],
   },
 ];

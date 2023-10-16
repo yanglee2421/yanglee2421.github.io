@@ -11,12 +11,12 @@ import { useObserverResize } from "@/hooks";
 export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
   (props, ref) => {
     // ** Props
-    const { options, style, ...restProps } = props;
+    const { options, style, children, ...restProps } = props;
 
-    const boxRef = React.useRef<HTMLDivElement>(null);
+    const containerRef = React.useRef<HTMLDivElement>(null);
     React.useImperativeHandle(ref, () => {
-      const el = boxRef.current;
-      if (!el) throw new Error("");
+      const el = containerRef.current;
+      if (!el) throw new Error("Excepted an HTMLDivElement, got falsy!");
 
       return el;
     });
@@ -24,7 +24,7 @@ export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
     // Get perfect scrollbar after element mounted
     const psRef = React.useRef<PerfectScrollbar | null>(null);
     React.useEffect(() => {
-      const el = boxRef.current;
+      const el = containerRef.current;
       if (!el) return;
 
       psRef.current = new PerfectScrollbar(el, options);
@@ -33,17 +33,26 @@ export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
         psRef.current?.destroy();
         psRef.current = null;
       };
-    }, [boxRef]);
+    }, [containerRef, options]);
 
     // Update perfect scrollbar after container resize
-    const entry = useObserverResize(boxRef);
+    const containerEntry = useObserverResize(containerRef);
+    const contentRef = React.useRef<HTMLDivElement>(null);
+    const contentEntry = useObserverResize(contentRef);
     React.useEffect(() => {
-      void entry;
+      void containerEntry;
+      void contentEntry;
       psRef.current?.update();
-    }, [entry, psRef]);
+    }, [containerEntry, contentEntry, psRef]);
 
     return (
-      <div ref={boxRef} style={{ height: "100%", ...style }} {...restProps} />
+      <div
+        ref={containerRef}
+        style={{ position: "relative", height: "100%", ...style }}
+        {...restProps}
+      >
+        <div ref={contentRef}>{children}</div>
+      </div>
     );
   }
 );
