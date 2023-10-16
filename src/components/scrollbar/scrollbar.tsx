@@ -14,12 +14,16 @@ export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
     const { options, style, children, ...restProps } = props;
 
     const containerRef = React.useRef<HTMLDivElement>(null);
-    React.useImperativeHandle(ref, () => {
-      const el = containerRef.current;
-      if (!el) throw new Error("Excepted an HTMLDivElement, got falsy!");
+    React.useImperativeHandle(
+      ref,
+      () => {
+        const el = containerRef.current;
+        if (!el) throw new Error("Excepted an HTMLDivElement, got falsy!");
 
-      return el;
-    });
+        return el;
+      },
+      [containerRef]
+    );
 
     // Get perfect scrollbar after element mounted
     const psRef = React.useRef<PerfectScrollbar | null>(null);
