@@ -7,6 +7,7 @@ export * from "./item-passwd";
 
 // ** UI
 export * from "./menu-drawer";
+export * from "./scrollbar";
 
 // ** Icons
 export * from "./icon-cancel";
