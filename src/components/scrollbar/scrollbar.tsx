@@ -37,7 +37,7 @@ export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
         psRef.current?.destroy();
         psRef.current = null;
       };
-    }, [containerRef, options]);
+    }, [containerRef, psRef, options]);
 
     // Update perfect scrollbar after container resize
     const containerEntry = useObserverResize(containerRef);
@@ -48,6 +48,20 @@ export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
       void contentEntry;
       psRef.current?.update();
     }, [containerEntry, contentEntry, psRef]);
+
+    // Bind perfect scrollbar custom events
+    React.useEffect(() => {
+      const el = containerRef.current;
+      if (!el) return;
+
+      el.addEventListener(
+        "ps-scroll-y",
+        (evt) => {
+          console.log(evt);
+        },
+        {}
+      );
+    }, [containerRef]);
 
     return (
       <div
