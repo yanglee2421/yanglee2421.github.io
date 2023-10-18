@@ -24,6 +24,9 @@ import { ItemCheckbox, ItemPasswd, ItemText } from "@/components";
 // Login Imports
 import { useLogin, useUsrPost } from "@/hooks";
 
+// Router Imports
+import { Link as RouterLink } from "react-router-dom";
+
 export function Component() {
   // Form Hooks
   const formCtx = useForm({
@@ -97,7 +100,12 @@ export function Component() {
                   control={<ItemCheckbox name="remember" />}
                   label="Remember Me"
                 />
-                <Link component="button">Forgot Password?</Link>
+                <Link
+                  component={RouterLink}
+                  to={{ pathname: "/forgot-passwd" }}
+                >
+                  Forgot Password?
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <LoadingButton
@@ -118,7 +126,9 @@ export function Component() {
                 gap={2}
               >
                 <Typography>New on our platform?</Typography>
-                <Link component={"button"}>Create an account</Link>
+                <Link component={RouterLink} to={{ pathname: "/register" }}>
+                  Create an account
+                </Link>
               </Grid>
               <Grid item xs={12}>
                 <Divider>Or</Divider>

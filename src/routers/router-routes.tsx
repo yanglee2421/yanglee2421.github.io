@@ -26,6 +26,22 @@ export const routes: RouteObject[] = [
         },
       },
       {
+        id: "forgot-passwd",
+        path: "forgot-passwd",
+        handle: { title: "Forgot Password" },
+        lazy() {
+          return import("@/pages/forgot-passwd");
+        },
+      },
+      {
+        id: "register",
+        path: "register",
+        handle: { title: "Register" },
+        lazy() {
+          return import("@/pages/register");
+        },
+      },
+      {
         id: "index",
         index: true,
         handle: { title: "首页" },

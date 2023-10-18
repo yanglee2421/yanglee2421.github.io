@@ -19,3 +19,5 @@ export * from "./icon-shopline";
 export * from "./icon-svelte";
 export * from "./icon-vite";
 export * from "./icon-vue";
+
+export * from "./lang-select";

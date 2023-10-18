@@ -12,6 +12,8 @@ i18next
   .init({
     interpolation: { escapeValue: false },
     resources,
+    ns: ["translation", "common", "button", "label"],
+    defaultNS: "translation",
     // lng: "en_US",
     fallbackLng: "en",
   });

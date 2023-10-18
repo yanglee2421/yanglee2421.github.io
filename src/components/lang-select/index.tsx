@@ -52,5 +52,5 @@ function getOptions() {
 }
 
 export interface LangSelectProps extends SelectProps {
-  whatever: unknown;
+  whatever?: unknown;
 }
