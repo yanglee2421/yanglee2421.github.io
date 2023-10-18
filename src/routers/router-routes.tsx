@@ -65,6 +65,14 @@ export const routes: RouteObject[] = [
           return import("@/pages/scrollbar");
         },
       },
+      {
+        id: "transition",
+        path: "transition",
+        handle: { title: "transition" },
+        lazy() {
+          return import("@/pages/transition");
+        },
+      },
     ],
   },
 ];
