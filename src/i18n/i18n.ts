@@ -6,6 +6,8 @@ import I18nextBrowserLanguageDetector from "i18next-browser-languagedetector";
 // Resources Imports
 import { resources } from "./resources";
 
+export const locales = ["zh-CN", "en-US", "fr-FR"];
+
 i18next
   .use(I18nextBrowserLanguageDetector)
   .use(initReactI18next)
@@ -14,6 +16,6 @@ i18next
     resources,
     ns: ["translation", "common", "button", "label"],
     defaultNS: "translation",
-    // lng: "en_US",
+    // lng: "en-US",
     fallbackLng: "en",
   });
