@@ -1,1 +1,3 @@
-export const button = {};
+export const button = {
+  submit: "submit",
+};

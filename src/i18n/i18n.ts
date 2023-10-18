@@ -16,6 +16,7 @@ i18next
     resources,
     ns: ["translation", "common", "button", "label"],
     defaultNS: "translation",
+    fallbackNS: "common",
     // lng: "en-US",
     fallbackLng: "en",
   });
