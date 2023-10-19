@@ -16,10 +16,13 @@ import {
 import { useLogin } from "@/hooks";
 
 // React Imports
-import { useRef, useMemo } from "react";
+import React from "react";
 
 // Theme Imports
 import { ThemeToggle } from "@/themes";
+
+// Components Imports
+import { SwiperTrans } from "./swiper-trans";
 
 const UlStyled = styled("ul")(({ theme }) => {
   return {
@@ -53,7 +56,7 @@ export const Swiper = () => {
   // Login Hooks
   const { signOut } = useLogin();
 
-  const ulRef = useRef<HTMLUListElement>(null);
+  const ulRef = React.useRef<HTMLUListElement>(null);
 
   const handlePrevClick = () => {
     const el = ulRef.current;
@@ -75,7 +78,7 @@ export const Swiper = () => {
   };
 
   const count = 5;
-  const liEl = useMemo(() => {
+  const liEl = React.useMemo(() => {
     const list = [];
     for (let i = 0; i < count; i++) {
       list.push(i);
@@ -84,7 +87,7 @@ export const Swiper = () => {
     return list.map((item) => <li key={item}>{item}</li>);
   }, [count]);
 
-  const dotEl = useMemo(() => {
+  const dotEl = React.useMemo(() => {
     const list = [];
     for (let i = 0; i < count; i++) {
       list.push(i);
@@ -127,6 +130,7 @@ export const Swiper = () => {
         <br />
         <ButtonGroup>{dotEl}</ButtonGroup>
         <Divider>Divider</Divider>
+        <SwiperTrans />
       </Box>
     </>
   );
