@@ -15,38 +15,50 @@ export function SwiperTrans() {
 
   return (
     <SwitchTransition>
-      <CSSTransition
+      <MyItem
         key={state ? "Goodbye, world!" : "Hello, world!"}
+        state={state}
         nodeRef={nodeRef}
-        addEndListener={(done) =>
-          nodeRef.current?.addEventListener("transitionend", done)
-        }
-        classNames="fade"
-      >
-        <Button
-          ref={nodeRef}
-          onClick={() => setState((state) => !state)}
-          variant="contained"
-          sx={{
-            "&.fade-enter": {
-              opacity: 0,
-            },
-            "&.fade-exit": {
-              opacity: 1,
-            },
-            "&.fade-enter-active": {
-              opacity: 1,
-              transition: " opacity 500ms",
-            },
-            "&.fade-exit-active": {
-              opacity: 0,
-              transition: " opacity 500ms",
-            },
-          }}
-        >
-          {state ? "Goodbye, world!" : "Hello, world!"}
-        </Button>
-      </CSSTransition>
+        setState={setState}
+      />
     </SwitchTransition>
+  );
+}
+
+function MyItem(props: any) {
+  const { state, nodeRef, setState, ...restProps } = props;
+  return (
+    <CSSTransition
+      nodeRef={nodeRef}
+      addEndListener={(done) =>
+        nodeRef.current?.addEventListener("transitionend", done)
+      }
+      classNames="fade"
+      {...restProps}
+    >
+      <Button
+        ref={nodeRef}
+        onClick={() => setState((state) => !state)}
+        variant="contained"
+        sx={{
+          "&.fade-enter": {
+            opacity: 0,
+          },
+          "&.fade-exit": {
+            opacity: 1,
+          },
+          "&.fade-enter-active": {
+            opacity: 1,
+            transition: " opacity 500ms",
+          },
+          "&.fade-exit-active": {
+            opacity: 0,
+            transition: " opacity 500ms",
+          },
+        }}
+      >
+        {state ? "Goodbye, world!" : "Hello, world!"}
+      </Button>
+    </CSSTransition>
   );
 }
