@@ -89,6 +89,14 @@ export const routes: RouteObject[] = [
           return import("@/pages/transition");
         },
       },
+      {
+        id: "swiper",
+        path: "swiper",
+        handle: { title: "Swiper" },
+        lazy() {
+          return import("@/pages/swiper");
+        },
+      },
     ],
   },
 ];

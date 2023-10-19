@@ -118,15 +118,15 @@ export const Swiper = () => {
         </Button>
         <Divider>Divider</Divider>
         <UlStyled ref={ulRef}>{liEl}</UlStyled>
-        <Divider>Divider</Divider>
         <IconButton onClick={handlePrevClick}>
           <ArrowBackIosNewRounded />
         </IconButton>
         <IconButton onClick={handleNextClick}>
           <ArrowForwardIosRounded />
         </IconButton>
-        <Divider>Divider</Divider>
+        <br />
         <ButtonGroup>{dotEl}</ButtonGroup>
+        <Divider>Divider</Divider>
       </Box>
     </>
   );
