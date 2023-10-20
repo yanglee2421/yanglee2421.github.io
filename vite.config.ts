@@ -3,7 +3,10 @@ import { ConfigEnv, defineConfig, UserConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 
 // NodeJs Imports
-import { resolve } from "node:path";
+import { dirname, resolve } from "node:path";
+import { fileURLToPath, URL } from "node:url";
+
+const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig((configEnv) => {
@@ -16,7 +19,7 @@ export default defineConfig((configEnv) => {
     // Path Alias
     resolve: {
       alias: {
-        "@": resolve(__dirname, "./src"),
+        "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
     },
 
