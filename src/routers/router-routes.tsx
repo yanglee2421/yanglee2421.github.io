@@ -98,9 +98,17 @@ export const routes: RouteObject[] = [
         },
       },
       {
+        id: "virtualized-list",
+        path: "virtualized-list",
+        handle: { title: "Virtualized List" },
+        lazy() {
+          return import("@/pages/virtualized-list");
+        },
+      },
+      {
         id: "infinite-list",
         path: "infinite-list",
-        handle: { title: "Infinite Scroll" },
+        handle: { title: "Infinite List" },
         lazy() {
           return import("@/pages/infinite-list");
         },

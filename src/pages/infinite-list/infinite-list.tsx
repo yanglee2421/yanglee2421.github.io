@@ -1,43 +1,71 @@
+// Component Imports
+import InfiniteScroll from "react-infinite-scroll-component";
+import { Scrollbar } from "@/components";
+
+// React Imports
+import React from "react";
+
 // MUI Imports
-import { List, ListItem, Button, Grid } from "@mui/material";
+import {
+  Box,
+  Divider,
+  List,
+  ListItemButton,
+  ListItemText,
+  Skeleton,
+} from "@mui/material";
 
-// Components Imports
-import { Scrollbar, ItemText } from "@/components";
+export function InfiniteList() {
+  const scrollId = React.useId();
+  const [count, setCount] = React.useState(20);
+  const listData = React.useMemo(() => {
+    const list = [];
+    for (let i = 0; i < count; i++) {
+      list.push(i);
+    }
 
-// Form Imports
-import { useForm, FormProvider } from "react-hook-form";
+    return list.map((item) => {
+      return (
+        <ListItemButton key={item}>
+          <ListItemText>{item}</ListItemText>
+        </ListItemButton>
+      );
+    });
+  }, [count]);
 
-export function InifiniteList() {
-  // Form Hooks
-  const formCtx = useForm({
-    defaultValues: {
-      inputText: "",
-    },
-  });
+  const nextHandler = async () => {
+    await new Promise((res) => {
+      setTimeout(res, 1000);
+    });
+    setCount((p) => p + 5);
+  };
 
   return (
     <>
-      <FormProvider {...formCtx}>
-        <Grid container spacing={3} alignItems={"center"}>
-          <Grid item xs={true}>
-            <ItemText size="small" name="inputText" />
-          </Grid>
-          <Grid item>
-            <Button variant="contained" size="large">
-              submit
-            </Button>
-          </Grid>
-          <Grid item xs={12}>
-            <Scrollbar>
-              <List>
-                <ListItem>123</ListItem>
-                <ListItem>123</ListItem>
-                <ListItem>123</ListItem>
-              </List>
-            </Scrollbar>
-          </Grid>
-        </Grid>
-      </FormProvider>
+      <Box height={420}>
+        <Scrollbar id={scrollId}>
+          <InfiniteScroll
+            scrollableTarget={scrollId}
+            dataLength={count}
+            hasMore={count < 100}
+            next={nextHandler}
+            loader={<Loader />}
+            endMessage={<Divider>It is all, nothing more</Divider>}
+          >
+            <List>{listData}</List>
+          </InfiniteScroll>
+        </Scrollbar>
+      </Box>
     </>
+  );
+}
+
+function Loader() {
+  return (
+    <Box padding={3}>
+      <Skeleton />
+      <Skeleton animation="wave" />
+      <Skeleton animation={false} />
+    </Box>
   );
 }
