@@ -97,6 +97,14 @@ export const routes: RouteObject[] = [
           return import("@/pages/swiper");
         },
       },
+      {
+        id: "infinite-list",
+        path: "infinite-list",
+        handle: { title: "Infinite Scroll" },
+        lazy() {
+          return import("@/pages/infinite-list");
+        },
+      },
     ],
   },
 ];
