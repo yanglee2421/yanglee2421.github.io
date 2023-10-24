@@ -20,4 +20,6 @@ export * from "./icon-svelte";
 export * from "./icon-vite";
 export * from "./icon-vue";
 
+// ** Feature
 export * from "./lang-select";
+export * from "./copy-btn";

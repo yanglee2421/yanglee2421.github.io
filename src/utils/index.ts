@@ -10,3 +10,5 @@ export { Particles } from "./class-particle";
 
 //
 export * from "./get-usr-map";
+
+export * from "./timeout";
