@@ -3,6 +3,7 @@ import { createTheme } from "@mui/material";
 import { red, blue } from "@mui/material/colors";
 
 export function toThemeValue(params: ToThemeValueParams) {
+  // ** Params
   const { isDark } = params;
 
   return createTheme({
@@ -14,6 +15,10 @@ export function toThemeValue(params: ToThemeValueParams) {
       error: {
         main: red[500],
       },
+    },
+    typography(palette) {
+      void palette;
+      return {};
     },
   });
 }

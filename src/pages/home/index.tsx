@@ -1,8 +1,9 @@
 // MUI Imports
-import { Box, Button, Stack } from "@mui/material";
+import { Grid, Button, Stack } from "@mui/material";
 
 // Components Imports
 import { CopyBtn } from "@/components";
+import { CardRadio } from "./card-radio";
 
 // Hooks Imports
 import { useLogin } from "@/hooks";
@@ -12,13 +13,18 @@ export function Component() {
   const { signOut } = useLogin();
 
   return (
-    <Box>
-      <Stack direction={"row"} spacing={3}>
-        <Button onClick={signOut} variant="contained" color="error">
-          sign out
-        </Button>
-        <CopyBtn text="2583169032" />
-      </Stack>
-    </Box>
+    <Grid container spacing={3} p={2}>
+      <Grid item xs={12}>
+        <Stack direction={"row"} spacing={2}>
+          <Button onClick={signOut} variant="contained" color="error">
+            sign out
+          </Button>
+          <CopyBtn text="2583169032" />
+        </Stack>
+      </Grid>
+      <Grid item xs={12}>
+        <CardRadio />
+      </Grid>
+    </Grid>
   );
 }
