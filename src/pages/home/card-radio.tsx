@@ -30,16 +30,36 @@ export function CardRadio() {
         <RadioGroup value={value} onChange={handleChange}>
           <Grid container spacing={6}>
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-              <RadioItem />
+              <RadioItem
+                title="Visual Search"
+                desc="lorem "
+                value="one"
+                checked={value === "one"}
+              />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-              <RadioItem />
+              <RadioItem
+                title="Visual Search"
+                desc="lorem "
+                value="two"
+                checked={value === "two"}
+              />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-              <RadioItem />
+              <RadioItem
+                title="Visual Search"
+                desc="lorem "
+                value="three"
+                checked={value === "three"}
+              />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
-              <RadioItem />
+              <RadioItem
+                title="Visual Search"
+                desc="lorem "
+                value="four"
+                checked={value === "four"}
+              />
             </Grid>
           </Grid>
         </RadioGroup>

@@ -6,7 +6,7 @@ import type { ToThemeParams } from "./to-theme";
 
 export function toBreakpoints(params: ToThemeParams): BreakpointsOptions {
   // ** Params
-  const {} = params;
+  void params;
 
   return {
     keys: ["xs", "sm", "md", "lg", "xl"],

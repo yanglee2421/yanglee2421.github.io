@@ -1,7 +1,10 @@
 // MUI Imports
 import { Box, Avatar, Typography, Radio } from "@mui/material";
 
-export function RadioItem() {
+export function RadioItem(props: RadioItemProps) {
+  // ** Props
+  const { checked, value, title, desc, ...restProps } = props;
+
   return (
     <Box
       component={"label"}
@@ -11,14 +14,15 @@ export function RadioItem() {
       height={"100%"}
       p={2}
       border={"1px solid"}
-      borderColor={(theme) =>
-        true ? theme.palette.primary.main : theme.palette.divider
-      }
+      borderColor={(theme) => {
+        return checked ? theme.palette.primary.main : theme.palette.divider;
+      }}
       borderRadius={1}
       textAlign={"center"}
       sx={{
         cursor: "pointer",
       }}
+      {...restProps}
     >
       <Avatar sx={{ width: 64, height: 64 }}></Avatar>
       <Typography
@@ -29,7 +33,7 @@ export function RadioItem() {
           return `calc(${theme.typography.body1.lineHeight}em * 1)`;
         }}
       >
-        Visually Similar Recommendations
+        {title}
       </Typography>
       <Typography
         variant="body2"
@@ -41,12 +45,16 @@ export function RadioItem() {
           return `calc(${theme.typography.body2.lineHeight}em * 4)`;
         }}
       >
-        Lorem ipsum dolor, sit amet consectetur adipisicing elit. At, possimus
-        itaque. Suscipit sequi, minus dignissimos reiciendis cumque rem
-        voluptatem nesciunt, iure, in ipsam quasi quod a. Adipisci alias
-        quibusdam eveniet.
+        {desc}
       </Typography>
-      <Radio value={"one"} />
+      <Radio value={value} />
     </Box>
   );
+}
+
+export interface RadioItemProps {
+  checked: boolean;
+  value: string;
+  title: string;
+  desc: string;
 }

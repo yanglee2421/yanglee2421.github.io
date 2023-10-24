@@ -10,7 +10,7 @@ export function toTypography(
   palette?: Palette
 ): TypographyOptions {
   // ** Params
-  const {} = params;
+  void params;
   void palette;
 
   return {
