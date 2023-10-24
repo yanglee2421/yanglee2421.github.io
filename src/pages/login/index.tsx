@@ -72,7 +72,7 @@ export function Component() {
       >
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
           <FormProvider {...formCtx}>
-            <Grid container spacing={4}>
+            <Grid container spacing={6}>
               <Grid item xs={12}>
                 <Typography variant="h5" fontWeight={500}>
                   Wellcome to Yang_Lee!
@@ -134,7 +134,13 @@ export function Component() {
               <Grid item xs={12}>
                 <Divider>Or</Divider>
               </Grid>
-              <Grid item xs={12} display={"flex"} justifyContent={"center"}>
+              <Grid
+                item
+                xs={12}
+                display={"flex"}
+                justifyContent={"center"}
+                gap={2}
+              >
                 <IconButton>
                   <FacebookOutlined />
                 </IconButton>
