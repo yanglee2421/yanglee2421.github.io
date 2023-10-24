@@ -23,7 +23,7 @@ export function CardRadio() {
   };
 
   const theme = useTheme();
-  console.log(theme.typography);
+  console.log(theme);
 
   return (
     <Card>
