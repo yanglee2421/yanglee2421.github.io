@@ -1,5 +1,5 @@
 // MUI Imports
-import { IconButton, IconButtonProps } from "@mui/material";
+import { IconButton, IconButtonProps, Tooltip } from "@mui/material";
 import {
   ContentCopyRounded,
   LibraryAddCheckRounded,
@@ -21,7 +21,7 @@ export const CopyBtn = React.forwardRef<HTMLButtonElement, CopyBtnProps>(
       if (children) return children;
       if (isPending) return <LibraryAddCheckRounded />;
       return <ContentCopyRounded />;
-    }, [isPending]);
+    }, [isPending, children]);
 
     const handleClick = async () => {
       if (isPending) return;
@@ -38,9 +38,11 @@ export const CopyBtn = React.forwardRef<HTMLButtonElement, CopyBtnProps>(
     };
 
     return (
-      <IconButton ref={ref} onClick={handleClick} {...restProps}>
-        {iconEl}
-      </IconButton>
+      <Tooltip title="Copy the source">
+        <IconButton ref={ref} onClick={handleClick} {...restProps}>
+          {iconEl}
+        </IconButton>
+      </Tooltip>
     );
   }
 );
