@@ -6,7 +6,7 @@ import { LightModeOutlined, DarkModeOutlined } from "@mui/icons-material";
 import { useAppDispatch, useAppSelector, sliceTheme } from "@/redux";
 
 // React Imports
-import { useMemo } from "react";
+import React from "react";
 
 export function ThemeToggle() {
   // Redux Hooks
@@ -14,8 +14,9 @@ export function ThemeToggle() {
   const dispatch = useAppDispatch();
 
   // Icon Element
-  const iconEl = useMemo(() => {
-    return isDark ? <LightModeOutlined /> : <DarkModeOutlined />;
+  const iconEl = React.useMemo(() => {
+    if (isDark) return <LightModeOutlined />;
+    return <DarkModeOutlined />;
   }, [isDark]);
 
   // Handle Toogle
