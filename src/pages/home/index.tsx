@@ -4,6 +4,7 @@ import { Grid, Button, Stack } from "@mui/material";
 // Components Imports
 import { CopyBtn } from "@/components";
 import { CardRadio } from "./card-radio";
+import { ThemeToggle } from "@/themes";
 
 // Hooks Imports
 import { useLogin } from "@/hooks";
@@ -20,6 +21,7 @@ export function Component() {
             sign out
           </Button>
           <CopyBtn text="2583169032" />
+          <ThemeToggle />
         </Stack>
       </Grid>
       <Grid item xs={12}>

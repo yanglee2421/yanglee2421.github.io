@@ -46,7 +46,7 @@ export function Component() {
 
   // Login Hooks
   const { signIn } = useLogin();
-  const { mutateAsync, isLoading } = useUsrPost();
+  const { mutateAsync, isPending } = useUsrPost();
 
   // Submit & Reset
   const handleSubmit = formCtx.handleSubmit(async (data) => {
@@ -72,7 +72,7 @@ export function Component() {
       >
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
           <FormProvider {...formCtx}>
-            <Grid container spacing={2}>
+            <Grid container spacing={4}>
               <Grid item xs={12}>
                 <Typography variant="h5" fontWeight={500}>
                   Wellcome to Yang_Lee!
@@ -95,6 +95,7 @@ export function Component() {
                 xs={12}
                 display={"flex"}
                 justifyContent={"space-between"}
+                alignItems={"center"}
               >
                 <FormControlLabel
                   control={<ItemCheckbox name="remember" />}
@@ -109,7 +110,7 @@ export function Component() {
               </Grid>
               <Grid item xs={12}>
                 <LoadingButton
-                  loading={isLoading}
+                  loading={isPending}
                   type="submit"
                   variant="contained"
                   fullWidth
@@ -123,7 +124,7 @@ export function Component() {
                 xs={12}
                 display={"flex"}
                 justifyContent={"center"}
-                gap={2}
+                gap={4}
               >
                 <Typography>New on our platform?</Typography>
                 <Link component={RouterLink} to={{ pathname: "/register" }}>

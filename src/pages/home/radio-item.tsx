@@ -33,6 +33,7 @@ export function RadioItem() {
       </Typography>
       <Typography
         variant="body2"
+        color="secondary"
         mt={1}
         mb={"auto"}
         overflow={"hidden"}

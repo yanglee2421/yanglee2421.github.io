@@ -1,19 +1,7 @@
 // MUI Imports
-import {
-  GlobalStyles,
-  GlobalStylesProps,
-  Theme,
-  useTheme,
-} from "@mui/material";
+import { GlobalStylesProps, Theme } from "@mui/material";
 
-export function ThemeGlobalStyles() {
-  // Theme Hooks
-  const theme = useTheme();
-
-  return <GlobalStyles styles={getGlobalStyles(theme)} />;
-}
-
-function getGlobalStyles(theme: Theme): GlobalStylesProps["styles"] {
+export function toGlobalStyles(theme: Theme): GlobalStylesProps["styles"] {
   // Dark Mode
   const isDark = theme.palette.mode === "dark";
 

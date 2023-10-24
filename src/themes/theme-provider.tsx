@@ -3,10 +3,11 @@ import {
   ThemeProvider as MuiThemeProvider,
   CssBaseline,
   ScopedCssBaseline,
+  GlobalStyles,
 } from "@mui/material";
 
 // Theme Imports
-import { toThemeValue } from "./theme-utils";
+import { toTheme } from "./to-theme";
 
 // Redux Imports
 import { useAppSelector } from "@/redux";
@@ -15,7 +16,7 @@ import { useAppSelector } from "@/redux";
 import React from "react";
 
 // Components Imports
-import { ThemeGlobalStyles } from "./theme-global-styles";
+import { toGlobalStyles } from "./to-global-styles";
 
 void ScopedCssBaseline;
 
@@ -25,11 +26,11 @@ export function ThemeProvider(props: React.PropsWithChildren) {
 
   // Redux Hooks
   const isDark = useAppSelector((s) => s.theme.isDark);
-  const theme = toThemeValue({ isDark });
+  const theme = toTheme({ isDark });
 
   return (
     <MuiThemeProvider theme={theme}>
-      <ThemeGlobalStyles />
+      <GlobalStyles styles={toGlobalStyles(theme)} />
       <CssBaseline />
       {children}
     </MuiThemeProvider>
