@@ -60,13 +60,15 @@ export function Component() {
 
   return (
     <Box display={"flex"} height={"100%"}>
-      <Box flex={1}>{isSm && <h1>Hello small</h1>}</Box>
+      <Box flex={1} overflow={"hidden"}>
+        {isSm && <h1>Hello small</h1>}
+      </Box>
       <Box
         display={"flex"}
         flexDirection={"column"}
         justifyContent={"center"}
         width={"100%"}
-        maxWidth={["none", 450]}
+        maxWidth={["none", "none", 450]}
         paddingX={4}
         boxShadow={(theme) => Reflect.get(Object(theme.shadows), 1)}
       >
