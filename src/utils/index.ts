@@ -4,6 +4,8 @@ export { toRandom } from "./toRandom";
 export { toStringTag } from "./toStringTag";
 export { toBase64 } from "./toBase64";
 
+export * from "./string-to-color";
+
 // ** Class
 export { Snow } from "./class-snow";
 export { Particles } from "./class-particle";

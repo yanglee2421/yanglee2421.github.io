@@ -22,7 +22,7 @@ export function CardRadio() {
   };
 
   const theme = useTheme();
-  console.log(theme);
+  void theme;
 
   return (
     <Card>
@@ -35,6 +35,7 @@ export function CardRadio() {
                 desc="lorem "
                 value="one"
                 checked={value === "one"}
+                name="Kent Dodds"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -43,6 +44,7 @@ export function CardRadio() {
                 desc="lorem "
                 value="two"
                 checked={value === "two"}
+                name="Jed Watson"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -51,6 +53,7 @@ export function CardRadio() {
                 desc="lorem "
                 value="three"
                 checked={value === "three"}
+                name="Tim Neutkens"
               />
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
@@ -59,6 +62,7 @@ export function CardRadio() {
                 desc="lorem "
                 value="four"
                 checked={value === "four"}
+                name="Yang Lee"
               />
             </Grid>
           </Grid>

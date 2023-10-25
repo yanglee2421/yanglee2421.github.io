@@ -1,9 +1,17 @@
 // MUI Imports
 import { Box, Avatar, Typography, Radio } from "@mui/material";
 
+// Utils Imports
+import { stringToColor } from "@/utils";
+
 export function RadioItem(props: RadioItemProps) {
   // ** Props
-  const { checked, value, title, desc, ...restProps } = props;
+  const { checked, value, title, desc, name, ...restProps } = props;
+
+  const nameList = name.split(" ");
+  const firstName = nameList.at(0) || "";
+  const lastName = nameList.at(1) || "";
+  const avatarText = (firstName.at(0) || "") + (lastName.at(0) || "");
 
   return (
     <Box
@@ -24,7 +32,9 @@ export function RadioItem(props: RadioItemProps) {
       }}
       {...restProps}
     >
-      <Avatar sx={{ width: 64, height: 64 }}></Avatar>
+      <Avatar sx={{ width: 64, height: 64, bgcolor: stringToColor(name) }}>
+        {avatarText}
+      </Avatar>
       <Typography
         mt={2}
         fontWeight={500}
@@ -57,4 +67,5 @@ export interface RadioItemProps {
   value: string;
   title: string;
   desc: string;
+  name: string;
 }
