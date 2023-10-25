@@ -33,7 +33,7 @@ export function RadioItem(props: RadioItemProps) {
       {...restProps}
     >
       <Avatar sx={{ width: 64, height: 64, bgcolor: stringToColor(name) }}>
-        {avatarText}
+        {avatarText.toUpperCase()}
       </Avatar>
       <Typography
         mt={2}
