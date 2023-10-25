@@ -4,7 +4,7 @@ import { Grid, Button, Stack } from "@mui/material";
 // Components Imports
 import { CopyBtn } from "@/components";
 import { CardRadio } from "./card-radio";
-import { ThemeToggle } from "@/themes";
+import { ThemeToggle } from "@/theme";
 
 // Hooks Imports
 import { useLogin } from "@/hooks";

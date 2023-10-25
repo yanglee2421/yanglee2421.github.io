@@ -19,7 +19,7 @@ import { useLogin } from "@/hooks";
 import React from "react";
 
 // Theme Imports
-import { ThemeToggle } from "@/themes";
+import { ThemeToggle } from "@/theme";
 
 // Components Imports
 import { SwiperTrans } from "./swiper-trans";
