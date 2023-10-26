@@ -8,8 +8,10 @@ import {
   useMediaQuery,
   Theme,
   Box,
+  Select,
+  MenuItem,
 } from "@mui/material";
-import { TabContext, TabList, TabPanel } from "@mui/lab";
+import { TabContext, TabList, TabListProps, TabPanel } from "@mui/lab";
 import { Facebook, Twitter } from "@mui/icons-material";
 
 // Components Imports
@@ -19,6 +21,7 @@ import { ThemeToggle } from "@/theme";
 
 // Hooks Imports
 import { useLogin } from "@/hooks";
+import React from "react";
 
 void Twitter;
 
@@ -48,6 +51,12 @@ export function Component() {
   // Login Hooks
   const { signOut } = useLogin();
 
+  const [tab, setTab] = React.useState("one");
+  const tabChangeHandler: TabListProps["onChange"] = (evt, v) => {
+    void evt;
+    setTab(v);
+  };
+
   return (
     <>
       <Grid container spacing={3} p={2}>
@@ -64,13 +73,49 @@ export function Component() {
           <CardRadio />
         </Grid>
       </Grid>
-      <TabContext value="one">
-        <StyledTabList variant="scrollable">
-          <Tab value="one" label={<TabLabel />} />
-          <Tab value="two" label={<TabLabel />} />
-        </StyledTabList>
-        <TabPanel value="one"></TabPanel>
-        <TabPanel value="two"></TabPanel>
+      <TabContext value={tab}>
+        <Box display={"flex"} gap={5} p={2}>
+          <Box
+            flex={1}
+            overflow={"hidden"}
+            display={"flex"}
+            alignItems={"center"}
+          >
+            <StyledTabList
+              onChange={tabChangeHandler}
+              variant="scrollable"
+              scrollButtons="auto"
+              sx={{ alignItems: "center" }}
+            >
+              <Tab value="one" label={<TabLabel />} />
+              <Tab value="two" label={<TabLabel />} />
+              <Tab value="three" label={<TabLabel />} />
+              <Tab value="four" label={<TabLabel />} />
+              <Tab value="five" label={<TabLabel />} />
+              <Tab value="six" label={<TabLabel />} />
+              <Tab value="seven" label={<TabLabel />} />
+              <Tab value="eight" label={<TabLabel />} />
+              <Tab value="nine" label={<TabLabel />} />
+              <Tab value="ten" label={<TabLabel />} />
+            </StyledTabList>
+          </Box>
+          <Box>
+            <Select value={"one"} onChange={() => {}}>
+              <MenuItem value="one">woolworlds one</MenuItem>
+              <MenuItem value="two">woolworlds two</MenuItem>
+            </Select>
+          </Box>
+        </Box>
+        <TabPanel value="one">one</TabPanel>
+        <TabPanel value="two">two</TabPanel>
+        <TabPanel value="three">three</TabPanel>
+        <TabPanel value="four">four</TabPanel>
+        <TabPanel value="five">five</TabPanel>
+        <TabPanel value="six">six</TabPanel>
+        <TabPanel value="seven">seven</TabPanel>
+        <TabPanel value="eight">eight</TabPanel>
+        <TabPanel value="nine">nine</TabPanel>
+        <TabPanel value="ten">ten</TabPanel>
       </TabContext>
     </>
   );
