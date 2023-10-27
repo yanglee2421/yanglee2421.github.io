@@ -121,6 +121,14 @@ export const routes: RouteObject[] = [
           return import("@/pages/autocomplete");
         },
       },
+      {
+        id: "data-grid",
+        path: "data-grid",
+        handle: { title: "Data Grid" },
+        lazy() {
+          return import("@/pages/data-grid");
+        },
+      },
     ],
   },
 ];
