@@ -34,6 +34,7 @@ export function AutoComplete() {
         options={options()}
         isOptionEqualToValue={isOptionEqualToValue}
         disablePortal
+        loading
       />
     </>
   );
