@@ -113,6 +113,14 @@ export const routes: RouteObject[] = [
           return import("@/pages/infinite-list");
         },
       },
+      {
+        id: "autocomplete",
+        path: "autocomplete",
+        handle: { title: "AutoComplete" },
+        lazy() {
+          return import("@/pages/autocomplete");
+        },
+      },
     ],
   },
 ];
