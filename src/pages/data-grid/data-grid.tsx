@@ -1,12 +1,15 @@
 // MUI Imports
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Box, Card, CardHeader, Button } from "@mui/material";
+import {
+  Box,
+  Card,
+  CardHeader,
+  TextField,
+  TextFieldProps,
+} from "@mui/material";
 
 // React Imports
 import React from "react";
-
-// Store Imports
-import { myStore } from "./my-store";
 
 // API Imports
 import { useTableGet } from "@/hooks/table";
@@ -17,19 +20,16 @@ export function DataGridPage() {
     pageSize: 20,
   });
 
-  const store = React.useSyncExternalStore(
-    myStore.subscribe.bind(myStore),
-    myStore.getSnapshot.bind(myStore)
-  );
-
-  const clickHandler = () => {
-    myStore.dispatch();
+  const [search, setSearch] = React.useState("");
+  const inputChgHandler: TextFieldProps["onChange"] = (evt) => {
+    setSearch(evt.target.value);
   };
 
-  const { data, isLoading } = useTableGet({
+  const { data, isPending } = useTableGet({
     params: {
       page: pagiModel.page + 1,
       pageSize: pagiModel.pageSize,
+      name: search,
     },
   });
   console.log(data);
@@ -40,9 +40,10 @@ export function DataGridPage() {
         <CardHeader title="Quick Filter" />
         <Box height={500}>
           <DataGrid
-            loading={isLoading}
+            loading={isPending}
             columns={columns()}
             rows={data?.rows || []}
+            getRowId={(row) => row.id}
             rowCount={data?.total || 0}
             paginationMode="server"
             pageSizeOptions={[20, 50, 100]}
@@ -51,9 +52,9 @@ export function DataGridPage() {
             slots={{
               toolbar: () => {
                 return (
-                  <Button onClick={clickHandler} variant="outlined">
-                    {store.count}
-                  </Button>
+                  <>
+                    <TextField value={search} onChange={inputChgHandler} />
+                  </>
                 );
               },
             }}
@@ -69,6 +70,7 @@ export function DataGridPage() {
 
 function columns(): GridColDef[] {
   return [
+    { headerName: "ID", type: "string", field: "id" },
     { headerName: "Name", type: "string", field: "name" },
     { headerName: "Age", type: "string", field: "age" },
   ];

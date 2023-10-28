@@ -5,7 +5,7 @@ const list: Row[] = [];
 for (let i = 0; i < 100; i++) {
   list.push({
     id: i,
-    name: "name" + 1,
+    name: "name" + i,
     age: i,
   });
 }
