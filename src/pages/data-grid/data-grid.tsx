@@ -1,15 +1,27 @@
 // MUI Imports
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { Box, Card, CardHeader } from "@mui/material";
+import { Box, Card, CardHeader, Button } from "@mui/material";
 
 // React Imports
 import React from "react";
+
+// Store Imports
+import { myStore } from "./my-store";
 
 export function DataGridPage() {
   const [pagiModel, setPagiModel] = React.useState({
     page: 0,
     pageSize: 7,
   });
+
+  const store = React.useSyncExternalStore(
+    myStore.subscribe.bind(myStore),
+    myStore.getSnapshot.bind(myStore)
+  );
+
+  const clickHandler = () => {
+    myStore.dispatch();
+  };
 
   return (
     <Box p={2}>
@@ -23,7 +35,13 @@ export function DataGridPage() {
           paginationModel={pagiModel}
           onPaginationModelChange={setPagiModel}
           slots={{
-            toolbar: () => <>hell</>,
+            toolbar: () => {
+              return (
+                <Button onClick={clickHandler} variant="outlined">
+                  {store.count}
+                </Button>
+              );
+            },
           }}
           slotProps={{
             toolbar: {},

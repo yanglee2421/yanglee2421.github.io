@@ -69,7 +69,7 @@ export function Component() {
         justifyContent={"center"}
         width={"100%"}
         maxWidth={["none", "none", 450]}
-        paddingX={4}
+        p={12}
         boxShadow={(theme) => Reflect.get(Object(theme.shadows), 1)}
       >
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
