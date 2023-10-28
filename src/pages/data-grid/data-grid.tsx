@@ -8,10 +8,13 @@ import React from "react";
 // Store Imports
 import { myStore } from "./my-store";
 
+// API Imports
+import { useTableGet } from "@/hooks/table";
+
 export function DataGridPage() {
   const [pagiModel, setPagiModel] = React.useState({
     page: 0,
-    pageSize: 7,
+    pageSize: 20,
   });
 
   const store = React.useSyncExternalStore(
@@ -23,30 +26,42 @@ export function DataGridPage() {
     myStore.dispatch();
   };
 
+  const { data, isLoading } = useTableGet({
+    params: {
+      page: pagiModel.page + 1,
+      pageSize: pagiModel.pageSize,
+    },
+  });
+  console.log(data);
+
   return (
     <Box p={2}>
       <Card>
         <CardHeader title="Quick Filter" />
-        <DataGrid
-          autoHeight
-          columns={columns()}
-          rows={[]}
-          pageSizeOptions={[7, 10, 25, 50]}
-          paginationModel={pagiModel}
-          onPaginationModelChange={setPagiModel}
-          slots={{
-            toolbar: () => {
-              return (
-                <Button onClick={clickHandler} variant="outlined">
-                  {store.count}
-                </Button>
-              );
-            },
-          }}
-          slotProps={{
-            toolbar: {},
-          }}
-        />
+        <Box height={500}>
+          <DataGrid
+            loading={isLoading}
+            columns={columns()}
+            rows={data?.rows || []}
+            rowCount={data?.total || 0}
+            paginationMode="server"
+            pageSizeOptions={[20, 50, 100]}
+            paginationModel={pagiModel}
+            onPaginationModelChange={setPagiModel}
+            slots={{
+              toolbar: () => {
+                return (
+                  <Button onClick={clickHandler} variant="outlined">
+                    {store.count}
+                  </Button>
+                );
+              },
+            }}
+            slotProps={{
+              toolbar: {},
+            }}
+          />
+        </Box>
       </Card>
     </Box>
   );
