@@ -10,13 +10,16 @@ import {
 import { toTheme } from "./to-theme";
 
 // Redux Imports
-import { useAppSelector } from "@/redux";
+import { useAppDispatch, useAppSelector, sliceTheme } from "@/redux";
 
 // React Imports
 import React from "react";
 
 // Components Imports
 import { toGlobalStyles } from "./to-global-styles";
+
+// Hooks Imports
+import { useIsDark } from "@/hooks/dom";
 
 void ScopedCssBaseline;
 
@@ -27,6 +30,12 @@ export function ThemeProvider(props: React.PropsWithChildren) {
   // Redux Hooks
   const isDark = useAppSelector((s) => s.theme.isDark);
   const theme = toTheme({ isDark });
+
+  const isDarkMedia = useIsDark();
+  const dispatch = useAppDispatch();
+  React.useEffect(() => {
+    dispatch(sliceTheme.actions.isDark(isDarkMedia));
+  }, [isDarkMedia]);
 
   return (
     <MuiThemeProvider theme={theme}>

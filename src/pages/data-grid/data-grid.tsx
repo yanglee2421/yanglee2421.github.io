@@ -14,6 +14,9 @@ import React from "react";
 // API Imports
 import { useTableGet } from "@/hooks/table";
 
+// Components Imports
+import { Counter } from "@/components";
+
 export function DataGridPage() {
   const [pagiModel, setPagiModel] = React.useState({
     page: 0,
@@ -36,6 +39,7 @@ export function DataGridPage() {
 
   return (
     <Box p={2}>
+      <Counter />
       <Card>
         <CardHeader title="Quick Filter" />
         <Box height={500}>

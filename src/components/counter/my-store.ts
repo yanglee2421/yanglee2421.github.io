@@ -7,10 +7,12 @@ class MyStore {
 
   subscribe(trigger: Trigger): Unsubscribe {
     this.#triggerSet.add(trigger);
+    console.log("subscribe");
 
     // ** Unsubscribe
     return () => {
       this.#triggerSet.delete(trigger);
+      console.log("unsubscribe");
     };
   }
 
