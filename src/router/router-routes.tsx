@@ -129,6 +129,14 @@ export const routes: RouteObject[] = [
           return import("@/pages/data-grid");
         },
       },
+      {
+        id: "upload",
+        path: "upload",
+        handle: { title: "Upload Image" },
+        lazy() {
+          return import("@/pages/upload");
+        },
+      },
     ],
   },
 ];
