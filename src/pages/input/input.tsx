@@ -2,7 +2,7 @@
 import { Grid, Card, CardContent, Box, CardHeader } from "@mui/material";
 
 // Theme Imports
-import { ThemeToggle } from "@/themes";
+import { ThemeToggle } from "@/theme";
 
 // Components Imports
 import { InputTextarea } from "./input-textarea";

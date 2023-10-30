@@ -30,7 +30,7 @@ function MyItem(props: any) {
   return (
     <CSSTransition
       nodeRef={nodeRef}
-      addEndListener={(done) =>
+      addEndListener={(done: any) =>
         nodeRef.current?.addEventListener("transitionend", done)
       }
       classNames="fade"
@@ -38,7 +38,7 @@ function MyItem(props: any) {
     >
       <Button
         ref={nodeRef}
-        onClick={() => setState((state) => !state)}
+        onClick={() => setState((state: any) => !state)}
         variant="contained"
         sx={{
           "&.fade-enter": {

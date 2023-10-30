@@ -49,7 +49,9 @@ export default defineConfig((configEnv) => {
 function build({ mode }: ConfigEnv): UserConfig["build"] {
   void mode;
 
-  return {};
+  return {
+    outDir: resolve(__dirname, "./docs"),
+  };
 }
 
 function server({ mode }: ConfigEnv): UserConfig["server"] {
