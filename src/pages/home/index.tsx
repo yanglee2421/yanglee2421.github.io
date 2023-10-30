@@ -10,9 +10,19 @@ import {
   Box,
   Select,
   MenuItem,
+  SelectProps,
 } from "@mui/material";
 import { TabContext, TabList, TabListProps, TabPanel } from "@mui/lab";
-import { Facebook, Twitter } from "@mui/icons-material";
+import {
+  Facebook,
+  Twitter,
+  GitHub,
+  Google,
+  Microsoft,
+  Apple,
+  YouTube,
+  Instagram,
+} from "@mui/icons-material";
 
 // Components Imports
 import { CopyBtn } from "@/components";
@@ -21,6 +31,8 @@ import { ThemeToggle } from "@/theme";
 
 // Hooks Imports
 import { useLogin } from "@/hooks";
+
+// React Imports
 import React from "react";
 
 void Twitter;
@@ -57,6 +69,11 @@ export function Component() {
     setTab(v);
   };
 
+  const [selected, setSelected] = React.useState("one");
+  const selecChgHandler: SelectProps["onChange"] = (evt) => {
+    setSelected(String(evt.target.value));
+  };
+
   return (
     <>
       <Grid container spacing={3} p={2}>
@@ -87,20 +104,42 @@ export function Component() {
               scrollButtons="auto"
               sx={{ alignItems: "center" }}
             >
-              <Tab value="one" label={<TabLabel />} />
-              <Tab value="two" label={<TabLabel />} />
-              <Tab value="three" label={<TabLabel />} />
-              <Tab value="four" label={<TabLabel />} />
-              <Tab value="five" label={<TabLabel />} />
-              <Tab value="six" label={<TabLabel />} />
-              <Tab value="seven" label={<TabLabel />} />
-              <Tab value="eight" label={<TabLabel />} />
-              <Tab value="nine" label={<TabLabel />} />
-              <Tab value="ten" label={<TabLabel />} />
+              <Tab
+                value="one"
+                label={<TabLabel icon={<Facebook />}>one</TabLabel>}
+              />
+              <Tab
+                value="two"
+                label={<TabLabel icon={<Twitter />}>two</TabLabel>}
+              />
+              <Tab
+                value="three"
+                label={<TabLabel icon={<GitHub />}>three</TabLabel>}
+              />
+              <Tab
+                value="four"
+                label={<TabLabel icon={<Google />}>four</TabLabel>}
+              />
+              <Tab
+                value="five"
+                label={<TabLabel icon={<Microsoft />}>five</TabLabel>}
+              />
+              <Tab
+                value="six"
+                label={<TabLabel icon={<Apple />}>six</TabLabel>}
+              />
+              <Tab
+                value="seven"
+                label={<TabLabel icon={<YouTube />}>seven</TabLabel>}
+              />
+              <Tab
+                value="eight"
+                label={<TabLabel icon={<Instagram />}>eight</TabLabel>}
+              />
             </StyledTabList>
           </Box>
-          <Box>
-            <Select value={"one"} onChange={() => {}}>
+          <Box display={"flex"} alignItems={"center"}>
+            <Select value={selected} onChange={selecChgHandler} size="small">
               <MenuItem value="one">woolworlds one</MenuItem>
               <MenuItem value="two">woolworlds two</MenuItem>
             </Select>
@@ -114,14 +153,15 @@ export function Component() {
         <TabPanel value="six">six</TabPanel>
         <TabPanel value="seven">seven</TabPanel>
         <TabPanel value="eight">eight</TabPanel>
-        <TabPanel value="nine">nine</TabPanel>
-        <TabPanel value="ten">ten</TabPanel>
       </TabContext>
     </>
   );
 }
 
-function TabLabel() {
+function TabLabel(props: TabLabelProps) {
+  // ** Props
+  const { children, icon } = props;
+
   const isExtraSmall = useMediaQuery<Theme>((theme) =>
     theme.breakpoints.down("sm")
   );
@@ -136,8 +176,13 @@ function TabLabel() {
         },
       }}
     >
-      <Facebook />
-      {isExtraSmall || "hello"}
+      {icon}
+      {isExtraSmall || children}
     </Box>
   );
+}
+
+interface TabLabelProps {
+  children: React.ReactNode;
+  icon: React.ReactNode;
 }
