@@ -42,7 +42,7 @@ export const routes: RouteObject[] = [
         },
       },
       {
-        id: "index",
+        id: "home",
         index: true,
         handle: { title: "首页" },
         lazy() {
