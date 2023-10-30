@@ -1,1 +1,0 @@
-import{j as o,e as t}from"./index-0afd6b54.js";import{B as e}from"./Button-44e1831c.js";import"./ButtonBase-24bd0105.js";function a(){return o.jsx(t,{to:"/",children:o.jsx(e,{variant:"contained",size:"large",children:"Take me home"})})}export{a as Component};
