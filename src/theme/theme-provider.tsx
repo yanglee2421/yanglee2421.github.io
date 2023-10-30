@@ -35,7 +35,7 @@ export function ThemeProvider(props: React.PropsWithChildren) {
   const dispatch = useAppDispatch();
   React.useEffect(() => {
     dispatch(sliceTheme.actions.isDark(isDarkMedia));
-  }, [isDarkMedia]);
+  }, [dispatch, isDarkMedia]);
 
   return (
     <MuiThemeProvider theme={theme}>
