@@ -18,10 +18,7 @@ export const UploadPage = () => {
     const files = evt.target.files;
     if (!files?.length) return;
 
-    setImgURL((prev) => {
-      URL.revokeObjectURL(prev);
-      return URL.createObjectURL(files[0]);
-    });
+    setImgURL(URL.createObjectURL(files[0]));
   };
 
   // File change by file reader
@@ -29,7 +26,7 @@ export const UploadPage = () => {
     const files = evt.target.files;
     if (!files?.length) return;
 
-    const url = await new Promise<string>((res) => {
+    const dataURL = await new Promise<string>((res) => {
       const reader = new FileReader();
       reader.readAsDataURL(files[0]);
       reader.onload = (evt) => {
@@ -37,8 +34,27 @@ export const UploadPage = () => {
       };
     });
 
-    setImgURL(url);
+    setImgURL(dataURL);
   };
+
+  const imgRef = React.useRef<HTMLImageElement>(null);
+  React.useEffect(() => {
+    const imgEl = imgRef.current;
+    if (!imgEl) return;
+
+    const controller = new AbortController();
+    imgEl.addEventListener(
+      "load",
+      () => {
+        URL.revokeObjectURL(imgEl.src);
+      },
+      { signal: controller.signal }
+    );
+
+    return () => {
+      controller.abort();
+    };
+  }, [imgRef]);
 
   return (
     <>
@@ -60,7 +76,7 @@ export const UploadPage = () => {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <Img src={imgURL} alt="upload img here" width={400} />
+          <Img ref={imgRef} src={imgURL} alt="upload img here" width={400} />
         </Grid>
       </Grid>
     </>
