@@ -32,6 +32,10 @@ export function Component() {
 
   const routeNode = React.useMemo(() => {
     const nextRoute = matches[matches.length - 1];
+    if (!nextRoute) {
+      console.error("Invalid nextRoute");
+      return null;
+    }
 
     // To Login
     const isToLogin = nextRoute.id === "login";
@@ -52,11 +56,8 @@ export function Component() {
     urlSearchParams.set("returnURL", nextRoute.pathname);
     const query = urlSearchParams.toString();
     const isGoHome = nextRoute.id === "home";
-
-    const to = {
-      pathname: "/login",
-      search: isGoHome ? void 0 : query,
-    };
+    const search = isGoHome ? void 0 : query;
+    const to = { pathname: "/login", search };
 
     return <Navigate to={to} replace />;
   }, [matches, searchParams, outlet, usr]);
