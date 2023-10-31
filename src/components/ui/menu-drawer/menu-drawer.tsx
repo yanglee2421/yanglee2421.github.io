@@ -37,7 +37,7 @@ export function MenuDrawer() {
         sx={{
           "& .MuiDrawer-paper": {
             width: "100%",
-            maxWidth: 320,
+            maxWidth: { sm: 320 },
           },
         }}
       >
