@@ -1,5 +1,11 @@
 // MUI Imports
-import { Close, Menu } from "@mui/icons-material";
+import {
+  Close,
+  Menu,
+  HomeOutlined,
+  FeedOutlined,
+  ArticleOutlined,
+} from "@mui/icons-material";
 import { IconButton, Drawer, Box, List } from "@mui/material";
 
 // React Imports
@@ -57,9 +63,11 @@ export function MenuDrawer() {
           <Box flex={1} overflow={"hidden"}>
             <Scrollbar>
               <List>
-                <MenuLink label="Home" to={"/"} />
-                <MenuLink label="Not Found" to={"404"} />
-                <MenuGroup label="Form">
+                <MenuLink icon={<HomeOutlined />} label="Home" to={"/"} />
+                <MenuGroup icon={<ArticleOutlined />} label="Pages">
+                  <MenuLink label="Not Found" to={"404"} />
+                </MenuGroup>
+                <MenuGroup icon={<FeedOutlined />} label="Form">
                   <MenuLink label="Input" to={"input"} />
                 </MenuGroup>
               </List>
