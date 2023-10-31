@@ -68,7 +68,7 @@ export function Component() {
         flexDirection={"column"}
         justifyContent={"center"}
         width={"100%"}
-        maxWidth={["none", "none", 450]}
+        maxWidth={{ md: 450 }}
         p={12}
         boxShadow={(theme) => Reflect.get(Object(theme.shadows), 1)}
       >

@@ -7,6 +7,9 @@ for (let i = 0; i < 100; i++) {
     id: i,
     name: "name" + i,
     age: i,
+    role: i % 2 === 0 ? "admin" : "client",
+    avator: "avator",
+    email: i + "@demo.com",
   });
 }
 
@@ -59,4 +62,7 @@ export interface Row {
   id: number;
   name: string;
   age: number;
+  role: string;
+  avator: string;
+  email: string;
 }
