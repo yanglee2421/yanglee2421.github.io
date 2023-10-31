@@ -2,7 +2,8 @@
 import React from "react";
 
 export function useObserverMutation<TRef extends Element>(
-  ref: React.RefObject<TRef>
+  ref: React.RefObject<TRef>,
+  options?: MutationObserverInit
 ) {
   // Prepare State
   const [record, setRecord] = React.useState<MutationRecord | null>(null);
@@ -19,14 +20,19 @@ export function useObserverMutation<TRef extends Element>(
     const observer = new MutationObserver(([record]) => {
       setRecord(record);
     });
-    observer.observe(el);
+    observer.observe(el, options);
 
     // Clear Effect
     return () => {
+      const records = observer.takeRecords();
+      records.forEach((record) => {
+        setRecord(record);
+      });
+
       observer.disconnect();
       setRecord(null);
     };
-  }, [ref, setRecord]);
+  }, [ref, setRecord, options]);
 
   return record;
 }

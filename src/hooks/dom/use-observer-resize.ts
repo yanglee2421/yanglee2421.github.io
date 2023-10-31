@@ -2,7 +2,8 @@
 import React from "react";
 
 export function useObserverResize<TRef extends Element>(
-  elRef: React.RefObject<TRef>
+  elRef: React.RefObject<TRef>,
+  options?: ResizeObserverOptions
 ) {
   // Prepare State
   const [entry, setEntry] = React.useState<ResizeObserverEntry | null>(null);
@@ -19,14 +20,14 @@ export function useObserverResize<TRef extends Element>(
     const obverser = new ResizeObserver(([entry]) => {
       setEntry(entry);
     });
-    obverser.observe(dom);
+    obverser.observe(dom, options);
 
     // Clear Previos Effect
     return () => {
       obverser.disconnect();
       setEntry(null);
     };
-  }, [elRef, setEntry]);
+  }, [elRef, setEntry, options]);
 
   return entry;
 }
