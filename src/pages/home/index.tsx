@@ -25,15 +25,16 @@ import {
 } from "@mui/icons-material";
 
 // Components Imports
-import { CopyBtn } from "@/components";
 import { CardRadio } from "./card-radio";
-import { ThemeToggle } from "@/theme";
 
 // Hooks Imports
 import { useLogin } from "@/hooks";
 
 // React Imports
 import React from "react";
+
+// I18n Imports
+import { useTranslation } from "react-i18next";
 
 void Twitter;
 
@@ -74,16 +75,16 @@ export function Component() {
     setSelected(String(evt.target.value));
   };
 
+  const { t } = useTranslation();
+
   return (
     <>
       <Grid container spacing={3} p={2}>
         <Grid item xs={12}>
           <Stack direction={"row"} spacing={2}>
             <Button onClick={signOut} variant="contained" color="error">
-              sign out
+              {t("sign out", { ns: "button" })}
             </Button>
-            <CopyBtn text="2583169032" />
-            <ThemeToggle />
           </Stack>
         </Grid>
         <Grid item xs={12}>
