@@ -5,6 +5,8 @@ import {
   HomeOutlined,
   FeedOutlined,
   ArticleOutlined,
+  GridOnOutlined,
+  FormatListNumberedOutlined,
 } from "@mui/icons-material";
 import { IconButton, Drawer, Box, List, IconButtonProps } from "@mui/material";
 
@@ -79,6 +81,13 @@ export function MenuDrawer(props: MenuDrawerProps) {
                   <MenuLink label="Input" to={"input"} />
                   <MenuLink label="Upload" to={"upload"} />
                   <MenuLink label="Autocomplete" to={"autocomplete"} />
+                </MenuGroup>
+                <MenuGroup label="Table" icon={<GridOnOutlined />}>
+                  <MenuLink label="Data Grid" to={"data-grid"} />
+                </MenuGroup>
+                <MenuGroup label="List" icon={<FormatListNumberedOutlined />}>
+                  <MenuLink label="Infinite List" to={"infinite-list"} />
+                  <MenuLink label="Virtualized List" to={"virtualized-list"} />
                 </MenuGroup>
               </List>
               <Box height={1000}></Box>

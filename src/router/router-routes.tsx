@@ -50,14 +50,7 @@ export const routes: RouteObject[] = [
           return import("@/pages/menu");
         },
       },
-      {
-        id: "fabric",
-        path: "fabric",
-        handle: { title: "fabric" },
-        lazy() {
-          return import("@/pages/fabric");
-        },
-      },
+
       {
         id: "scrollbar",
         path: "scrollbar",
@@ -82,30 +75,7 @@ export const routes: RouteObject[] = [
           return import("@/pages/swiper");
         },
       },
-      {
-        id: "virtualized-list",
-        path: "virtualized-list",
-        handle: { title: "Virtualized List" },
-        lazy() {
-          return import("@/pages/virtualized-list");
-        },
-      },
-      {
-        id: "infinite-list",
-        path: "infinite-list",
-        handle: { title: "Infinite List" },
-        lazy() {
-          return import("@/pages/infinite-list");
-        },
-      },
-      {
-        id: "data-grid",
-        path: "data-grid",
-        handle: { title: "Data Grid" },
-        lazy() {
-          return import("@/pages/data-grid");
-        },
-      },
+
       {
         id: "with-appbar",
         path: "",
@@ -121,6 +91,8 @@ export const routes: RouteObject[] = [
               return import("@/pages/home");
             },
           },
+
+          // ** Form
           {
             id: "input",
             path: "input",
@@ -143,6 +115,44 @@ export const routes: RouteObject[] = [
             handle: { title: "AutoComplete" },
             lazy() {
               return import("@/pages/autocomplete");
+            },
+          },
+
+          // ** Table
+          {
+            id: "data-grid",
+            path: "data-grid",
+            handle: { title: "Data Grid" },
+            lazy() {
+              return import("@/pages/data-grid");
+            },
+          },
+
+          // ** List
+          {
+            id: "infinite-list",
+            path: "infinite-list",
+            handle: { title: "Infinite List" },
+            lazy() {
+              return import("@/pages/infinite-list");
+            },
+          },
+          {
+            id: "virtualized-list",
+            path: "virtualized-list",
+            handle: { title: "Virtualized List" },
+            lazy() {
+              return import("@/pages/virtualized-list");
+            },
+          },
+
+          // ** Lab
+          {
+            id: "fabric",
+            path: "fabric",
+            handle: { title: "fabric" },
+            lazy() {
+              return import("@/pages/fabric");
             },
           },
         ],
