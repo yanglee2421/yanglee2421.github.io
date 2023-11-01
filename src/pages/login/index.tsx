@@ -3,10 +3,10 @@ import {
   Box,
   Divider,
   FormControlLabel,
-  Grid,
   IconButton,
   Link,
   Typography,
+  styled,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
@@ -67,107 +67,96 @@ export function Component() {
         display={"flex"}
         flexDirection={"column"}
         justifyContent={"center"}
+        gap={4}
         width={"100%"}
         maxWidth={{ md: 450 }}
         p={[6, 12]}
-        boxShadow={(theme) => Reflect.get(Object(theme.shadows), 1)}
+        boxShadow={(theme) => theme.shadows[2]}
       >
-        <form onSubmit={handleSubmit} noValidate autoComplete="off">
+        <Box>
+          <Typography variant="h4">Wellcome to here!</Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              overflow: "hidden",
+              maxHeight(theme) {
+                return `calc(${theme.typography.body1.lineHeight}em * 3)`;
+              },
+            }}
+          >
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis
+            sed fugiat placeat alias illo praesentium.
+          </Typography>
+        </Box>
+        <StyledForm
+          onSubmit={handleSubmit}
+          noValidate
+          autoComplete="off"
+          sx={{ display: "flex", flexDirection: "column", gap: 4 }}
+        >
           <FormProvider {...formCtx}>
-            <Grid container spacing={6}>
-              <Grid item xs={12}>
-                <Typography variant="h5" fontWeight={500}>
-                  Wellcome to Yang_Lee!
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <Typography
-                  color={"GrayText"}
-                  sx={{
-                    overflow: "hidden",
-                    maxHeight(theme) {
-                      return `calc(${theme.typography.body1.lineHeight}em * 2)`;
-                    },
-                  }}
-                >
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro
-                  omnis sed fugiat placeat alias illo praesentium.
-                </Typography>
-              </Grid>
-              <Grid item xs={12}>
-                <ItemText name="email" label="Email" />
-              </Grid>
-              <Grid item xs={12}>
-                <ItemPasswd name="passwd" label="Password" />
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                display={"flex"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
+            <ItemText name="email" label="Email" />
+            <ItemPasswd name="passwd" label="Password" />
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <FormControlLabel
+                control={<ItemCheckbox name="remember" />}
+                label={<Typography variant="body2">Remember Me</Typography>}
+              />
+              <Link
+                variant="body2"
+                component={RouterLink}
+                to={{ pathname: "/forgot-passwd" }}
               >
-                <FormControlLabel
-                  control={<ItemCheckbox name="remember" />}
-                  label="Remember Me"
-                />
-                <Link
-                  component={RouterLink}
-                  to={{ pathname: "/forgot-passwd" }}
-                >
-                  Forgot Password?
-                </Link>
-              </Grid>
-              <Grid item xs={12}>
-                <LoadingButton
-                  loading={isPending}
-                  type="submit"
-                  variant="contained"
-                  fullWidth
-                  size="large"
-                >
-                  sign in
-                </LoadingButton>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                display={"flex"}
-                justifyContent={"center"}
-                gap={[2, 4]}
-              >
-                <Typography>New on our platform?</Typography>
-                <Link component={RouterLink} to={{ pathname: "/register" }}>
-                  Create an account
-                </Link>
-              </Grid>
-              <Grid item xs={12}>
-                <Divider>Or</Divider>
-              </Grid>
-              <Grid
-                item
-                xs={12}
-                display={"flex"}
-                justifyContent={"center"}
-                gap={2}
-              >
-                <IconButton>
-                  <FacebookOutlined />
-                </IconButton>
-                <IconButton>
-                  <Twitter />
-                </IconButton>
-                <IconButton>
-                  <GitHub />
-                </IconButton>
-                <IconButton>
-                  <Google />
-                </IconButton>
-              </Grid>
-            </Grid>
+                Forgot Password?
+              </Link>
+            </Box>
+            <LoadingButton
+              loading={isPending}
+              type="submit"
+              variant="contained"
+              fullWidth
+              size="large"
+            >
+              sign in
+            </LoadingButton>
           </FormProvider>
-        </form>
+        </StyledForm>
+        <Box
+          display={"flex"}
+          justifyContent={"space-between"}
+          alignItems={"center"}
+        >
+          <Typography variant="body2">New on our platform?</Typography>
+          <Link
+            variant="body2"
+            component={RouterLink}
+            to={{ pathname: "/register" }}
+          >
+            Create an account
+          </Link>
+        </Box>
+        <Divider>Or</Divider>
+        <Box display={"flex"} justifyContent={"center"} gap={4}>
+          <IconButton>
+            <FacebookOutlined />
+          </IconButton>
+          <IconButton>
+            <Twitter />
+          </IconButton>
+          <IconButton>
+            <GitHub />
+          </IconButton>
+          <IconButton>
+            <Google />
+          </IconButton>
+        </Box>
       </Box>
     </Box>
   );
 }
+
+const StyledForm = styled("form")({});

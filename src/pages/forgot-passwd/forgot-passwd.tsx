@@ -2,16 +2,8 @@
 import { useTranslation } from "react-i18next";
 
 // MUI Imports
-import {
-  Typography,
-  Button,
-  Box,
-  styled,
-  Divider,
-  Stack,
-  IconButton,
-} from "@mui/material";
-import { Google, FacebookRounded, Twitter, GitHub } from "@mui/icons-material";
+import { Typography, Button, Box, styled } from "@mui/material";
+import { Send, ArrowBack } from "@mui/icons-material";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
@@ -19,7 +11,10 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 // Components Imports
-import { ItemPasswd, ItemText } from "@/components/form";
+import { ItemText } from "@/components/form";
+
+// Router Imports
+import { Link as RouterLink } from "react-router-dom";
 
 export function ForgotPasswd() {
   const { t } = useTranslation();
@@ -28,12 +23,10 @@ export function ForgotPasswd() {
   const formCtx = useForm({
     defaultValues: {
       email: "",
-      passwd: "",
     },
     resolver: yupResolver(
       yup.object().shape({
         email: yup.string().email().required(),
-        passwd: yup.string().min(6).max(16).required(),
       })
     ),
   });
@@ -52,63 +45,55 @@ export function ForgotPasswd() {
           maxWidth={{ sm: 450 }}
           display={"flex"}
           flexDirection={"column"}
-          gap={6}
-          p={[4, 8]}
+          justifyContent={"center"}
+          gap={4}
+          p={[4, 12]}
           boxShadow={(theme) => {
-            return theme.shadows[3];
+            return theme.shadows[2];
           }}
         >
-          <Typography variant="h4" mt={"auto"}>
-            {t("hello")}
-          </Typography>
-          <Typography
-            variant="body2"
-            overflow={"hidden"}
-            maxHeight={(theme) => {
-              return `calc(${theme.typography.body2.lineHeight}em * 3)`;
-            }}
-          >
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum
-            velit exercitationem vitae deserunt dolorum consequuntur culpa
-            repellendus, quibusdam deleniti error atque in excepturi corrupti
-            quae assumenda, necessitatibus amet, incidunt labore?
-          </Typography>
+          <Box>
+            <Typography variant="h4">{t("hello")}</Typography>
+            <Typography
+              variant="body2"
+              mt={1}
+              overflow={"hidden"}
+              maxHeight={(theme) => {
+                return `calc(${theme.typography.body2.lineHeight}em * 3)`;
+              }}
+            >
+              Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum
+              velit exercitationem vitae deserunt dolorum consequuntur culpa
+              repellendus, quibusdam deleniti error atque in excepturi corrupti
+              quae assumenda, necessitatibus amet, incidunt labore?
+            </Typography>
+          </Box>
           <StyledForm
             onSubmit={submitHandler}
+            noValidate
+            autoComplete="off"
             sx={{
               display: "flex",
               flexDirection: "column",
-              gap: 6,
+              gap: 4,
             }}
           >
             <FormProvider {...formCtx}>
               <ItemText name="email" label="Email" type="email" />
-              <ItemPasswd name="passwd" label="Password" />
-              <Button variant="contained" size="large" fullWidth>
-                {t("submit", { ns: "button" })}
+              <Button
+                type="submit"
+                variant="contained"
+                size="large"
+                fullWidth
+                endIcon={<Send />}
+              >
+                {t("send reset link", { ns: "button" })}
               </Button>
             </FormProvider>
           </StyledForm>
-          <Divider>Or</Divider>
-          <Stack
-            direction={"row"}
-            spacing={4}
-            justifyContent={"center"}
-            mb={"auto"}
-          >
-            <IconButton>
-              <FacebookRounded />
-            </IconButton>
-            <IconButton>
-              <Twitter />
-            </IconButton>
-            <IconButton>
-              <GitHub />
-            </IconButton>
-            <IconButton>
-              <Google />
-            </IconButton>
-          </Stack>
+          <Button component={RouterLink} to={"login"} startIcon={<ArrowBack />}>
+            Back to login
+          </Button>
         </Box>
       </Box>
     </>
