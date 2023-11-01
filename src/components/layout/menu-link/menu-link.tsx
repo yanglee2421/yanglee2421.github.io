@@ -7,12 +7,12 @@ import { FiberManualRecordOutlined } from "@mui/icons-material";
 
 // Router Imports
 import {
-  NavLink,
   To,
   useResolvedPath,
   useLocation,
   RelativeRoutingType,
   UNSAFE_NavigationContext,
+  Link,
 } from "react-router-dom";
 
 export function MenuLink(props: MenuLinkProps) {
@@ -45,7 +45,7 @@ export function MenuLink(props: MenuLinkProps) {
       locationPathname.charAt(toPathname.length) === "/");
 
   return (
-    <ListItemButton component={NavLink} to={to} selected={isActive}>
+    <ListItemButton component={Link} to={to} selected={isActive}>
       <ListItemIcon>{iconNode}</ListItemIcon>
       <ListItemText>{label}</ListItemText>
     </ListItemButton>
