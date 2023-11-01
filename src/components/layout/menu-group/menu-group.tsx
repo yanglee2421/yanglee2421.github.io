@@ -7,6 +7,7 @@ import {
   Collapse,
   ListItemIcon,
   ListItemText,
+  ListItemButtonProps,
 } from "@mui/material";
 import {
   FiberManualRecordOutlined,
@@ -15,7 +16,7 @@ import {
 
 export function MenuGroup(props: MenuGroupProps) {
   // ** Props
-  const { label, icon, children } = props;
+  const { label, icon, children, ...restProps } = props;
 
   const [open, setOpen] = React.useState(false);
   const toggleHandler = () => {
@@ -51,6 +52,7 @@ export function MenuGroup(props: MenuGroupProps) {
             return open ? theme.palette.action.selected : void 0;
           },
         }}
+        {...restProps}
       >
         <ListItemIcon>{iconNode}</ListItemIcon>
         <ListItemText>{label}</ListItemText>
@@ -63,8 +65,7 @@ export function MenuGroup(props: MenuGroupProps) {
   );
 }
 
-export interface MenuGroupProps {
+export interface MenuGroupProps extends ListItemButtonProps {
   label: React.ReactNode;
   icon?: React.ReactNode;
-  children: React.ReactNode;
 }
