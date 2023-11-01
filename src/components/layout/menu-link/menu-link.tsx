@@ -2,7 +2,12 @@
 import React from "react";
 
 // MUI Imports
-import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import {
+  ListItemButton,
+  ListItemButtonProps,
+  ListItemIcon,
+  ListItemText,
+} from "@mui/material";
 import { FiberManualRecordOutlined } from "@mui/icons-material";
 
 // Router Imports
@@ -17,8 +22,9 @@ import {
 
 export function MenuLink(props: MenuLinkProps) {
   // ** Props
-  const { label, icon, to, end, caseSensitive, relative } = props;
+  const { label, icon, to, end, caseSensitive, relative, ...restProps } = props;
 
+  // Icon node
   const iconNode = React.useMemo(() => {
     if (icon) return icon;
     return <FiberManualRecordOutlined />;
@@ -28,14 +34,15 @@ export function MenuLink(props: MenuLinkProps) {
   const path = useResolvedPath(to, { relative });
   const location = useLocation();
   const { navigator } = React.useContext(UNSAFE_NavigationContext);
+
+  let locationPathname = location.pathname;
   let toPathname = navigator.encodeLocation
     ? navigator.encodeLocation(path).pathname
     : path.pathname;
-  let locationPathname = location.pathname;
 
   if (!caseSensitive) {
-    toPathname = toPathname.toLowerCase();
     locationPathname = locationPathname.toLowerCase();
+    toPathname = toPathname.toLowerCase();
   }
 
   const isActive =
@@ -45,14 +52,14 @@ export function MenuLink(props: MenuLinkProps) {
       locationPathname.charAt(toPathname.length) === "/");
 
   return (
-    <ListItemButton component={Link} to={to} selected={isActive}>
+    <ListItemButton component={Link} to={to} selected={isActive} {...restProps}>
       <ListItemIcon>{iconNode}</ListItemIcon>
       <ListItemText>{label}</ListItemText>
     </ListItemButton>
   );
 }
 
-export interface MenuLinkProps {
+export interface MenuLinkProps extends ListItemButtonProps {
   label: React.ReactNode;
   icon?: React.ReactNode;
   to: To;
