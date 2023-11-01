@@ -35,7 +35,12 @@ export function Trans() {
       <IconButton onClick={openHandler}>
         <Translate />
       </IconButton>
-      <Menu open={open} onClose={closeHandler} anchorEl={anchorEl}>
+      <Menu
+        open={open}
+        onClose={closeHandler}
+        anchorEl={anchorEl}
+        sx={{ mt: 4 }}
+      >
         <MenuItem onClick={toItemHandler("en-US")} selected={lng === "en-US"}>
           English
         </MenuItem>

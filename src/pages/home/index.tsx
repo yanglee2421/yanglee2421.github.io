@@ -1,8 +1,5 @@
 // MUI Imports
 import {
-  Grid,
-  Button,
-  Stack,
   Tab,
   styled,
   useMediaQuery,
@@ -27,14 +24,8 @@ import {
 // Components Imports
 import { CardRadio } from "./card-radio";
 
-// Hooks Imports
-import { useLogin } from "@/hooks";
-
 // React Imports
 import React from "react";
-
-// I18n Imports
-import { useTranslation } from "react-i18next";
 
 void Twitter;
 
@@ -61,9 +52,6 @@ const StyledTabList = styled(TabList)(({ theme }) => {
 });
 
 export function Component() {
-  // Login Hooks
-  const { signOut } = useLogin();
-
   const [tab, setTab] = React.useState("one");
   const tabChangeHandler: TabListProps["onChange"] = (evt, v) => {
     void evt;
@@ -75,22 +63,11 @@ export function Component() {
     setSelected(String(evt.target.value));
   };
 
-  const { t } = useTranslation();
-
   return (
     <>
-      <Grid container spacing={3} p={2}>
-        <Grid item xs={12}>
-          <Stack direction={"row"} spacing={2}>
-            <Button onClick={signOut} variant="contained" color="error">
-              {t("sign out", { ns: "button" })}
-            </Button>
-          </Stack>
-        </Grid>
-        <Grid item xs={12}>
-          <CardRadio />
-        </Grid>
-      </Grid>
+      <Box p={2}>
+        <CardRadio />
+      </Box>
       <TabContext value={tab}>
         <Box display={"flex"} gap={5} p={2}>
           <Box
