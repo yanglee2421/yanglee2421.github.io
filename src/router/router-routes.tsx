@@ -41,22 +41,7 @@ export const routes: RouteObject[] = [
           return import("@/pages/register");
         },
       },
-      {
-        id: "home",
-        index: true,
-        handle: { title: "首页" },
-        lazy() {
-          return import("@/pages/home");
-        },
-      },
-      {
-        id: "input",
-        path: "input",
-        handle: { title: "Input" },
-        lazy() {
-          return import("@/pages/input");
-        },
-      },
+
       {
         id: "menu",
         path: "menu",
@@ -114,14 +99,6 @@ export const routes: RouteObject[] = [
         },
       },
       {
-        id: "autocomplete",
-        path: "autocomplete",
-        handle: { title: "AutoComplete" },
-        lazy() {
-          return import("@/pages/autocomplete");
-        },
-      },
-      {
         id: "data-grid",
         path: "data-grid",
         handle: { title: "Data Grid" },
@@ -130,12 +107,45 @@ export const routes: RouteObject[] = [
         },
       },
       {
-        id: "upload",
-        path: "upload",
-        handle: { title: "Upload Image" },
+        id: "with-appbar",
+        path: "",
         lazy() {
-          return import("@/pages/upload");
+          return import("@/layout/main");
         },
+        children: [
+          {
+            id: "home",
+            index: true,
+            handle: { title: "首页" },
+            lazy() {
+              return import("@/pages/home");
+            },
+          },
+          {
+            id: "input",
+            path: "input",
+            handle: { title: "Input" },
+            lazy() {
+              return import("@/pages/input");
+            },
+          },
+          {
+            id: "upload",
+            path: "upload",
+            handle: { title: "Upload Image" },
+            lazy() {
+              return import("@/pages/upload");
+            },
+          },
+          {
+            id: "autocomplete",
+            path: "autocomplete",
+            handle: { title: "AutoComplete" },
+            lazy() {
+              return import("@/pages/autocomplete");
+            },
+          },
+        ],
       },
     ],
   },

@@ -28,7 +28,6 @@ import {
 import { CopyBtn } from "@/components";
 import { CardRadio } from "./card-radio";
 import { ThemeToggle } from "@/theme";
-import { MenuDrawer } from "@/components/ui";
 
 // Hooks Imports
 import { useLogin } from "@/hooks";
@@ -85,7 +84,6 @@ export function Component() {
             </Button>
             <CopyBtn text="2583169032" />
             <ThemeToggle />
-            <MenuDrawer />
           </Stack>
         </Grid>
         <Grid item xs={12}>

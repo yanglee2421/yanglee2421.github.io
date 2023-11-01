@@ -44,7 +44,14 @@ export function MenuGroup(props: MenuGroupProps) {
 
   return (
     <>
-      <ListItemButton onClick={toggleHandler}>
+      <ListItemButton
+        onClick={toggleHandler}
+        sx={{
+          backgroundColor(theme) {
+            return open ? theme.palette.action.selected : void 0;
+          },
+        }}
+      >
         <ListItemIcon>{iconNode}</ListItemIcon>
         <ListItemText>{label}</ListItemText>
         {arrowNode}
