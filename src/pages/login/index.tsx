@@ -69,7 +69,7 @@ export function Component() {
         justifyContent={"center"}
         width={"100%"}
         maxWidth={{ md: 450 }}
-        p={12}
+        p={[6, 12]}
         boxShadow={(theme) => Reflect.get(Object(theme.shadows), 1)}
       >
         <form onSubmit={handleSubmit} noValidate autoComplete="off">
@@ -81,7 +81,15 @@ export function Component() {
                 </Typography>
               </Grid>
               <Grid item xs={12}>
-                <Typography color={"GrayText"}>
+                <Typography
+                  color={"GrayText"}
+                  sx={{
+                    overflow: "hidden",
+                    maxHeight(theme) {
+                      return `calc(${theme.typography.body1.lineHeight}em * 2)`;
+                    },
+                  }}
+                >
                   Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro
                   omnis sed fugiat placeat alias illo praesentium.
                 </Typography>
@@ -126,7 +134,7 @@ export function Component() {
                 xs={12}
                 display={"flex"}
                 justifyContent={"center"}
-                gap={4}
+                gap={[2, 4]}
               >
                 <Typography>New on our platform?</Typography>
                 <Link component={RouterLink} to={{ pathname: "/register" }}>
