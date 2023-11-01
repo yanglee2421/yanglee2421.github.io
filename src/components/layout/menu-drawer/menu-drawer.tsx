@@ -13,8 +13,8 @@ import React from "react";
 
 // Components Imports
 import { Scrollbar } from "@/components/ui/scrollbar";
-import { MenuLink } from "@/components/layout/menu-link";
-import { MenuGroup } from "@/components/layout/menu-group";
+import { MenuGroup } from "@/components/ui/menu-group";
+import { MenuLink } from "@/components/ui/menu-link";
 
 export function MenuDrawer(props: MenuDrawerProps) {
   // ** Props
