@@ -1,5 +1,5 @@
 // MUI Imports
-import { AppBar, Box, Toolbar, Avatar } from "@mui/material";
+import { AppBar, Toolbar, Avatar } from "@mui/material";
 
 // Components Imports
 import { MenuDrawer } from "@/components/layout/menu-drawer";
@@ -13,7 +13,7 @@ export function Appbar() {
       <Toolbar>
         <MenuDrawer sx={{ mr: "auto" }} />
         <ThemeToggle />
-        <Avatar />
+        <Avatar sx={{ ml: 2 }} />
       </Toolbar>
     </AppBar>
   );
