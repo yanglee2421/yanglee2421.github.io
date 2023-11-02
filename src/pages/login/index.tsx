@@ -109,7 +109,7 @@ export function Component() {
               <Link
                 variant="body2"
                 component={RouterLink}
-                to={{ pathname: "/forgot-passwd" }}
+                to={"/forgot-passwd"}
               >
                 Forgot Password?
               </Link>
@@ -131,11 +131,7 @@ export function Component() {
           alignItems={"center"}
         >
           <Typography variant="body2">New on our platform?</Typography>
-          <Link
-            variant="body2"
-            component={RouterLink}
-            to={{ pathname: "/register" }}
-          >
+          <Link variant="body2" component={RouterLink} to={"/register"}>
             Create an account
           </Link>
         </Box>

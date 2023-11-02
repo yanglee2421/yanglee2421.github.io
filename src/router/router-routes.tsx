@@ -17,6 +17,8 @@ export const routes: RouteObject[] = [
           return import("@/pages/404");
         },
       },
+
+      // User module
       {
         id: "login",
         path: "login",
@@ -41,41 +43,16 @@ export const routes: RouteObject[] = [
           return import("@/pages/register");
         },
       },
-
       {
-        id: "menu",
-        path: "menu",
-        handle: { title: "Menu" },
+        id: "privacy-policy",
+        path: "privacy-policy",
+        handle: { title: "Privacy Policy" },
         lazy() {
-          return import("@/pages/menu");
+          return import("@/pages/privacy-policy");
         },
       },
 
-      {
-        id: "scrollbar",
-        path: "scrollbar",
-        handle: { title: "scrollbar" },
-        lazy() {
-          return import("@/pages/scrollbar");
-        },
-      },
-      {
-        id: "transition",
-        path: "transition",
-        handle: { title: "transition" },
-        lazy() {
-          return import("@/pages/transition");
-        },
-      },
-      {
-        id: "swiper",
-        path: "swiper",
-        handle: { title: "Swiper" },
-        lazy() {
-          return import("@/pages/swiper");
-        },
-      },
-
+      // With APP Bar
       {
         id: "with-appbar",
         path: "",
@@ -153,6 +130,38 @@ export const routes: RouteObject[] = [
             handle: { title: "fabric" },
             lazy() {
               return import("@/pages/fabric");
+            },
+          },
+          {
+            id: "menu",
+            path: "menu",
+            handle: { title: "Menu" },
+            lazy() {
+              return import("@/pages/menu");
+            },
+          },
+          {
+            id: "scrollbar",
+            path: "scrollbar",
+            handle: { title: "scrollbar" },
+            lazy() {
+              return import("@/pages/scrollbar");
+            },
+          },
+          {
+            id: "transition",
+            path: "transition",
+            handle: { title: "transition" },
+            lazy() {
+              return import("@/pages/transition");
+            },
+          },
+          {
+            id: "swiper",
+            path: "swiper",
+            handle: { title: "Swiper" },
+            lazy() {
+              return import("@/pages/swiper");
             },
           },
         ],

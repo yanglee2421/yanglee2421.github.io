@@ -91,7 +91,11 @@ export function ForgotPasswd() {
               </Button>
             </FormProvider>
           </StyledForm>
-          <Button component={RouterLink} to={"login"} startIcon={<ArrowBack />}>
+          <Button
+            component={RouterLink}
+            to={"/login"}
+            startIcon={<ArrowBack />}
+          >
             Back to login
           </Button>
         </Box>

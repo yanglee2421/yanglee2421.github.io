@@ -64,7 +64,7 @@ export function Register() {
                   <Link
                     variant="body2"
                     component={RouterLink}
-                    to={"privacy-policy"}
+                    to={"/privacy-policy"}
                   >
                     privacy policy & terms
                   </Link>
@@ -82,7 +82,7 @@ export function Register() {
           alignItems={"center"}
         >
           <Typography variant="body2">Already have an account?</Typography>
-          <Link variant="body2" component={RouterLink} to={"login"}>
+          <Link variant="body2" component={RouterLink} to={"/login"}>
             Sign in insead
           </Link>
         </Box>
