@@ -6,6 +6,7 @@ import { GitHub } from "@mui/icons-material";
 import { MenuDrawer } from "@/components/layout/menu-drawer";
 import { Trans } from "@/components/layout/trans";
 import { UserDropdown } from "@/components/layout/user-dropdown";
+import { Seacher } from "@/components/layout/seacher";
 
 // Theme Imports
 import { ThemeToggle } from "@/theme";
@@ -14,7 +15,8 @@ export function Appbar() {
   return (
     <AppBar position="static" sx={{ backgroundColor: "transparent" }}>
       <Toolbar>
-        <MenuDrawer sx={{ mr: "auto" }} />
+        <MenuDrawer />
+        <Seacher />
         <Trans />
         <ThemeToggle />
         <IconButton
