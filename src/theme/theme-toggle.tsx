@@ -1,5 +1,5 @@
 // MUI Imports
-import { IconButton } from "@mui/material";
+import { IconButton, IconButtonProps } from "@mui/material";
 import { LightModeOutlined, DarkModeOutlined } from "@mui/icons-material";
 
 // Redux Imports
@@ -8,7 +8,10 @@ import { useAppDispatch, useAppSelector, sliceTheme } from "@/redux";
 // React Imports
 import React from "react";
 
-export function ThemeToggle() {
+export function ThemeToggle(props: ThemeToggleProps) {
+  // ** Props
+  const { ...restProps } = props;
+
   // Redux Hooks
   const isDark = useAppSelector((s) => s.theme.isDark);
   const dispatch = useAppDispatch();
@@ -25,5 +28,11 @@ export function ThemeToggle() {
     dispatch(action);
   };
 
-  return <IconButton onClick={handleClick}>{iconEl}</IconButton>;
+  return (
+    <IconButton onClick={handleClick} {...restProps}>
+      {iconEl}
+    </IconButton>
+  );
 }
+
+export interface ThemeToggleProps extends IconButtonProps {}

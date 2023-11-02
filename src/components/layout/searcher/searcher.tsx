@@ -5,6 +5,7 @@ import {
   Box,
   OutlinedInput,
   InputAdornment,
+  IconButtonProps,
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 
@@ -12,9 +13,12 @@ import { Search } from "@mui/icons-material";
 import React from "react";
 
 // Form Imports
-import { useForm, FormProvider } from "react-hook-form";
+import { useForm, FormProvider, useController } from "react-hook-form";
 
-export function Seacher() {
+export function Searcher(props: SearcherProps) {
+  // ** Props
+  const { ...restProps } = props;
+
   const [open, setOpen] = React.useState(false);
   const inputRef = React.useRef<HTMLDivElement>(null);
 
@@ -24,12 +28,16 @@ export function Seacher() {
     },
   });
 
+  const { field } = useController({ control: formCtx.control, name: "search" });
+
   const closeHandler = () => {
     setOpen(false);
+    document.body.style.overflow = "";
   };
 
   const openHandler = () => {
     setOpen(true);
+    document.body.style.overflow = "hidden";
   };
 
   const submitHandler = formCtx.handleSubmit((data) => {
@@ -37,17 +45,25 @@ export function Seacher() {
     closeHandler();
   });
 
+  const blurHandler = () => {
+    formCtx.reset();
+    closeHandler();
+  };
+  const chgHandler: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
+    field.onChange(evt.target.value);
+  };
+
   React.useEffect(() => {
     if (!open) return;
 
-    const el =
-      inputRef.current?.querySelector<HTMLInputElement>(":scope input");
-    el?.focus();
-  }, [open]);
+    const el = inputRef.current;
+    const inputEl = el?.querySelector<HTMLInputElement>(":scope input");
+    inputEl?.focus();
+  }, [open, inputRef]);
 
   return (
     <>
-      <IconButton onClick={openHandler}>
+      <IconButton onClick={openHandler} {...restProps}>
         <Search />
       </IconButton>
       <Backdrop
@@ -60,13 +76,19 @@ export function Seacher() {
           },
         }}
       >
-        <Box flexBasis={450}>
-          <form onSubmit={submitHandler}>
+        <Box width={"80%"} maxWidth={450} mt={-96}>
+          <form onSubmit={submitHandler} autoComplete="off" noValidate>
             <FormProvider {...formCtx}>
               <OutlinedInput
-                {...formCtx.register("search")}
-                ref={inputRef}
-                onBlur={closeHandler}
+                ref={(el) => {
+                  field.ref(el);
+                  Reflect.set(inputRef, "current", el);
+                }}
+                value={field.value}
+                onChange={chgHandler}
+                onBlur={blurHandler}
+                disabled={field.disabled}
+                name={field.name}
                 fullWidth
                 startAdornment={
                   <InputAdornment position="start">
@@ -74,6 +96,8 @@ export function Seacher() {
                   </InputAdornment>
                 }
                 sx={{ borderRadius: 56 }}
+                placeholder="Search..."
+                type="text"
               />
             </FormProvider>
           </form>
@@ -82,3 +106,5 @@ export function Seacher() {
     </>
   );
 }
+
+export interface SearcherProps extends IconButtonProps {}

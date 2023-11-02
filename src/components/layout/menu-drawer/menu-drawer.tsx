@@ -43,7 +43,7 @@ export function MenuDrawer(props: MenuDrawerProps) {
       <Drawer
         open={open}
         onClose={closeHandler}
-        anchor="right"
+        anchor="left"
         sx={{
           "& .MuiDrawer-paper": {
             width: "100%",
@@ -59,12 +59,11 @@ export function MenuDrawer(props: MenuDrawerProps) {
         >
           <Box
             p={2}
-            sx={{
-              borderBottom: 1,
-              borderColor(theme) {
-                return theme.palette.divider;
-              },
-            }}
+            borderBottom={1}
+            borderColor={(theme) => theme.palette.divider}
+            display={"flex"}
+            justifyContent={"end"}
+            alignItems={"center"}
           >
             <IconButton onClick={closeHandler}>
               <Close />

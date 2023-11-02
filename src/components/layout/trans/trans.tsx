@@ -1,5 +1,5 @@
 // MUI Imports
-import { IconButton, Menu, MenuItem } from "@mui/material";
+import { IconButton, IconButtonProps, Menu, MenuItem } from "@mui/material";
 import { Translate } from "@mui/icons-material";
 
 // React Imports
@@ -8,7 +8,10 @@ import React from "react";
 // I18n Imports
 import { useTranslation } from "react-i18next";
 
-export function Trans() {
+export function Trans(props: TransProps) {
+  // ** Props
+  const { ...restProps } = props;
+
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
   const [open, setOpen] = React.useState(false);
 
@@ -32,7 +35,7 @@ export function Trans() {
 
   return (
     <>
-      <IconButton onClick={openHandler}>
+      <IconButton onClick={openHandler} {...restProps}>
         <Translate />
       </IconButton>
       <Menu
@@ -51,3 +54,5 @@ export function Trans() {
     </>
   );
 }
+
+export interface TransProps extends IconButtonProps {}
