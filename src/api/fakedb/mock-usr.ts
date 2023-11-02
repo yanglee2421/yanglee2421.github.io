@@ -5,12 +5,12 @@ const BASE_URI = "/usr";
 const usrList = [
   {
     email: "admin@demo.com",
-    passwd: "admin123456",
+    passwd: "test123456",
     role: "admin",
   },
   {
     email: "client@demo.com",
-    passwd: "client123456",
+    passwd: "test123456",
     role: "client",
   },
 ];

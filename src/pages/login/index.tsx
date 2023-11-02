@@ -31,8 +31,8 @@ export function Component() {
   // Form Hooks
   const formCtx = useForm({
     defaultValues: {
-      email: "",
-      passwd: "",
+      email: "admin@demo.com",
+      passwd: "test123456",
       isRemember: false,
     },
     resolver: yupResolver(
@@ -50,7 +50,6 @@ export function Component() {
 
   // Submit & Reset
   const handleSubmit = formCtx.handleSubmit(async (data) => {
-    console.log(data);
     const usr = await mutateAsync({ data });
     signIn({ ...usr, role: "admin", loginAt: 0 });
   });

@@ -1,0 +1,1 @@
+import{b as e,g as s}from"./ButtonBase-c41b8bd3.js";function l(t){return s("MuiListItemText",t)}const i=e("MuiListItemText",["root","multiline","dense","inset","primary","secondary"]),n=i;export{l as g,n as l};
