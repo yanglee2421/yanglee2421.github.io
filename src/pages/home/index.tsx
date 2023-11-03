@@ -10,24 +10,13 @@ import {
   SelectProps,
 } from "@mui/material";
 import { TabContext, TabList, TabListProps, TabPanel } from "@mui/lab";
-import {
-  Facebook,
-  Twitter,
-  GitHub,
-  Google,
-  Microsoft,
-  Apple,
-  YouTube,
-  Instagram,
-} from "@mui/icons-material";
+import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
 
 // Components Imports
 import { CardRadio } from "./card-radio";
 
 // React Imports
 import React from "react";
-
-void Twitter;
 
 const StyledTabList = styled(TabList)(({ theme }) => {
   return {
@@ -52,13 +41,13 @@ const StyledTabList = styled(TabList)(({ theme }) => {
 });
 
 export function Component() {
-  const [tab, setTab] = React.useState("one");
+  const [tab, setTab] = React.useState("five");
   const tabChangeHandler: TabListProps["onChange"] = (evt, v) => {
     void evt;
     setTab(v);
   };
 
-  const [selected, setSelected] = React.useState("one");
+  const [selected, setSelected] = React.useState("five");
   const selecChgHandler: SelectProps["onChange"] = (evt) => {
     setSelected(String(evt.target.value));
   };
@@ -83,22 +72,6 @@ export function Component() {
               sx={{ alignItems: "center" }}
             >
               <Tab
-                value="one"
-                label={<TabLabel icon={<Facebook />}>one</TabLabel>}
-              />
-              <Tab
-                value="two"
-                label={<TabLabel icon={<Twitter />}>two</TabLabel>}
-              />
-              <Tab
-                value="three"
-                label={<TabLabel icon={<GitHub />}>three</TabLabel>}
-              />
-              <Tab
-                value="four"
-                label={<TabLabel icon={<Google />}>four</TabLabel>}
-              />
-              <Tab
                 value="five"
                 label={<TabLabel icon={<Microsoft />}>five</TabLabel>}
               />
@@ -118,15 +91,11 @@ export function Component() {
           </Box>
           <Box display={"flex"} alignItems={"center"}>
             <Select value={selected} onChange={selecChgHandler} size="small">
-              <MenuItem value="one">woolworlds one</MenuItem>
+              <MenuItem value="five">woolworlds five</MenuItem>
               <MenuItem value="two">woolworlds two</MenuItem>
             </Select>
           </Box>
         </Box>
-        <TabPanel value="one">one</TabPanel>
-        <TabPanel value="two">two</TabPanel>
-        <TabPanel value="three">three</TabPanel>
-        <TabPanel value="four">four</TabPanel>
         <TabPanel value="five">five</TabPanel>
         <TabPanel value="six">six</TabPanel>
         <TabPanel value="seven">seven</TabPanel>
@@ -140,9 +109,9 @@ function TabLabel(props: TabLabelProps) {
   // ** Props
   const { children, icon } = props;
 
-  const isExtraSmall = useMediaQuery<Theme>((theme) =>
-    theme.breakpoints.down("sm")
-  );
+  const isExtraSmall = useMediaQuery<Theme>((theme) => {
+    return theme.breakpoints.down("sm");
+  });
 
   return (
     <Box
