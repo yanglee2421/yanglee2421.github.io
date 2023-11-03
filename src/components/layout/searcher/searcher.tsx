@@ -61,6 +61,24 @@ export function Searcher(props: SearcherProps) {
     inputEl?.focus();
   }, [open, inputRef]);
 
+  React.useEffect(() => {
+    const controller = new AbortController();
+    document.addEventListener(
+      "keypress",
+      (evt) => {
+        void setOpen;
+        console.log(evt);
+      },
+      {
+        signal: controller.signal,
+      }
+    );
+
+    return () => {
+      controller.abort();
+    };
+  }, [setOpen]);
+
   return (
     <>
       <IconButton onClick={openHandler} {...restProps}>
