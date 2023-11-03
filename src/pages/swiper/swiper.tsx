@@ -12,14 +12,8 @@ import {
   ArrowForwardIosRounded,
 } from "@mui/icons-material";
 
-// Hooks Imports
-import { useLogin } from "@/hooks";
-
 // React Imports
 import React from "react";
-
-// Theme Imports
-import { ThemeToggle } from "@/theme";
 
 // Components Imports
 import { SwiperTrans } from "./swiper-trans";
@@ -53,9 +47,6 @@ const UlStyled = styled("ul")(({ theme }) => {
 });
 
 export const Swiper = () => {
-  // Login Hooks
-  const { signOut } = useLogin();
-
   const ulRef = React.useRef<HTMLUListElement>(null);
 
   const handlePrevClick = () => {
@@ -115,11 +106,6 @@ export const Swiper = () => {
   return (
     <>
       <Box flex={1}>
-        <ThemeToggle />
-        <Button onClick={signOut} variant="contained" color="error">
-          log out
-        </Button>
-        <Divider>Divider</Divider>
         <UlStyled ref={ulRef}>{liEl}</UlStyled>
         <IconButton onClick={handlePrevClick}>
           <ArrowBackIosNewRounded />
