@@ -63,15 +63,24 @@ export function Searcher(props: SearcherProps) {
 
   React.useEffect(() => {
     const controller = new AbortController();
+    const { signal } = controller;
+
     document.addEventListener(
-      "keypress",
+      "keydown",
       (evt) => {
-        void setOpen;
-        console.log(evt);
+        if (!evt.ctrlKey) return;
+        if (evt.key !== "/") return;
+        setOpen(true);
       },
-      {
-        signal: controller.signal,
-      }
+      { signal }
+    );
+    document.addEventListener(
+      "keyup",
+      (evt) => {
+        if (evt.key !== "Escape") return;
+        setOpen(false);
+      },
+      { signal }
     );
 
     return () => {
