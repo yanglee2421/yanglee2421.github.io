@@ -7,6 +7,7 @@ import {
   ArticleOutlined,
   GridOnOutlined,
   FormatListNumberedOutlined,
+  ScienceOutlined,
 } from "@mui/icons-material";
 import { IconButton, Drawer, Box, List, IconButtonProps } from "@mui/material";
 
@@ -74,22 +75,25 @@ export function MenuDrawer(props: MenuDrawerProps) {
               <List component={"nav"} disablePadding>
                 <MenuLink icon={<HomeOutlined />} label="Home" to={"/"} />
                 <MenuGroup icon={<ArticleOutlined />} label="Pages">
-                  <MenuLink label="Not Found" to={"404"} />
+                  <MenuLink label="Not Found" to={"/404"} />
                 </MenuGroup>
                 <MenuGroup icon={<FeedOutlined />} label="Form">
-                  <MenuLink label="Input" to={"input"} />
-                  <MenuLink label="Upload" to={"upload"} />
+                  <MenuLink label="Input" to={"/input"} />
+                  <MenuLink label="Upload" to={"/upload"} />
                   <MenuLink label="Autocomplete" to={"autocomplete"} />
                 </MenuGroup>
                 <MenuGroup label="Table" icon={<GridOnOutlined />}>
-                  <MenuLink label="Data Grid" to={"data-grid"} />
+                  <MenuLink label="Data Grid" to={"/data-grid"} />
                 </MenuGroup>
                 <MenuGroup label="List" icon={<FormatListNumberedOutlined />}>
-                  <MenuLink label="Infinite List" to={"infinite-list"} />
-                  <MenuLink label="Virtualized List" to={"virtualized-list"} />
+                  <MenuLink label="Infinite List" to={"/infinite-list"} />
+                  <MenuLink label="Virtualized List" to={"/virtualized-list"} />
+                </MenuGroup>
+                <MenuGroup label="Lab" icon={<ScienceOutlined />}>
+                  <MenuLink label="Fabric" to="/fabric" />
+                  <MenuLink label="Swiper" to="/swiper" />
                 </MenuGroup>
               </List>
-              <Box height={1000}></Box>
             </Scrollbar>
           </Box>
         </Box>
