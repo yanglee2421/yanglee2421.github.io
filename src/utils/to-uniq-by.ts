@@ -1,4 +1,4 @@
-export function toDeduplicate(items: unknown[], ops: Partial<Ops> = {}) {
+export function toUniqBy(items: unknown[], ops: Partial<Ops> = {}) {
   const { overwrite = false, key = "id" } = ops;
 
   const map = new Map();
