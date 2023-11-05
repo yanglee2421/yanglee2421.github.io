@@ -6,12 +6,10 @@ import react from "@vitejs/plugin-react-swc";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, URL } from "node:url";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
-
 // https://vitejs.dev/config/
 export default defineConfig((configEnv) => {
-  const { command } = configEnv;
-  const isBuild = command === "build";
+  const __dirname = dirname(fileURLToPath(import.meta.url));
+  const isBuild = configEnv.command === "build";
 
   return {
     plugins: [react()],
@@ -43,10 +41,15 @@ export default defineConfig((configEnv) => {
 
     // DEV Server
     server: server(configEnv),
+
+    // Env file directory
+    envDir: resolve(__dirname, "./"),
   };
 });
 
+// Build config
 function build({ mode }: ConfigEnv): UserConfig["build"] {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
   void mode;
 
   return {
@@ -54,7 +57,9 @@ function build({ mode }: ConfigEnv): UserConfig["build"] {
   };
 }
 
+// Vite server config
 function server({ mode }: ConfigEnv): UserConfig["server"] {
+  const __dirname = dirname(fileURLToPath(import.meta.url));
   void mode;
 
   return {
