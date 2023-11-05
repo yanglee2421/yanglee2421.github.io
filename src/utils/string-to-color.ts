@@ -3,7 +3,7 @@ export function stringToColor(string: string) {
   let i;
 
   for (i = 0; i < string.length; i += 1) {
-    // 9 << 2 => 9 * (2 ** 3) = 36
+    // 9 << 3 => 9 * (2 ** 3) = 36
     hash = string.charCodeAt(i) + ((hash << 5) - hash);
   }
 
