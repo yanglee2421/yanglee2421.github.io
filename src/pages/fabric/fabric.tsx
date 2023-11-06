@@ -1,5 +1,5 @@
 // React Imports
-import { useEffect, useState } from "react";
+import React from "react";
 
 // Assets Imports
 import bg from "@/assets/images/frame.png";
@@ -7,10 +7,22 @@ import bg from "@/assets/images/frame.png";
 // Fabric Imports
 import { fabric } from "fabric";
 
-export function Fabric() {
-  const [img, setImg] = useState("");
+// MUI Imports
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Container,
+  styled,
+} from "@mui/material";
 
-  useEffect(() => {
+export function Fabric() {
+  const [img, setImg] = React.useState("");
+
+  React.useEffect(() => {
     void (async () => {
       const img = await new Promise<fabric.Image>((res) => {
         fabric.Image.fromURL(bg, res);
@@ -50,7 +62,29 @@ export function Fabric() {
 
   return (
     <>
-      <img src={img} width={380} alt="fabric" />
+      <Container>
+        <Card sx={{ mx: "auto", width: "fit-content" }}>
+          <CardHeader title="Fabric" />
+          <CardContent>
+            <Box>
+              <StyledImg src={img} alt="fabric" />
+            </Box>
+          </CardContent>
+          <CardActions>
+            <Box
+              width={"100%"}
+              display={"flex"}
+              justifyContent={"center"}
+              gap={4}
+            >
+              <Button variant="outlined">cancel</Button>
+              <Button variant="contained">confrim</Button>
+            </Box>
+          </CardActions>
+        </Card>
+      </Container>
     </>
   );
 }
+
+const StyledImg = styled("img")({});

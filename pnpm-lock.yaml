@@ -59,6 +59,9 @@ dependencies:
   axios-mock-adapter:
     specifier: ^1.22.0
     version: 1.22.0(axios@1.6.0)
+  cropperjs:
+    specifier: ^1.6.1
+    version: 1.6.1
   fabric:
     specifier: ^5.3.0
     version: 5.3.0
@@ -1973,6 +1976,10 @@ packages:
     dependencies:
       crc-32: 1.2.2
       readable-stream: 3.6.2
+    dev: false
+
+  /cropperjs@1.6.1:
+    resolution: {integrity: sha512-F4wsi+XkDHCOMrHMYjrTEE4QBOrsHHN5/2VsVAaRq8P7E5z7xQpT75S+f/9WikmBEailas3+yo+6zPIomW+NOA==}
     dev: false
 
   /cross-spawn@7.0.3:
