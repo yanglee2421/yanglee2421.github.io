@@ -11,24 +11,24 @@ export function toUniqBy(items: unknown[], ops: Partial<Ops> = {}) {
     }
 
     if (!item) {
-      console.error("Excepted an object, got a falsy!");
+      console.error("Excepted an object, got a null!");
       return;
     }
 
     // Get Key
-    const keyValue = Reflect.get(item, key);
-    if (!keyValue) {
+    const mapKey = Reflect.get(item, key);
+    if (!mapKey) {
       console.error("Excepted a truth, got a falsy!");
       return;
     }
 
     // Whether to allow overwriting
     if (overwrite) {
-      map.set(key, item);
+      map.set(mapKey, item);
       return;
     }
 
-    map.get(key) ?? map.set(key, item);
+    map.get(mapKey) ?? map.set(mapKey, item);
   });
 
   return [...map.values()];
