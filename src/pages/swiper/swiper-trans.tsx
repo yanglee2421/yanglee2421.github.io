@@ -25,12 +25,12 @@ export function SwiperTrans() {
   );
 }
 
-function MyItem(props: any) {
+function MyItem(props: MyItemProps) {
   const { state, nodeRef, setState, ...restProps } = props;
   return (
     <CSSTransition
       nodeRef={nodeRef}
-      addEndListener={(done: any) =>
+      addEndListener={(done) =>
         nodeRef.current?.addEventListener("transitionend", done)
       }
       classNames="fade"
@@ -38,7 +38,7 @@ function MyItem(props: any) {
     >
       <Button
         ref={nodeRef}
-        onClick={() => setState((state: any) => !state)}
+        onClick={() => setState((state) => !state)}
         variant="contained"
         sx={{
           "&.fade-enter": {
@@ -61,4 +61,10 @@ function MyItem(props: any) {
       </Button>
     </CSSTransition>
   );
+}
+
+interface MyItemProps {
+  state: boolean;
+  setState: React.Dispatch<React.SetStateAction<boolean>>;
+  nodeRef: React.RefObject<HTMLButtonElement>;
 }
