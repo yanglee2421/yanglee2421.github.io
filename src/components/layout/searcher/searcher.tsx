@@ -69,16 +69,20 @@ export function Searcher(props: SearcherProps) {
       "keydown",
       (evt) => {
         if (!evt.ctrlKey) return;
-        if (evt.key !== "/") return;
-        setOpen(true);
+        if (evt.key === "/") {
+          setOpen(true);
+          return;
+        }
       },
       { signal }
     );
     document.addEventListener(
       "keyup",
       (evt) => {
-        if (evt.key !== "Escape") return;
-        setOpen(false);
+        if (evt.key === "Escape") {
+          setOpen(false);
+          return;
+        }
       },
       { signal }
     );

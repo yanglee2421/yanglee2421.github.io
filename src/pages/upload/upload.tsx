@@ -37,25 +37,6 @@ export const UploadPage = () => {
     setImgURL(dataURL);
   };
 
-  const imgRef = React.useRef<HTMLImageElement>(null);
-  React.useEffect(() => {
-    const imgEl = imgRef.current;
-    if (!imgEl) return;
-
-    const controller = new AbortController();
-    imgEl.addEventListener(
-      "load",
-      () => {
-        URL.revokeObjectURL(imgEl.src);
-      },
-      { signal: controller.signal }
-    );
-
-    return () => {
-      controller.abort();
-    };
-  }, [imgRef]);
-
   return (
     <>
       <Grid container spacing={3} p={3}>
@@ -76,7 +57,14 @@ export const UploadPage = () => {
           </Button>
         </Grid>
         <Grid item xs={12}>
-          <Img ref={imgRef} src={imgURL} alt="upload img here" width={400} />
+          <Img
+            src={imgURL}
+            onLoad={(evt) => {
+              URL.revokeObjectURL(evt.currentTarget.src);
+            }}
+            alt="upload img here"
+            width={400}
+          />
         </Grid>
       </Grid>
     </>
