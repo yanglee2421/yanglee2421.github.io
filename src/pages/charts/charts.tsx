@@ -1,5 +1,5 @@
 // React Imports
-import React from "react";
+// import React from "react";
 
 // Components Imports
 import ReactApexcharts from "react-apexcharts";
@@ -24,7 +24,7 @@ export function Charts() {
 
   return (
     <>
-      <Card sx={{ m: 4 }}>
+      <Card sx={{ m: 4, "& .bar-chart": { padding: theme.spacing(2, 2.5) } }}>
         <CardHeader
           title="Balance"
           subheader="Commercial networks & enterprises"
@@ -72,7 +72,6 @@ export function Charts() {
           />
         </CardContent>
       </Card>
-      <Box></Box>
     </>
   );
 }
@@ -107,7 +106,7 @@ function options(theme: Theme): ApexOptions {
       strokeWidth: 7,
       strokeOpacity: 1,
       colors: ["#ff9f43"],
-      strokeColors: ["#fff"],
+      strokeColors: ["#fff", "#eee"],
     },
     grid: {
       padding: { top: -10 },
