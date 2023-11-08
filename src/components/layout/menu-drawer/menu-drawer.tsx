@@ -8,6 +8,7 @@ import {
   GridOnOutlined,
   FormatListNumberedOutlined,
   ScienceOutlined,
+  DataSaverOffOutlined,
 } from "@mui/icons-material";
 import { IconButton, Drawer, Box, List, IconButtonProps } from "@mui/material";
 
@@ -92,6 +93,9 @@ export function MenuDrawer(props: MenuDrawerProps) {
                 <MenuGroup label="Lab" icon={<ScienceOutlined />}>
                   <MenuLink label="Fabric" to="/fabric" />
                   <MenuLink label="Swiper" to="/swiper" />
+                </MenuGroup>
+                <MenuGroup label="Charts" icon={<DataSaverOffOutlined />}>
+                  <MenuLink label="Charts" to="/charts" />
                 </MenuGroup>
               </List>
             </Scrollbar>

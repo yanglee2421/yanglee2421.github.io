@@ -164,6 +164,16 @@ export const routes: RouteObject[] = [
               return import("@/pages/swiper");
             },
           },
+
+          // ** Charts
+          {
+            id: "charts",
+            path: "charts",
+            handle: { title: "Charts" },
+            lazy() {
+              return import("@/pages/charts");
+            },
+          },
         ],
       },
     ],
