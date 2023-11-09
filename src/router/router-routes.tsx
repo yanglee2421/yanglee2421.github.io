@@ -104,6 +104,14 @@ export const routes: RouteObject[] = [
               return import("@/pages/data-grid");
             },
           },
+          {
+            id: "posthog-insights",
+            path: "posthog-insights",
+            handle: { title: "Posthog Insights" },
+            lazy() {
+              return import("@/pages/posthog-insights");
+            },
+          },
 
           // ** List
           {

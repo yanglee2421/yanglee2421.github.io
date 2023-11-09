@@ -85,6 +85,7 @@ export function MenuDrawer(props: MenuDrawerProps) {
                 </MenuGroup>
                 <MenuGroup label="Table" icon={<GridOnOutlined />}>
                   <MenuLink label="Data Grid" to={"/data-grid"} />
+                  <MenuLink label="Posthog Insights" to={"/posthog-insights"} />
                 </MenuGroup>
                 <MenuGroup label="List" icon={<FormatListNumberedOutlined />}>
                   <MenuLink label="Infinite List" to={"/infinite-list"} />
