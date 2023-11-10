@@ -112,6 +112,14 @@ export const routes: RouteObject[] = [
               return import("@/pages/posthog-insights");
             },
           },
+          {
+            id: "posthog-table",
+            path: "posthog-table",
+            handle: { title: "Posthog Table" },
+            lazy() {
+              return import("@/pages/posthog-table");
+            },
+          },
 
           // ** List
           {
