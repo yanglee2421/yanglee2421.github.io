@@ -3,13 +3,11 @@ import { AxiosRequestConfig } from "axios";
 import { axiosPosthog } from "./axios-posthog";
 
 export function insights_trend(req: Req, { project_id }: PathParams) {
-  return axiosPosthog({
+  return axiosPosthog<unknown, Res>({
     url: `/projects/${project_id}/insights/trend/`,
     ...req,
   });
 }
-
-export interface Res {}
 
 export interface PathParams {
   project_id: number;
@@ -45,4 +43,18 @@ export interface Property {
   operator: string;
   type: string;
   value: string;
+}
+export interface Res {
+  is_cached: boolean;
+  last_refresh: string;
+  next: string | null;
+  timezone: string;
+  result: Result[];
+}
+
+export interface Result {
+  label: string;
+  count: number;
+  data: number[];
+  labels: string[];
 }

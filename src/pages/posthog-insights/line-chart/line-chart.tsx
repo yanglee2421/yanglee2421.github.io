@@ -1,6 +1,3 @@
-// React Imports
-import React from "react";
-
 // Charts Imports
 import ReactApexcharts from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
@@ -19,7 +16,10 @@ import {
 import { ArrowUpwardOutlined } from "@mui/icons-material";
 import { green } from "@mui/material/colors";
 
-export function LineChart() {
+export function LineChart(props: LineChartProps) {
+  // ** Props
+  const { categories, series } = props;
+
   const theme = useTheme();
 
   return (
@@ -67,8 +67,8 @@ export function LineChart() {
           <ReactApexcharts
             type="line"
             height={400}
-            series={series()}
-            options={options(theme)}
+            series={series}
+            options={options({ theme, categories })}
           />
         </CardContent>
       </Card>
@@ -76,23 +76,26 @@ export function LineChart() {
   );
 }
 
-function series(): ApexOptions["series"] {
-  return [
-    {
-      data: [
-        280, 200, 220, 180, 270, 250, 70, 90, 200, 150, 160, 100, 150, 100, 50,
-      ],
-    },
-    {
-      data: [
-        120, 500, 320, 89, 159, 170, 170, 190, 100, 140, 250, 100, 159, 120,
-        150,
-      ],
-    },
-  ];
-}
+// function series(): ApexOptions["series"] {
+//   return [
+//     {
+//       data: [
+//         280, 200, 220, 180, 270, 250, 70, 90, 200, 150, 160, 100, 150, 100, 50,
+//       ],
+//     },
+//     {
+//       data: [
+//         120, 500, 320, 89, 159, 170, 170, 190, 100, 140, 250, 100, 159, 120,
+//         150,
+//       ],
+//     },
+//   ];
+// }
 
-function options(theme: Theme): ApexOptions {
+function options(options: Options): ApexOptions {
+  // ** Params
+  const { categories, theme } = options;
+
   return {
     chart: {
       parentHeightOffset: 0,
@@ -138,23 +141,17 @@ function options(theme: Theme): ApexOptions {
       labels: {
         style: { colors: theme.palette.text.disabled },
       },
-      categories: [
-        "2023-7/12",
-        "2023-8/12",
-        "2023-9/12",
-        "2023-10/12",
-        "2023-11/12",
-        "2023-12/12",
-        "2023-13/12",
-        "2023-14/12",
-        "2023-15/12",
-        "2023-16/12",
-        "2023-17/12",
-        "2023-18/12",
-        "2023-19/12",
-        "2023-20/12",
-        "2023-21/12",
-      ],
+      categories,
     },
   };
+}
+
+interface Options {
+  theme: Theme;
+  categories: string[];
+}
+
+interface LineChartProps {
+  categories: string[];
+  series: ApexOptions["series"];
 }

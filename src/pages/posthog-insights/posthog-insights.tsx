@@ -8,17 +8,20 @@ export function PosthogInsights() {
   const query = useInsightsTrend(
     {
       insight: "TRENDS",
-      date_from: "all",
+      date_from: "-7d",
       entity_type: "events",
-      display: "ActionsLineGraph",
       interval: "day",
+      display: "ActionsLineGraph",
       compare: "",
       session_id: "",
       client_query_id: "",
       events: JSON.stringify([
         {
+          order: 0,
           type: "events",
           id: "$pageview",
+          name: "$pageview",
+          math: "total",
           properties: [
             {
               key: "$current_url",
@@ -28,7 +31,13 @@ export function PosthogInsights() {
             },
           ],
         },
-        { type: "events", id: "WarpDrivenVSRView" },
+        {
+          order: 1,
+          type: "events",
+          id: "WarpDrivenVSRView",
+          name: "WarpDrivenVSRView",
+          math: "total",
+        },
       ]),
     },
     { project_id: 1 }
@@ -38,7 +47,19 @@ export function PosthogInsights() {
 
   return (
     <>
-      <LineChart />
+      <LineChart
+        categories={query.data?.result[0].labels || []}
+        series={[
+          {
+            name: query.data?.result[0].label,
+            data: query.data?.result[0].data || [],
+          },
+          {
+            name: query.data?.result[1].label,
+            data: query.data?.result[1].data || [],
+          },
+        ]}
+      />
     </>
   );
 }
