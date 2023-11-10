@@ -116,7 +116,7 @@ function options(theme: Theme): ApexOptions {
       },
     },
     tooltip: {
-      custom(data: any) {
+      custom(data) {
         return `<div class='bar-chart'>
               <span>${
                 data.series[data.seriesIndex][data.dataPointIndex]
