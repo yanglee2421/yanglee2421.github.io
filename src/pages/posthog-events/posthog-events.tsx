@@ -51,7 +51,6 @@ export function PosthogEvents() {
     { project_id: 1 }
   );
 
-  console.log(query.data);
   const rows = query.data?.results.map((item) => {
     return {
       uuid: item[0].uuid,
@@ -151,8 +150,13 @@ interface Row {
 
 function toHourAgo(...args: ConstructorParameters<typeof Date>) {
   const date = new Date(...args);
-  const time = date.getTime();
   const now = Date.now();
+  const time = date.getTime();
+
+  const days = Math.floor((now - time) / (1000 * 60 * 60 * 24));
+  if (days) {
+    return `${days} days ago`;
+  }
 
   const hours = Math.floor((now - time) / (1000 * 60 * 60));
   if (hours) {
