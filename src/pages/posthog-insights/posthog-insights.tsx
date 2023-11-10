@@ -3,6 +3,10 @@ import { useInsightsTrend } from "@/hooks/api-posthog";
 
 // Components Imports
 import { LineChart } from "./line-chart";
+import { ResultTable } from "./result-table";
+
+// MUI Imports
+import { Grid } from "@mui/material";
 
 export function PosthogInsights() {
   const query = useInsightsTrend(
@@ -47,19 +51,26 @@ export function PosthogInsights() {
 
   return (
     <>
-      <LineChart
-        categories={query.data?.result[0].labels || []}
-        series={[
-          {
-            name: query.data?.result[0].label,
-            data: query.data?.result[0].data || [],
-          },
-          {
-            name: query.data?.result[1].label,
-            data: query.data?.result[1].data || [],
-          },
-        ]}
-      />
+      <Grid container spacing={6} p={6}>
+        <Grid item xs={12}>
+          <LineChart
+            categories={query.data?.result[0].labels || []}
+            series={[
+              {
+                name: query.data?.result[0].label,
+                data: query.data?.result[0].data || [],
+              },
+              {
+                name: query.data?.result[1].label,
+                data: query.data?.result[1].data || [],
+              },
+            ]}
+          />
+        </Grid>
+        <Grid item xs={12}>
+          <ResultTable />
+        </Grid>
+      </Grid>
     </>
   );
 }

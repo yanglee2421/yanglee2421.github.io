@@ -24,7 +24,7 @@ export function LineChart(props: LineChartProps) {
 
   return (
     <>
-      <Card sx={{ m: 4, "& .bar-chart": { padding: theme.spacing(2, 2.5) } }}>
+      <Card sx={{ "& .bar-chart": { padding: theme.spacing(2, 2.5) } }}>
         <CardHeader
           title="Balance"
           subheader="Commercial networks & enterprises"
@@ -118,15 +118,17 @@ function options(options: Options): ApexOptions {
         lines: { show: true },
       },
     },
-    tooltip: {
-      custom(data: any) {
-        return `<div class='bar-chart'>
-                <span>${
-                  data.series[data.seriesIndex][data.dataPointIndex]
-                }%</span>
-              </div>`;
-      },
-    },
+    // tooltip: {
+    //   custom(data) {
+    //     console.log(data);
+
+    //     const number = data.series[data.seriesIndex][data.dataPointIndex];
+
+    //     return `<div class='bar-chart'>
+    //             <span>${number}</span>
+    //           </div>`;
+    //   },
+    // },
     yaxis: {
       labels: {
         style: { colors: theme.palette.text.disabled },
