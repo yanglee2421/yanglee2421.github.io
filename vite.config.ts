@@ -66,15 +66,15 @@ function server({ mode }: ConfigEnv): UserConfig["server"] {
     https: false,
     fs: { allow: [resolve(__dirname, "../../")] },
     port: 3006,
-    proxy: {
-      "/api": {
-        ws: true,
-        changeOrigin: true,
-        target: "https://data-warpdriven.warpdriven.ai",
-        // rewrite(path) {
-        //   return path.replace(/^\/dev/, "");
-        // },
-      },
-    },
+    // proxy: {
+    //   "/api": {
+    //     ws: true,
+    //     changeOrigin: true,
+    //     target: "https://data-warpdriven.warpdriven.ai",
+    //     rewrite(path) {
+    //       return path.replace(/^\/dev/, "");
+    //     },
+    //   },
+    // },
   };
 }
