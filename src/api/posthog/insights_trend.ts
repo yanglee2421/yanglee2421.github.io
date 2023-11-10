@@ -27,6 +27,7 @@ export interface Params {
   insight: string;
   interval: string;
   session_id: string;
+  refresh?: boolean;
 }
 
 export interface Event {

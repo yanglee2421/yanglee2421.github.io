@@ -3,31 +3,27 @@ import ReactApexcharts from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 
 // MUI Imports
-import {
-  Card,
-  CardHeader,
-  CardContent,
-  useTheme,
-  Typography,
-  Box,
-  Chip,
-  Theme,
-} from "@mui/material";
-import { ArrowUpwardOutlined } from "@mui/icons-material";
-import { green } from "@mui/material/colors";
+import { Card, CardHeader, CardContent, useTheme, Theme } from "@mui/material";
+import { RefreshOutlined } from "@mui/icons-material";
+import { green, grey } from "@mui/material/colors";
+import { LoadingButton } from "@mui/lab";
 
 export function LineChart(props: LineChartProps) {
   // ** Props
-  const { categories, series } = props;
+  const { categories, series, loading, onRefresh, last_refresh, ...restProps } =
+    props;
 
   const theme = useTheme();
 
   return (
     <>
-      <Card sx={{ "& .bar-chart": { padding: theme.spacing(2, 2.5) } }}>
+      <Card
+        sx={{ "& .bar-chart": { padding: theme.spacing(2, 2.5) } }}
+        {...restProps}
+      >
         <CardHeader
-          title="Balance"
-          subheader="Commercial networks & enterprises"
+          title="Trends"
+          subheader={`Last refresh ${last_refresh.toLocaleString()}`}
           sx={{
             flexDirection: ["column", "row"],
             alignItems: ["flex-start", "center"],
@@ -35,32 +31,14 @@ export function LineChart(props: LineChartProps) {
             "& .MuiCardHeader-content": { mb: [2, 0] },
           }}
           action={
-            <Box display={"flex"} alignItems={"center"}>
-              <Typography variant="h6" marginRight={5}>
-                $221,267
-              </Typography>
-              <Chip
-                color="success"
-                variant="filled"
-                label={
-                  <Box
-                    display={"flex"}
-                    alignSelf={"center"}
-                    sx={{
-                      "& svg": { mr: 1 },
-                    }}
-                  >
-                    <ArrowUpwardOutlined fontSize="small" />
-                    <span>22%</span>
-                  </Box>
-                }
-                sx={{
-                  fontWeight: 500,
-                  borderRadius: 1,
-                  fontSize: "0.875rem",
-                }}
-              />
-            </Box>
+            <LoadingButton
+              loading={loading}
+              onClick={onRefresh}
+              color="success"
+              startIcon={<RefreshOutlined />}
+            >
+              refresh
+            </LoadingButton>
           }
         />
         <CardContent>
@@ -109,7 +87,7 @@ function options(options: Options): ApexOptions {
       strokeWidth: 7,
       strokeOpacity: 1,
       colors: ["#ff9f43"],
-      strokeColors: ["#fff", "#eee"],
+      strokeColors: ["#fff", grey[100]],
     },
     grid: {
       padding: { top: -10 },
@@ -156,4 +134,7 @@ interface Options {
 interface LineChartProps {
   categories: string[];
   series: ApexOptions["series"];
+  loading: boolean;
+  onRefresh(): void;
+  last_refresh: Date;
 }

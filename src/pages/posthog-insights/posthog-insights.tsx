@@ -19,6 +19,7 @@ export function PosthogInsights() {
       compare: "",
       session_id: "",
       client_query_id: "",
+      refresh: true,
       events: JSON.stringify([
         {
           order: 0,
@@ -47,14 +48,15 @@ export function PosthogInsights() {
     { project_id: 1 }
   );
 
-  console.log(query.data);
-
   return (
     <>
       <Grid container spacing={6} p={6}>
         <Grid item xs={12}>
           <LineChart
+            loading={query.isFetching}
+            onRefresh={() => query.refetch()}
             categories={query.data?.result[0].labels || []}
+            last_refresh={new Date(query.data?.last_refresh || "")}
             series={[
               {
                 name: query.data?.result[0].label,
