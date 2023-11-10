@@ -1,22 +1,44 @@
+// API Hooks
 import { useInsightsTrend } from "@/hooks/api-posthog";
+
+// Components Imports
+import { LineChart } from "./line-chart";
 
 export function PosthogInsights() {
   const query = useInsightsTrend(
     {
-      client_query_id: "",
+      insight: "TRENDS",
+      date_from: "all",
+      entity_type: "events",
+      display: "ActionsLineGraph",
+      interval: "day",
       compare: "",
-      date_from: "",
-      display: "",
-      interval: "",
-      entity_type: "",
       session_id: "",
-      insight: "",
-      events: JSON.stringify([]),
+      client_query_id: "",
+      events: JSON.stringify([
+        {
+          type: "events",
+          id: "$pageview",
+          properties: [
+            {
+              key: "$current_url",
+              value: "vsr_click",
+              operator: "icontains",
+              type: "event",
+            },
+          ],
+        },
+        { type: "events", id: "WarpDrivenVSRView" },
+      ]),
     },
     { project_id: 1 }
   );
 
   console.log(query.data);
 
-  return <></>;
+  return (
+    <>
+      <LineChart />
+    </>
+  );
 }
