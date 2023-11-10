@@ -6,7 +6,11 @@ export const axiosPosthog = axios.create({
   timeout: 1000 * 30,
 });
 
-axiosPosthog.interceptors.request.use((config) => config);
+axiosPosthog.interceptors.request.use((config) => {
+  const token = import.meta.env.VITE_POSTHOG_APIKEY;
+  config.headers.setAuthorization(`Bearer ${token}`);
+  return config;
+});
 axiosPosthog.interceptors.response.use(
   (res) => {
     const { data } = res;

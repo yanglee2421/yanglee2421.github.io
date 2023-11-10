@@ -9,6 +9,8 @@ export function insights_trend(req: Req, { project_id }: PathParams) {
   });
 }
 
+export interface Res {}
+
 export interface PathParams {
   project_id: number;
 }

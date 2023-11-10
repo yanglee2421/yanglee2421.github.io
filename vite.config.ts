@@ -70,7 +70,7 @@ function server({ mode }: ConfigEnv): UserConfig["server"] {
       "/api": {
         ws: true,
         changeOrigin: true,
-        target: "https://data-warpdriven.warpdriven.ai/api",
+        target: "https://data-warpdriven.warpdriven.ai",
         // rewrite(path) {
         //   return path.replace(/^\/dev/, "");
         // },
