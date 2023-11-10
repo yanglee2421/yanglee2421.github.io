@@ -1,0 +1,16 @@
+{
+  "query": {
+    "kind": "EventsQuery",
+    "select": [
+      "*",
+      "event",
+      "person",
+      "coalesce(properties.$current_url, properties.$screen_name) -- Url / Screen",
+      "properties.$lib",
+      "timestamp"
+    ],
+    "event": "WarpDrivenVSRView"
+  },
+  "client_query_id": "f642b3cc-1161-4edc-8f29-f3ee7c4afb59",
+  "refresh": false
+}
