@@ -67,13 +67,13 @@ function server({ mode }: ConfigEnv): UserConfig["server"] {
     fs: { allow: [resolve(__dirname, "../../")] },
     port: 3006,
     proxy: {
-      "/dev": {
+      "/api": {
         ws: true,
         changeOrigin: true,
-        target: "http://127.0.0.1",
-        rewrite(path) {
-          return path.replace(/^\/dev/, "");
-        },
+        target: "https://data-warpdriven.warpdriven.ai/api",
+        // rewrite(path) {
+        //   return path.replace(/^\/dev/, "");
+        // },
       },
     },
   };
