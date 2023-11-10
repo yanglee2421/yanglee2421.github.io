@@ -42,17 +42,21 @@ export function ResultTable(props: ResultTableProps) {
 function columns(): GridColDef[] {
   return [
     {
-      flex: 1,
-      headerName: "SERIES",
       field: "label",
       type: "string",
+      flex: 1,
+      headerName: "SERIES",
+      headerAlign: "left",
+      align: "left",
       sortable: false,
     },
     {
-      flex: 1,
-      headerName: "TOTAL SUM",
       field: "count",
       type: "string",
+      flex: 1,
+      headerName: "TOTAL SUM",
+      headerAlign: "left",
+      align: "left",
       sortable: false,
     },
   ];
