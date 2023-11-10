@@ -10,3 +10,4 @@ export { Particles } from "./class-particle";
 
 export * from "./timeout";
 export * from "./to-data-url";
+export * from "./to-compact";

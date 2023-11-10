@@ -34,7 +34,7 @@ export function DataGridPage() {
   });
   console.log(data);
 
-  const [selection, setSelection] = React.useState<(number | string)[]>([]);
+  const [selection, setSelection] = React.useState<Array<number | string>>([]);
 
   return (
     <Box p={2}>

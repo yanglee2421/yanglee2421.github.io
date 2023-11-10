@@ -28,7 +28,7 @@ export interface Query {
   kind: string;
   select: string[];
   event: string;
-  properties?: Property;
+  properties?: Property[];
 }
 
 export interface Property {
@@ -42,7 +42,7 @@ export interface Res {
   columns: string[];
   hasMore: boolean;
   hogql: string;
-  result: [];
+  results: Result[];
 }
 
 export type Result = [Event, string, Person, string, string, string];
