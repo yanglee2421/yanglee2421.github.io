@@ -113,11 +113,11 @@ export const routes: RouteObject[] = [
             },
           },
           {
-            id: "posthog-table",
-            path: "posthog-table",
-            handle: { title: "Posthog Table" },
+            id: "posthog-events",
+            path: "posthog-events",
+            handle: { title: "Posthog Events" },
             lazy() {
-              return import("@/pages/posthog-table");
+              return import("@/pages/posthog-events");
             },
           },
 
