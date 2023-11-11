@@ -12,10 +12,13 @@ import {
   Navigate,
   useOutlet,
 } from "react-router-dom";
-import { toIsInWl } from "./router-whitelist";
+import { toIsInWhitelist } from "./to-is-in-whitelist";
 
 // React Imports
 import React from "react";
+
+// Acl Imports
+import { useAcl } from "@/configs/acl";
 
 export function Component() {
   useDocTitle();
@@ -29,6 +32,9 @@ export function Component() {
 
   // Login Hooks
   const { usr } = useLogin();
+
+  // Acl Hooks
+  const acl = useAcl();
 
   const routeNode = React.useMemo(() => {
     const nextRoute = matches[matches.length - 1];
@@ -45,11 +51,17 @@ export function Component() {
     }
 
     // To Whitelist
-    const isInWhitelist = toIsInWl(nextRoute.id);
+    const isInWhitelist = toIsInWhitelist(nextRoute.id);
     if (isInWhitelist) return outlet;
 
     // Has Logged
-    if (usr) return outlet;
+    if (usr) {
+      if (acl.can("read", "Article")) {
+        return outlet;
+      }
+
+      return <Navigate to={"/401"} />;
+    }
 
     // Not Logged
     const urlSearchParams = new URLSearchParams();

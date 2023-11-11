@@ -8,13 +8,14 @@ export function useDocTitle() {
   const matches = useMatches();
 
   return React.useEffect(() => {
-    const curr = matches.at(-1);
-    if (!curr) return;
+    const match = matches[matches.length - 1];
 
-    const { handle } = curr;
-    const title = Reflect.get(Object(handle), "title");
-    if (typeof title !== "string") return;
+    const title = Reflect.get(Object(match?.handle), "title");
 
-    document.title = title;
+    if (!title) return;
+    if (typeof title === "string") {
+      document.title = title;
+      return;
+    }
   }, [matches]);
 }

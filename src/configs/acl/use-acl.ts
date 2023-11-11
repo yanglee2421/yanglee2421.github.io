@@ -7,7 +7,6 @@ import React from "react";
 // Types Imports
 import { AppAbility, defineAbilityFor } from "./define-ability-for";
 
-const ability = defineAbilityFor("client");
-export const AclContext = React.createContext<AppAbility>(ability);
+export const AclContext = React.createContext<AppAbility>(defineAbilityFor(""));
 
 export const useAcl = () => useAbility(AclContext);
