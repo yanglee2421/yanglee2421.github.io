@@ -9,9 +9,9 @@ export function RadioItem(props: RadioItemProps) {
   const { checked, value, title, desc, name, ...restProps } = props;
 
   const nameList = name.split(" ");
-  const firstName = nameList.at(0) || "";
-  const lastName = nameList.at(1) || "";
-  const avatarText = (firstName.at(0) || "") + (lastName.at(0) || "");
+  const firstName = nameList[0] || "";
+  const lastName = nameList[1] || "";
+  const avatarText = (firstName[0] || "") + (lastName[0] || "");
 
   return (
     <Box

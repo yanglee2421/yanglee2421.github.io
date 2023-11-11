@@ -37,11 +37,11 @@ axiosMock.interceptors.response.use(
 
     // No Data
     if (!response?.data) {
-      throw new Error(message, { cause: response });
+      throw new Error(message);
     }
 
     // Has Data
     const msg = Reflect.get(Object(response.data), "msg");
-    throw new Error(msg, { cause: response });
+    throw new Error(msg);
   }
 );
