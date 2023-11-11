@@ -1,5 +1,5 @@
 // MUI Imports
-import { Card, CardHeader, CardContent, Box } from "@mui/material";
+import { Card, CardHeader, CardContent, Box, Link } from "@mui/material";
 import {
   DataGrid,
   GridColDef,
@@ -8,6 +8,9 @@ import {
   GridToolbarFilterButton,
   GridValidRowModel,
 } from "@mui/x-data-grid";
+
+// Router Imports
+import { Link as RouterLink } from "react-router-dom";
 
 export function ResultTable(props: ResultTableProps) {
   // ** Props
@@ -49,6 +52,21 @@ function columns(): GridColDef[] {
       headerAlign: "left",
       align: "left",
       sortable: false,
+      renderCell(params) {
+        const searchParams = new URLSearchParams();
+        searchParams.set("event", params.value);
+        const search = searchParams.toString();
+
+        return (
+          <Link
+            component={RouterLink}
+            to={{ pathname: "/posthog-events", search }}
+            underline="always"
+          >
+            {params.value}
+          </Link>
+        );
+      },
     },
     {
       field: "count",

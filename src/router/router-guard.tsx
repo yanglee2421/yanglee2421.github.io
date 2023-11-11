@@ -17,9 +17,6 @@ import { toIsInWhitelist } from "./to-is-in-whitelist";
 // React Imports
 import React from "react";
 
-// Acl Imports
-import { useAcl } from "@/configs/acl";
-
 export function Component() {
   useDocTitle();
   useNprogress();
@@ -32,9 +29,6 @@ export function Component() {
 
   // Login Hooks
   const { usr } = useLogin();
-
-  // Acl Hooks
-  const acl = useAcl();
 
   const routeNode = React.useMemo(() => {
     const nextRoute = matches[matches.length - 1];
@@ -55,13 +49,7 @@ export function Component() {
     if (isInWhitelist) return outlet;
 
     // Has Logged
-    if (usr) {
-      if (acl.can("read", "Article")) {
-        return outlet;
-      }
-
-      return <Navigate to={"/401"} />;
-    }
+    if (usr) return outlet;
 
     // Not Logged
     const urlSearchParams = new URLSearchParams();
