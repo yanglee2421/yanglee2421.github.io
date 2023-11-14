@@ -25,6 +25,8 @@ export interface Data {
 }
 
 export interface Query {
+  before?: string;
+  after?: string;
   kind: string;
   select: string[];
   event: string;

@@ -8,7 +8,7 @@ import {
   GridToolbarFilterButton,
 } from "@mui/x-data-grid";
 import { LoadingButton } from "@mui/lab";
-import { RefreshOutlined } from "@mui/icons-material";
+import { RefreshOutlined, ReadMoreOutlined } from "@mui/icons-material";
 
 // API Imports
 import { usePosthogQuery } from "@/hooks/api-posthog";
@@ -26,6 +26,8 @@ export function PosthogEvents() {
   const query = usePosthogQuery(
     {
       query: {
+        before: void 0,
+        after: "all",
         kind: "EventsQuery",
         select: [
           "*",
@@ -46,20 +48,24 @@ export function PosthogEvents() {
         ]),
       },
       client_query_id: "",
-      refresh: false,
+      refresh: true,
     },
     { project_id: 1 }
   );
 
-  const rows = query.data?.results.map((item) => {
-    return {
-      uuid: item[0].uuid,
-      event: item[1],
-      url: item[3],
-      library: item[4],
-      time: item[5],
-    };
-  });
+  const rows = query.data?.pages
+    .flatMap((item) => item.results)
+    .map((item) => {
+      return {
+        uuid: item[0].uuid,
+        event: item[1],
+        url: item[3],
+        library: item[4],
+        time: item[5],
+      };
+    });
+
+  console.log(rows?.length);
 
   return (
     <>
@@ -84,10 +90,19 @@ export function PosthogEvents() {
             rows={rows || []}
             getRowId={(item) => item.uuid}
             autoHeight
-            hideFooterPagination
             disableRowSelectionOnClick
             slots={{ toolbar }}
+            slotProps={{
+              toolbar: {
+                onClick() {
+                  query.fetchNextPage();
+                },
+                loading: query.isFetchingNextPage,
+                hasNextPage: query.hasNextPage,
+              },
+            }}
           />
+          <Box display={"flex"} justifyContent={"center"} p={3}></Box>
         </CardContent>
       </Card>
     </>
@@ -176,12 +191,31 @@ function toHourAgo(...args: ConstructorParameters<typeof Date>) {
   return "a few seconds ago";
 }
 
-function toolbar() {
+function toolbar(props: toolbarProps) {
+  // ** Props
+  const { onClick, loading, hasNextPage } = props;
+
   return (
     <Box display={"flex"} p={3}>
       <GridToolbarFilterButton />
       <GridToolbarExport sx={{ ml: 3 }} />
+      {hasNextPage && (
+        <LoadingButton
+          onClick={onClick}
+          loading={loading}
+          startIcon={<ReadMoreOutlined />}
+          sx={{ ml: 3 }}
+        >
+          load more
+        </LoadingButton>
+      )}
       <GridToolbarQuickFilter sx={{ ml: "auto" }} />
     </Box>
   );
+}
+
+interface toolbarProps {
+  onClick(): void;
+  loading: boolean;
+  hasNextPage: boolean;
 }
