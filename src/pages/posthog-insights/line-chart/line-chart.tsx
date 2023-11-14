@@ -5,7 +5,7 @@ import type { ApexOptions } from "apexcharts";
 // MUI Imports
 import { Card, CardHeader, CardContent, useTheme, Theme } from "@mui/material";
 import { RefreshOutlined } from "@mui/icons-material";
-import { green, grey } from "@mui/material/colors";
+import { green, grey, blue, purple } from "@mui/material/colors";
 import { LoadingButton } from "@mui/lab";
 
 export function LineChart(props: LineChartProps) {
@@ -54,22 +54,6 @@ export function LineChart(props: LineChartProps) {
   );
 }
 
-// function series(): ApexOptions["series"] {
-//   return [
-//     {
-//       data: [
-//         280, 200, 220, 180, 270, 250, 70, 90, 200, 150, 160, 100, 150, 100, 50,
-//       ],
-//     },
-//     {
-//       data: [
-//         120, 500, 320, 89, 159, 170, 170, 190, 100, 140, 250, 100, 159, 120,
-//         150,
-//       ],
-//     },
-//   ];
-// }
-
 function options(options: Options): ApexOptions {
   // ** Params
   const { categories, theme } = options;
@@ -80,7 +64,7 @@ function options(options: Options): ApexOptions {
       zoom: { enabled: false },
       toolbar: { show: false },
     },
-    colors: ["#ff9f43", green[500]],
+    colors: ["#ff9f43", green[500], blue[500], purple[400]],
     stroke: { curve: "straight" },
     dataLabels: { enabled: false },
     markers: {
@@ -96,17 +80,6 @@ function options(options: Options): ApexOptions {
         lines: { show: true },
       },
     },
-    // tooltip: {
-    //   custom(data) {
-    //     console.log(data);
-
-    //     const number = data.series[data.seriesIndex][data.dataPointIndex];
-
-    //     return `<div class='bar-chart'>
-    //             <span>${number}</span>
-    //           </div>`;
-    //   },
-    // },
     yaxis: {
       labels: {
         style: { colors: theme.palette.text.disabled },

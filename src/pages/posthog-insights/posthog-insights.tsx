@@ -43,6 +43,34 @@ export function PosthogInsights() {
           name: "WarpDrivenVSRView",
           math: "total",
         },
+        {
+          order: 2,
+          type: "events",
+          id: "$autocapture",
+          name: "$autocapture",
+          properties: [
+            {
+              key: "$el_text",
+              value: "Add to cart",
+              operator: "icontains",
+              type: "event",
+            },
+          ],
+        },
+        {
+          order: 3,
+          type: "events",
+          id: "$autocapture",
+          name: "$autocapture",
+          properties: [
+            {
+              key: "$el_text",
+              value: "Checkout",
+              operator: "icontains",
+              type: "event",
+            },
+          ],
+        },
       ]),
     },
     { project_id: 1 }
@@ -65,6 +93,14 @@ export function PosthogInsights() {
               {
                 name: query.data?.result[1].label,
                 data: query.data?.result[1].data || [],
+              },
+              {
+                name: query.data?.result[2].label,
+                data: query.data?.result[2].data || [],
+              },
+              {
+                name: query.data?.result[3].label,
+                data: query.data?.result[3].data || [],
               },
             ]}
           />
