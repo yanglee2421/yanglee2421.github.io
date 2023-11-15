@@ -1,14 +1,8 @@
 // MUI Imports
 import { Card, CardHeader, CardContent, Box } from "@mui/material";
-import {
-  DataGrid,
-  GridColDef,
-  GridToolbarQuickFilter,
-  GridToolbarExport,
-  GridToolbarFilterButton,
-} from "@mui/x-data-grid";
+import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { LoadingButton } from "@mui/lab";
-import { RefreshOutlined, ReadMoreOutlined } from "@mui/icons-material";
+import { RefreshOutlined } from "@mui/icons-material";
 
 // API Imports
 import { usePosthogQuery } from "@/hooks/api-posthog";
@@ -17,17 +11,34 @@ import { usePosthogQuery } from "@/hooks/api-posthog";
 import { useSearchParams } from "react-router-dom";
 
 // Utils Imports
-import { toCompact } from "@/utils";
+import { toTimeAgo } from "./to-time-ago";
+import { eventsMap } from "@/pages/posthog-insights/events-map";
+
+// Components Imports
+import { DateSelect } from "./date-select";
+import { toolbar } from "./toolbar";
+
+// React Imports
+import React from "react";
 
 export function PosthogEvents() {
   const [searchParams] = useSearchParams();
   const event = searchParams.get("event");
 
+  const [date, setDate] = React.useState(() => {
+    return JSON.stringify({
+      after: "dStart",
+    });
+  });
+
+  const eventQuery = eventsMap.get(String(event));
+
   const query = usePosthogQuery(
     {
       query: {
-        before: void 0,
-        after: "all",
+        ...toJsonParse(date),
+        event: eventQuery?.id,
+        properties: eventQuery?.properties,
         kind: "EventsQuery",
         select: [
           "*",
@@ -37,15 +48,6 @@ export function PosthogEvents() {
           "properties.$lib",
           "timestamp",
         ],
-        event: event || "",
-        properties: toCompact([
-          event === "$pageview" && {
-            key: "$current_url",
-            value: "vsr_click",
-            operator: "icontains",
-            type: "event",
-          },
-        ]),
       },
       client_query_id: "",
       refresh: true,
@@ -84,6 +86,12 @@ export function PosthogEvents() {
           }
         />
         <CardContent>
+          <DateSelect
+            value={date}
+            onChange={(evt) => {
+              setDate(String(evt.target.value));
+            }}
+          />
           <DataGrid
             loading={query.isPending}
             columns={columns()}
@@ -151,7 +159,7 @@ function columns(): GridColDef<Row>[] {
       width: 160,
       sortable: false,
       renderCell(params) {
-        return toHourAgo(params.value);
+        return toTimeAgo(params.value);
       },
     },
   ];
@@ -163,59 +171,10 @@ interface Row {
   url: string;
 }
 
-function toHourAgo(...args: ConstructorParameters<typeof Date>) {
-  const date = new Date(...args);
-  const now = Date.now();
-  const time = date.getTime();
-
-  const days = Math.floor((now - time) / (1000 * 60 * 60 * 24));
-  if (days) {
-    return `${days} days ago`;
+function toJsonParse(json: string) {
+  try {
+    return JSON.parse(json);
+  } catch (error) {
+    return {};
   }
-
-  const hours = Math.floor((now - time) / (1000 * 60 * 60));
-  if (hours) {
-    return `${hours} hours ago`;
-  }
-
-  const minutes = Math.floor((now - time) / (1000 * 60));
-  if (minutes) {
-    return `${minutes} minutes ago`;
-  }
-
-  const seconds = Math.floor((now - time) / 1000);
-  if (seconds) {
-    return `${seconds} seconds ago`;
-  }
-
-  return "a few seconds ago";
-}
-
-function toolbar(props: toolbarProps) {
-  // ** Props
-  const { onClick, loading, hasNextPage } = props;
-
-  return (
-    <Box display={"flex"} p={3}>
-      <GridToolbarFilterButton />
-      <GridToolbarExport sx={{ ml: 3 }} />
-      {hasNextPage && (
-        <LoadingButton
-          onClick={onClick}
-          loading={loading}
-          startIcon={<ReadMoreOutlined />}
-          sx={{ ml: 3 }}
-        >
-          load more
-        </LoadingButton>
-      )}
-      <GridToolbarQuickFilter sx={{ ml: "auto" }} />
-    </Box>
-  );
-}
-
-interface toolbarProps {
-  onClick(): void;
-  loading: boolean;
-  hasNextPage: boolean;
 }

@@ -3,50 +3,24 @@ import ReactApexcharts from "react-apexcharts";
 import type { ApexOptions } from "apexcharts";
 
 // MUI Imports
-import { Card, CardHeader, CardContent, useTheme, Theme } from "@mui/material";
-import { RefreshOutlined } from "@mui/icons-material";
+import { useTheme, Theme } from "@mui/material";
 import { green, grey, blue, purple } from "@mui/material/colors";
-import { LoadingButton } from "@mui/lab";
 
 export function LineChart(props: LineChartProps) {
   // ** Props
-  const { categories, series, loading, onRefresh, last_refresh, ...restProps } =
-    props;
+  const { categories, series, ...restProps } = props;
 
   const theme = useTheme();
 
   return (
     <>
-      <Card {...restProps}>
-        <CardHeader
-          title="Trends"
-          subheader={`Last refresh ${last_refresh.toLocaleString()}`}
-          sx={{
-            flexDirection: ["column", "row"],
-            alignItems: ["flex-start", "center"],
-            "& .MuiCardHeader-action": { mb: 0 },
-            "& .MuiCardHeader-content": { mb: [2, 0] },
-          }}
-          action={
-            <LoadingButton
-              loading={loading}
-              onClick={onRefresh}
-              color="success"
-              startIcon={<RefreshOutlined />}
-            >
-              refresh
-            </LoadingButton>
-          }
-        />
-        <CardContent>
-          <ReactApexcharts
-            type="line"
-            height={400}
-            series={series}
-            options={options({ theme, categories })}
-          />
-        </CardContent>
-      </Card>
+      <ReactApexcharts
+        type="line"
+        height={400}
+        series={series}
+        options={options({ theme, categories })}
+        {...restProps}
+      />
     </>
   );
 }
@@ -104,7 +78,4 @@ interface Options {
 interface LineChartProps {
   categories: string[];
   series: ApexOptions["series"];
-  loading: boolean;
-  onRefresh(): void;
-  last_refresh: Date;
 }
