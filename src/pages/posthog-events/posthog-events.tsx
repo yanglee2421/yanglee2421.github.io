@@ -78,7 +78,7 @@ export function PosthogEvents() {
             <LoadingButton
               onClick={() => query.refetch()}
               variant="contained"
-              loading={query.isFetching}
+              loading={query.isRefetching}
               startIcon={<RefreshOutlined />}
             >
               reload

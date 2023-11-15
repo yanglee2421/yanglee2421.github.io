@@ -15,10 +15,14 @@ export function usePosthogQuery(data: Data, pathParams: PathParams) {
     initialPageParam: data,
     getNextPageParam(lastPage, allPages, lastPageParam) {
       void allPages;
+
       if (lastPage.hasMore) {
         const list = lastPage.results;
-        lastPageParam.query.before = list[list.length - 1][5];
-        return { ...lastPageParam };
+        const nextBefore = list[list.length - 1][5];
+
+        const nextPageParam = structuredClone(lastPageParam);
+        nextPageParam.query.before = nextBefore;
+        return nextPageParam;
       }
 
       return null;
