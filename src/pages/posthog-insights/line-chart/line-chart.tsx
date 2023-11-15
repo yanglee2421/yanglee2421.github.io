@@ -67,6 +67,11 @@ function options(options: Options): ApexOptions {
       },
       categories,
     },
+    legend: {
+      labels: {
+        colors: [theme.palette.text.primary],
+      },
+    },
   };
 }
 
