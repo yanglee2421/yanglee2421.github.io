@@ -6,11 +6,13 @@ import {
   GridToolbarExport,
   GridToolbarQuickFilter,
   GridToolbarFilterButton,
-  GridValidRowModel,
 } from "@mui/x-data-grid";
 
 // Router Imports
 import { Link as RouterLink } from "react-router-dom";
+
+// API Imports
+import { Result } from "@/api/posthog/insights_trend";
 
 export function ResultTable(props: ResultTableProps) {
   // ** Props
@@ -24,7 +26,7 @@ export function ResultTable(props: ResultTableProps) {
           <DataGrid
             columns={columns()}
             rows={rows}
-            getRowId={(item) => item.label}
+            getRowId={(item) => JSON.stringify(item.action)}
             autoHeight
             hideFooterPagination
             disableRowSelectionOnClick
@@ -42,7 +44,7 @@ export function ResultTable(props: ResultTableProps) {
   );
 }
 
-function columns(): GridColDef[] {
+function columns(): GridColDef<Result>[] {
   return [
     {
       field: "label",
@@ -93,5 +95,5 @@ function toolbar() {
 }
 
 export interface ResultTableProps {
-  rows: GridValidRowModel[];
+  rows: Result[];
 }

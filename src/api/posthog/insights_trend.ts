@@ -58,4 +58,9 @@ export interface Result {
   count: number;
   data: number[];
   labels: string[];
+  action: Action;
+}
+
+export interface Action {
+  id: string;
 }
