@@ -8,8 +8,8 @@ export function DateSelect(props: SelectProps) {
 
   const optionsNode = Array.from(optionsMap.entries(), ([key, value]) => {
     const unique = JSON.stringify(value);
-    
-return (
+
+    return (
       <MenuItem key={unique} value={unique}>
         {key}
       </MenuItem>
@@ -33,7 +33,7 @@ return (
   );
 }
 
-export const optionsMap = new Map<string, Value>();
+const optionsMap = new Map<string, Value>();
 optionsMap.set("Today", {
   date_from: "dStart",
 });
