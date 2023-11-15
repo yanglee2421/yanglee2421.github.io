@@ -6,6 +6,9 @@ import type { ApexOptions } from "apexcharts";
 import { useTheme, Theme } from "@mui/material";
 import { green, blue, purple } from "@mui/material/colors";
 
+// React Imports
+// import React from "react";
+
 export function LineChart(props: LineChartProps) {
   // ** Props
   const { categories, series, ...restProps } = props;
