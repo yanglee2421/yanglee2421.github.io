@@ -17,10 +17,7 @@ export function LineChart(props: LineChartProps) {
 
   return (
     <>
-      <Card
-        sx={{ "& .bar-chart": { padding: theme.spacing(2, 2.5) } }}
-        {...restProps}
-      >
+      <Card {...restProps}>
         <CardHeader
           title="Trends"
           subheader={`Last refresh ${last_refresh.toLocaleString()}`}
@@ -71,7 +68,7 @@ function options(options: Options): ApexOptions {
       strokeWidth: 7,
       strokeOpacity: 1,
       colors: ["#ff9f43"],
-      strokeColors: ["#fff", grey[100]],
+      strokeColors: ["#fff", grey[100], grey[200], grey[300]],
     },
     grid: {
       padding: { top: -10 },
