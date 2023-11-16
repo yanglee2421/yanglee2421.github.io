@@ -1,18 +1,18 @@
 // MUI Imports
-import { Card, CardHeader, CardContent, Box } from "@mui/material";
+import { Card, CardHeader, CardContent, Box, Alert } from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
 import { LoadingButton } from "@mui/lab";
 import { RefreshOutlined } from "@mui/icons-material";
 
 // API Imports
 import { usePosthogQuery } from "@/hooks/api-posthog";
+import { platformQueryMap } from "@/api/posthog";
 
 // Router Imports
 import { useSearchParams } from "react-router-dom";
 
 // Utils Imports
 import { toTimeAgo } from "./to-time-ago";
-import { eventsMap } from "@/pages/posthog-insights/events-map";
 
 // Components Imports
 import { DateSelect } from "./date-select";
@@ -31,7 +31,9 @@ export function PosthogEvents() {
     });
   });
 
-  const eventQuery = eventsMap.get(String(event));
+  const queryMap = platformQueryMap.get(3);
+  const eventQuery = queryMap?.get(String(event));
+  const isWithoutFalsy = [queryMap, eventQuery].every(Boolean);
 
   const query = usePosthogQuery(
     {
@@ -67,7 +69,9 @@ export function PosthogEvents() {
       };
     });
 
-  console.log(rows?.length);
+  if (!isWithoutFalsy) {
+    return <Alert severity="error">Invalid platform or event</Alert>;
+  }
 
   return (
     <>

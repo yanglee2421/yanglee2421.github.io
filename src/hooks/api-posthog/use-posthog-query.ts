@@ -12,6 +12,8 @@ export function usePosthogQuery(data: Data, pathParams: PathParams) {
       return posthog_query({ signal, data: pageParam }, pathParams);
     },
 
+    enabled: Boolean(data.query.event),
+
     initialPageParam: data,
     getNextPageParam(lastPage, allPages, lastPageParam) {
       void allPages;
