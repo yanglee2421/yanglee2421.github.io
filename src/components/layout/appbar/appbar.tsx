@@ -7,6 +7,7 @@ import { MenuDrawer } from "@/components/layout/menu-drawer";
 import { Trans } from "@/components/layout/trans";
 import { UserDropdown } from "@/components/layout/user-dropdown";
 import { Searcher } from "@/components/layout/searcher";
+import { SkinSettings } from "@/components/layout/skin-settings";
 
 // Theme Imports
 import { ThemeToggle } from "@/theme";
@@ -24,6 +25,7 @@ export function Appbar() {
       <Toolbar>
         <MenuDrawer color="inherit" />
         <Searcher color="inherit" sx={{ mr: "auto" }} />
+        <SkinSettings color="inherit" />
         <Trans color="inherit" />
         <ThemeToggle color="inherit" />
         <IconButton

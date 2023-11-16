@@ -28,7 +28,10 @@ export function Searcher(props: SearcherProps) {
     },
   });
 
-  const { field } = useController({ control: formCtx.control, name: "search" });
+  const searchController = useController({
+    control: formCtx.control,
+    name: "search",
+  });
 
   const closeHandler = () => {
     setOpen(false);
@@ -46,11 +49,9 @@ export function Searcher(props: SearcherProps) {
   });
 
   const blurHandler = () => {
+    searchController.field.onBlur();
     formCtx.reset();
     closeHandler();
-  };
-  const chgHandler: React.ChangeEventHandler<HTMLInputElement> = (evt) => {
-    field.onChange(evt.target.value);
   };
 
   React.useEffect(() => {
@@ -111,15 +112,12 @@ export function Searcher(props: SearcherProps) {
           <form onSubmit={submitHandler} autoComplete="off" noValidate>
             <FormProvider {...formCtx}>
               <OutlinedInput
+                {...searchController.field}
+                onBlur={blurHandler}
                 ref={(el) => {
-                  field.ref(el);
+                  searchController.field.ref(el);
                   Reflect.set(inputRef, "current", el);
                 }}
-                value={field.value}
-                onChange={chgHandler}
-                onBlur={blurHandler}
-                disabled={field.disabled}
-                name={field.name}
                 fullWidth
                 startAdornment={
                   <InputAdornment position="start">
