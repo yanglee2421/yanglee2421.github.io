@@ -1,6 +1,7 @@
-export const eventsMap = new Map<string, EventQuery>();
-eventsMap.set("VSR - Clicks", {
-  order: 0,
+export const shoplineQueryMap = new Map<string, EventQuery>();
+
+shoplineQueryMap.set("VSR - Clicks", {
+  order: 1,
   type: "events",
   id: "$pageview",
   name: "VSR - Clicks",
@@ -14,14 +15,14 @@ eventsMap.set("VSR - Clicks", {
     },
   ],
 });
-eventsMap.set("VSR - View", {
-  order: 1,
+shoplineQueryMap.set("VSR - View", {
+  order: 0,
   type: "events",
   id: "WarpDrivenVSRView",
   name: "VSR - View",
   math: "total",
 });
-eventsMap.set("VSR - Add to cart", {
+shoplineQueryMap.set("VSR - Add to cart", {
   order: 2,
   type: "events",
   id: "$autocapture",
@@ -36,7 +37,7 @@ eventsMap.set("VSR - Add to cart", {
     },
   ],
 });
-eventsMap.set("VSR - Checkout", {
+shoplineQueryMap.set("VSR - Checkout", {
   order: 3,
   type: "events",
   id: "$autocapture",
