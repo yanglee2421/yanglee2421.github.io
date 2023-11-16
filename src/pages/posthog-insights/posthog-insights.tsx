@@ -97,7 +97,7 @@ export function PosthogInsights() {
               }}
               action={
                 <LoadingButton
-                  loading={query.isFetching}
+                  loading={query.isRefetching}
                   onClick={() => query.refetch()}
                   color="success"
                   startIcon={<RefreshOutlined />}
