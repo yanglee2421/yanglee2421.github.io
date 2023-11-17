@@ -180,6 +180,14 @@ export const routes: RouteObject[] = [
               return import("@/pages/swiper");
             },
           },
+          {
+            id: "sso-login",
+            path: "sso-login",
+            handle: { title: "SSO" },
+            lazy() {
+              return import("@/pages/sso-login");
+            },
+          },
 
           // ** Charts
           {

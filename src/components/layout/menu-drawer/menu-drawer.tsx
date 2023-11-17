@@ -95,6 +95,7 @@ export function MenuDrawer(props: MenuDrawerProps) {
                 <MenuGroup label="Lab" icon={<ScienceOutlined />}>
                   <MenuLink label="Fabric" to="/fabric" />
                   <MenuLink label="Swiper" to="/swiper" />
+                  <MenuLink label="SSO" to="/sso-login" />
                 </MenuGroup>
                 <MenuGroup label="Charts" icon={<DataSaverOffOutlined />}>
                   <MenuLink label="Charts" to="/charts" />
