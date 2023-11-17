@@ -18,28 +18,6 @@ import { CardRadio } from "./card-radio";
 // React Imports
 import React from "react";
 
-const StyledTabList = styled(TabList)(({ theme }) => {
-  return {
-    "& .MuiTabs-indicator": {
-      display: "none",
-    },
-    "& .Mui-selected": {
-      backgroundColor: theme.palette.primary.main,
-      color: `${theme.palette.common.white} !important`,
-    },
-    "& .MuiTab-root": {
-      minWidth: 65,
-      minHeight: 38,
-      paddingTop: theme.spacing(2.5),
-      paddingBottom: theme.spacing(2.5),
-      borderRadius: theme.shape.borderRadius,
-      [theme.breakpoints.up("sm")]: {
-        minWidth: 130,
-      },
-    },
-  };
-});
-
 export function Component() {
   const [tab, setTab] = React.useState("five");
   const tabChangeHandler: TabListProps["onChange"] = (evt, v) => {
@@ -105,7 +83,7 @@ export function Component() {
   );
 }
 
-function TabLabel(props: TabLabelProps) {
+const TabLabel = React.forwardRef((props: TabLabelProps, ref) => {
   // ** Props
   const { children, icon } = props;
 
@@ -115,6 +93,7 @@ function TabLabel(props: TabLabelProps) {
 
   return (
     <Box
+      ref={ref}
       display={"flex"}
       alignItems={"center"}
       sx={{
@@ -127,9 +106,30 @@ function TabLabel(props: TabLabelProps) {
       {isExtraSmall || children}
     </Box>
   );
-}
-
+});
 interface TabLabelProps {
   children: React.ReactNode;
   icon: React.ReactNode;
 }
+
+const StyledTabList = styled(TabList)(({ theme }) => {
+  return {
+    "& .MuiTabs-indicator": {
+      display: "none",
+    },
+    "& .Mui-selected": {
+      backgroundColor: theme.palette.primary.main,
+      color: `${theme.palette.common.white} !important`,
+    },
+    "& .MuiTab-root": {
+      minWidth: 65,
+      minHeight: 38,
+      paddingTop: theme.spacing(2.5),
+      paddingBottom: theme.spacing(2.5),
+      borderRadius: theme.shape.borderRadius,
+      [theme.breakpoints.up("sm")]: {
+        minWidth: 130,
+      },
+    },
+  };
+});
