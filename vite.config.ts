@@ -34,7 +34,7 @@ export default defineConfig((configEnv) => {
     },
 
     // Base URL
-    base: isBuild ? "./" : "/mui",
+    base: isBuild ? "./" : "/react-mui",
 
     // ** Build
     build: build(configEnv),
