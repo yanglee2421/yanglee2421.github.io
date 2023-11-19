@@ -54,40 +54,15 @@ export function Component() {
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
-  const iframeReactAntdRef = React.useRef<HTMLIFrameElement>(null);
-  const iframeVueEleRef = React.useRef<HTMLIFrameElement>(null);
-
   // Submit & Reset
   const handleSubmit = formCtx.handleSubmit((data) => {
     loginMutation.mutate(
       { data },
       {
         onSuccess(usr) {
-          iframeReactAntdRef.current?.contentWindow?.postMessage(
-            JSON.stringify({
-              type: "sso-login",
-              rememberMe: data.isRemember,
-              ...usr,
-            }),
-            import.meta.env.VITE_REACT_ANTD_URL,
-            []
-          );
-
-          iframeVueEleRef.current?.contentWindow?.postMessage(
-            JSON.stringify({
-              type: "sso-login",
-              rememberMe: data.isRemember,
-              ...usr,
-            }),
-            import.meta.env.VITE_VUE_ELE_URL,
-            []
-          );
-
-          setTimeout(() => {
-            React.startTransition(() => {
-              signIn({ ...usr, role: "admin", loginAt: 0 });
-            });
-          }, 0);
+          React.startTransition(() => {
+            signIn({ ...usr, role: "admin", loginAt: 0 });
+          });
         },
       }
     );
@@ -95,16 +70,6 @@ export function Component() {
 
   return (
     <>
-      <iframe
-        ref={iframeReactAntdRef}
-        src={import.meta.env.VITE_REACT_ANTD_URL}
-        style={{ display: "none" }}
-      ></iframe>
-      <iframe
-        ref={iframeVueEleRef}
-        src={import.meta.env.VITE_VUE_ELE_URL}
-        style={{ display: "none" }}
-      ></iframe>
       <Box display={"flex"} height={"100%"}>
         <Box flex={1} overflow={"hidden"}>
           {isSm && <h1>Hello small</h1>}
