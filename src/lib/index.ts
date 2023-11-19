@@ -13,17 +13,33 @@ export function mutate() {
       throw new Error("Invalid contentWindow");
     }
 
-    iframeEl.contentWindow.onmessage = (evt) => {
-      res(evt.data);
-    };
-    iframeEl.contentWindow.onmessageerror = (evt) => {
-      rej(evt.data);
-    };
+    iframeEl.contentWindow.addEventListener(
+      "message",
+      (evt) => {
+        res(evt.data);
+      },
+      {
+        once: true,
+      }
+    );
+    iframeEl.contentWindow.addEventListener(
+      "messageerror",
+      (evt) => {
+        rej(evt);
+      },
+      {
+        once: true,
+      }
+    );
 
     iframeEl.contentWindow.postMessage(
       JSON.stringify({}),
       import.meta.env.VITE_SSO_ORIGIN,
       []
     );
+
+    setTimeout(() => {
+      rej(new Error("Time out"));
+    }, 1000 * 30);
   });
 }
