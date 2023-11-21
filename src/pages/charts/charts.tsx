@@ -15,6 +15,7 @@ import {
   Chip,
   Theme,
   useTheme,
+  styled,
 } from "@mui/material";
 import { ArrowUpwardOutlined } from "@mui/icons-material";
 import { green } from "@mui/material/colors";
@@ -24,7 +25,7 @@ export function Charts() {
 
   return (
     <>
-      <Card sx={{ m: 4, "& .bar-chart": { padding: theme.spacing(2, 2.5) } }}>
+      <StyledCard>
         <CardHeader
           title="Balance"
           subheader="Commercial networks & enterprises"
@@ -71,7 +72,7 @@ export function Charts() {
             options={options(theme)}
           />
         </CardContent>
-      </Card>
+      </StyledCard>
     </>
   );
 }
@@ -105,8 +106,8 @@ function options(theme: Theme): ApexOptions {
     markers: {
       strokeWidth: 7,
       strokeOpacity: 1,
-      colors: ["#ff9f43"],
-      strokeColors: ["#fff", "#eee"],
+      colors: ["#ff9f43", green[500]],
+      strokeColors: "#fff",
     },
     grid: {
       padding: { top: -10 },
@@ -116,13 +117,13 @@ function options(theme: Theme): ApexOptions {
       },
     },
     tooltip: {
-      custom(data) {
-        return `<div class='bar-chart'>
-              <span>${
-                data.series[data.seriesIndex][data.dataPointIndex]
-              }%</span>
-            </div>`;
-      },
+      // custom(data) {
+      //   return `<div class='bar-chart'>
+      //         <span>${
+      //           data.series[data.seriesIndex][data.dataPointIndex]
+      //         }%</span>
+      //       </div>`;
+      // },
     },
     yaxis: {
       labels: {
@@ -156,5 +157,88 @@ function options(theme: Theme): ApexOptions {
         "2023-21/12",
       ],
     },
+    legend: {
+      labels: {
+        colors: theme.palette.text.primary,
+      },
+    },
   };
 }
+
+const StyledCard = styled(Card)(({ theme }) => {
+  return {
+    "& .apexcharts-canvas": {
+      "& line[stroke='transparent']": {
+        display: "none",
+      },
+      "& .apexcharts-tooltip": {
+        boxShadow: theme.shadows[3],
+        borderColor: theme.palette.divider,
+        background: theme.palette.background.paper,
+        "& .apexcharts-tooltip-title": {
+          fontWeight: 600,
+          borderColor: theme.palette.divider,
+          background: theme.palette.background.paper,
+        },
+        "&.apexcharts-theme-light": {
+          color: theme.palette.text.primary,
+        },
+        "&.apexcharts-theme-dark": {
+          color: theme.palette.common.white,
+        },
+        "& .apexcharts-tooltip-series-group:first-of-type": {
+          paddingBottom: 0,
+        },
+      },
+      "& .apexcharts-xaxistooltip": {
+        borderColor: theme.palette.divider,
+        background:
+          theme.palette.mode === "light"
+            ? theme.palette.grey[50]
+            : theme.palette.background.default,
+        "&:after": {
+          borderBottomColor:
+            theme.palette.mode === "light"
+              ? theme.palette.grey[50]
+              : theme.palette.background.default,
+        },
+        "&:before": {
+          borderBottomColor: theme.palette.divider,
+        },
+      },
+      "& .apexcharts-yaxistooltip": {
+        borderColor: theme.palette.divider,
+        background:
+          theme.palette.mode === "light"
+            ? theme.palette.grey[50]
+            : theme.palette.background.default,
+        "&:after": {
+          borderLeftColor:
+            theme.palette.mode === "light"
+              ? theme.palette.grey[50]
+              : theme.palette.background.default,
+        },
+        "&:before": {
+          borderLeftColor: theme.palette.divider,
+        },
+      },
+      "& .apexcharts-xaxistooltip-text, & .apexcharts-yaxistooltip-text": {
+        color: theme.palette.text.primary,
+      },
+      "& .apexcharts-yaxis .apexcharts-yaxis-texts-g .apexcharts-yaxis-label": {
+        textAnchor: theme.direction === "rtl" ? "start" : void 0,
+      },
+      "& .apexcharts-text, & .apexcharts-tooltip-text, & .apexcharts-datalabel-label, & .apexcharts-datalabel, & .apexcharts-xaxistooltip-text, & .apexcharts-yaxistooltip-text, & .apexcharts-legend-text":
+        {
+          fontFamily: `${theme.typography.fontFamily} !important`,
+        },
+      "& .apexcharts-pie-label": {
+        filter: "none",
+        fill: theme.palette.common.white,
+      },
+      "& .apexcharts-marker": {
+        boxShadow: "none",
+      },
+    },
+  };
+});
