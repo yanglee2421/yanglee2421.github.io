@@ -26,8 +26,8 @@ import React from "react";
 // Components Imports
 import { Scrollbar } from "@/components";
 
-// Redux Imports
-import { useAppSelector, useAppDispatch, setBgImg, sliceTheme } from "@/redux";
+// Query Imports
+import { useThemeMutation, useThemeQuery } from "@/hooks/api-theme";
 
 export function BlankMenu() {
   const [showDrawer, setShowDrawer] = React.useState(false);
@@ -36,16 +36,11 @@ export function BlankMenu() {
     return theme.breakpoints.down("sm");
   });
 
-  const dispatch = useAppDispatch();
-  const bgImg = useAppSelector((s) => {
-    return s.theme.bgImg;
-  });
-  const bgAlpha = useAppSelector((s) => {
-    return s.theme.bgAlpha;
-  });
-  const bgBlur = useAppSelector((s) => {
-    return s.theme.bgBlur;
-  });
+  const themeQuery = useThemeQuery();
+  const themeMutation = useThemeMutation();
+  const { bgImg, bgAlpha, bgBlur } = themeQuery.data;
+  const [alpha, setAlpha] = React.useState(() => bgAlpha);
+  const [blur, setBlur] = React.useState(() => bgBlur);
 
   const handleDrawerClose = () => {
     setShowDrawer(false);
@@ -77,7 +72,11 @@ export function BlankMenu() {
           };
         }
       });
-      dispatch(setBgImg(dataURL));
+
+      themeMutation.mutate({
+        ...themeQuery.data,
+        bgImg: dataURL,
+      });
     } catch (error) {
       console.error(error);
     }
@@ -87,7 +86,11 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      dispatch(sliceTheme.actions.bgAlpha(v));
+      setAlpha(v);
+      themeMutation.mutate({
+        ...themeQuery.data,
+        bgAlpha: v,
+      });
     }
   };
 
@@ -95,7 +98,11 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      dispatch(sliceTheme.actions.bgBlur(v));
+      setBlur(v);
+      themeMutation.mutate({
+        ...themeQuery.data,
+        bgBlur: v,
+      });
     }
   };
 
@@ -164,11 +171,11 @@ export function BlankMenu() {
                     </CardContent>
                     <CardContent>
                       <Slider
-                        defaultValue={bgAlpha}
+                        defaultValue={alpha}
                         onChange={handleBgAlphaChange}
                       />
                       <Slider
-                        defaultValue={bgBlur}
+                        defaultValue={blur}
                         onChange={handleBgblurChange}
                       />
                     </CardContent>

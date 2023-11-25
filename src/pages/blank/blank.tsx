@@ -1,15 +1,13 @@
 // MUI Imports
 import { Backdrop, Box, CircularProgress } from "@mui/material";
 
-// Redux Imports
-import { useAppSelector, loadBgImg, useAppDispatch } from "@/redux";
-
 // React Imports
 import React from "react";
 import ReactDOM from "react-dom";
 
 // Components Imports
 import { BlankMenu } from "./blank-menu";
+import { useThemeQuery } from "@/hooks/api-theme";
 
 export function Blank() {
   return (
@@ -23,24 +21,8 @@ export function Blank() {
 }
 
 function GlobalBg() {
-  const isLoading = useAppSelector((s) => {
-    return s.theme.isLoading;
-  });
-  const bgImg = useAppSelector((s) => {
-    return s.theme.bgImg;
-  });
-  const bgBlur = useAppSelector((s) => {
-    return s.theme.bgBlur;
-  });
-  const bgAlpha = useAppSelector((s) => {
-    return s.theme.bgAlpha;
-  });
-  const dispatch = useAppDispatch();
-
-  React.useEffect(() => {
-    if (bgImg) return;
-    dispatch(loadBgImg());
-  }, [dispatch]);
+  const themeQuery = useThemeQuery();
+  const { bgImg, bgAlpha, bgBlur } = themeQuery.data;
 
   return (
     <>
@@ -52,7 +34,7 @@ function GlobalBg() {
           backgroundImage: `url(${bgImg})`,
           backgroundAttachment: "fixed",
           backgroundSize: "cover",
-          backgroundPosition: "center",
+          // backgroundPosition: "center",
           filter: `blur(${20 * (bgBlur / 100)}px)`,
           transition(theme) {
             return theme.transitions.create("filter");
@@ -70,7 +52,7 @@ function GlobalBg() {
           }}
         ></Box>
       </Box>
-      <Backdrop open={isLoading} sx={{ color: "common.white" }}>
+      <Backdrop open={themeQuery.isLoading} sx={{ color: "common.white" }}>
         <CircularProgress color="inherit" />
       </Backdrop>
     </>
