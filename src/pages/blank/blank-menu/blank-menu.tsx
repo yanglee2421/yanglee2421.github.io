@@ -47,12 +47,6 @@ export function BlankMenu() {
     return s.theme.bgBlur;
   });
 
-  const [alpha, setAlpha] = React.useState(bgAlpha);
-  const [blur, setBlur] = React.useState(bgBlur);
-  const [count, setCount] = React.useState(0);
-  const alphaTimerRef = React.useRef(0);
-  const blurTimerRef = React.useRef(0);
-
   const handleDrawerClose = () => {
     setShowDrawer(false);
   };
@@ -93,13 +87,7 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      setAlpha(v);
-      clearTimeout(alphaTimerRef.current);
-      alphaTimerRef.current = setTimeout(() => {
-        React.startTransition(() => {
-          dispatch(sliceTheme.actions.bgAlpha(v));
-        });
-      }, 200);
+      dispatch(sliceTheme.actions.bgAlpha(v));
     }
   };
 
@@ -107,13 +95,7 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      setBlur(v);
-      clearTimeout(blurTimerRef.current);
-      blurTimerRef.current = setTimeout(() => {
-        React.startTransition(() => {
-          dispatch(sliceTheme.actions.bgBlur(v));
-        });
-      }, 200);
+      dispatch(sliceTheme.actions.bgBlur(v));
     }
   };
 
@@ -181,16 +163,13 @@ export function BlankMenu() {
                       </CardActionArea>
                     </CardContent>
                     <CardContent>
-                      <Slider value={alpha} onChange={handleBgAlphaChange} />
-                      <Slider value={blur} onChange={handleBgblurChange} />
                       <Slider
-                        value={count}
-                        onChange={(evt, v) => {
-                          void evt;
-                          if (typeof v === "number") {
-                            setCount(v);
-                          }
-                        }}
+                        defaultValue={bgAlpha}
+                        onChange={handleBgAlphaChange}
+                      />
+                      <Slider
+                        defaultValue={bgBlur}
+                        onChange={handleBgblurChange}
                       />
                     </CardContent>
                     <CardActions>

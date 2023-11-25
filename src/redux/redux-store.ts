@@ -42,7 +42,7 @@ const reducer = persistReducer(
     key: import.meta.env.VITE_REDUX_PERSISTER_KEY,
     version: 1,
     storage,
-    blacklist: [sliceLoginSession.name, sliceDemo.name],
+    blacklist: [sliceLoginSession.name, sliceTheme.name],
   },
   rootReducer
 );
