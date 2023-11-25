@@ -54,11 +54,20 @@ function GlobalBg() {
           backgroundSize: "cover",
           backgroundPosition: "center",
           filter: `blur(${20 * (bgBlur / 100)}px)`,
+          transition(theme) {
+            return theme.transitions.create("filter");
+          },
         }}
       >
         <Box
           position={"absolute"}
-          sx={{ inset: 0, bgcolor: `rgba(0,0,0,${bgAlpha / 100})` }}
+          sx={{
+            inset: 0,
+            bgcolor: `rgba(0,0,0,${bgAlpha / 100})`,
+            transition(theme) {
+              return theme.transitions.create("background-color");
+            },
+          }}
         ></Box>
       </Box>
       <Backdrop open={isLoading} sx={{ color: "common.white" }}>

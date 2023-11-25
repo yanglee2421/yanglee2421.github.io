@@ -99,7 +99,7 @@ export function BlankMenu() {
         React.startTransition(() => {
           dispatch(sliceTheme.actions.bgAlpha(v));
         });
-      }, 100);
+      }, 200);
     }
   };
 
@@ -113,7 +113,7 @@ export function BlankMenu() {
         React.startTransition(() => {
           dispatch(sliceTheme.actions.bgBlur(v));
         });
-      }, 100);
+      }, 200);
     }
   };
 
