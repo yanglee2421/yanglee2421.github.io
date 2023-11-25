@@ -47,7 +47,11 @@ export function BlankMenu() {
     return s.theme.bgBlur;
   });
 
-  const [blur, setBlur] = React.useState(0);
+  const [alpha, setAlpha] = React.useState(bgAlpha);
+  const [blur, setBlur] = React.useState(bgBlur);
+  const [count, setCount] = React.useState(0);
+  const alphaTimerRef = React.useRef(0);
+  const blurTimerRef = React.useRef(0);
 
   const handleDrawerClose = () => {
     setShowDrawer(false);
@@ -89,9 +93,13 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      React.startTransition(() => {
-        dispatch(sliceTheme.actions.bgAlpha(v));
-      });
+      setAlpha(v);
+      clearTimeout(alphaTimerRef.current);
+      alphaTimerRef.current = setTimeout(() => {
+        React.startTransition(() => {
+          dispatch(sliceTheme.actions.bgAlpha(v));
+        });
+      }, 100);
     }
   };
 
@@ -99,9 +107,13 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      React.startTransition(() => {
-        dispatch(sliceTheme.actions.bgBlur(v));
-      });
+      setBlur(v);
+      clearTimeout(blurTimerRef.current);
+      blurTimerRef.current = setTimeout(() => {
+        React.startTransition(() => {
+          dispatch(sliceTheme.actions.bgBlur(v));
+        });
+      }, 100);
     }
   };
 
@@ -169,12 +181,15 @@ export function BlankMenu() {
                       </CardActionArea>
                     </CardContent>
                     <CardContent>
-                      <Slider value={bgAlpha} onChange={handleBgAlphaChange} />
-                      <Slider value={bgBlur} onChange={handleBgblurChange} />
+                      <Slider value={alpha} onChange={handleBgAlphaChange} />
+                      <Slider value={blur} onChange={handleBgblurChange} />
                       <Slider
-                        value={blur}
+                        value={count}
                         onChange={(evt, v) => {
-                          setBlur(Number(v));
+                          void evt;
+                          if (typeof v === "number") {
+                            setCount(v);
+                          }
                         }}
                       />
                     </CardContent>
