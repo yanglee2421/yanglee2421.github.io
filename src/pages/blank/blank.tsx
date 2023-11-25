@@ -1,73 +1,65 @@
 // MUI Imports
-import { Backdrop, Box, Button, CircularProgress } from "@mui/material";
+import { Backdrop, Box, CircularProgress } from "@mui/material";
 
 // Redux Imports
-import { useAppSelector, loadBgImg, setBgImg, useAppDispatch } from "@/redux";
+import { useAppSelector, loadBgImg, useAppDispatch } from "@/redux";
+
+// React Imports
 import React from "react";
+import ReactDOM from "react-dom";
+
+// Components Imports
+import { BlankMenu } from "./blank-menu";
 
 export function Blank() {
-  const dispatch = useAppDispatch();
+  return (
+    <>
+      {ReactDOM.createPortal(<GlobalBg />, document.body)}
+      <Box position={"relative"} height={"100%"} color={"common.white"}>
+        <BlankMenu />
+      </Box>
+    </>
+  );
+}
+
+function GlobalBg() {
   const isLoading = useAppSelector((s) => {
     return s.theme.isLoading;
   });
   const bgImg = useAppSelector((s) => {
     return s.theme.bgImg;
   });
-
-  const handleBgImgChange: React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  >["onChange"] = async (evt) => {
-    try {
-      const dataURL = await new Promise<string>((res, rej) => {
-        const file = evt.target.files?.[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onerror = (evt) => {
-            rej(evt.target?.error);
-          };
-          reader.onload = (evt) => {
-            const dataURL = evt.target?.result;
-            if (typeof dataURL === "string") {
-              res(dataURL);
-              return;
-            }
-
-            rej(new Error("result is not a string"));
-          };
-        }
-      });
-      dispatch(setBgImg(dataURL));
-    } catch (error) {
-      console.error(error);
-    }
-  };
+  const bgBlur = useAppSelector((s) => {
+    return s.theme.bgBlur;
+  });
+  const bgAlpha = useAppSelector((s) => {
+    return s.theme.bgAlpha;
+  });
+  const dispatch = useAppDispatch();
 
   React.useEffect(() => {
+    if (bgImg) return;
     dispatch(loadBgImg());
   }, [dispatch]);
 
   return (
     <>
       <Box
-        height={"100%"}
+        position={"fixed"}
+        zIndex={-1}
         sx={{
+          inset: 0,
           backgroundImage: `url(${bgImg})`,
           backgroundAttachment: "fixed",
           backgroundSize: "cover",
           backgroundPosition: "center",
+          filter: `blur(${20 * (bgBlur / 100)}px)`,
         }}
       >
-        <Button component="label">
-          <input
-            onChange={handleBgImgChange}
-            type="file"
-            hidden
-            accept="image/*"
-          />
-          upload
-        </Button>
+        <Box
+          position={"absolute"}
+          sx={{ inset: 0, bgcolor: `rgba(0,0,0,${bgAlpha / 100})` }}
+        ></Box>
       </Box>
       <Backdrop open={isLoading} sx={{ color: "common.white" }}>
         <CircularProgress color="inherit" />

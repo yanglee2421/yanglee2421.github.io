@@ -47,6 +47,16 @@ export const sliceTheme = createSlice({
           state.isDark = !state.isDark;
       }
     },
+    bgAlpha(state, { payload }: PayloadAction<number>) {
+      if (typeof payload === "number") {
+        state.bgAlpha = payload;
+      }
+    },
+    bgBlur(state, { payload }: PayloadAction<number>) {
+      if (typeof payload === "number") {
+        state.bgBlur = payload;
+      }
+    },
   },
   extraReducers(builder) {
     // ** LoadBgImg
@@ -82,5 +92,7 @@ function initialState() {
     isDark: false,
     isLoading: false,
     bgImg: "",
+    bgBlur: 0,
+    bgAlpha: 0,
   };
 }

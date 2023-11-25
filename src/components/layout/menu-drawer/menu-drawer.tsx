@@ -20,9 +20,9 @@ import { Scrollbar } from "@/components/ui/scrollbar";
 import { MenuGroup } from "@/components/ui/menu-group";
 import { MenuLink } from "@/components/ui/menu-link";
 
-export function MenuDrawer(props: MenuDrawerProps) {
+export function MenuDrawer(props: IconButtonProps) {
   // ** Props
-  const { icon, ...restProps } = props;
+  const { ...restProps } = props;
 
   const [open, setOpen] = React.useState(false);
   const closeHandler = () => {
@@ -32,15 +32,10 @@ export function MenuDrawer(props: MenuDrawerProps) {
     setOpen(true);
   };
 
-  const iconNode = React.useMemo(() => {
-    if (icon) return icon;
-    return <Menu />;
-  }, [icon]);
-
   return (
     <>
       <IconButton onClick={openHandler} {...restProps}>
-        {iconNode}
+        <Menu />
       </IconButton>
       <Drawer
         open={open}
@@ -108,8 +103,4 @@ export function MenuDrawer(props: MenuDrawerProps) {
       </Drawer>
     </>
   );
-}
-
-export interface MenuDrawerProps extends IconButtonProps {
-  icon?: React.ReactNode;
 }
