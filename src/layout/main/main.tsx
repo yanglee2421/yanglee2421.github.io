@@ -12,8 +12,12 @@ export function Main() {
 
   return (
     <>
-      <Appbar />
-      <Box>{outlet}</Box>
+      <Box display={"flex"} flexDirection={"column"} height={"100%"}>
+        <Appbar />
+        <Box flex={1} overflow={"hidden"}>
+          {outlet}
+        </Box>
+      </Box>
     </>
   );
 }

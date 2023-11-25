@@ -188,6 +188,14 @@ export const routes: RouteObject[] = [
               return import("@/pages/sso-login");
             },
           },
+          {
+            id: "blank",
+            path: "blank",
+            handle: { title: "blank" },
+            lazy() {
+              return import("@/pages/blank");
+            },
+          },
 
           // ** Charts
           {
