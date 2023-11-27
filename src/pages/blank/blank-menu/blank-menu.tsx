@@ -65,9 +65,9 @@ export function BlankMenu() {
     HTMLInputElement
   >["onChange"] = async (evt) => {
     const file = evt.target.files?.[0];
-    if (!file) return;
-
-    bgImgMutation.mutate(file);
+    if (file) {
+      bgImgMutation.mutate(file);
+    }
   };
 
   const handleBgAlphaChange: SliderProps["onChange"] = (evt, v) => {
