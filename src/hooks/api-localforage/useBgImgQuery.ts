@@ -1,13 +1,19 @@
 // Query Imports
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 
 // Localforage Imports
 import localforage from "localforage";
 
 export function useBgImgQuery() {
+  const queryClient = useQueryClient();
   return useQuery<string, Error>({
     queryKey: ["bg-img"],
     async queryFn() {
+      const prev = queryClient.getQueryData(["bg-img"]);
+      if (typeof prev === "string") {
+        URL.revokeObjectURL(prev);
+      }
+
       const file = await localforage.getItem<File>("bg-img");
 
       if (file) {
