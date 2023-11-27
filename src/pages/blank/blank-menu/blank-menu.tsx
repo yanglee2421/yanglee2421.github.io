@@ -25,9 +25,13 @@ import React from "react";
 
 // Components Imports
 import { Scrollbar } from "@/components";
+import { GlobalBg } from "./global-bg";
 
 // Query Imports
-import { useThemeMutation, useThemeQuery } from "@/hooks/api-theme";
+import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
+
+// Redux Imports
+import { useAppDispatch, useAppSelector, sliceTheme } from "@/redux";
 
 export function BlankMenu() {
   const [showDrawer, setShowDrawer] = React.useState(false);
@@ -36,78 +40,60 @@ export function BlankMenu() {
     return theme.breakpoints.down("sm");
   });
 
-  const themeQuery = useThemeQuery();
-  const themeMutation = useThemeMutation();
-  const { bgImg, bgAlpha, bgBlur } = themeQuery.data;
-  const [alpha, setAlpha] = React.useState(() => bgAlpha);
-  const [blur, setBlur] = React.useState(() => bgBlur);
+  const dispatch = useAppDispatch();
+  const bgAlpha = useAppSelector((s) => {
+    return s.theme.bgAlpha;
+  });
+  const bgBlur = useAppSelector((s) => {
+    return s.theme.bgBlur;
+  });
+
+  // Query Hooks
+  const bgImgQuery = useBgImgQuery();
+  const bgImgMutation = useBgImgMutation();
 
   const handleDrawerClose = () => {
     setShowDrawer(false);
   };
+
   const handleDrawerOpen = () => {
     setShowDrawer(true);
   };
+
   const handleBgImgChange: React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   >["onChange"] = async (evt) => {
-    try {
-      const dataURL = await new Promise<string>((res, rej) => {
-        const file = evt.target.files?.[0];
-        if (file) {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onerror = (evt) => {
-            rej(evt.target?.error);
-          };
-          reader.onload = (evt) => {
-            const dataURL = evt.target?.result;
-            if (typeof dataURL === "string") {
-              res(dataURL);
-              return;
-            }
+    const file = evt.target.files?.[0];
+    if (!file) return;
 
-            rej(new Error("result is not a string"));
-          };
-        }
-      });
-
-      themeMutation.mutate({
-        ...themeQuery.data,
-        bgImg: dataURL,
-      });
-    } catch (error) {
-      console.error(error);
-    }
+    bgImgMutation.mutate(file);
   };
 
   const handleBgAlphaChange: SliderProps["onChange"] = (evt, v) => {
     void evt;
 
     if (typeof v === "number") {
-      setAlpha(v);
-      themeMutation.mutate({
-        ...themeQuery.data,
-        bgAlpha: v,
-      });
+      dispatch(sliceTheme.actions.bgAlpha(v));
     }
   };
 
-  const handleBgblurChange: SliderProps["onChange"] = (evt, v) => {
+  const handleBgBlurChange: SliderProps["onChange"] = (evt, v) => {
     void evt;
 
     if (typeof v === "number") {
-      setBlur(v);
-      themeMutation.mutate({
-        ...themeQuery.data,
-        bgBlur: v,
-      });
+      dispatch(sliceTheme.actions.bgBlur(v));
     }
   };
 
   return (
     <>
+      <GlobalBg
+        loading={bgImgQuery.isFetching}
+        bgImg={bgImgQuery.data || ""}
+        bgAlpha={bgAlpha}
+        bgBlur={bgBlur}
+      />
       <IconButton
         onClick={handleDrawerOpen}
         color="inherit"
@@ -153,7 +139,7 @@ export function BlankMenu() {
                         sx={{ color: "common.white" }}
                       >
                         <StyledImg
-                          src={bgImg}
+                          src={bgImgQuery.data}
                           alt=""
                           sx={{
                             width: "100%",
@@ -171,19 +157,21 @@ export function BlankMenu() {
                     </CardContent>
                     <CardContent>
                       <Slider
-                        defaultValue={alpha}
+                        value={bgAlpha}
                         onChange={handleBgAlphaChange}
+                        valueLabelDisplay="auto"
                       />
                       <Slider
-                        defaultValue={blur}
-                        onChange={handleBgblurChange}
+                        value={bgBlur}
+                        onChange={handleBgBlurChange}
+                        valueLabelDisplay="auto"
                       />
                     </CardContent>
                     <CardActions>
                       <Button
                         size="small"
                         LinkComponent={"a"}
-                        href={bgImg}
+                        href={bgImgQuery.data || ""}
                         download={`${Date.now()}.png`}
                         title="download image"
                         startIcon={<Download fontSize="small" />}

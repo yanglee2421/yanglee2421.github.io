@@ -2,10 +2,8 @@
 import { QueryClient, DefaultOptions } from "@tanstack/react-query";
 
 // Persist Imports
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
+import { createSyncStoragePersister } from "@tanstack/query-sync-storage-persister";
 import { persistQueryClient } from "@tanstack/react-query-persist-client";
-
-import localforage from "localforage";
 
 // ** QueryClient
 export const queryClient = new QueryClient({
@@ -13,6 +11,16 @@ export const queryClient = new QueryClient({
     queries: queries(),
     mutations: mutations(),
   },
+});
+
+// ** Persist
+const persister = createSyncStoragePersister({
+  storage: sessionStorage,
+  key: import.meta.env.VITE_QUERY_PERSISTER_KEY,
+});
+persistQueryClient({
+  queryClient,
+  persister,
 });
 
 // ** Defaults
@@ -25,12 +33,6 @@ queryClient.setMutationDefaults(["post-demo"], {
   async mutationFn() {
     return { msg: "successly" };
   },
-});
-
-// ** Persist
-export const persister = createAsyncStoragePersister({
-  storage: localforage,
-  key: import.meta.env.VITE_QUERY_PERSISTER_KEY,
 });
 
 // ** Config

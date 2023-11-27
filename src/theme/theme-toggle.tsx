@@ -3,40 +3,31 @@ import { IconButton, IconButtonProps } from "@mui/material";
 import { LightModeOutlined, DarkModeOutlined } from "@mui/icons-material";
 
 // Redux Imports
+import { useAppSelector, useAppDispatch, sliceTheme } from "@/redux";
 
 // React Imports
 import React from "react";
-import { useThemeMutation, useThemeQuery } from "@/hooks/api-theme";
-import { useQueryClient } from "@tanstack/react-query";
 
 export function ThemeToggle(props: ThemeToggleProps) {
   // ** Props
   const { ...restProps } = props;
 
-  const themeQuery = useThemeQuery();
-  const themeMutation = useThemeMutation();
-  const queryClient = useQueryClient();
+  const mode = useAppSelector((s) => {
+    return s.theme.mode;
+  });
+  const dispatch = useAppDispatch();
 
   // Icon Element
   const iconEl = React.useMemo(() => {
-    const isDark = themeQuery.data.mode === "dark";
+    const isDark = mode === "dark";
 
     if (isDark) return <LightModeOutlined />;
     return <DarkModeOutlined />;
-  }, [themeQuery.data.mode]);
+  }, [mode]);
 
   // Handle Toogle
   const handleClick = () => {
-    const isDark = themeQuery.data.mode === "dark";
-    queryClient.setQueryData(["theme-config"], (prev: unknown) => {
-      if (!prev) return prev;
-
-      themeMutation.mutate({
-        ...prev,
-        mode: isDark ? "light" : "dark",
-      });
-      return { ...prev, mode: isDark ? "light" : "dark" };
-    });
+    dispatch(sliceTheme.actions.mode("dark"));
   };
 
   return (

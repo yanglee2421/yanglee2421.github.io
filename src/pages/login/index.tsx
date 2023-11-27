@@ -61,7 +61,7 @@ export function Component() {
       {
         onSuccess(usr) {
           React.startTransition(() => {
-            signIn({ ...usr, role: "admin", loginAt: 0 });
+            signIn({ ...usr, role: "admin", loginAt: 0 }, data.isRemember);
           });
         },
       }
