@@ -89,7 +89,7 @@ export function BlankMenu() {
   return (
     <>
       <GlobalBg
-        loading={bgImgQuery.isFetching}
+        loading={bgImgMutation.isPending}
         bgImg={bgImgQuery.data || ""}
         bgAlpha={bgAlpha}
         bgBlur={bgBlur}
