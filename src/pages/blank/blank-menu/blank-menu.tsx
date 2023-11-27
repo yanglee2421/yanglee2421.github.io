@@ -106,6 +106,8 @@ export function BlankMenu() {
         onOpen={handleDrawerOpen}
         onClose={handleDrawerClose}
         anchor={isExtraSmall ? "top" : "right"}
+        hideBackdrop
+        // variant="persistent"
         sx={{
           "& > .MuiPaper-root": {
             height: "100%",
