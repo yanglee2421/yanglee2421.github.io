@@ -18,6 +18,7 @@ import session from "redux-persist/lib/storage/session";
 // Slice Imports
 import { sliceLoginLocal } from "./slice-login-local";
 import { sliceLoginSession } from "./slice-login-session";
+import { sliceTheme } from "./slice-theme";
 
 // Create Reducer
 const rootReducer = combineReducers({
@@ -30,6 +31,7 @@ const rootReducer = combineReducers({
     },
     sliceLoginSession.reducer
   ),
+  [sliceTheme.name]: sliceTheme.reducer,
 });
 
 // Create Persisted Reducer

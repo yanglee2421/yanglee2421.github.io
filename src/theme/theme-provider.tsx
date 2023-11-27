@@ -17,7 +17,9 @@ import { toGlobalStyles } from "./to-global-styles";
 
 // Hooks Imports
 import { useIsDark } from "@/hooks/dom";
-import { useThemeQuery } from "@/hooks/api-theme";
+
+// Redux Imports
+import { useAppSelector } from "@/redux";
 
 void ScopedCssBaseline;
 
@@ -26,11 +28,13 @@ export function ThemeProvider(props: React.PropsWithChildren) {
   const { children } = props;
 
   // Redux Hooks
-  const themeQuery = useThemeQuery();
+  const mode = useAppSelector((s) => {
+    return s.theme.mode;
+  });
   const isDarkMedia = useIsDark();
 
   const toIsDark = () => {
-    switch (themeQuery.data.mode) {
+    switch (mode) {
       case "auto":
         return isDarkMedia;
       case "dark":
