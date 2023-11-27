@@ -2,37 +2,16 @@
 import { NavLink } from "react-router-dom";
 
 // MUI Imports
-import {
-  Box,
-  Button,
-  Typography,
-  Container,
-  Backdrop,
-  CircularProgress,
-} from "@mui/material";
+import { Box, Button, Typography, Container } from "@mui/material";
 
-// API Imports
-import { useBgImgQuery } from "@/hooks/api-localforage";
+// Components Imports
+import { BlankMenu } from "./blank-menu";
 
 export function Component() {
-  const bgImgQuery = useBgImgQuery();
-
   return (
     <>
-      <Backdrop open={bgImgQuery.isPending} sx={{ color: "common.white" }}>
-        <CircularProgress color="inherit" />
-      </Backdrop>
-      <Box
-        position={"fixed"}
-        display={"flex"}
-        sx={{
-          inset: 0,
-          backgroundImage: `url(${bgImgQuery.data})`,
-          backgroundPosition: "center center",
-          backgroundSize: "cover",
-          // backgroundAttachment: "fixed",
-        }}
-      >
+      <Box display={"flex"} color="common.white">
+        <BlankMenu />
         <Container disableGutters sx={{ pt: 36, px: 16 }}>
           <Typography variant="h1">404</Typography>
           <Typography variant="h2">Page not found</Typography>
