@@ -18,5 +18,6 @@ export function useBgImgQuery() {
     },
 
     staleTime: 0,
+    retry: false,
   });
 }
