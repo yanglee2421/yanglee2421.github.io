@@ -17,8 +17,8 @@ export function GlobalBg(props: GlobalBgProps) {
           inset: 0,
           backgroundImage: `url(${bgImg})`,
           backgroundAttachment: "fixed",
+          backgroundPosition: "center",
           backgroundSize: "cover",
-          // backgroundPosition: "center",
           filter: `blur(${20 * (bgBlur / 100)}px)`,
           transition(theme) {
             return theme.transitions.create("filter");
@@ -27,16 +27,16 @@ export function GlobalBg(props: GlobalBgProps) {
       >
         <Box
           position={"absolute"}
+          bgcolor={`rgba(0,0,0,${bgAlpha / 100})`}
           sx={{
             inset: 0,
-            bgcolor: `rgba(0,0,0,${bgAlpha / 100})`,
             transition(theme) {
               return theme.transitions.create("background-color");
             },
           }}
         ></Box>
       </Box>
-      <Backdrop open={loading} sx={{ color: "common.white" }}>
+      <Backdrop open={loading} unmountOnExit sx={{ color: "common.white" }}>
         <CircularProgress color="inherit" />
       </Backdrop>
     </>,
