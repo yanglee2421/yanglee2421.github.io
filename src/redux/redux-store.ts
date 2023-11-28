@@ -1,5 +1,5 @@
 // Redux Toolkit Imports
-import { combineReducers, configureStore, Reducer } from "@reduxjs/toolkit";
+import { combineReducers, configureStore } from "@reduxjs/toolkit";
 
 // Persist Imports
 import {
@@ -19,7 +19,6 @@ import session from "redux-persist/lib/storage/session";
 import { sliceLoginLocal } from "./slice-login-local";
 import { sliceLoginSession } from "./slice-login-session";
 import { sliceTheme } from "./slice-theme";
-import { sliceDemo } from "./slice-demo";
 
 // Create Reducer
 const rootReducer = combineReducers({
@@ -33,16 +32,15 @@ const rootReducer = combineReducers({
     sliceLoginSession.reducer
   ),
   [sliceTheme.name]: sliceTheme.reducer,
-  [sliceDemo.name]: sliceDemo.reducer,
 });
 
 // Create Persisted Reducer
 const reducer = persistReducer(
   {
-    key: "root",
+    key: import.meta.env.VITE_REDUX_PERSISTER_KEY,
     version: 1,
     storage,
-    blacklist: [sliceLoginSession.name, sliceDemo.name],
+    blacklist: [sliceLoginSession.name],
   },
   rootReducer
 );
@@ -63,6 +61,5 @@ export const store = configureStore({
 export const persistor = persistStore(store);
 
 // ** Types
-type RootReducer = typeof rootReducer;
-export type RootState = RootReducer extends Reducer<infer R> ? R : unknown;
+export type RootState = ReturnType<typeof store.getState>;
 export type AppDispatch = typeof store.dispatch;

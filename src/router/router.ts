@@ -4,4 +4,4 @@ import { routes } from "./router-routes";
 
 export const router = import.meta.env.PROD
   ? createHashRouter(routes)
-  : createBrowserRouter(routes, { basename: "/mui" });
+  : createBrowserRouter(routes, { basename: "/react-mui" });

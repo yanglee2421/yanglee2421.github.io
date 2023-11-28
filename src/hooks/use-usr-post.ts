@@ -15,10 +15,11 @@ export function useUsrPost() {
     },
     onSuccess(data) {
       queryClient.setQueryData<Res>(["usr_get"], (prev) => {
-        if (!prev) return data;
-        return { ...prev, ...data };
+        if (prev) {
+          return { ...prev, ...data };
+        }
+        return data;
       });
-      toast.success("Welcome back!");
     },
     onError(err) {
       toast.error(err.message);

@@ -1,5 +1,6 @@
 // API Hooks
 import { useInsightsTrend } from "@/hooks/api-posthog";
+import { platformQueryMap } from "@/api/posthog";
 
 // Components Imports
 import { LineChart } from "./line-chart";
@@ -16,12 +17,10 @@ import {
   Grid,
   styled,
   SelectProps,
+  Alert,
 } from "@mui/material";
 import { LoadingButton } from "@mui/lab";
 import { RefreshOutlined } from "@mui/icons-material";
-
-//
-import { eventsMap } from "./events-map";
 
 // React Imports
 import React from "react";
@@ -34,6 +33,10 @@ export function PosthogInsights() {
     });
   });
 
+  const queryMap = platformQueryMap.get(3);
+  const events = queryMap ? [...queryMap.values()] : [];
+  const isWithoutFalsy = [queryMap, events].every(Boolean);
+
   const query = useInsightsTrend(
     {
       ...toJsonParse(date),
@@ -45,7 +48,7 @@ export function PosthogInsights() {
       session_id: "",
       client_query_id: "",
       refresh: true,
-      events: JSON.stringify([...eventsMap.values()]),
+      events: JSON.stringify(events),
     },
     { project_id: 1 }
   );
@@ -79,6 +82,10 @@ export function PosthogInsights() {
     setDate(dateJson);
   };
 
+  if (!isWithoutFalsy) {
+    return <Alert severity="error">Invalid platform type</Alert>;
+  }
+
   return (
     <>
       <Grid container spacing={6} p={6}>
@@ -86,9 +93,14 @@ export function PosthogInsights() {
           <StyledCard>
             <CardHeader
               title="Trends"
-              subheader={`Last refresh ${new Date(
-                query.data?.last_refresh || ""
-              ).toLocaleString()}`}
+              subheader={
+                <>
+                  {query.data?.last_refresh &&
+                    `Last refresh ${new Date(
+                      query.data?.last_refresh || ""
+                    ).toLocaleString()}`}
+                </>
+              }
               sx={{
                 flexDirection: ["column", "row"],
                 alignItems: ["flex-start", "center"],
@@ -97,7 +109,7 @@ export function PosthogInsights() {
               }}
               action={
                 <LoadingButton
-                  loading={query.isFetching}
+                  loading={query.isRefetching}
                   onClick={() => query.refetch()}
                   color="success"
                   startIcon={<RefreshOutlined />}

@@ -14,14 +14,14 @@ export default defineConfig((configEnv) => {
   return {
     plugins: [react()],
 
-    // Path Alias
+    // Path alias
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
     },
 
-    // ** CSS
+    // CSS configuration
     css: {
       preprocessorOptions: {
         scss: {
@@ -33,10 +33,10 @@ export default defineConfig((configEnv) => {
       },
     },
 
-    // Base URL
-    base: isBuild ? "./" : "/mui",
+    // Base URI
+    base: isBuild ? "./" : "/react-mui",
 
-    // ** Build
+    // Build configuration
     build: build(configEnv),
 
     // DEV Server
@@ -47,24 +47,35 @@ export default defineConfig((configEnv) => {
   };
 });
 
-// Build config
-function build({ mode }: ConfigEnv): UserConfig["build"] {
+// Build configuration
+function build(configEnv: ConfigEnv): UserConfig["build"] {
+  void configEnv;
+
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  void mode;
 
   return {
     outDir: resolve(__dirname, "./docs"),
+    emptyOutDir: true,
+
+    chunkSizeWarningLimit: 500,
+    sourcemap: false,
+
+    rollupOptions: {
+      input: {
+        index: resolve(__dirname, "./index.html"),
+      },
+      output: {},
+    },
   };
 }
 
-// Vite server config
-function server({ mode }: ConfigEnv): UserConfig["server"] {
+// Vite development server
+function server(configEnv: ConfigEnv): UserConfig["server"] {
+  void configEnv;
+
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  void mode;
 
   return {
-    https: false,
-    fs: { allow: [resolve(__dirname, "../../")] },
     port: 3006,
     // proxy: {
     //   "/api": {
@@ -75,6 +86,11 @@ function server({ mode }: ConfigEnv): UserConfig["server"] {
     //       return path.replace(/^\/dev/, "");
     //     },
     //   },
+    // },
+    fs: { allow: [resolve(__dirname, "../../")] },
+    // https: {
+    //   cert: "",
+    //   key: "",
     // },
   };
 }

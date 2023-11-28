@@ -4,7 +4,10 @@ import type { ApexOptions } from "apexcharts";
 
 // MUI Imports
 import { useTheme, Theme } from "@mui/material";
-import { green, grey, blue, purple } from "@mui/material/colors";
+import { green, blue, purple } from "@mui/material/colors";
+
+// React Imports
+// import React from "react";
 
 export function LineChart(props: LineChartProps) {
   // ** Props
@@ -32,44 +35,66 @@ function options(options: Options): ApexOptions {
   return {
     chart: {
       parentHeightOffset: 0,
-      zoom: { enabled: false },
-      toolbar: { show: false },
+      zoom: {
+        enabled: false,
+      },
+      toolbar: {
+        show: false,
+      },
     },
     colors: ["#ff9f43", green[500], blue[500], purple[400]],
-    stroke: { curve: "straight" },
-    dataLabels: { enabled: false },
+    stroke: {
+      curve: "straight",
+    },
+    dataLabels: {
+      enabled: false,
+    },
     markers: {
       strokeWidth: 7,
       strokeOpacity: 1,
-      colors: ["#ff9f43"],
-      strokeColors: ["#fff", grey[100], grey[200], grey[300]],
+      colors: ["#ff9f43", green[500], blue[500], purple[400]],
+      strokeColors: "#fff",
     },
     grid: {
-      padding: { top: -10 },
+      padding: {
+        top: -10,
+      },
       borderColor: theme.palette.divider,
       xaxis: {
-        lines: { show: true },
+        lines: {
+          show: true,
+        },
       },
     },
     yaxis: {
       labels: {
-        style: { colors: theme.palette.text.disabled },
+        style: {
+          colors: theme.palette.text.disabled,
+        },
       },
     },
     xaxis: {
-      axisBorder: { show: false },
-      axisTicks: { color: theme.palette.divider },
+      axisBorder: {
+        show: false,
+      },
+      axisTicks: {
+        color: theme.palette.divider,
+      },
       crosshairs: {
-        stroke: { color: theme.palette.divider },
+        stroke: {
+          color: theme.palette.divider,
+        },
       },
       labels: {
-        style: { colors: theme.palette.text.disabled },
+        style: {
+          colors: theme.palette.text.disabled,
+        },
       },
       categories,
     },
     legend: {
       labels: {
-        colors: [theme.palette.text.primary],
+        colors: theme.palette.text.primary,
       },
     },
   };

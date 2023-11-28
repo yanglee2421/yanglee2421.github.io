@@ -52,7 +52,7 @@ export const routes: RouteObject[] = [
         },
       },
 
-      // With APP Bar
+      // With App Bar
       {
         id: "with-appbar",
         path: "",
@@ -180,6 +180,14 @@ export const routes: RouteObject[] = [
               return import("@/pages/swiper");
             },
           },
+          {
+            id: "sso-login",
+            path: "sso-login",
+            handle: { title: "SSO" },
+            lazy() {
+              return import("@/pages/sso-login");
+            },
+          },
 
           // ** Charts
           {
@@ -191,6 +199,16 @@ export const routes: RouteObject[] = [
             },
           },
         ],
+      },
+
+      // Without App Bar
+      {
+        id: "blank",
+        path: "blank",
+        handle: { title: "blank" },
+        lazy() {
+          return import("@/pages/blank");
+        },
       },
     ],
   },
