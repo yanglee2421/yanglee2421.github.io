@@ -32,6 +32,7 @@ import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
 
 // Redux Imports
 import { useAppDispatch, useAppSelector, sliceTheme } from "@/redux";
+import localforage from "localforage";
 
 export function BlankMenu() {
   const [showDrawer, setShowDrawer] = React.useState(false);
@@ -84,6 +85,18 @@ export function BlankMenu() {
     if (typeof v === "number") {
       dispatch(sliceTheme.actions.bgBlur(v));
     }
+  };
+
+  const handleShare = async () => {
+    const file = await localforage.getItem<File>("bg-img");
+    if (!file) return;
+
+    navigator.share({
+      url: window.location.href,
+      title: "Share feature",
+      text: file.name,
+      files: [file],
+    });
   };
 
   return (
@@ -184,11 +197,14 @@ export function BlankMenu() {
                     </CardActions>
                   </Card>
                   <Card>
-                    <CardContent></CardContent>
+                    <CardHeader title={"Share"} />
+                    <CardContent>
+                      <Button onClick={handleShare}>share</Button>
+                    </CardContent>
                   </Card>
                 </Stack>
 
-                <Box height={1000}>465464161</Box>
+                <Box height={1000}></Box>
               </Box>
             </Scrollbar>
           </Box>
