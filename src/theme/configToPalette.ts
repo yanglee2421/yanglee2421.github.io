@@ -1,20 +1,15 @@
 // MUI Imports
-import { PaletteOptions } from "@mui/material";
+import { PaletteOptions, alpha } from "@mui/material";
 
-// Type Imports
-import type { ToThemeParams } from "./to-theme";
-
-export function toPalette(params: ToThemeParams): PaletteOptions {
+export function configToPalette(params: PaletteConfig): PaletteOptions {
   // ** Params
-  const { isDark } = params;
+  const { mode, lightColor, darkColor, whiteColor } = params;
 
-  const whiteColor = "#FFF";
-  const lightColor = "58, 53, 65";
-  const darkColor = "231, 227, 252";
+  const isDark = mode === "dark";
   const mainColor = isDark ? darkColor : lightColor;
 
   return {
-    mode: isDark ? "dark" : "light",
+    mode,
     common: {
       black: "#000",
       white: whiteColor,
@@ -35,6 +30,7 @@ export function toPalette(params: ToThemeParams): PaletteOptions {
       A400: "#BDBDBD",
       A700: "#616161",
     },
+
     primary: {
       main: "#9155FD",
       light: "#9E69FD",
@@ -71,28 +67,41 @@ export function toPalette(params: ToThemeParams): PaletteOptions {
       dark: "#139CE0",
       contrastText: whiteColor,
     },
-    divider: `rgba(${mainColor}, 0.12)`,
+
+    divider: alpha(mainColor, 0.12),
     text: {
-      primary: `rgba(${mainColor}, 0.87)`,
-      secondary: `rgba(${mainColor}, 0.6)`,
-      disabled: `rgba(${mainColor}, 0.38)`,
+      primary: alpha(mainColor, 0.87),
+      secondary: alpha(mainColor, 0.6),
+      disabled: alpha(mainColor, 0.38),
     },
     background: {
       paper: isDark ? "#312D4B" : whiteColor,
       default: isDark ? "#28243D" : "#F4F5FA",
     },
+
     action: {
-      active: `rgba(${mainColor}, 0.54)`,
-      hover: `rgba(${mainColor}, 0.04)`,
-      hoverOpacity: 0.08,
-      selected: `rgba(${mainColor}, 0.08)`,
-      selectedOpacity: 0.16,
-      disabled: `rgba(${mainColor}, 0.26)`,
-      disabledOpacity: 0.38,
-      disabledBackground: `rgba(${mainColor}, 0.12)`,
-      focus: `rgba(${mainColor}, 0.12)`,
-      focusOpacity: 0.12,
+      active: alpha(mainColor, 0.54),
       activatedOpacity: 0.24,
+
+      disabled: alpha(mainColor, 0.26),
+      disabledOpacity: 0.38,
+      disabledBackground: alpha(mainColor, 0.12),
+
+      focus: alpha(mainColor, 0.12),
+      focusOpacity: 0.12,
+
+      hover: alpha(mainColor, 0.04),
+      hoverOpacity: 0.08,
+
+      selected: alpha(mainColor, 0.08),
+      selectedOpacity: 0.16,
     },
   };
+}
+
+interface PaletteConfig {
+  mode: "dark" | "light";
+  lightColor: string;
+  darkColor: string;
+  whiteColor: string;
 }

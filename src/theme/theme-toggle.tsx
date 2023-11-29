@@ -15,19 +15,18 @@ export function ThemeToggle(props: ThemeToggleProps) {
   const mode = useAppSelector((s) => {
     return s.theme.mode;
   });
+  const isDark = mode === "dark";
   const dispatch = useAppDispatch();
 
   // Icon Element
   const iconEl = React.useMemo(() => {
-    const isDark = mode === "dark";
-
     if (isDark) return <LightModeOutlined />;
     return <DarkModeOutlined />;
-  }, [mode]);
+  }, [isDark]);
 
   // Handle Toogle
   const handleClick = () => {
-    dispatch(sliceTheme.actions.mode("dark"));
+    dispatch(sliceTheme.actions.mode(isDark ? "light" : "dark"));
   };
 
   return (
