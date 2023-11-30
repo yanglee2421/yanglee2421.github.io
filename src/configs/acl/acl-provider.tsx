@@ -15,6 +15,7 @@ export function AclProvider(props: React.PropsWithChildren) {
   const { children } = props;
 
   const { usr } = useLogin();
+
   const ability = defineAbilityFor(usr?.role || "");
 
   return <AclContext.Provider value={ability}>{children}</AclContext.Provider>;

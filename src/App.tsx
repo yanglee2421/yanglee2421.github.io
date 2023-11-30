@@ -6,6 +6,7 @@ import { router } from "@/router";
 import { ThemeProvider } from "@/theme";
 import { ReduxProvider } from "@/redux";
 import { QueryProvider } from "@/api/provider";
+import { AclProvider } from "@/configs/acl";
 
 // Toast Imports
 import { Toaster } from "react-hot-toast";
@@ -14,10 +15,12 @@ export function App() {
   return (
     <ReduxProvider>
       <QueryProvider>
-        <ThemeProvider>
-          <Toaster />
-          <RouterProvider router={router} />
-        </ThemeProvider>
+        <AclProvider>
+          <ThemeProvider>
+            <Toaster />
+            <RouterProvider router={router} />
+          </ThemeProvider>
+        </AclProvider>
       </QueryProvider>
     </ReduxProvider>
   );

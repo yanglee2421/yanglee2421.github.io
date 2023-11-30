@@ -4,9 +4,18 @@ import { Box, Backdrop, CircularProgress } from "@mui/material";
 // React Imports
 import ReactDOM from "react-dom";
 
-export function GlobalBg(props: GlobalBgProps) {
-  // ** Props
-  const { loading, bgImg, bgAlpha, bgBlur } = props;
+// Redux Imports
+import { useAppSelector } from "@/redux";
+import { useBgImgQuery } from "@/hooks/api-localforage";
+
+export function GlobalBg() {
+  const query = useBgImgQuery();
+  const bgAlpha = useAppSelector((s) => {
+    return s.theme.bgAlpha;
+  });
+  const bgBlur = useAppSelector((s) => {
+    return s.theme.bgBlur;
+  });
 
   return ReactDOM.createPortal(
     <>
@@ -15,7 +24,7 @@ export function GlobalBg(props: GlobalBgProps) {
         zIndex={-1}
         sx={{
           inset: 0,
-          backgroundImage: `url(${bgImg})`,
+          backgroundImage: `url(${query.data})`,
           backgroundAttachment: "fixed",
           backgroundSize: "cover",
           // backgroundPosition: "center",
@@ -36,7 +45,7 @@ export function GlobalBg(props: GlobalBgProps) {
           }}
         ></Box>
       </Box>
-      <Backdrop open={loading} sx={{ color: "common.white" }}>
+      <Backdrop open={query.isPending} sx={{ color: "common.white" }}>
         <CircularProgress color="inherit" />
       </Backdrop>
     </>,

@@ -6,10 +6,12 @@ import { Box, styled } from "@mui/material";
 
 // Components Imports
 import { BlankMenu } from "./blank-menu";
+import { GlobalBg } from "@/components/ui";
 
 export function Blank() {
   return (
     <>
+      <GlobalBg />
       <Box
         position={"relative"}
         display={"flex"}

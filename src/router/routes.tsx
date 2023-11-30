@@ -5,7 +5,7 @@ export const routes: RouteObject[] = [
   {
     path: "",
     lazy() {
-      return import("./router-guard");
+      return import("./RootRoute");
     },
     children: [
       { path: "*", element: <Navigate to="/404" replace /> },
@@ -15,6 +15,14 @@ export const routes: RouteObject[] = [
         handle: { title: "404，NotFound" },
         lazy() {
           return import("@/pages/404");
+        },
+      },
+      {
+        id: "401",
+        path: "401",
+        handle: { title: "401, Not Allow" },
+        lazy() {
+          return import("@/pages/401");
         },
       },
 

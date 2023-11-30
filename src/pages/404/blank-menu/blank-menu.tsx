@@ -25,7 +25,6 @@ import React from "react";
 
 // Components Imports
 import { Scrollbar } from "@/components";
-import { GlobalBg } from "./global-bg";
 
 // Query Imports
 import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
@@ -88,12 +87,6 @@ export function BlankMenu() {
 
   return (
     <>
-      <GlobalBg
-        loading={bgImgMutation.isPending}
-        bgImg={bgImgQuery.data || ""}
-        bgAlpha={bgAlpha}
-        bgBlur={bgBlur}
-      />
       <IconButton
         onClick={handleDrawerOpen}
         color="inherit"

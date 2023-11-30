@@ -25,7 +25,6 @@ import React from "react";
 
 // Components Imports
 import { Scrollbar } from "@/components";
-import { GlobalBg } from "./global-bg";
 
 // Query Imports
 import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
@@ -64,8 +63,9 @@ export function BlankMenu() {
   const handleBgImgChange: React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
-  >["onChange"] = async (evt) => {
+  >["onChange"] = (evt) => {
     const file = evt.target.files?.[0];
+
     if (file) {
       bgImgMutation.mutate(file);
     }
@@ -101,12 +101,6 @@ export function BlankMenu() {
 
   return (
     <>
-      <GlobalBg
-        loading={bgImgMutation.isPending}
-        bgImg={bgImgQuery.data || ""}
-        bgAlpha={bgAlpha}
-        bgBlur={bgBlur}
-      />
       <IconButton
         onClick={handleDrawerOpen}
         color="inherit"
