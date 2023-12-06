@@ -102,6 +102,14 @@ export const routes: RouteObject[] = [
               return import("@/pages/autocomplete");
             },
           },
+          {
+            id: "tinymce",
+            path: "tinymce",
+            handle: { title: "TinyMCE" },
+            lazy() {
+              return import("@/pages/tinymce");
+            },
+          },
 
           // ** Table
           {

@@ -18,7 +18,7 @@ export function MenuGroup(props: MenuGroupProps) {
   // ** Props
   const { label, icon, children, ...restProps } = props;
 
-  const [open, setOpen] = React.useState(false);
+  const [open, setOpen] = React.useState(true);
   const toggleHandler = () => {
     setOpen((p) => !p);
   };
