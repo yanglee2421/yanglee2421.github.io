@@ -44,8 +44,8 @@ export default defineConfig((configEnv) => {
       outDir: resolve(__dirname, "./docs"),
       emptyOutDir: true,
 
-      chunkSizeWarningLimit: 500,
       sourcemap: false,
+      chunkSizeWarningLimit: 500,
 
       rollupOptions: {
         input: {
