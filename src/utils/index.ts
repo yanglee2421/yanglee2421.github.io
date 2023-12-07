@@ -1,14 +1,17 @@
-export { toCountdown } from "./toCountdown";
-export { toLink } from "./toLink";
-export { toStringTag } from "./toStringTag";
+// ** Web
+export * from "./class-snow";
+export * from "./class-particle";
+export * from "./getIsFirefox";
+export * from "./toDataURL";
+export * from "./toLink";
 
-export * from "./string-to-color";
+// ** ECMAScript
+export * from "./stringToColor";
+export * from "./toCompact";
+export * from "./toCountdown";
+export * from "./toJsonClone";
+export * from "./toStringTag";
+export * from "./toUniqBy";
 
-// ** Class
-export { Snow } from "./class-snow";
-export { Particles } from "./class-particle";
-
+// ** Common
 export * from "./timeout";
-export * from "./to-data-url";
-export * from "./to-compact";
-export * from "./to-json-clone";

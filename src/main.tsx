@@ -19,18 +19,22 @@ import "@fontsource/roboto/900.css";
 // FakeDB Imports
 import "@/api/fakedb";
 
-// HTML Element
-const el = document.querySelector("#root");
-bootstrap(el);
+init();
 
-function bootstrap(el: Element | null) {
-  if (!el) {
-    console.error("Invalid Element");
+/**
+ * @description Initialize React Application
+ */
+function init() {
+  const container = document.getElementById("root");
+
+  // No Container Element
+  if (!container) {
+    console.error("Can not find element #root");
     return;
   }
 
-  // React Root
-  ReactDOM.createRoot(el).render(
+  // Has Container Element
+  ReactDOM.createRoot(container).render(
     <React.StrictMode>
       <App />
     </React.StrictMode>
