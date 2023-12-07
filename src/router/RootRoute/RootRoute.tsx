@@ -69,7 +69,7 @@ export function RootRoute() {
     const to = { pathname: "/login", search };
 
     return <Navigate to={to} replace />;
-  }, [matches, searchParams, outlet, usr]);
+  }, [matches, searchParams, outlet, usr, acl]);
 
   useNProgress();
   useRouteTitle();
