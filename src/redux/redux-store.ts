@@ -1,5 +1,6 @@
 // Redux Toolkit Imports
 import { combineReducers, configureStore } from "@reduxjs/toolkit";
+import { setupListeners } from "@reduxjs/toolkit/query";
 
 // Persist Imports
 import {
@@ -19,43 +20,48 @@ import session from "redux-persist/lib/storage/session";
 import { sliceLoginLocal } from "./slice-login-local";
 import { sliceLoginSession } from "./slice-login-session";
 import { sliceTheme } from "./slice-theme";
-
-// Create Reducer
-const rootReducer = combineReducers({
-  [sliceLoginLocal.name]: sliceLoginLocal.reducer,
-  [sliceLoginSession.name]: persistReducer(
-    {
-      key: sliceLoginSession.name,
-      storage: session,
-      blacklist: [],
-    },
-    sliceLoginSession.reducer
-  ),
-  [sliceTheme.name]: sliceTheme.reducer,
-});
-
-// Create Persisted Reducer
-const reducer = persistReducer(
-  {
-    key: import.meta.env.VITE_REDUX_PERSISTER_KEY,
-    version: 1,
-    storage,
-    blacklist: [sliceLoginSession.name],
-  },
-  rootReducer
-);
+import { sliceApi } from "./slice-api";
 
 // Create Store
 export const store = configureStore({
-  reducer,
+  reducer: persistReducer(
+    // Persist configuration
+    {
+      key: import.meta.env.VITE_REDUX_PERSISTER_KEY,
+      version: 1,
+      storage,
+      blacklist: [sliceLoginSession.name, sliceApi.reducerPath],
+    },
+
+    // Root reducer
+    combineReducers({
+      [sliceLoginLocal.name]: sliceLoginLocal.reducer,
+      [sliceLoginSession.name]: persistReducer(
+        {
+          key: sliceLoginSession.name,
+          storage: session,
+          blacklist: [],
+        },
+        sliceLoginSession.reducer
+      ),
+      [sliceTheme.name]: sliceTheme.reducer,
+      [sliceApi.reducerPath]: sliceApi.reducer,
+    })
+  ),
+
+  // ** Middleware
   middleware(getMiddleWare) {
     return getMiddleWare({
       serializableCheck: {
         ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
       },
-    });
+    }).concat(sliceApi.middleware);
   },
 });
+
+// optional, but required for refetchOnFocus/refetchOnReconnect behaviors
+// see `setupListeners` docs - takes an optional callback as the 2nd arg for customization
+setupListeners(store.dispatch);
 
 // Create Persisted Store
 export const persistor = persistStore(store);
