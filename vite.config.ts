@@ -14,14 +14,14 @@ export default defineConfig((configEnv) => {
   return {
     plugins: [react()],
 
-    // Path alias
+    // Path Alias
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
     },
 
-    // CSS configuration
+    // CSS Configuration
     css: {
       preprocessorOptions: {
         scss: {
@@ -36,10 +36,10 @@ export default defineConfig((configEnv) => {
     // Base URI
     base: isBuild ? "./" : "/react-mui",
 
-    // Env file directory
+    // Env File Directory
     envDir: resolve(__dirname, "./"),
 
-    // Build configuration
+    // Build Configuration
     build: {
       outDir: resolve(__dirname, "./docs"),
       emptyOutDir: true,
@@ -75,7 +75,7 @@ export default defineConfig((configEnv) => {
       minify: "esbuild",
     },
 
-    // DEV Server
+    // Dev Server
     server: {
       port: 3006,
       strictPort: true,
@@ -92,7 +92,9 @@ export default defineConfig((configEnv) => {
           ws: true,
         },
       },
-      fs: { allow: [resolve(__dirname, "../../")] },
+      fs: {
+        allow: [resolve(__dirname, "../../")],
+      },
       // https: {
       //   cert: "",
       //   key: "",
