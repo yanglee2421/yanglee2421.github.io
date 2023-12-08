@@ -33,7 +33,6 @@ export function PosthogEvents() {
 
   const queryMap = platformQueryMap.get(3);
   const eventQuery = queryMap?.get(String(event));
-  const isWithoutFalsy = [queryMap, eventQuery].every(Boolean);
 
   const query = usePosthogQuery(
     {
@@ -68,6 +67,8 @@ export function PosthogEvents() {
         time: item[5],
       };
     });
+
+  const isWithoutFalsy = [queryMap, eventQuery].every(Boolean);
 
   if (!isWithoutFalsy) {
     return <Alert severity="error">Invalid platform or event</Alert>;
