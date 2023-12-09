@@ -41,25 +41,21 @@ export function RootRoute() {
       return null;
     }
 
-    // To Login
+    // Login page
     if (currentRoute.id === "login") {
       const returnURL = searchParams.get("returnURL") || "/";
-
       return usr ? <Navigate to={returnURL} replace /> : outlet;
     }
 
-    // To Whitelist
+    // Whitelist
     if (whitelist.has(currentRoute.id)) {
       return outlet;
     }
 
     // Has Logged
     if (usr) {
-      return acl.can("read", `page-${currentRoute.id}`) ? (
-        outlet
-      ) : (
-        <Navigate to={"/401"} replace />
-      );
+      const hasPermission = acl.can("read", `page-${currentRoute.id}`);
+      return hasPermission ? outlet : <Navigate to={"/401"} replace />;
     }
 
     // Not Logged
