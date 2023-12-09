@@ -44,6 +44,7 @@ export default defineConfig((configEnv) => {
       outDir: resolve(__dirname, "./docs"),
       emptyOutDir: true,
 
+      manifest: false,
       sourcemap: false,
       chunkSizeWarningLimit: 500,
 
@@ -71,7 +72,7 @@ export default defineConfig((configEnv) => {
       minify: "esbuild",
 
       cssTarget: ["es2020", "edge88", "firefox78", "chrome87", "safari14"],
-      cssMinify: true,
+      cssMinify: "esbuild",
       cssCodeSplit: true,
     },
 
