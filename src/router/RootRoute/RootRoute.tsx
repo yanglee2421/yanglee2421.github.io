@@ -55,9 +55,11 @@ export function RootRoute() {
 
     // Has Logged
     if (usr) {
-      const isHasAcl = acl.can("read", `page-${currentRoute.id}`);
-
-      return isHasAcl ? outlet : <Navigate to={"/401"} replace />;
+      return acl.can("read", `page-${currentRoute.id}`) ? (
+        outlet
+      ) : (
+        <Navigate to={"/401"} replace />
+      );
     }
 
     // Not Logged
