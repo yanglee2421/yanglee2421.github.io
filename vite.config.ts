@@ -67,12 +67,12 @@ export default defineConfig((configEnv) => {
         },
       },
 
+      target: "modules",
+      minify: "esbuild",
+
       cssTarget: ["es2020", "edge88", "firefox78", "chrome87", "safari14"],
       cssMinify: true,
       cssCodeSplit: true,
-
-      target: "modules",
-      minify: "esbuild",
     },
 
     // Dev Server
