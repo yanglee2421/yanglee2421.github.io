@@ -4,28 +4,20 @@ import { Editor, IAllProps } from "@tinymce/tinymce-react";
 // React Imports
 import React from "react";
 
-interface TinyMCEProps extends Omit<IAllProps, "onChange"> {
-  value: string;
-  onChange(html: string): void;
-}
-
-export function TinyMCE(props: TinyMCEProps) {
+export function TinyMCE(props: IAllProps) {
   // Props
-  const { value, onChange, ...restProps } = props;
+  const { ...restProps } = props;
 
   const editorRef = React.useRef<Editor["editor"]>();
-  const handleInit: IAllProps["onInit"] = (...args) => {
-    const editor = args[1];
-    editorRef.current = editor;
-  };
 
   return (
     <Editor
-      value={value}
-      onEditorChange={onChange}
       apiKey="4hxy0mee8bp47o512g4sy8s3ihg2djrmbiwtei8kduky11io"
-      onInit={handleInit}
       init={init()}
+      onInit={(evt, editor) => {
+        void evt;
+        editorRef.current = editor;
+      }}
       {...restProps}
     />
   );
