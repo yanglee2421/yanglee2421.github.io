@@ -1,5 +1,13 @@
 // MUI Imports
 import { PaletteOptions, alpha } from "@mui/material";
+import {
+  deepPurple,
+  grey,
+  lightGreen,
+  red,
+  amber,
+  blue,
+} from "@mui/material/colors";
 
 export function configToPalette(params: PaletteConfig): PaletteOptions {
   // ** Params
@@ -32,39 +40,39 @@ export function configToPalette(params: PaletteConfig): PaletteOptions {
     },
 
     primary: {
-      main: "#9155FD",
-      light: "#9E69FD",
-      dark: "#804BDF",
+      main: deepPurple["A400"],
+      light: deepPurple["A200"],
+      dark: deepPurple["A700"],
       contrastText: whiteColor,
     },
     secondary: {
-      main: "#8A8D93",
-      light: "#9C9FA4",
-      dark: "#777B82",
+      main: grey["A400"],
+      light: grey["A200"],
+      dark: grey["A700"],
       contrastText: whiteColor,
     },
     success: {
-      main: "#56CA00",
-      light: "#6AD01F",
-      dark: "#4CB200",
+      main: lightGreen["A400"],
+      light: lightGreen["A200"],
+      dark: lightGreen["A700"],
       contrastText: whiteColor,
     },
     error: {
-      main: "#FF4C51",
-      light: "#FF6166",
-      dark: "#E04347",
+      main: red["A400"],
+      light: red["A200"],
+      dark: red["A700"],
       contrastText: whiteColor,
     },
     warning: {
-      main: "#FFB400",
-      light: "#FFCA64",
-      dark: "#E09E00",
+      main: amber["A400"],
+      light: amber["A200"],
+      dark: amber["A700"],
       contrastText: whiteColor,
     },
     info: {
-      main: "#16B1FF",
-      light: "#32BAFF",
-      dark: "#139CE0",
+      main: blue["A400"],
+      light: blue["A200"],
+      dark: blue["A700"],
       contrastText: whiteColor,
     },
 

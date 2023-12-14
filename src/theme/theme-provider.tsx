@@ -6,7 +6,6 @@ import {
   Components,
   GlobalStyles,
   GlobalStylesProps,
-  ScopedCssBaseline,
   Theme,
   ThemeProvider as MuiThemeProvider,
   Palette,
@@ -25,8 +24,7 @@ import { useIsDark } from "@/hooks/dom";
 
 // Redux Imports
 import { useAppSelector } from "@/redux";
-
-void ScopedCssBaseline;
+import { grey } from "@mui/material/colors";
 
 export function ThemeProvider(props: React.PropsWithChildren) {
   // ** Props
@@ -64,8 +62,10 @@ export function ThemeProvider(props: React.PropsWithChildren) {
     palette: configToPalette({
       mode: themeMode,
       whiteColor: "#FFF",
-      lightColor: "rgb(58, 53, 65)",
-      darkColor: "rgb(231, 227, 252)",
+      // lightColor: "rgb(58, 53, 65)",
+      // darkColor: "rgb(231, 227, 252)",
+      lightColor: grey[900],
+      darkColor: grey[50],
     }),
     typography,
     components: cmponents(),
