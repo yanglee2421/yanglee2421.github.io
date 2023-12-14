@@ -14,18 +14,20 @@ import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
 
 // Components Imports
 import { CardRadio } from "./card-radio";
+import { FiveForm } from "./FiveForm";
 
 // React Imports
 import React from "react";
 
 export function Component() {
   const [tab, setTab] = React.useState("five");
+  const [selected, setSelected] = React.useState("five");
+
   const tabChangeHandler: TabListProps["onChange"] = (evt, v) => {
     void evt;
     setTab(v);
   };
 
-  const [selected, setSelected] = React.useState("five");
   const selecChgHandler: SelectProps["onChange"] = (evt) => {
     setSelected(String(evt.target.value));
   };
@@ -74,7 +76,9 @@ export function Component() {
             </Select>
           </Box>
         </Box>
-        <TabPanel value="five">five</TabPanel>
+        <TabPanel value="five">
+          <FiveForm />
+        </TabPanel>
         <TabPanel value="six">six</TabPanel>
         <TabPanel value="seven">seven</TabPanel>
         <TabPanel value="eight">eight</TabPanel>

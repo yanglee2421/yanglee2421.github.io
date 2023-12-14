@@ -4,33 +4,28 @@ import { TextField, TextFieldProps } from "@mui/material";
 // Form Imports
 import { useFormContext, useController } from "react-hook-form";
 
-export type ItemTextProps = TextFieldProps & { name: string };
-
 export function ItemText(props: ItemTextProps) {
   // ** Props
-  const { name, ...restProps } = props;
+  const { name, disabled, ...restProps } = props;
 
-  // ** Form
-  const { control } = useFormContext();
-
-  // ** Field
-  const { field, fieldState } = useController({
+  // Form Hooks
+  const formCtx = useFormContext();
+  const controller = useController({
     name,
-    control,
+    control: formCtx.control,
     defaultValue: "",
+    disabled,
   });
-  const { value } = field;
-  const model = value ? String(value) : "";
-  const { error } = fieldState;
 
   return (
     <TextField
+      {...controller.field}
+      error={!!controller.fieldState.error}
+      helperText={controller.fieldState.error?.message}
       fullWidth
       {...restProps}
-      {...field}
-      value={model}
-      error={!!error}
-      helperText={error?.message}
     />
   );
 }
+
+export type ItemTextProps = TextFieldProps & { name: string };

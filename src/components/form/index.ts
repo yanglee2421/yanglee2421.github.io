@@ -1,5 +1,6 @@
 export * from "./tiny-mce";
-export * from "./item-radio";
+
+// React Hook Form
 export * from "./item-text";
 export * from "./item-checkbox";
 export * from "./item-passwd";
