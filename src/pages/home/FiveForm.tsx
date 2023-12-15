@@ -4,12 +4,11 @@ import {
   CardHeader,
   CardContent,
   Grid,
-  Input,
   InputAdornment,
-  InputLabel,
-  FormControl,
+  TextField,
+  IconButton,
 } from "@mui/material";
-import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import { VisibilityOutlined, SearchOutlined } from "@mui/icons-material";
 
 // Components Imports
 import { SkeletonCard } from "@/components/ui";
@@ -68,17 +67,22 @@ export function FiveForm() {
               />
             </Grid>
             <Grid item xs={12} sm={6}>
-              <FormControl fullWidth>
-                <InputLabel>Input</InputLabel>
-                <Input
-                  size="small"
-                  endAdornment={
+              <TextField
+                hiddenLabel
+                size="small"
+                variant="filled"
+                fullWidth
+                placeholder="Search go"
+                InputProps={{
+                  endAdornment: (
                     <InputAdornment position="end">
-                      <VisibilityOffOutlined />
+                      <IconButton size="small">
+                        <SearchOutlined fontSize="small" />
+                      </IconButton>
                     </InputAdornment>
-                  }
-                ></Input>
-              </FormControl>
+                  ),
+                }}
+              />
             </Grid>
           </Grid>
         </CardContent>
