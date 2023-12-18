@@ -13,10 +13,12 @@ export const axiosMock = axios.create({
 // Axios Interceptors
 axiosMock.interceptors.request.use((config) => {
   // Bearer Token
-  const sessionToken = sessionStorage.getItem("token");
-  const localToken = localStorage.getItem("token");
-  const token = localToken || sessionToken;
-  config.headers.setAuthorization(token);
+  if (!config.headers.getAuthorization()) {
+    const sessionToken = sessionStorage.getItem("token");
+    const localToken = localStorage.getItem("token");
+    const token = localToken || sessionToken;
+    config.headers.setAuthorization(token);
+  }
 
   // Accept Lang
   const locale = i18next.language;
