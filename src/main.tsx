@@ -16,18 +16,19 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "@fontsource/roboto/900.css";
 
-// FakeDB Imports
-import "@/api/fakedb";
+initApp();
 
-init();
+function initApp() {
+  const container = (() => {
+    const existedEl = document.getElementById("root");
+    if (existedEl) {
+      return existedEl;
+    }
 
-function init() {
-  const container = document.getElementById("root");
-
-  if (!container) {
-    console.error("Can not find element #root");
-    return;
-  }
+    const el = document.createElement("div");
+    el.id = "root";
+    return el;
+  })();
 
   ReactDOM.createRoot(container).render(
     <React.StrictMode>

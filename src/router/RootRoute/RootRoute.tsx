@@ -2,9 +2,6 @@
 import { useRouteTitle } from "./useRouteTitle";
 import { useNProgress } from "./useNProgress";
 
-// API Imports
-import { useLoginMe, useLogin } from "@/hooks";
-
 // Router Imports
 import {
   useMatches,
@@ -17,8 +14,11 @@ import { whitelist } from "./whitelist";
 // React Imports
 import React from "react";
 
+// Store Imports
+import { useAuthStore } from "@/hooks/store";
+
 // Acl Imports
-import { useAcl } from "@/configs/acl";
+import { defineAbilityFor, AclContext } from "@/configs/acl";
 
 export function RootRoute() {
   // Router Hooks
@@ -26,11 +26,7 @@ export function RootRoute() {
   const matches = useMatches();
   const [searchParams] = useSearchParams();
 
-  // Acl Hooks
-  const acl = useAcl();
-
-  // Login Hooks
-  const { usr } = useLogin();
+  const auth = useAuthStore();
 
   const routeNode = React.useMemo(() => {
     const currentRoute = matches[matches.length - 1];
@@ -44,7 +40,7 @@ export function RootRoute() {
     // Login page
     if (currentRoute.id === "login") {
       const returnURL = searchParams.get("returnURL") || "/";
-      return usr ? <Navigate to={returnURL} replace /> : outlet;
+      return auth.currentUser ? <Navigate to={returnURL} replace /> : outlet;
     }
 
     // Whitelist
@@ -53,9 +49,10 @@ export function RootRoute() {
     }
 
     // Has Logged
-    if (usr) {
-      const hasPermission = acl.can("read", `page-${currentRoute.id}`);
-      return hasPermission ? outlet : <Navigate to={"/401"} replace />;
+    if (auth.currentUser) {
+      // const hasPermission = acl.can("read", `page-${currentRoute.id}`);
+      // return hasPermission ? outlet : <Navigate to={"/401"} replace />;
+      return outlet;
     }
 
     // Not Logged
@@ -67,11 +64,14 @@ export function RootRoute() {
     const to = { pathname: "/login", search };
 
     return <Navigate to={to} replace />;
-  }, [matches, searchParams, outlet, usr, acl]);
+  }, [matches, searchParams, outlet, auth.currentUser]);
 
   useNProgress();
   useRouteTitle();
-  useLoginMe();
 
-  return <>{routeNode}</>;
+  return (
+    <AclContext.Provider value={defineAbilityFor("")}>
+      {routeNode}
+    </AclContext.Provider>
+  );
 }

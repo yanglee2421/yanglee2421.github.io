@@ -12,7 +12,9 @@ import { ExitToApp } from "@mui/icons-material";
 
 // React Imports
 import React from "react";
-import { useLogin } from "@/hooks";
+
+// Store Imports
+import { useAuthStore } from "@/hooks/store";
 
 export function UserDropdown() {
   const [open, setOpen] = React.useState(false);
@@ -27,7 +29,7 @@ export function UserDropdown() {
   };
 
   // Login hooks
-  const { signOut } = useLogin();
+  const auth = useAuthStore();
 
   return (
     <>
@@ -88,7 +90,11 @@ export function UserDropdown() {
         <MenuItem>one</MenuItem>
         <MenuItem>one</MenuItem>
         <Divider></Divider>
-        <MenuItem onClick={signOut}>
+        <MenuItem
+          onClick={() => {
+            auth.signOut();
+          }}
+        >
           <ListItemIcon>
             <ExitToApp />
           </ListItemIcon>

@@ -2,7 +2,6 @@
 import {
   Box,
   Divider,
-  FormControlLabel,
   IconButton,
   Link,
   Typography,
@@ -19,53 +18,39 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 // Components Imports
-import { ItemCheckbox, ItemPasswd, ItemText } from "@/components";
+import { ItemPasswd, ItemText } from "@/components";
 
-// Login Imports
-import { useLogin, useUsrPost } from "@/hooks";
+// Query Imports
+import { useSignIn } from "@/hooks/api-firebase";
 
 // Router Imports
 import { Link as RouterLink } from "react-router-dom";
-
-// React Imports
-import React from "react";
 
 export function Component() {
   // Form Hooks
   const formCtx = useForm({
     defaultValues: {
-      email: "admin@demo.com",
-      passwd: "test123456",
-      isRemember: false,
+      email: "",
+      password: "",
     },
     resolver: yupResolver(
       yup.object().shape({
-        email: yup.string().email().max(50).required(),
-        passwd: yup.string().min(8).max(16).required(),
-        isRemember: yup.boolean(),
+        email: yup.string().email().max(128).required(),
+        password: yup.string().min(8).max(16).required(),
       })
     ),
   });
 
-  // Login Hooks
-  const { signIn } = useLogin();
-  const loginMutation = useUsrPost();
-
+  const mutation = useSignIn();
   const theme = useTheme();
   const isSm = useMediaQuery(theme.breakpoints.down("md"));
 
   // Submit & Reset
   const handleSubmit = formCtx.handleSubmit((data) => {
-    loginMutation.mutate(
-      { data },
-      {
-        onSuccess(usr) {
-          React.startTransition(() => {
-            signIn({ ...usr, role: "admin", loginAt: 0 }, data.isRemember);
-          });
-        },
-      }
-    );
+    mutation.mutate(data, {
+      onError() {},
+      onSuccess() {},
+    });
   });
 
   return (
@@ -107,16 +92,12 @@ export function Component() {
           >
             <FormProvider {...formCtx}>
               <ItemText name="email" label="Email" />
-              <ItemPasswd name="passwd" label="Password" />
+              <ItemPasswd name="password" label="Password" />
               <Box
                 display={"flex"}
                 justifyContent={"space-between"}
                 alignItems={"center"}
               >
-                <FormControlLabel
-                  control={<ItemCheckbox name="isRemember" />}
-                  label={<Typography variant="body2">Remember Me</Typography>}
-                />
                 <Link
                   variant="body2"
                   component={RouterLink}
@@ -126,7 +107,7 @@ export function Component() {
                 </Link>
               </Box>
               <LoadingButton
-                loading={loginMutation.isPending}
+                loading={mutation.isPending}
                 type="submit"
                 variant="contained"
                 fullWidth
