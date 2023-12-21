@@ -16,23 +16,20 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "@fontsource/roboto/900.css";
 
-initApp();
+const container = (() => {
+  const existedEl = document.getElementById("root");
+  if (existedEl) {
+    return existedEl;
+  }
 
-function initApp() {
-  const container = (() => {
-    const existedEl = document.getElementById("root");
-    if (existedEl) {
-      return existedEl;
-    }
+  const newEl = document.createElement("div");
+  newEl.id = "root";
+  document.body.append(newEl);
+  return newEl;
+})();
 
-    const el = document.createElement("div");
-    el.id = "root";
-    return el;
-  })();
-
-  ReactDOM.createRoot(container).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
-}
+ReactDOM.createRoot(container).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);
