@@ -15,7 +15,7 @@ import { whitelist } from "./whitelist";
 import React from "react";
 
 // Store Imports
-import { useAuthStore } from "@/hooks/store";
+import { useAuth } from "@/hooks/store";
 
 // Acl Imports
 import { defineAbilityFor, AclContext } from "@/configs/acl";
@@ -26,7 +26,7 @@ export function RootRoute() {
   const matches = useMatches();
   const [searchParams] = useSearchParams();
 
-  const auth = useAuthStore();
+  const auth = useAuth();
 
   const routeNode = React.useMemo(() => {
     const currentRoute = matches[matches.length - 1];
@@ -39,6 +39,12 @@ export function RootRoute() {
 
     // Login page
     if (currentRoute.id === "login") {
+      const returnURL = searchParams.get("returnURL") || "/";
+      return auth.currentUser ? <Navigate to={returnURL} replace /> : outlet;
+    }
+
+    // Register page
+    if (currentRoute.id === "register") {
       const returnURL = searchParams.get("returnURL") || "/";
       return auth.currentUser ? <Navigate to={returnURL} replace /> : outlet;
     }

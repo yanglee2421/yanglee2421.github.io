@@ -7,6 +7,7 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  alpha,
 } from "@mui/material";
 import { ExitToApp } from "@mui/icons-material";
 
@@ -14,7 +15,10 @@ import { ExitToApp } from "@mui/icons-material";
 import React from "react";
 
 // Store Imports
-import { useAuthStore } from "@/hooks/store";
+import { useAuth } from "@/hooks/store";
+
+// Utils Imports
+import { stringToColor } from "@/utils";
 
 export function UserDropdown() {
   const [open, setOpen] = React.useState(false);
@@ -29,7 +33,7 @@ export function UserDropdown() {
   };
 
   // Login hooks
-  const auth = useAuthStore();
+  const auth = useAuth();
 
   return (
     <>
@@ -73,9 +77,22 @@ export function UserDropdown() {
         }}
       >
         <Avatar
-          src="https://avatars.githubusercontent.com/u/122474700?v=4"
+          src={auth.currentUser?.photoURL || ""}
           alt="avator"
-        />
+          sx={{
+            color: auth.currentUser?.displayName
+              ? stringToColor(auth.currentUser.displayName.at(0) || "")
+              : void 0,
+            bgcolor: auth.currentUser?.displayName
+              ? alpha(
+                  stringToColor(auth.currentUser.displayName.at(0) || ""),
+                  0.12
+                )
+              : void 0,
+          }}
+        >
+          {auth.currentUser?.displayName?.at(0)}
+        </Avatar>
       </Badge>
       <Menu
         open={open}
