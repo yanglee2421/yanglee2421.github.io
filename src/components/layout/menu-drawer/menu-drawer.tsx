@@ -77,6 +77,7 @@ export function MenuDrawer(props: IconButtonProps) {
                   <MenuLink label="Input" to={"/input"} />
                   <MenuLink label="Upload" to={"/upload"} />
                   <MenuLink label="Autocomplete" to={"autocomplete"} />
+                  <MenuLink label="TinyMCE" to={"tinymce"} />
                 </MenuGroup>
                 <MenuGroup label="Table" icon={<GridOnOutlined />}>
                   <MenuLink label="Data Grid" to={"/data-grid"} />

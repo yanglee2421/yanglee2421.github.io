@@ -7,8 +7,11 @@ export const axiosPosthog = axios.create({
 });
 
 axiosPosthog.interceptors.request.use((config) => {
-  const token = import.meta.env.VITE_POSTHOG_APIKEY;
-  config.headers.setAuthorization(`Bearer ${token}`);
+  if (!config.headers.getAuthorization()) {
+    const token = import.meta.env.VITE_POSTHOG_APIKEY;
+    config.headers.setAuthorization(`Bearer ${token}`);
+  }
+
   return config;
 });
 axiosPosthog.interceptors.response.use(

@@ -16,23 +16,20 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "@fontsource/roboto/900.css";
 
-// FakeDB Imports
-import "@/api/fakedb";
-
-// HTML Element
-const el = document.querySelector("#root");
-bootstrap(el);
-
-function bootstrap(el: Element | null) {
-  if (!el) {
-    console.error("Invalid Element");
-    return;
+const container = (() => {
+  const existedEl = document.getElementById("root");
+  if (existedEl) {
+    return existedEl;
   }
 
-  // React Root
-  ReactDOM.createRoot(el).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>
-  );
-}
+  const newEl = document.createElement("div");
+  newEl.id = "root";
+  document.body.append(newEl);
+  return newEl;
+})();
+
+ReactDOM.createRoot(container).render(
+  <React.StrictMode>
+    <App />
+  </React.StrictMode>
+);

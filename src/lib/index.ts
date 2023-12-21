@@ -22,15 +22,9 @@ export function mutate() {
         once: true,
       }
     );
-    iframeEl.contentWindow.addEventListener(
-      "messageerror",
-      (evt) => {
-        rej(evt);
-      },
-      {
-        once: true,
-      }
-    );
+    iframeEl.contentWindow.addEventListener("messageerror", rej, {
+      once: true,
+    });
 
     iframeEl.contentWindow.postMessage(
       JSON.stringify({}),

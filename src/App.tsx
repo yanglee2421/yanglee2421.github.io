@@ -14,8 +14,8 @@ export function App() {
   return (
     <ReduxProvider>
       <QueryProvider>
+        <Toaster />
         <ThemeProvider>
-          <Toaster />
           <RouterProvider router={router} />
         </ThemeProvider>
       </QueryProvider>

@@ -6,10 +6,12 @@ import { Box, Button, Typography, Container } from "@mui/material";
 
 // Components Imports
 import { BlankMenu } from "./blank-menu";
+import { GlobalBg } from "@/components/ui";
 
 export function Component() {
   return (
     <>
+      <GlobalBg />
       <Box display={"flex"} color="common.white">
         <BlankMenu />
         <Container disableGutters sx={{ pt: 36, px: 16 }}>

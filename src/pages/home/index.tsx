@@ -9,23 +9,36 @@ import {
   MenuItem,
   SelectProps,
 } from "@mui/material";
-import { TabContext, TabList, TabListProps, TabPanel } from "@mui/lab";
+import {
+  LoadingButton,
+  TabContext,
+  TabList,
+  TabListProps,
+  TabPanel,
+} from "@mui/lab";
 import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
 
 // Components Imports
 import { CardRadio } from "./card-radio";
+import { FiveForm } from "./FiveForm";
 
 // React Imports
 import React from "react";
 
+// Query Imports
+import { useUploadAvator } from "@/hooks/api-firebase";
+
 export function Component() {
   const [tab, setTab] = React.useState("five");
+  const [selected, setSelected] = React.useState("five");
+
+  const avatorMutation = useUploadAvator();
+
   const tabChangeHandler: TabListProps["onChange"] = (evt, v) => {
     void evt;
     setTab(v);
   };
 
-  const [selected, setSelected] = React.useState("five");
   const selecChgHandler: SelectProps["onChange"] = (evt) => {
     setSelected(String(evt.target.value));
   };
@@ -74,8 +87,32 @@ export function Component() {
             </Select>
           </Box>
         </Box>
-        <TabPanel value="five">five</TabPanel>
-        <TabPanel value="six">six</TabPanel>
+        <TabPanel value="five">
+          <FiveForm />
+        </TabPanel>
+        <TabPanel value="six">
+          <LoadingButton
+            component="label"
+            loading={avatorMutation.isPending}
+            variant="contained"
+          >
+            <input
+              value={""}
+              onChange={(evt) => {
+                const files = evt.target.files;
+                if (!files) return;
+
+                const file = files[0];
+                if (!file) return;
+
+                avatorMutation.mutate(file);
+              }}
+              type="file"
+              hidden
+            />
+            upload
+          </LoadingButton>
+        </TabPanel>
         <TabPanel value="seven">seven</TabPanel>
         <TabPanel value="eight">eight</TabPanel>
       </TabContext>

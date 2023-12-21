@@ -9,19 +9,40 @@ import {
   Typography,
   styled,
 } from "@mui/material";
+import { FacebookOutlined, GitHub, Google, Twitter } from "@mui/icons-material";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
+import { yupResolver } from "@hookform/resolvers/yup";
+import * as yup from "yup";
 
 // Components Imports
 import { ItemText, ItemPasswd, ItemCheckbox } from "@/components";
-import { FacebookOutlined, GitHub, Google, Twitter } from "@mui/icons-material";
 
 // Rouetr Imports
 import { Link as RouterLink } from "react-router-dom";
+import { useCreateUser } from "@/hooks/api-firebase";
 
 export function Register() {
-  const formCtx = useForm({ defaultValues: {} });
+  const formCtx = useForm({
+    defaultValues: {
+      email: "",
+      password: "",
+    },
+
+    resolver: yupResolver(
+      yup.object().shape({
+        email: yup.string().email().max(128).required(),
+        password: yup.string().min(8).max(16).required(),
+      })
+    ),
+  });
+
+  const mutation = useCreateUser();
+
+  const handleSubmit = formCtx.handleSubmit((data) => {
+    mutation.mutate(data, {});
+  });
 
   return (
     <Box height={"100%"} display={"flex"}>
@@ -51,11 +72,10 @@ export function Register() {
             asperiores nesciunt explicabo nisi nam eos.
           </Typography>
         </Box>
-        <StyledForm sx={{ display: "flex", flexDirection: "column", gap: 4 }}>
+        <StyledForm onSubmit={handleSubmit}>
           <FormProvider {...formCtx}>
             <ItemText name="email" label="Email" />
-            <ItemText name="usrname" label="User Name" />
-            <ItemPasswd name="passwd" label="Password" />
+            <ItemPasswd name="password" label="Password" />
             <FormControlLabel
               control={<ItemCheckbox name="isAgree" />}
               label={
@@ -71,7 +91,13 @@ export function Register() {
                 </Box>
               }
             />
-            <LoadingButton variant="contained" fullWidth size="large">
+            <LoadingButton
+              type="submit"
+              loading={mutation.isPending}
+              variant="contained"
+              fullWidth
+              size="large"
+            >
               register
             </LoadingButton>
           </FormProvider>
@@ -106,4 +132,8 @@ export function Register() {
   );
 }
 
-const StyledForm = styled("form")({});
+const StyledForm = styled("form")({
+  display: "flex",
+  flexDirection: "column",
+  gap: 4,
+});

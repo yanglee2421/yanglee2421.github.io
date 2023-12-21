@@ -8,5 +8,4 @@ import React from "react";
 import { AppAbility, defineAbilityFor } from "./define-ability-for";
 
 export const AclContext = React.createContext<AppAbility>(defineAbilityFor(""));
-
 export const useAcl = () => useAbility(AclContext);

@@ -1,5 +1,5 @@
 /**
- * Geting the type of the target value
+ * @description Geting the type of the target value
  * @param target target value
  * @returns the type of the target value
  */

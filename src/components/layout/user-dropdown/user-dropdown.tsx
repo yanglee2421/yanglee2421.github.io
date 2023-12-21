@@ -7,12 +7,18 @@ import {
   ListItemText,
   Menu,
   MenuItem,
+  alpha,
 } from "@mui/material";
 import { ExitToApp } from "@mui/icons-material";
 
 // React Imports
 import React from "react";
-import { useLogin } from "@/hooks";
+
+// Store Imports
+import { useAuth } from "@/hooks/store";
+
+// Utils Imports
+import { stringToColor } from "@/utils";
 
 export function UserDropdown() {
   const [open, setOpen] = React.useState(false);
@@ -27,7 +33,7 @@ export function UserDropdown() {
   };
 
   // Login hooks
-  const { signOut } = useLogin();
+  const auth = useAuth();
 
   return (
     <>
@@ -71,9 +77,22 @@ export function UserDropdown() {
         }}
       >
         <Avatar
-          src="https://avatars.githubusercontent.com/u/122474700?v=4"
+          src={auth.currentUser?.photoURL || ""}
           alt="avator"
-        />
+          sx={{
+            color: auth.currentUser?.displayName
+              ? stringToColor(auth.currentUser.displayName.at(0) || "")
+              : void 0,
+            bgcolor: auth.currentUser?.displayName
+              ? alpha(
+                  stringToColor(auth.currentUser.displayName.at(0) || ""),
+                  0.12
+                )
+              : void 0,
+          }}
+        >
+          {auth.currentUser?.displayName?.at(0)}
+        </Avatar>
       </Badge>
       <Menu
         open={open}
@@ -88,7 +107,11 @@ export function UserDropdown() {
         <MenuItem>one</MenuItem>
         <MenuItem>one</MenuItem>
         <Divider></Divider>
-        <MenuItem onClick={signOut}>
+        <MenuItem
+          onClick={() => {
+            auth.signOut();
+          }}
+        >
           <ListItemIcon>
             <ExitToApp />
           </ListItemIcon>
