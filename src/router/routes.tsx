@@ -77,6 +77,15 @@ export const routes: RouteObject[] = [
             },
           },
 
+          {
+            id: "account",
+            path: "account",
+            handle: { title: "Account" },
+            lazy() {
+              return import("@/pages/account");
+            },
+          },
+
           // ** Form
           {
             id: "input",

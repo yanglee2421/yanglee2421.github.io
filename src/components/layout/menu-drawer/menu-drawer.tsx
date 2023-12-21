@@ -72,6 +72,7 @@ export function MenuDrawer(props: IconButtonProps) {
                 <MenuLink icon={<HomeOutlined />} label="Home" to={"/"} />
                 <MenuGroup icon={<ArticleOutlined />} label="Pages">
                   <MenuLink label="Not Found" to={"/404"} />
+                  <MenuLink label="Account" to={"/account"} />
                 </MenuGroup>
                 <MenuGroup icon={<FeedOutlined />} label="Form">
                   <MenuLink label="Input" to={"/input"} />
