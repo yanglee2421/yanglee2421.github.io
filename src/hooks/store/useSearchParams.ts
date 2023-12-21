@@ -30,7 +30,7 @@ export const useSearchParams = () => {
 
   const setSearchParams = React.useCallback(
     (action: Action) => {
-      const newSearch = (() => {
+      const searchParams = (() => {
         if (typeof action === "function") {
           return action(new URLSearchParams(window.location.search));
         }
@@ -38,14 +38,16 @@ export const useSearchParams = () => {
         return action;
       })();
 
-      const url = new URL(window.location.href);
-      url.search = newSearch.toString();
-      history.replaceState(null, "", url);
-
-      setSearch(url.search);
+      setSearch(searchParams.toString());
     },
     [setSearch]
   );
+
+  React.useEffect(() => {
+    const url = new URL(window.location.href);
+    url.search = search;
+    history.replaceState(null, "", url);
+  }, [search]);
 
   return [searchParams, setSearchParams] as [
     typeof searchParams,
