@@ -11,9 +11,6 @@ import { Close, Search } from "@mui/icons-material";
 // React Imports
 import React from "react";
 
-// API Imports
-import { useTableGet } from "@/hooks/table";
-
 // Components Imports
 import { Counter } from "@/components";
 
@@ -25,15 +22,6 @@ export function DataGridPage() {
 
   const [search, setSearch] = React.useState("");
 
-  const { data, isPending } = useTableGet({
-    params: {
-      page: pagiModel.page + 1,
-      pageSize: pagiModel.pageSize,
-      name: search,
-    },
-  });
-  console.log(data);
-
   const [selection, setSelection] = React.useState<Array<number | string>>([]);
 
   return (
@@ -43,12 +31,12 @@ export function DataGridPage() {
         <CardHeader title="Quick Filter" />
         <Box height={500}>
           <DataGrid
-            loading={isPending}
+            loading={false}
             columns={columns()}
-            rows={data?.rows || []}
+            rows={[]}
             getRowId={(row) => row.id}
             paginationMode="server"
-            rowCount={data?.total || 0}
+            rowCount={0}
             pageSizeOptions={[20, 50, 100]}
             paginationModel={pagiModel}
             onPaginationModelChange={setPagiModel}

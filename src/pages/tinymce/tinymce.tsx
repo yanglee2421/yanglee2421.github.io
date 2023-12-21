@@ -9,7 +9,7 @@ export function Tinymce() {
 
   return (
     <>
-      <TinyMCE value={html} onChange={setHtml} />
+      <TinyMCE value={html} onEditorChange={setHtml} />
     </>
   );
 }
