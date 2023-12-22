@@ -41,7 +41,10 @@ export function ItemPasswd(props: ItemPasswdProps) {
         label={label}
         required={required}
         endAdornment={
-          <ToggleIcon value={showPasswd} onChange={setIsShowPasswd} />
+          <ToggleIcon
+            value={showPasswd}
+            onChange={setIsShowPasswd}
+          ></ToggleIcon>
         }
         {...restProps}
       />

@@ -109,19 +109,23 @@ export function Account() {
                   alt="avator"
                   sx={{
                     color: auth.currentUser?.displayName
-                      ? stringToColor(auth.currentUser.displayName.at(0) || "")
+                      ? stringToColor(
+                          auth.currentUser.displayName.at(0)?.toUpperCase() ||
+                            ""
+                        )
                       : void 0,
                     bgcolor: auth.currentUser?.displayName
                       ? alpha(
                           stringToColor(
-                            auth.currentUser.displayName.at(0) || ""
+                            auth.currentUser.displayName.at(0)?.toUpperCase() ||
+                              ""
                           ),
                           0.12
                         )
                       : void 0,
                   }}
                 >
-                  {auth.currentUser?.displayName?.at(0)}
+                  {auth.currentUser?.displayName?.at(0)?.toUpperCase()}
                 </Avatar>
               }
               action={<UploadAvator></UploadAvator>}
