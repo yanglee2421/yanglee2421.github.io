@@ -17,13 +17,15 @@ import "@fontsource/roboto/700.css";
 import "@fontsource/roboto/900.css";
 
 const container = (() => {
-  const existedEl = document.getElementById("root");
+  const containerId = "root";
+
+  const existedEl = document.getElementById(containerId);
   if (existedEl) {
     return existedEl;
   }
 
   const newEl = document.createElement("div");
-  newEl.id = "root";
+  newEl.id = containerId;
   document.body.append(newEl);
   return newEl;
 })();
