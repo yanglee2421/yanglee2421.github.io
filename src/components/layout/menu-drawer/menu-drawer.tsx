@@ -73,6 +73,7 @@ export function MenuDrawer(props: IconButtonProps) {
                 <MenuGroup icon={<ArticleOutlined />} label="Pages">
                   <MenuLink label="Not Found" to={"/404"} />
                   <MenuLink label="Account" to={"/account"} />
+                  <MenuLink label="Picture" to={"/picture"} />
                 </MenuGroup>
                 <MenuGroup icon={<FeedOutlined />} label="Form">
                   <MenuLink label="Input" to={"/input"} />
