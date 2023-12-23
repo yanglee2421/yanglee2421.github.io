@@ -2,14 +2,16 @@
 import React from "react";
 
 export function useIsDark() {
-  const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
-
   return React.useSyncExternalStore(
     (trigger) => {
-      mediaQuery.addEventListener("change", trigger);
+      const controller = new AbortController();
+
+      mediaQuery.addEventListener("change", trigger, {
+        signal: controller.signal,
+      });
 
       return () => {
-        mediaQuery.removeEventListener("change", trigger);
+        controller.abort();
       };
     },
     () => {
@@ -17,3 +19,5 @@ export function useIsDark() {
     }
   );
 }
+
+const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
