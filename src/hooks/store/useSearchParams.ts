@@ -5,7 +5,7 @@ import { useShallow } from "zustand/react/shallow";
 // React Imports
 import React from "react";
 
-const useRouterStore = create<SearchParamsStore>((set) => {
+export const useRouterStore = create<SearchParamsStore>((set) => {
   return {
     search: window.location.search,
     setSearch(search) {
@@ -44,9 +44,15 @@ export const useSearchParams = () => {
   );
 
   React.useEffect(() => {
-    const url = new URL(window.location.href);
-    url.search = search;
-    history.replaceState(null, "", url);
+    const animateId = requestAnimationFrame(() => {
+      const url = new URL(window.location.href);
+      url.search = search;
+      history.replaceState(null, "", url);
+    });
+
+    return () => {
+      cancelAnimationFrame(animateId);
+    };
   }, [search]);
 
   return [searchParams, setSearchParams] as [
