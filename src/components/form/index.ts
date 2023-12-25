@@ -4,3 +4,4 @@ export * from "./tiny-mce";
 export * from "./item-text";
 export * from "./item-checkbox";
 export * from "./item-passwd";
+export * from "./ItemSwitch";
