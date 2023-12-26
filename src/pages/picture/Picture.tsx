@@ -1,25 +1,36 @@
 // MUI Imports
-import { Card, CardContent, Box } from "@mui/material";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  IconButton,
+  Stack,
+} from "@mui/material";
+import { CodeOutlined } from "@mui/icons-material";
 
-import { useDropzone } from "react-dropzone";
+// Components Imports
+import { UploadSingleFiles } from "./UploadSingleFiles";
+import { UploadMultipleFiles } from "./UploadMultipleFiles";
 
 export function Picture() {
-  const dropzone = useDropzone({
-    maxFiles: 2,
-    maxSize: 20 * 1024 * 1024,
-    onDrop() {},
-    onDropRejected() {},
-  });
-
   return (
     <>
-      <Card>
-        <CardContent>
-          <Box {...dropzone.getRootProps()}>
-            <input {...dropzone.getInputProps()} />
-          </Box>
-        </CardContent>
-      </Card>
+      <Stack padding={2} spacing={4}>
+        <UploadSingleFiles></UploadSingleFiles>
+        <UploadMultipleFiles></UploadMultipleFiles>
+
+        <Card>
+          <CardHeader
+            title="Upload Multiple Files"
+            action={
+              <IconButton>
+                <CodeOutlined></CodeOutlined>
+              </IconButton>
+            }
+          ></CardHeader>
+          <CardContent></CardContent>
+        </Card>
+      </Stack>
     </>
   );
 }
