@@ -6,17 +6,19 @@ import { Box } from "@mui/material";
 
 // Component Imports
 import { Appbar } from "@/components/layout";
+import React from "react";
+import { useObserverResize } from "@/hooks";
 
 export function Main() {
   const outlet = useOutlet();
+  const appBarRef = React.useRef<HTMLElement>(null);
+  const resizeEntry = useObserverResize(appBarRef);
 
   return (
     <>
-      <Box display={"flex"} flexDirection={"column"} height={"100%"}>
-        <Appbar />
-        <Box flex={1} overflow={"hidden"}>
-          {outlet}
-        </Box>
+      <Appbar ref={appBarRef} />
+      <Box sx={{ mt: `${resizeEntry?.borderBoxSize.at(0)?.blockSize}px` }}>
+        {outlet}
       </Box>
     </>
   );
