@@ -2,7 +2,7 @@
 import { CardSnippet } from "./CardSnippet";
 
 // MUI Imports
-import { TextField, styled, Box, Typography, Link } from "@mui/material";
+import { TextField, styled, Box, Typography } from "@mui/material";
 
 // React Imports
 import React from "react";
@@ -96,11 +96,8 @@ export function UploadSingleFiles() {
                   "& a": { color: "primary.main", textDecoration: "none" },
                 }}
               >
-                Drop files here or click{" "}
-                <Link href="/" onClick={(e) => e.preventDefault()}>
-                  browse
-                </Link>{" "}
-                thorough your machine
+                Allowed *.jpeg, *.jpg, *.png, *.gif Max 3 files and max size of
+                20 MB
               </Typography>
             </Box>
           </Box>

@@ -1,12 +1,5 @@
 // MUI Imports
-import {
-  Card,
-  CardContent,
-  CardHeader,
-  IconButton,
-  Stack,
-} from "@mui/material";
-import { CodeOutlined } from "@mui/icons-material";
+import { Stack } from "@mui/material";
 
 // Components Imports
 import { UploadSingleFiles } from "./UploadSingleFiles";
@@ -18,18 +11,6 @@ export function Picture() {
       <Stack padding={2} spacing={4}>
         <UploadSingleFiles></UploadSingleFiles>
         <UploadMultipleFiles></UploadMultipleFiles>
-
-        <Card>
-          <CardHeader
-            title="Upload Multiple Files"
-            action={
-              <IconButton>
-                <CodeOutlined></CodeOutlined>
-              </IconButton>
-            }
-          ></CardHeader>
-          <CardContent></CardContent>
-        </Card>
       </Stack>
     </>
   );

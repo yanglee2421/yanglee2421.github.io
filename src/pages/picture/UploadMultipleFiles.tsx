@@ -8,6 +8,7 @@ import {
   Button,
   ListItem,
   IconButton,
+  Link,
 } from "@mui/material";
 import { CloseOutlined, UploadFileOutlined } from "@mui/icons-material";
 
@@ -38,9 +39,9 @@ export function UploadMultipleFiles() {
   const dropzone = useDropzone({
     maxFiles: 3,
     maxSize: 20 * 1024 * 1024,
-    accept: {
-      "image/*": [".png", ".jpg", ".jpeg", ".gif"],
-    },
+    // accept: {
+    //   "image/*": [".png", ".jpg", ".jpeg", ".gif"],
+    // },
     onDrop(acceptedFiles) {
       setFiles(toUniqBy(acceptedFiles, { key: "name" }));
     },
@@ -83,8 +84,11 @@ export function UploadMultipleFiles() {
                   "& a": { color: "primary.main", textDecoration: "none" },
                 }}
               >
-                Allowed *.jpeg, *.jpg, *.png, *.gif Max 3 files and max size of
-                20 MB
+                Drop files here or click{" "}
+                <Link href="/" onClick={(e) => e.preventDefault()}>
+                  browse
+                </Link>{" "}
+                thorough your machine
               </Typography>
             </Box>
           </Box>
@@ -155,16 +159,18 @@ export function UploadMultipleFiles() {
 }
 
 const StyledBox = styled(Box)({
-  minHeight: "300px",
+  position: "relative",
   display: "flex",
   flexWrap: "wrap",
-  cursor: "pointer",
-  position: "relative",
   alignItems: "center",
   justifyContent: "center",
+
   padding: "1rem",
-  borderRadius: "6px",
   border: "2px dashed rgba(93, 89, 98, 0.22)",
+  borderRadius: "6px",
+  minHeight: "300px",
+
+  cursor: "pointer",
 });
 
 const Img = styled("img")(({ theme }) => ({
