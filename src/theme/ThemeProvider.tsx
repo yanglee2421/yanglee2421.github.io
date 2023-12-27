@@ -11,6 +11,7 @@ import {
   Palette,
 } from "@mui/material";
 import { TypographyOptions } from "@mui/material/styles/createTypography";
+import { grey } from "@mui/material/colors";
 
 // Theme Imports
 import { configToPalette } from "./configToPalette";
@@ -22,25 +23,18 @@ import React from "react";
 // Hooks Imports
 import { useIsDark } from "@/hooks/dom";
 
-// Redux Imports
-import { useAppSelector } from "@/redux";
-import { grey } from "@mui/material/colors";
-
 export function ThemeProvider(props: React.PropsWithChildren) {
   // ** Props
   const { children } = props;
 
-  // Redux Hooks
-  const mode = useAppSelector((s) => {
-    return s.theme.mode;
-  });
   const isDarkMedia = useIsDark();
 
   const themeMode = (() => {
+    const mode = "auto";
     switch (mode) {
-      case "dark":
-      case "light":
-        return mode;
+      // case "dark":
+      // case "light":
+      //   return mode;
       case "auto":
         return isDarkMedia ? "dark" : "light";
       default:

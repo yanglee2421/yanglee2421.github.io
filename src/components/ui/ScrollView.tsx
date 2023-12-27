@@ -1,17 +1,19 @@
+// React Imports
+import React from "react";
+
+// MUI Imports
+import { Box, BoxProps, styled } from "@mui/material";
+
 // Perfect Scrollbar Imports
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
-// React Imports
-import React from "react";
-
-export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
+export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
   (props, ref) => {
     // ** Props
     const {
-      options,
-      style,
       children,
+      options,
       onPsScrollUp,
       onPsScrollDown,
       onPsScrollLeft,
@@ -151,21 +153,19 @@ export const Scrollbar = React.forwardRef<HTMLDivElement, ScrollbarProps>(
     ]);
 
     return (
-      <div
-        ref={containerRef}
-        style={{ position: "relative", height: "100%", ...style }}
-        {...restProps}
-      >
-        <div ref={contentRef}>{children}</div>
-      </div>
+      <StyledBox ref={containerRef} {...restProps}>
+        <Box ref={contentRef}>{children}</Box>
+      </StyledBox>
     );
   }
 );
 
-export type ScrollbarProps = React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLDivElement>,
-  HTMLDivElement
-> & {
+const StyledBox = styled(Box)({
+  position: "relative",
+  height: "100%",
+});
+
+export type ScrollViewProps = BoxProps & {
   options?: PerfectScrollbar.Options;
   onPsScrollY?(evt: Event): void;
   onPsScrollX?(evt: Event): void;

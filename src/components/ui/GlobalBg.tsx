@@ -5,17 +5,12 @@ import { Box, Backdrop, CircularProgress } from "@mui/material";
 import ReactDOM from "react-dom";
 
 // Redux Imports
-import { useAppSelector } from "@/redux";
 import { useBgImgQuery } from "@/hooks/api-localforage";
 
 export function GlobalBg() {
   const query = useBgImgQuery();
-  const bgAlpha = useAppSelector((s) => {
-    return s.theme.bgAlpha;
-  });
-  const bgBlur = useAppSelector((s) => {
-    return s.theme.bgBlur;
-  });
+  const bgAlpha = 0;
+  const bgBlur = 0;
 
   return ReactDOM.createPortal(
     <>

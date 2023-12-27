@@ -24,13 +24,10 @@ import { Close, Download, Menu } from "@mui/icons-material";
 import React from "react";
 
 // Components Imports
-import { Scrollbar } from "@/components";
+import { ScrollView } from "@/components";
 
 // Query Imports
 import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
-
-// Redux Imports
-import { useAppDispatch, useAppSelector, sliceTheme } from "@/redux";
 
 export function BlankMenu() {
   const [showDrawer, setShowDrawer] = React.useState(false);
@@ -39,13 +36,8 @@ export function BlankMenu() {
     return theme.breakpoints.down("sm");
   });
 
-  const dispatch = useAppDispatch();
-  const bgAlpha = useAppSelector((s) => {
-    return s.theme.bgAlpha;
-  });
-  const bgBlur = useAppSelector((s) => {
-    return s.theme.bgBlur;
-  });
+  const bgAlpha = 0;
+  const bgBlur = 0;
 
   // Query Hooks
   const bgImgQuery = useBgImgQuery();
@@ -73,7 +65,6 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      dispatch(sliceTheme.actions.bgAlpha(v));
     }
   };
 
@@ -81,7 +72,6 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      dispatch(sliceTheme.actions.bgBlur(v));
     }
   };
 
@@ -120,7 +110,7 @@ export function BlankMenu() {
           </Box>
           <Divider></Divider>
           <Box flex={1} overflow={"hidden"}>
-            <Scrollbar>
+            <ScrollView>
               <Box p={4} bgcolor={(theme) => theme.palette.background.default}>
                 <Stack spacing={6}>
                   <Card>
@@ -183,7 +173,7 @@ export function BlankMenu() {
 
                 <Box height={1000}>465464161</Box>
               </Box>
-            </Scrollbar>
+            </ScrollView>
           </Box>
         </Box>
       </SwipeableDrawer>
@@ -191,4 +181,6 @@ export function BlankMenu() {
   );
 }
 
-const StyledImg = styled("img")({});
+const StyledImg = styled("img")({
+  objectFit: "cover",
+});

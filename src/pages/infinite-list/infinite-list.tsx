@@ -1,6 +1,6 @@
 // Component Imports
 import InfiniteScroll from "react-infinite-scroll-component";
-import { Scrollbar } from "@/components";
+import { ScrollView } from "@/components";
 
 // React Imports
 import React from "react";
@@ -104,7 +104,7 @@ export function InfiniteList() {
             />
             <CardContent>
               <Box height={420}>
-                <Scrollbar id={scrollId}>
+                <ScrollView id={scrollId}>
                   <InfiniteScroll
                     scrollableTarget={scrollId}
                     dataLength={query.data?.pages.length || 0}
@@ -115,7 +115,7 @@ export function InfiniteList() {
                   >
                     <List>{listData}</List>
                   </InfiniteScroll>
-                </Scrollbar>
+                </ScrollView>
               </Box>
             </CardContent>
           </Card>
