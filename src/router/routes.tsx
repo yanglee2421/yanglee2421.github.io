@@ -4,15 +4,22 @@ import { Navigate, RouteObject } from "react-router-dom";
 export const routes: RouteObject[] = [
   {
     path: "",
-    lazy() {
-      return import("./RootRoute");
+    async lazy() {
+      const { RootRoute } = await import("./RootRoute");
+
+      return {
+        Component: RootRoute,
+      };
     },
     children: [
       { path: "*", element: <Navigate to="/404" replace /> },
       {
         id: "404",
         path: "404",
-        handle: { title: "404，NotFound" },
+        handle: {
+          title: "404, NotFound",
+          auth: "none",
+        },
         lazy() {
           return import("@/pages/404");
         },
@@ -20,7 +27,10 @@ export const routes: RouteObject[] = [
       {
         id: "401",
         path: "401",
-        handle: { title: "401, Not Allow" },
+        handle: {
+          title: "401, Not Allow",
+          auth: "auth",
+        },
         lazy() {
           return import("@/pages/401");
         },

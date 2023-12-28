@@ -1,6 +1,6 @@
-// Hooks Imports
-import { useRouteTitle } from "./useRouteTitle";
-import { useNProgress } from "./useNProgress";
+// NProgress Imports
+import NProgress from "nprogress";
+// import "nprogress/nprogress.css";
 
 // Router Imports
 import {
@@ -20,26 +20,20 @@ import { useAuth } from "@/hooks/store";
 import { defineAbilityFor, AclContext } from "@/configs/acl";
 
 export function RootRoute() {
-  // Router Hooks
   const outlet = useOutlet();
   const matches = useMatches();
   const [searchParams] = useSearchParams();
-
   const auth = useAuth();
 
   const routeNode = React.useMemo(() => {
     const currentRoute = matches[matches.length - 1];
 
-    if (!currentRoute) {
-      console.error("currentRoute is falsy");
-
-      return null;
-    }
+    if (!currentRoute) return null;
 
     switch (Reflect.get(Object(currentRoute.handle), "auth")) {
       case "guest": {
         const returnURL = searchParams.get("returnURL") || "/";
-        return auth.currentUser ? <Navigate to={returnURL}></Navigate> : outlet;
+        return auth.currentUser ? <Navigate to={returnURL} replace /> : outlet;
       }
 
       case "none":
@@ -54,17 +48,32 @@ export function RootRoute() {
         const search = isGoHome ? void 0 : query;
         const to = { pathname: "/login", search };
 
-        return auth.currentUser ? (
-          outlet
-        ) : (
-          <Navigate to={to} replace></Navigate>
-        );
+        return auth.currentUser ? outlet : <Navigate to={to} replace />;
       }
     }
   }, [matches, searchParams, outlet, auth.currentUser]);
 
-  useNProgress();
-  useRouteTitle();
+  React.useEffect(() => {
+    void matches;
+    NProgress.done();
+    return () => {
+      NProgress.start();
+    };
+  }, [matches]);
+
+  React.useEffect(() => {
+    const currentRoute = matches[matches.length - 1];
+
+    if (!currentRoute) return;
+
+    const title = Reflect.get(Object(currentRoute.handle), "title");
+
+    if (!title) return;
+
+    if (typeof title === "string") {
+      document.title = title;
+    }
+  }, [matches]);
 
   return (
     <AclContext.Provider value={defineAbilityFor("")}>
