@@ -30,7 +30,10 @@ export const routes: RouteObject[] = [
       {
         id: "login",
         path: "login",
-        handle: { title: "登录" },
+        handle: {
+          title: "登录",
+          auth: "guest",
+        },
         lazy() {
           return import("@/pages/login");
         },
@@ -54,7 +57,10 @@ export const routes: RouteObject[] = [
       {
         id: "privacy-policy",
         path: "privacy-policy",
-        handle: { title: "Privacy Policy" },
+        handle: {
+          title: "Privacy Policy",
+          auth: "none",
+        },
         lazy() {
           return import("@/pages/privacy-policy");
         },
@@ -71,7 +77,10 @@ export const routes: RouteObject[] = [
           {
             id: "home",
             index: true,
-            handle: { title: "首页" },
+            handle: {
+              title: "首页",
+              auth: "auth",
+            },
             lazy() {
               return import("@/pages/home");
             },

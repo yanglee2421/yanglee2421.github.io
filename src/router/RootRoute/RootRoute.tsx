@@ -9,7 +9,6 @@ import {
   Navigate,
   useOutlet,
 } from "react-router-dom";
-import { whitelist } from "./whitelist";
 
 // React Imports
 import React from "react";
@@ -37,39 +36,31 @@ export function RootRoute() {
       return null;
     }
 
-    // Login page
-    if (currentRoute.id === "login") {
-      const returnURL = searchParams.get("returnURL") || "/";
-      return auth.currentUser ? <Navigate to={returnURL} replace /> : outlet;
+    switch (Reflect.get(Object(currentRoute.handle), "auth")) {
+      case "guest": {
+        const returnURL = searchParams.get("returnURL") || "/";
+        return auth.currentUser ? <Navigate to={returnURL}></Navigate> : outlet;
+      }
+
+      case "none":
+        return outlet;
+
+      case "auth":
+      default: {
+        const urlSearchParams = new URLSearchParams();
+        urlSearchParams.set("returnURL", currentRoute.pathname);
+        const query = urlSearchParams.toString();
+        const isGoHome = currentRoute.id === "home";
+        const search = isGoHome ? void 0 : query;
+        const to = { pathname: "/login", search };
+
+        return auth.currentUser ? (
+          outlet
+        ) : (
+          <Navigate to={to} replace></Navigate>
+        );
+      }
     }
-
-    // Register page
-    if (currentRoute.id === "register") {
-      const returnURL = searchParams.get("returnURL") || "/";
-      return auth.currentUser ? <Navigate to={returnURL} replace /> : outlet;
-    }
-
-    // Whitelist
-    if (whitelist.has(currentRoute.id)) {
-      return outlet;
-    }
-
-    // Has Logged
-    if (auth.currentUser) {
-      // const hasPermission = acl.can("read", `page-${currentRoute.id}`);
-      // return hasPermission ? outlet : <Navigate to={"/401"} replace />;
-      return outlet;
-    }
-
-    // Not Logged
-    const urlSearchParams = new URLSearchParams();
-    urlSearchParams.set("returnURL", currentRoute.pathname);
-    const query = urlSearchParams.toString();
-    const isGoHome = currentRoute.id === "home";
-    const search = isGoHome ? void 0 : query;
-    const to = { pathname: "/login", search };
-
-    return <Navigate to={to} replace />;
   }, [matches, searchParams, outlet, auth.currentUser]);
 
   useNProgress();
