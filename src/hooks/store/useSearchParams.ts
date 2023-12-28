@@ -38,8 +38,10 @@ export const useSearchParams = () => {
     return new URLSearchParams(search);
   }, [search]);
 
-  const setSearchParams = React.useCallback(
-    (action: Action) => {
+  const setSearchParams = React.useCallback<
+    React.Dispatch<React.SetStateAction<URLSearchParams>>
+  >(
+    (action) => {
       return setSearch((prevSearch) => {
         if (typeof action === "function") {
           return action(new URLSearchParams(prevSearch)).toString();
@@ -71,11 +73,5 @@ export const useSearchParams = () => {
 
 export interface SearchParamsStore {
   search: string;
-  setSearch(search: SearchParamsStoreAction): void;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
-
-type SearchParamsStoreAction = string | SearchParamsStoreFunctionAction;
-type SearchParamsStoreFunctionAction = (search: string) => string;
-
-type Action = URLSearchParams | FunctionAction;
-type FunctionAction = (prev: URLSearchParams) => URLSearchParams;

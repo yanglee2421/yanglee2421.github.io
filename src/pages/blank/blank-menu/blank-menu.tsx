@@ -29,7 +29,11 @@ import { ScrollView } from "@/components";
 // Query Imports
 import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
 
-// Redux Imports
+// Store Imports
+import { useThemeStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
+
+// Storage Imports
 import localforage from "localforage";
 
 export function BlankMenu() {
@@ -43,8 +47,16 @@ export function BlankMenu() {
   const bgImgQuery = useBgImgQuery();
   const bgImgMutation = useBgImgMutation();
 
-  const bgAlpha = 0;
-  const bgBlur = 0;
+  const themeStore = useThemeStore(
+    useShallow((store) => {
+      return {
+        bgAlpha: store.bgAlpha,
+        setBgAlpha: store.setBgAlpha,
+        bgBlur: store.bgBlur,
+        setBgBlur: store.setBgBlur,
+      };
+    })
+  );
 
   const handleDrawerClose = () => {
     setShowDrawer(false);
@@ -69,6 +81,7 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
+      themeStore.setBgAlpha(v);
     }
   };
 
@@ -76,6 +89,7 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
+      themeStore.setBgBlur(v);
     }
   };
 
@@ -158,12 +172,12 @@ export function BlankMenu() {
                     </CardContent>
                     <CardContent>
                       <Slider
-                        value={bgAlpha}
+                        value={themeStore.bgAlpha}
                         onChange={handleBgAlphaChange}
                         valueLabelDisplay="auto"
                       />
                       <Slider
-                        value={bgBlur}
+                        value={themeStore.bgBlur}
                         onChange={handleBgBlurChange}
                         valueLabelDisplay="auto"
                       />

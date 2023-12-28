@@ -29,6 +29,10 @@ import { ScrollView } from "@/components";
 // Query Imports
 import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
 
+// Store Imports
+import { useThemeStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
+
 export function BlankMenu() {
   const [showDrawer, setShowDrawer] = React.useState(false);
 
@@ -36,8 +40,16 @@ export function BlankMenu() {
     return theme.breakpoints.down("sm");
   });
 
-  const bgAlpha = 0;
-  const bgBlur = 0;
+  const themeStore = useThemeStore(
+    useShallow((store) => {
+      return {
+        bgAlpha: store.bgAlpha,
+        setBgAlpha: store.setBgAlpha,
+        bgBlur: store.bgBlur,
+        setBgBlur: store.setBgBlur,
+      };
+    })
+  );
 
   // Query Hooks
   const bgImgQuery = useBgImgQuery();
@@ -56,6 +68,7 @@ export function BlankMenu() {
     HTMLInputElement
   >["onChange"] = async (evt) => {
     const file = evt.target.files?.[0];
+
     if (file) {
       bgImgMutation.mutate(file);
     }
@@ -65,6 +78,7 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
+      themeStore.setBgAlpha(v);
     }
   };
 
@@ -72,6 +86,7 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
+      themeStore.setBgBlur(v);
     }
   };
 
@@ -142,12 +157,12 @@ export function BlankMenu() {
                     </CardContent>
                     <CardContent>
                       <Slider
-                        value={bgAlpha}
+                        value={themeStore.bgAlpha}
                         onChange={handleBgAlphaChange}
                         valueLabelDisplay="auto"
                       />
                       <Slider
-                        value={bgBlur}
+                        value={themeStore.bgBlur}
                         onChange={handleBgBlurChange}
                         valueLabelDisplay="auto"
                       />
