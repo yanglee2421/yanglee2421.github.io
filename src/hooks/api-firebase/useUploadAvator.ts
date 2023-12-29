@@ -6,7 +6,11 @@ import { ref, getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth, updateProfile, User } from "firebase/auth";
 import { app } from "@/api/firebase";
 
+// Store Imports
+import { useAuth } from "@/hooks/store";
+
 export function useUploadAvator() {
+  const [, setUpdateAt] = useAuth();
   return useMutation<User, Error, Blob>({
     async mutationFn(blob) {
       const user = getAuth(app).currentUser;
@@ -25,6 +29,8 @@ export function useUploadAvator() {
     onError(error) {
       console.error(error);
     },
-    onSuccess() {},
+    onSuccess() {
+      setUpdateAt(Date.now());
+    },
   });
 }

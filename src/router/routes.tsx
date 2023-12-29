@@ -53,7 +53,10 @@ export const routes: RouteObject[] = [
       {
         id: "forgot-passwd",
         path: "forgot-passwd",
-        handle: { title: "Forgot Password" },
+        handle: {
+          title: "Forgot Password",
+          auth: "guest",
+        },
         lazy() {
           return import("@/pages/forgot-passwd");
         },
@@ -61,7 +64,10 @@ export const routes: RouteObject[] = [
       {
         id: "register",
         path: "register",
-        handle: { title: "Register" },
+        handle: {
+          title: "Register",
+          auth: "guest",
+        },
         lazy() {
           return import("@/pages/register");
         },

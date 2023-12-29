@@ -25,19 +25,16 @@ import { stringToColor } from "@/utils";
 import { Link } from "react-router-dom";
 
 export function UserDropdown() {
-  const [open, setOpen] = React.useState(false);
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   // Login hooks
-  const auth = useAuth();
+  const [auth] = useAuth();
 
   const openHandler: React.MouseEventHandler<HTMLSpanElement> = (evt) => {
     setAnchorEl(evt.currentTarget);
-    setOpen(true);
   };
   const closeHandler = () => {
     setAnchorEl(null);
-    setOpen(false);
   };
 
   return (
@@ -53,17 +50,10 @@ export function UserDropdown() {
           alt="avator"
           sx={{
             color: auth.currentUser?.displayName
-              ? stringToColor(
-                  auth.currentUser.displayName.at(0)?.toUpperCase() || ""
-                )
+              ? stringToColor(auth.currentUser.displayName || "")
               : void 0,
             bgcolor: auth.currentUser?.displayName
-              ? alpha(
-                  stringToColor(
-                    auth.currentUser.displayName.at(0)?.toUpperCase() || ""
-                  ),
-                  0.12
-                )
+              ? alpha(stringToColor(auth.currentUser.displayName || ""), 0.12)
               : void 0,
           }}
         >
@@ -71,7 +61,7 @@ export function UserDropdown() {
         </Avatar>
       </StyledBadge>
       <Menu
-        open={open}
+        open={!!anchorEl}
         onClose={closeHandler}
         anchorEl={anchorEl}
         anchorOrigin={{
@@ -88,7 +78,11 @@ export function UserDropdown() {
         </MenuItem>
         <MenuItem>one</MenuItem>
         <Divider></Divider>
-        <MenuItem onClick={auth.signOut}>
+        <MenuItem
+          onClick={() => {
+            auth.signOut();
+          }}
+        >
           <ListItemIcon>
             <ExitToApp></ExitToApp>
           </ListItemIcon>

@@ -27,7 +27,7 @@ export function RootRoute() {
   const outlet = useOutlet();
   const matches = useMatches();
   const [searchParams] = useSearchParams();
-  const auth = useAuth();
+  const [auth] = useAuth();
   const acl = React.useMemo(() => {
     return defineAbilityFor("");
   }, [auth.currentUser]);

@@ -5,7 +5,7 @@ import { GitHub } from "@mui/icons-material";
 // Components Imports
 import { MenuDrawer } from "@/components/layout/menu-drawer";
 import { Trans } from "@/components/layout/trans";
-import { UserDropdown } from "@/components/layout/user-dropdown";
+import { UserDropdown } from "@/components/layout/UserDropdown";
 import { Searcher } from "@/components/layout/searcher";
 import { SkinSettings } from "@/components/layout/skin-settings";
 

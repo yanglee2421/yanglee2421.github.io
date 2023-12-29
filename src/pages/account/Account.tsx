@@ -38,7 +38,7 @@ import { Auth, updateProfile } from "firebase/auth";
 import toast from "react-hot-toast";
 
 export function Account() {
-  const auth = useAuth();
+  const [auth, setUpdateAt] = useAuth();
 
   const formCtx = useForm({
     defaultValues: {
@@ -69,6 +69,8 @@ export function Account() {
       toast.error(error.message);
     },
     onSuccess(data) {
+      setUpdateAt(Date.now());
+
       formCtx.reset({
         displayName: data.currentUser?.displayName || "",
       });
@@ -106,17 +108,11 @@ export function Account() {
                   alt="avator"
                   sx={{
                     color: auth.currentUser?.displayName
-                      ? stringToColor(
-                          auth.currentUser.displayName.at(0)?.toUpperCase() ||
-                            ""
-                        )
+                      ? stringToColor(auth.currentUser.displayName || "")
                       : void 0,
                     bgcolor: auth.currentUser?.displayName
                       ? alpha(
-                          stringToColor(
-                            auth.currentUser.displayName.at(0)?.toUpperCase() ||
-                              ""
-                          ),
+                          stringToColor(auth.currentUser.displayName || ""),
                           0.12
                         )
                       : void 0,

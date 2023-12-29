@@ -1,2 +1,2 @@
 export * from "./useThemeStore";
-export * from "./useAuth";
+export * from "./useAuthStore";
