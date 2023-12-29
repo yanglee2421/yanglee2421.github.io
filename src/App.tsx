@@ -4,7 +4,7 @@ import { router } from "@/router";
 
 // Provider Imports
 import { ThemeProvider } from "@/theme";
-import { QueryProvider } from "@/api/provider";
+import { QueryProvider } from "@/plugins";
 
 // Toast Imports
 import { Toaster } from "react-hot-toast";

@@ -22,7 +22,7 @@ export function RootRoute() {
   const matches = useMatches();
   const [auth] = useAuth();
   const acl = React.useMemo(() => {
-    return defineAbilityFor("");
+    return defineAbilityFor(auth.currentUser ? "admin" : "");
   }, [auth.currentUser]);
 
   const routeNode = React.useMemo(() => {

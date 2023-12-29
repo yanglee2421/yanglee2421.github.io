@@ -7,6 +7,19 @@ export const useThemeStore = create(
   persist<ThemeStore>(
     (set, get) => {
       return {
+        mode: "auto",
+        setMode(action) {
+          const mode = (() => {
+            if (typeof action === "function") {
+              return action(get().mode);
+            }
+
+            return action;
+          })();
+
+          return set({ mode });
+        },
+
         bgAlpha: 0,
         setBgAlpha(action) {
           const bgAlpha = (() => {
@@ -46,4 +59,8 @@ export interface ThemeStore {
   setBgAlpha: React.Dispatch<React.SetStateAction<number>>;
   bgBlur: number;
   setBgBlur: React.Dispatch<React.SetStateAction<number>>;
+  mode: Mode;
+  setMode: React.Dispatch<React.SetStateAction<Mode>>;
 }
+
+type Mode = "auto" | "dark" | "light";

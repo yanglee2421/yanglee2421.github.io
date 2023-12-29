@@ -69,7 +69,7 @@ export function UploadSingleFiles() {
     >
       <StyledBox {...dropzone.getRootProps()}>
         <input {...dropzone.getInputProps()} />
-        {!!files.length ? (
+        {files.length ? (
           imgNode
         ) : (
           <Box

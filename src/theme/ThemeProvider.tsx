@@ -22,23 +22,30 @@ import React from "react";
 
 // Hooks Imports
 import { useIsDark } from "@/hooks/dom";
+import { useThemeStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
 
 export function ThemeProvider(props: React.PropsWithChildren) {
   // ** Props
   const { children } = props;
 
-  const isDarkMedia = useIsDark();
+  const themeStore = useThemeStore(
+    useShallow((store) => {
+      return {
+        mode: store.mode,
+      };
+    })
+  );
+  const isDark = useIsDark();
 
-  const themeMode = (() => {
-    const mode = "auto";
-    switch (mode) {
-      // case "dark":
-      // case "light":
-      //   return mode;
+  const mode = (() => {
+    switch (themeStore.mode) {
+      case "dark":
+      case "light":
+        return themeStore.mode;
       case "auto":
-        return isDarkMedia ? "dark" : "light";
       default:
-        return isDarkMedia ? "dark" : "light";
+        return isDark ? "dark" : "light";
     }
   })();
 
@@ -51,10 +58,10 @@ export function ThemeProvider(props: React.PropsWithChildren) {
     shape: {
       borderRadius: 6,
     },
-    shadows: shadowsMap.get(themeMode),
+    shadows: shadowsMap.get(mode),
 
     palette: configToPalette({
-      mode: themeMode,
+      mode: mode,
       whiteColor: "#FFF",
       // lightColor: "rgb(58, 53, 65)",
       // darkColor: "rgb(231, 227, 252)",
