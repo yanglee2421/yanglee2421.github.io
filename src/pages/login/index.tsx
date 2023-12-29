@@ -18,7 +18,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 // Components Imports
-import { ItemPasswd, ItemText } from "@/components";
+import { ItemPassword, ItemText } from "@/components";
 
 // Query Imports
 import { useSignIn } from "@/hooks/api-firebase";
@@ -92,7 +92,7 @@ export function Component() {
           >
             <FormProvider {...formCtx}>
               <ItemText name="email" label="Email" />
-              <ItemPasswd name="password" label="Password" />
+              <ItemPassword name="password" label="Password" />
               <Box
                 display={"flex"}
                 justifyContent={"space-between"}
