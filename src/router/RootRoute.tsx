@@ -19,21 +19,27 @@ import { useAuth } from "@/hooks/store";
 // Acl Imports
 import { defineAbilityFor, AclContext } from "@/configs/acl";
 
+// Components Imports
+import { HomeRoute } from "./HomeRoute";
+import { LoginRoute } from "./LoginRoute";
+
 export function RootRoute() {
   const outlet = useOutlet();
   const matches = useMatches();
   const [searchParams] = useSearchParams();
   const auth = useAuth();
+  const acl = React.useMemo(() => {
+    return defineAbilityFor("");
+  }, [auth.currentUser]);
 
   const routeNode = React.useMemo(() => {
-    const currentRoute = matches[matches.length - 1];
+    const currentRoute = matches.at(-1);
 
     if (!currentRoute) return null;
 
     switch (Reflect.get(Object(currentRoute.handle), "auth")) {
       case "guest": {
-        const returnURL = searchParams.get("returnURL") || "/";
-        return auth.currentUser ? <Navigate to={returnURL} replace /> : outlet;
+        return auth.currentUser ? <HomeRoute /> : outlet;
       }
 
       case "none":
@@ -41,17 +47,25 @@ export function RootRoute() {
 
       case "auth":
       default: {
-        const urlSearchParams = new URLSearchParams();
-        urlSearchParams.set("returnURL", currentRoute.pathname);
-        const query = urlSearchParams.toString();
-        const isGoHome = currentRoute.id === "home";
-        const search = isGoHome ? void 0 : query;
-        const to = { pathname: "/login", search };
+        // Not logged in
+        if (!auth.currentUser) {
+          return <LoginRoute />;
+        }
 
-        return auth.currentUser ? outlet : <Navigate to={to} replace />;
+        // No access control
+        if (
+          acl.can(
+            Reflect.get(Object(currentRoute.handle), "aclAction") || "read",
+            Reflect.get(Object(currentRoute.handle), "aclSubject") || "fallback"
+          )
+        ) {
+          return outlet;
+        }
+
+        return <Navigate to="/401" />;
       }
     }
-  }, [matches, searchParams, outlet, auth.currentUser]);
+  }, [matches, searchParams, outlet, auth.currentUser, acl]);
 
   React.useEffect(() => {
     void matches;
@@ -62,7 +76,7 @@ export function RootRoute() {
   }, [matches]);
 
   React.useEffect(() => {
-    const currentRoute = matches[matches.length - 1];
+    const currentRoute = matches.at(-1);
 
     if (!currentRoute) return;
 
@@ -75,9 +89,7 @@ export function RootRoute() {
     }
   }, [matches]);
 
-  return (
-    <AclContext.Provider value={defineAbilityFor("")}>
-      {routeNode}
-    </AclContext.Provider>
-  );
+  return <AclContext.Provider value={acl}>{routeNode}</AclContext.Provider>;
 }
+// ck_bc5124569889f94574e6fb878677c85db8300749
+// cs_40da90a7ae05b183a5cdd59148254ecdbc817c01

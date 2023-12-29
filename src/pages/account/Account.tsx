@@ -19,7 +19,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 // Store Imports
-import { useAuth, useAuthStore } from "@/hooks/store";
+import { useAuth } from "@/hooks/store";
 
 // Components Imports
 import { ItemText } from "@/components";
@@ -52,7 +52,6 @@ export function Account() {
     ),
   });
 
-  const setLastUpdateAt = useAuthStore((store) => store.setLastUpdateAt);
   const mutation = useMutation<Auth, Error, { displayName: string }>({
     async mutationFn({ displayName }) {
       const user = auth.currentUser;
@@ -70,8 +69,6 @@ export function Account() {
       toast.error(error.message);
     },
     onSuccess(data) {
-      setLastUpdateAt(Date.now());
-
       formCtx.reset({
         displayName: data.currentUser?.displayName || "",
       });

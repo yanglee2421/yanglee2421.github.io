@@ -28,8 +28,10 @@ export const routes: RouteObject[] = [
         id: "401",
         path: "401",
         handle: {
-          title: "401, Not Allow",
+          title: "401, No authorization",
           auth: "auth",
+          aclAction: "read",
+          aclSubject: "all",
         },
         lazy() {
           return import("@/pages/401");
