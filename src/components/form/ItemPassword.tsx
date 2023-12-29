@@ -16,7 +16,7 @@ import { useFormContext, useController } from "react-hook-form";
 // React Imports
 import React from "react";
 
-export function ItemPasswd(props: ItemPasswdProps) {
+export function ItemPassword(props: ItemPasswdProps) {
   // ** Props
   const { name, label, disabled, required, sx, ...restProps } = props;
 

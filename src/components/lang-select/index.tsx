@@ -30,10 +30,10 @@ export function LangSelect(props: LangSelectProps) {
     <FormControl fullWidth required={required} sx={sx}>
       <InputLabel>Lang</InputLabel>
       <Select
-        label="Lang"
-        {...restProps}
         value={model || ""}
         onChange={handleChang}
+        label="Lang"
+        {...restProps}
       >
         {getOptions()}
       </Select>
