@@ -24,13 +24,14 @@ import { Close, Download, Menu } from "@mui/icons-material";
 import React from "react";
 
 // Components Imports
-import { Scrollbar } from "@/components";
+import { ScrollView } from "@/components";
 
 // Query Imports
 import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
 
-// Redux Imports
-import { useAppDispatch, useAppSelector, sliceTheme } from "@/redux";
+// Store Imports
+import { useThemeStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
 
 export function BlankMenu() {
   const [showDrawer, setShowDrawer] = React.useState(false);
@@ -39,13 +40,16 @@ export function BlankMenu() {
     return theme.breakpoints.down("sm");
   });
 
-  const dispatch = useAppDispatch();
-  const bgAlpha = useAppSelector((s) => {
-    return s.theme.bgAlpha;
-  });
-  const bgBlur = useAppSelector((s) => {
-    return s.theme.bgBlur;
-  });
+  const themeStore = useThemeStore(
+    useShallow((store) => {
+      return {
+        bgAlpha: store.bgAlpha,
+        setBgAlpha: store.setBgAlpha,
+        bgBlur: store.bgBlur,
+        setBgBlur: store.setBgBlur,
+      };
+    })
+  );
 
   // Query Hooks
   const bgImgQuery = useBgImgQuery();
@@ -64,6 +68,7 @@ export function BlankMenu() {
     HTMLInputElement
   >["onChange"] = async (evt) => {
     const file = evt.target.files?.[0];
+
     if (file) {
       bgImgMutation.mutate(file);
     }
@@ -73,7 +78,7 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      dispatch(sliceTheme.actions.bgAlpha(v));
+      themeStore.setBgAlpha(v);
     }
   };
 
@@ -81,7 +86,7 @@ export function BlankMenu() {
     void evt;
 
     if (typeof v === "number") {
-      dispatch(sliceTheme.actions.bgBlur(v));
+      themeStore.setBgBlur(v);
     }
   };
 
@@ -120,7 +125,7 @@ export function BlankMenu() {
           </Box>
           <Divider></Divider>
           <Box flex={1} overflow={"hidden"}>
-            <Scrollbar>
+            <ScrollView>
               <Box p={4} bgcolor={(theme) => theme.palette.background.default}>
                 <Stack spacing={6}>
                   <Card>
@@ -152,12 +157,12 @@ export function BlankMenu() {
                     </CardContent>
                     <CardContent>
                       <Slider
-                        value={bgAlpha}
+                        value={themeStore.bgAlpha}
                         onChange={handleBgAlphaChange}
                         valueLabelDisplay="auto"
                       />
                       <Slider
-                        value={bgBlur}
+                        value={themeStore.bgBlur}
                         onChange={handleBgBlurChange}
                         valueLabelDisplay="auto"
                       />
@@ -183,7 +188,7 @@ export function BlankMenu() {
 
                 <Box height={1000}>465464161</Box>
               </Box>
-            </Scrollbar>
+            </ScrollView>
           </Box>
         </Box>
       </SwipeableDrawer>
@@ -191,4 +196,6 @@ export function BlankMenu() {
   );
 }
 
-const StyledImg = styled("img")({});
+const StyledImg = styled("img")({
+  objectFit: "cover",
+});

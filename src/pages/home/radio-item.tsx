@@ -1,5 +1,5 @@
 // MUI Imports
-import { Box, Avatar, Typography, Radio } from "@mui/material";
+import { Box, Avatar, Typography, Radio, alpha } from "@mui/material";
 
 // Utils Imports
 import { stringToColor } from "@/utils";
@@ -32,7 +32,14 @@ export function RadioItem(props: RadioItemProps) {
       }}
       {...restProps}
     >
-      <Avatar sx={{ width: 64, height: 64, bgcolor: stringToColor(name) }}>
+      <Avatar
+        sx={{
+          width: 64,
+          height: 64,
+          color: stringToColor(avatarText.toUpperCase()),
+          bgcolor: alpha(stringToColor(avatarText.toUpperCase()), 0.12),
+        }}
+      >
         {avatarText.toUpperCase()}
       </Avatar>
       <Typography

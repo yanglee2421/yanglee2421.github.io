@@ -17,7 +17,7 @@ import { yupResolver } from "@hookform/resolvers/yup";
 import * as yup from "yup";
 
 // Components Imports
-import { ItemText, ItemPasswd, ItemCheckbox } from "@/components";
+import { ItemText, ItemPassword, ItemCheckbox } from "@/components";
 
 // Rouetr Imports
 import { Link as RouterLink } from "react-router-dom";
@@ -75,7 +75,7 @@ export function Register() {
         <StyledForm onSubmit={handleSubmit}>
           <FormProvider {...formCtx}>
             <ItemText name="email" label="Email" />
-            <ItemPasswd name="password" label="Password" />
+            <ItemPassword name="password" label="Password" />
             <FormControlLabel
               control={<ItemCheckbox name="isAgree" />}
               label={

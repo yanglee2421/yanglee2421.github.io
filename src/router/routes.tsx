@@ -4,41 +4,84 @@ import { Navigate, RouteObject } from "react-router-dom";
 export const routes: RouteObject[] = [
   {
     path: "",
-    lazy() {
-      return import("./RootRoute");
+    async lazy() {
+      const { RootRoute } = await import("./RootRoute");
+
+      return {
+        Component: RootRoute,
+      };
     },
     children: [
       { path: "*", element: <Navigate to="/404" replace /> },
       {
-        id: "404",
-        path: "404",
-        handle: { title: "404，NotFound" },
-        lazy() {
-          return import("@/pages/404");
+        id: "401",
+        path: "401",
+        handle: {
+          title: "Login",
+          auth: "guest",
+        },
+        async lazy() {
+          const { NotLogged } = await import("@/pages/401");
+
+          return {
+            Component: NotLogged,
+          };
         },
       },
       {
-        id: "401",
-        path: "401",
-        handle: { title: "401, Not Allow" },
-        lazy() {
-          return import("@/pages/401");
+        id: "403",
+        path: "403",
+        handle: {
+          title: "403, Not authorization",
+          auth: "none",
+        },
+        async lazy() {
+          const { NotAuthorized } = await import("@/pages/403");
+
+          return {
+            Component: NotAuthorized,
+          };
+        },
+      },
+      {
+        id: "404",
+        path: "404",
+        handle: {
+          title: "404, NotFound",
+          auth: "none",
+        },
+        async lazy() {
+          const { NotFound } = await import("@/pages/404");
+
+          return {
+            Component: NotFound,
+          };
+        },
+      },
+      {
+        id: "500",
+        path: "500",
+        handle: {
+          title: "500, System error",
+          auth: "none",
+        },
+        async lazy() {
+          const { SystemError } = await import("@/pages/500");
+
+          return {
+            Component: SystemError,
+          };
         },
       },
 
-      // User module
-      {
-        id: "login",
-        path: "login",
-        handle: { title: "登录" },
-        lazy() {
-          return import("@/pages/login");
-        },
-      },
+      // Guest pages
       {
         id: "forgot-passwd",
         path: "forgot-passwd",
-        handle: { title: "Forgot Password" },
+        handle: {
+          title: "Forgot Password",
+          auth: "guest",
+        },
         lazy() {
           return import("@/pages/forgot-passwd");
         },
@@ -46,15 +89,22 @@ export const routes: RouteObject[] = [
       {
         id: "register",
         path: "register",
-        handle: { title: "Register" },
+        handle: {
+          title: "Register",
+          auth: "guest",
+        },
         lazy() {
           return import("@/pages/register");
         },
       },
+
       {
         id: "privacy-policy",
         path: "privacy-policy",
-        handle: { title: "Privacy Policy" },
+        handle: {
+          title: "Privacy Policy",
+          auth: "none",
+        },
         lazy() {
           return import("@/pages/privacy-policy");
         },
@@ -71,7 +121,10 @@ export const routes: RouteObject[] = [
           {
             id: "home",
             index: true,
-            handle: { title: "首页" },
+            handle: {
+              title: "首页",
+              auth: "auth",
+            },
             lazy() {
               return import("@/pages/home");
             },
@@ -83,6 +136,15 @@ export const routes: RouteObject[] = [
             handle: { title: "Account" },
             lazy() {
               return import("@/pages/account");
+            },
+          },
+
+          {
+            id: "picture",
+            path: "picture",
+            handle: { title: "Picture" },
+            lazy() {
+              return import("@/pages/picture");
             },
           },
 

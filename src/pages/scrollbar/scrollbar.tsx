@@ -5,7 +5,7 @@ import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 
 // Components Imports
-import { ItemText, Scrollbar } from "@/components";
+import { ItemText, ScrollView } from "@/components";
 import { Button, Card, CardContent, CardHeader, Grid } from "@mui/material";
 
 export function ScrollbarPage() {
@@ -56,9 +56,9 @@ export function ScrollbarPage() {
               </form>
             </Grid>
             <Grid item xs={12} maxHeight={200}>
-              <Scrollbar>
+              <ScrollView>
                 <ul>{listEl}</ul>
-              </Scrollbar>
+              </ScrollView>
             </Grid>
           </Grid>
         </CardContent>

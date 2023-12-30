@@ -5,10 +5,20 @@ import { useShallow } from "zustand/react/shallow";
 // React Imports
 import React from "react";
 
-const useRouterStore = create<SearchParamsStore>((set) => {
+export const useRouterStore = create<SearchParamsStore>((set, get) => {
   return {
     search: window.location.search,
-    setSearch(search) {
+    setSearch(action) {
+      // Get next search
+      const search = (() => {
+        if (typeof action === "function") {
+          return action(get().search);
+        }
+
+        return action;
+      })();
+
+      // Set next search
       return set({ search });
     },
   };
@@ -28,25 +38,31 @@ export const useSearchParams = () => {
     return new URLSearchParams(search);
   }, [search]);
 
-  const setSearchParams = React.useCallback(
-    (action: Action) => {
-      const searchParams = (() => {
+  const setSearchParams = React.useCallback<
+    React.Dispatch<React.SetStateAction<URLSearchParams>>
+  >(
+    (action) => {
+      return setSearch((prevSearch) => {
         if (typeof action === "function") {
-          return action(new URLSearchParams(window.location.search));
+          return action(new URLSearchParams(prevSearch)).toString();
         }
 
-        return action;
-      })();
-
-      setSearch(searchParams.toString());
+        return action.toString();
+      });
     },
     [setSearch]
   );
 
   React.useEffect(() => {
-    const url = new URL(window.location.href);
-    url.search = search;
-    history.replaceState(null, "", url);
+    const animateId = setTimeout(() => {
+      const url = new URL(window.location.href);
+      url.search = search;
+      history.replaceState(null, "", url);
+    }, 16);
+
+    return () => {
+      clearTimeout(animateId);
+    };
   }, [search]);
 
   return [searchParams, setSearchParams] as [
@@ -57,8 +73,5 @@ export const useSearchParams = () => {
 
 export interface SearchParamsStore {
   search: string;
-  setSearch(search: string): void;
+  setSearch: React.Dispatch<React.SetStateAction<string>>;
 }
-
-type Action = URLSearchParams | FunctionAction;
-type FunctionAction = (prev: URLSearchParams) => URLSearchParams;

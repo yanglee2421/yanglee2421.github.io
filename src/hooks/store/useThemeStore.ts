@@ -1,4 +1,5 @@
 // Zustand Imports
+import React from "react";
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 
@@ -6,24 +7,60 @@ export const useThemeStore = create(
   persist<ThemeStore>(
     (set, get) => {
       return {
-        count: 0,
-        setCount(count) {
-          if (typeof count === "number") {
-            return set({ count });
-          }
+        mode: "auto",
+        setMode(action) {
+          const mode = (() => {
+            if (typeof action === "function") {
+              return action(get().mode);
+            }
 
-          return set({ count: get().count + 1 });
+            return action;
+          })();
+
+          return set({ mode });
+        },
+
+        bgAlpha: 0,
+        setBgAlpha(action) {
+          const bgAlpha = (() => {
+            if (typeof action === "function") {
+              return action(get().bgAlpha);
+            }
+
+            return action;
+          })();
+
+          return set({ bgAlpha });
+        },
+
+        bgBlur: 0,
+        setBgBlur(action) {
+          const bgBlur = (() => {
+            if (typeof action === "function") {
+              return action(get().bgBlur);
+            }
+
+            return action;
+          })();
+
+          return set({ bgBlur });
         },
       };
     },
     {
       name: import.meta.env.VITE_ZUSTAND_PERSIST,
-      storage: createJSONStorage(() => globalThis.sessionStorage),
+      storage: createJSONStorage(() => globalThis.localStorage),
     }
   )
 );
 
 export interface ThemeStore {
-  count: number;
-  setCount(count?: number): void;
+  bgAlpha: number;
+  setBgAlpha: React.Dispatch<React.SetStateAction<number>>;
+  bgBlur: number;
+  setBgBlur: React.Dispatch<React.SetStateAction<number>>;
+  mode: Mode;
+  setMode: React.Dispatch<React.SetStateAction<Mode>>;
 }
+
+type Mode = "auto" | "dark" | "light";

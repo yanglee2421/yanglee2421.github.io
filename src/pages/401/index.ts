@@ -1,1 +1,1 @@
-export { NotAllow as Component } from "./NotAllow";
+export * from "./NotLogged";

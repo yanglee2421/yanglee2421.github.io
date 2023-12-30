@@ -15,6 +15,7 @@ import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
 // Components Imports
 import { CardRadio } from "./card-radio";
 import { FiveForm } from "./FiveForm";
+import { QueryBoard } from "./QueryBoard";
 
 // React Imports
 import React from "react";
@@ -57,7 +58,7 @@ export function Component() {
               />
               <Tab
                 value="six"
-                label={<TabLabel icon={<Apple />}>six</TabLabel>}
+                label={<TabLabel icon={<Apple />}>Query Board</TabLabel>}
               />
               <Tab
                 value="seven"
@@ -79,7 +80,9 @@ export function Component() {
         <TabPanel value="five">
           <FiveForm />
         </TabPanel>
-        <TabPanel value="six"></TabPanel>
+        <TabPanel value="six">
+          <QueryBoard></QueryBoard>
+        </TabPanel>
         <TabPanel value="seven">seven</TabPanel>
         <TabPanel value="eight">eight</TabPanel>
       </TabContext>

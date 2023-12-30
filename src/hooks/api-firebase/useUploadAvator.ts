@@ -7,14 +7,14 @@ import { getAuth, updateProfile, User } from "firebase/auth";
 import { app } from "@/api/firebase";
 
 // Store Imports
-import { useAuthStore } from "@/hooks/store";
+import { useAuth } from "@/hooks/store";
 
 export function useUploadAvator() {
-  const setLastUpdateAt = useAuthStore((store) => store.setLastUpdateAt);
-
+  const [, setUpdateAt] = useAuth();
   return useMutation<User, Error, Blob>({
     async mutationFn(blob) {
       const user = getAuth(app).currentUser;
+
       if (!user) {
         throw new Error("Not authorization");
       }
@@ -30,7 +30,7 @@ export function useUploadAvator() {
       console.error(error);
     },
     onSuccess() {
-      setLastUpdateAt(Date.now());
+      setUpdateAt(Date.now());
     },
   });
 }

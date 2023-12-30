@@ -7,10 +7,8 @@ export const axiosPosthog = axios.create({
 });
 
 axiosPosthog.interceptors.request.use((config) => {
-  if (!config.headers.getAuthorization()) {
-    const token = import.meta.env.VITE_POSTHOG_APIKEY;
-    config.headers.setAuthorization(`Bearer ${token}`);
-  }
+  const token = import.meta.env.VITE_POSTHOG_APIKEY;
+  config.headers.setAuthorization(`Bearer ${token}`, false);
 
   return config;
 });

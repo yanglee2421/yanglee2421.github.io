@@ -16,7 +16,7 @@ import { IconButton, Drawer, Box, List, IconButtonProps } from "@mui/material";
 import React from "react";
 
 // Components Imports
-import { Scrollbar } from "@/components/ui/scrollbar";
+import { ScrollView } from "@/components/ui/ScrollView";
 import { MenuGroup } from "@/components/ui/menu-group";
 import { MenuLink } from "@/components/ui/menu-link";
 
@@ -67,12 +67,13 @@ export function MenuDrawer(props: IconButtonProps) {
             </IconButton>
           </Box>
           <Box flex={1} overflow={"hidden"}>
-            <Scrollbar>
+            <ScrollView>
               <List component={"nav"} disablePadding>
                 <MenuLink icon={<HomeOutlined />} label="Home" to={"/"} />
                 <MenuGroup icon={<ArticleOutlined />} label="Pages">
                   <MenuLink label="Not Found" to={"/404"} />
                   <MenuLink label="Account" to={"/account"} />
+                  <MenuLink label="Picture" to={"/picture"} />
                 </MenuGroup>
                 <MenuGroup icon={<FeedOutlined />} label="Form">
                   <MenuLink label="Input" to={"/input"} />
@@ -99,7 +100,7 @@ export function MenuDrawer(props: IconButtonProps) {
                   <MenuLink label="Charts" to="/charts" />
                 </MenuGroup>
               </List>
-            </Scrollbar>
+            </ScrollView>
           </Box>
         </Box>
       </Drawer>
