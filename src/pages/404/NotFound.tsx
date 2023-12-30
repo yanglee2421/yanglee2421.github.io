@@ -8,7 +8,7 @@ import { Box, Button, Typography, Container } from "@mui/material";
 import { BlankMenu } from "./blank-menu";
 import { GlobalBg } from "@/components/ui";
 
-export function Component() {
+export function NotFound() {
   return (
     <>
       <GlobalBg />

@@ -15,7 +15,7 @@ import { GlobalBg } from "@/components/ui";
 import { Link } from "react-router-dom";
 import { grey } from "@mui/material/colors";
 
-export function NotAllow() {
+export function NotAuthorized() {
   return (
     <>
       <GlobalBg />

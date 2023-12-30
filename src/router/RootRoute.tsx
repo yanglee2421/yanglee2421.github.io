@@ -48,14 +48,19 @@ export function RootRoute() {
         // No access control
         if (
           acl.can(
-            Reflect.get(Object(currentRoute.handle), "aclAction") || "read",
-            Reflect.get(Object(currentRoute.handle), "aclSubject") || "fallback"
+            String(
+              Reflect.get(Object(currentRoute.handle), "aclAction") || "read"
+            ),
+            String(
+              Reflect.get(Object(currentRoute.handle), "aclSubject") ||
+                "fallback"
+            )
           )
         ) {
           return outlet;
         }
 
-        return <Navigate to="/401" />;
+        return <Navigate to="/403" />;
       }
     }
   }, [matches, auth.currentUser, outlet, acl]);

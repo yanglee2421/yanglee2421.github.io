@@ -14,42 +14,63 @@ export const routes: RouteObject[] = [
     children: [
       { path: "*", element: <Navigate to="/404" replace /> },
       {
+        id: "401",
+        path: "401",
+        handle: {
+          title: "Login",
+          auth: "guest",
+        },
+        async lazy() {
+          const { NotLogged } = await import("@/pages/401");
+          return {
+            Component: NotLogged,
+          };
+        },
+      },
+      {
+        id: "403",
+        path: "403",
+        handle: {
+          title: "403, Not authorization",
+          auth: "none",
+        },
+        async lazy() {
+          const { NotAuthorized } = await import("@/pages/403");
+          return {
+            Component: NotAuthorized,
+          };
+        },
+      },
+      {
         id: "404",
         path: "404",
         handle: {
           title: "404, NotFound",
           auth: "none",
         },
-        lazy() {
-          return import("@/pages/404");
+        async lazy() {
+          const { NotFound } = await import("@/pages/404");
+          return {
+            Component: NotFound,
+          };
         },
       },
       {
-        id: "401",
-        path: "401",
+        id: "500",
+        path: "500",
         handle: {
-          title: "401, No authorization",
-          auth: "auth",
-          aclAction: "read",
-          aclSubject: "all",
+          title: "500, System error",
+          auth: "none",
         },
-        lazy() {
-          return import("@/pages/401");
+        async lazy() {
+          const { SystemError } = await import("@/pages/500");
+          return {
+            Component: SystemError,
+          };
         },
       },
 
-      // User module
-      {
-        id: "login",
-        path: "login",
-        handle: {
-          title: "登录",
-          auth: "guest",
-        },
-        lazy() {
-          return import("@/pages/login");
-        },
-      },
+      // Guest pages
       {
         id: "forgot-passwd",
         path: "forgot-passwd",
@@ -72,6 +93,7 @@ export const routes: RouteObject[] = [
           return import("@/pages/register");
         },
       },
+
       {
         id: "privacy-policy",
         path: "privacy-policy",
