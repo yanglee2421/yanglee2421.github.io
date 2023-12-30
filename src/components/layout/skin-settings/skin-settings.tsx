@@ -16,7 +16,7 @@ import { AutoAwesomeOutlined, CloseOutlined } from "@mui/icons-material";
 import React from "react";
 
 // Components Imports
-import { Scrollbar } from "@/components";
+import { ScrollView } from "@/components/ui";
 
 export function SkinSettings(props: IconButtonProps) {
   // ** Props
@@ -81,7 +81,7 @@ export function SkinSettings(props: IconButtonProps) {
             </IconButton>
           </Box>
           <Box flex={1} overflow={"hidden"}>
-            <Scrollbar>
+            <ScrollView>
               <Box height={1000} p={4}>
                 <Typography
                   variant="caption"
@@ -158,7 +158,7 @@ export function SkinSettings(props: IconButtonProps) {
                   layout
                 </Typography>
               </Box>
-            </Scrollbar>
+            </ScrollView>
           </Box>
         </Box>
       </Drawer>

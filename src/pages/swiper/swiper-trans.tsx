@@ -9,24 +9,27 @@ import { Button } from "@mui/material";
 
 export function SwiperTrans() {
   const [state, setState] = React.useState(false);
-  const helloRef = React.useRef<HTMLButtonElement>(null);
-  const goodbyeRef = React.useRef<HTMLButtonElement>(null);
-  const nodeRef = state ? goodbyeRef : helloRef;
 
   return (
     <SwitchTransition>
-      <MyItem
-        key={state ? "Goodbye, world!" : "Hello, world!"}
-        state={state}
-        nodeRef={nodeRef}
-        setState={setState}
-      />
+      {state ? (
+        <MyItem key={1} setState={setState}>
+          Goodbye, world!
+        </MyItem>
+      ) : (
+        <MyItem key={2} setState={setState}>
+          Hello, world!
+        </MyItem>
+      )}
     </SwitchTransition>
   );
 }
 
 function MyItem(props: MyItemProps) {
-  const { state, nodeRef, setState, ...restProps } = props;
+  const { setState, children, ...restProps } = props;
+
+  const nodeRef = React.useRef<HTMLButtonElement>(null);
+
   return (
     <CSSTransition
       nodeRef={nodeRef}
@@ -40,31 +43,32 @@ function MyItem(props: MyItemProps) {
         ref={nodeRef}
         onClick={() => setState((state) => !state)}
         variant="contained"
-        sx={{
-          "&.fade-enter": {
-            opacity: 0,
-          },
-          "&.fade-exit": {
-            opacity: 1,
-          },
-          "&.fade-enter-active": {
-            opacity: 1,
-            transition: " opacity 500ms",
-          },
-          "&.fade-exit-active": {
-            opacity: 0,
-            transition: " opacity 500ms",
-          },
+        sx={(theme) => {
+          return {
+            "&.fade-enter": {
+              opacity: 0,
+            },
+            "&.fade-exit": {
+              opacity: 1,
+            },
+            "&.fade-enter-active": {
+              opacity: 1,
+              transition: theme.transitions.create("opacity"),
+            },
+            "&.fade-exit-active": {
+              opacity: 0,
+              transition: theme.transitions.create("opacity"),
+            },
+          };
         }}
       >
-        {state ? "Goodbye, world!" : "Hello, world!"}
+        {children}
       </Button>
     </CSSTransition>
   );
 }
 
 interface MyItemProps {
-  state: boolean;
+  children: React.ReactNode;
   setState: React.Dispatch<React.SetStateAction<boolean>>;
-  nodeRef: React.RefObject<HTMLButtonElement>;
 }

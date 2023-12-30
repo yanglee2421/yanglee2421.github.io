@@ -1,9 +1,8 @@
 // ** ScrollBar
-export * from "./scrollbar";
 export * from "./ScrollView";
 
-export * from "./menu-group";
-export * from "./menu-link";
+export * from "./MenuGroup";
+export * from "./MenuLink";
 export * from "./GlobalBg";
 
 // ** Skeleton

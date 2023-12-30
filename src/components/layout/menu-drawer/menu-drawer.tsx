@@ -17,8 +17,7 @@ import React from "react";
 
 // Components Imports
 import { ScrollView } from "@/components/ui/ScrollView";
-import { MenuGroup } from "@/components/ui/menu-group";
-import { MenuLink } from "@/components/ui/menu-link";
+import { MenuGroup, MenuLink } from "@/components/ui";
 
 export function MenuDrawer(props: IconButtonProps) {
   // ** Props

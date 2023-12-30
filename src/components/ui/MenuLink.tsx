@@ -59,11 +59,11 @@ export function MenuLink(props: MenuLinkProps) {
   );
 }
 
-export interface MenuLinkProps extends ListItemButtonProps {
+export type MenuLinkProps = ListItemButtonProps & {
   label: React.ReactNode;
   icon?: React.ReactNode;
   to: To;
   end?: boolean;
   caseSensitive?: boolean;
   relative?: RelativeRoutingType;
-}
+};
