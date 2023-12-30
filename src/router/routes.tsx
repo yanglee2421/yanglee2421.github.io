@@ -22,6 +22,7 @@ export const routes: RouteObject[] = [
         },
         async lazy() {
           const { NotLogged } = await import("@/pages/401");
+
           return {
             Component: NotLogged,
           };
@@ -36,6 +37,7 @@ export const routes: RouteObject[] = [
         },
         async lazy() {
           const { NotAuthorized } = await import("@/pages/403");
+
           return {
             Component: NotAuthorized,
           };
@@ -50,6 +52,7 @@ export const routes: RouteObject[] = [
         },
         async lazy() {
           const { NotFound } = await import("@/pages/404");
+
           return {
             Component: NotFound,
           };
@@ -64,6 +67,7 @@ export const routes: RouteObject[] = [
         },
         async lazy() {
           const { SystemError } = await import("@/pages/500");
+
           return {
             Component: SystemError,
           };

@@ -18,14 +18,12 @@ import { HomeRoute } from "./HomeRoute";
 import { LoginRoute } from "./LoginRoute";
 
 export function RootRoute() {
-  const outlet = useOutlet();
   const matches = useMatches();
+  const outlet = useOutlet();
   const [auth] = useAuth();
-  const acl = React.useMemo(() => {
-    return defineAbilityFor(auth.currentUser ? "admin" : "");
-  }, [auth.currentUser]);
+  const acl = defineAbilityFor(auth.currentUser ? "admin" : "");
 
-  const routeNode = React.useMemo(() => {
+  const routeNode = (() => {
     const currentRoute = matches.at(-1);
 
     if (!currentRoute) return null;
@@ -45,7 +43,7 @@ export function RootRoute() {
           return <LoginRoute />;
         }
 
-        // No access control
+        // Authorized pass
         if (
           acl.can(
             String(
@@ -60,10 +58,11 @@ export function RootRoute() {
           return outlet;
         }
 
+        // Not authorized
         return <Navigate to="/403" />;
       }
     }
-  }, [matches, auth.currentUser, outlet, acl]);
+  })();
 
   React.useEffect(() => {
     void matches;
