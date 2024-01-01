@@ -226,14 +226,6 @@ export const routes: RouteObject[] = [
 
           // ** Lab
           {
-            id: "fabric",
-            path: "fabric",
-            handle: { title: "fabric" },
-            lazy() {
-              return import("@/pages/fabric");
-            },
-          },
-          {
             id: "scrollbar",
             path: "scrollbar",
             handle: { title: "scrollbar" },
