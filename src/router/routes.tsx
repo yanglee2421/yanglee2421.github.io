@@ -129,7 +129,6 @@ export const routes: RouteObject[] = [
               return import("@/pages/home");
             },
           },
-
           {
             id: "account",
             path: "account",
@@ -138,7 +137,6 @@ export const routes: RouteObject[] = [
               return import("@/pages/account");
             },
           },
-
           {
             id: "picture",
             path: "picture",
@@ -233,14 +231,6 @@ export const routes: RouteObject[] = [
             handle: { title: "fabric" },
             lazy() {
               return import("@/pages/fabric");
-            },
-          },
-          {
-            id: "menu",
-            path: "menu",
-            handle: { title: "Menu" },
-            lazy() {
-              return import("@/pages/menu");
             },
           },
           {
