@@ -7,3 +7,4 @@ export * from "./GlobalBg";
 
 // ** Skeleton
 export * from "./SkeletonCard";
+export * from "./SkeletonList";

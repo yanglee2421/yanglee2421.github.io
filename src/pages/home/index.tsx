@@ -16,6 +16,7 @@ import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
 import { CardRadio } from "./card-radio";
 import { FiveForm } from "./FiveForm";
 import { QueryBoard } from "./QueryBoard";
+import { SkeletonList } from "@/components/ui";
 
 // React Imports
 import React from "react";
@@ -83,7 +84,9 @@ export function Component() {
         <TabPanel value="six">
           <QueryBoard></QueryBoard>
         </TabPanel>
-        <TabPanel value="seven">seven</TabPanel>
+        <TabPanel value="seven">
+          <SkeletonList></SkeletonList>
+        </TabPanel>
         <TabPanel value="eight">eight</TabPanel>
       </TabContext>
     </>
