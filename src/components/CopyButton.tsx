@@ -11,17 +11,16 @@ import React from "react";
 // Utils Imports
 import { timeout } from "@/utils";
 
-export const CopyBtn = React.forwardRef<HTMLButtonElement, CopyBtnProps>(
+export const CopyButton = React.forwardRef<HTMLButtonElement, CopyBtnProps>(
   (props, ref) => {
     // ** Props
-    const { children, text, ...restProps } = props;
+    const {
+      children = <ContentCopyRounded></ContentCopyRounded>,
+      text,
+      ...restProps
+    } = props;
 
     const [isPending, setIsPending] = React.useState(false);
-    const iconEl = React.useMemo(() => {
-      if (children) return children;
-      if (isPending) return <LibraryAddCheckRounded />;
-      return <ContentCopyRounded />;
-    }, [isPending, children]);
 
     const handleClick = async () => {
       if (isPending) return;
@@ -30,9 +29,9 @@ export const CopyBtn = React.forwardRef<HTMLButtonElement, CopyBtnProps>(
         await navigator.clipboard.writeText(text);
         setIsPending(true);
         await timeout(1000);
-        setIsPending(false);
       } catch (error) {
         console.error(error);
+      } finally {
         setIsPending(false);
       }
     };
@@ -40,13 +39,17 @@ export const CopyBtn = React.forwardRef<HTMLButtonElement, CopyBtnProps>(
     return (
       <Tooltip title="Copy the source">
         <IconButton ref={ref} onClick={handleClick} {...restProps}>
-          {iconEl}
+          {isPending ? (
+            <LibraryAddCheckRounded></LibraryAddCheckRounded>
+          ) : (
+            children
+          )}
         </IconButton>
       </Tooltip>
     );
   }
 );
 
-export interface CopyBtnProps extends IconButtonProps {
+export type CopyBtnProps = IconButtonProps & {
   text: string;
-}
+};

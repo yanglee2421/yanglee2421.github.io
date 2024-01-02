@@ -4,7 +4,7 @@ import { Editor, IAllProps } from "@tinymce/tinymce-react";
 // React Imports
 import React from "react";
 
-export function TinyMCE(props: IAllProps) {
+export function TinyMce(props: IAllProps) {
   // Props
   const { ...restProps } = props;
 
