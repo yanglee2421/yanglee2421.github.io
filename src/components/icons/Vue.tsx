@@ -1,9 +1,13 @@
 // React Imports
 import React from "react";
 
-export function IconVue(props: React.SVGProps<SVGSVGElement>) {
+export const Vue = React.forwardRef<
+  SVGSVGElement,
+  React.SVGProps<SVGSVGElement>
+>((props, ref) => {
   return (
     <svg
+      ref={ref}
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       aria-hidden="true"
@@ -29,4 +33,4 @@ export function IconVue(props: React.SVGProps<SVGSVGElement>) {
       ></path>
     </svg>
   );
-}
+});

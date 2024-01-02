@@ -1,9 +1,13 @@
 // React Imports
 import React from "react";
 
-export function IconCopy(props: React.SVGProps<SVGSVGElement>) {
+export const Copy = React.forwardRef<
+  SVGSVGElement,
+  React.SVGProps<SVGSVGElement>
+>((props, ref) => {
   return (
     <svg
+      ref={ref}
       viewBox="0 0 1024 1024"
       version="1.1"
       xmlns="http://www.w3.org/2000/svg"
@@ -17,4 +21,4 @@ export function IconCopy(props: React.SVGProps<SVGSVGElement>) {
       ></path>
     </svg>
   );
-}
+});

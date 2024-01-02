@@ -1,9 +1,18 @@
 // React Imports
 import React from "react";
 
-export function IconShopline(props: React.SVGProps<SVGSVGElement>) {
+export const Shopline = React.forwardRef<
+  SVGSVGElement,
+  React.SVGProps<SVGSVGElement>
+>((props, ref) => {
   return (
-    <svg xmlns="http://www.w3.org/2000/svg" width="67" height="67" {...props}>
+    <svg
+      ref={ref}
+      xmlns="http://www.w3.org/2000/svg"
+      width="67"
+      height="67"
+      {...props}
+    >
       <path
         style={{ fill: "#fefeff", stroke: "none" }}
         d="M0 0L0 28L1 28C2.25517 15.476 12.8673 3.90864 25 1L0 0z"
@@ -334,4 +343,4 @@ export function IconShopline(props: React.SVGProps<SVGSVGElement>) {
       />
     </svg>
   );
-}
+});

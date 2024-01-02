@@ -1,9 +1,13 @@
 // React Imports
 import React from "react";
 
-export function IconSvelte(props: React.SVGProps<SVGSVGElement>) {
+export const Svelte = React.forwardRef<
+  SVGSVGElement,
+  React.SVGProps<SVGSVGElement>
+>((props, ref) => {
   return (
     <svg
+      ref={ref}
       xmlns="http://www.w3.org/2000/svg"
       xmlnsXlink="http://www.w3.org/1999/xlink"
       aria-hidden="true"
@@ -25,4 +29,4 @@ export function IconSvelte(props: React.SVGProps<SVGSVGElement>) {
       ></path>
     </svg>
   );
-}
+});
