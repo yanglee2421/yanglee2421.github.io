@@ -5,24 +5,31 @@ import { SwitchTransition, Transition } from "react-transition-group";
 import React from "react";
 
 // MUI Imports
-import { Stack, Switch, Card, CardHeader, CardContent } from "@mui/material";
+import { Switch, Card, CardHeader, CardContent } from "@mui/material";
 
-export function SwitchHidden() {
+export function FadeCard() {
   const [show, setShow] = React.useState(false);
 
   return (
-    <Stack>
-      <Switch
-        checked={show}
-        onChange={(evt, checked) => {
-          void evt;
-          setShow(checked);
-        }}
-      ></Switch>
-      <SwitchTransition>
-        {show ? <CardOne></CardOne> : <CardTwo></CardTwo>}
-      </SwitchTransition>
-    </Stack>
+    <Card>
+      <CardHeader
+        title="Fade card"
+        action={
+          <Switch
+            checked={show}
+            onChange={(evt, checked) => {
+              void evt;
+              setShow(checked);
+            }}
+          ></Switch>
+        }
+      ></CardHeader>
+      <CardContent>
+        <SwitchTransition>
+          {show ? <CardOne></CardOne> : <CardTwo></CardTwo>}
+        </SwitchTransition>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -30,12 +37,13 @@ function CardOne(props: React.PropsWithChildren) {
   // ** Props
   const { ...restProps } = props;
 
-  const nodeRef = React.useRef(null);
+  const nodeRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <Transition
-      addEndListener={(node, done) => {
-        node.addEventListener("transitionend", done);
+      nodeRef={nodeRef}
+      addEndListener={(done) => {
+        nodeRef.current?.addEventListener("transitionend", done);
       }}
       {...restProps}
     >
@@ -45,16 +53,6 @@ function CardOne(props: React.PropsWithChildren) {
             ref={nodeRef}
             sx={(theme) => {
               switch (status) {
-                case "entering":
-                  return {
-                    transition: theme.transitions.create([
-                      "opacity",
-                      "transform",
-                    ]),
-                    opacity: 1,
-                    // transform: "translateX(0%)",
-                  };
-
                 case "entered":
                   return {
                     opacity: 1,
@@ -67,13 +65,20 @@ function CardOne(props: React.PropsWithChildren) {
                       "transform",
                     ]),
                     opacity: 0,
-                    // transform: "translateX(-100%)",
                   };
 
                 case "exited":
                   return {
                     opacity: 0,
-                    // transform: "translateX(-100%)",
+                  };
+
+                case "entering":
+                  return {
+                    transition: theme.transitions.create([
+                      "opacity",
+                      "transform",
+                    ]),
+                    opacity: 1,
                   };
 
                 default:
@@ -94,12 +99,13 @@ function CardTwo(props: React.PropsWithChildren) {
   // ** Props
   const { ...restProps } = props;
 
-  const nodeRef = React.useRef(null);
+  const nodeRef = React.useRef<HTMLDivElement>(null);
 
   return (
     <Transition
-      addEndListener={(node, done) => {
-        node.addEventListener("transitionend", done);
+      nodeRef={nodeRef}
+      addEndListener={(done) => {
+        nodeRef.current?.addEventListener("transitionend", done);
       }}
       {...restProps}
     >
@@ -109,20 +115,9 @@ function CardTwo(props: React.PropsWithChildren) {
             ref={nodeRef}
             sx={(theme) => {
               switch (status) {
-                case "entering":
-                  return {
-                    transition: theme.transitions.create([
-                      "opacity",
-                      "transform",
-                    ]),
-                    opacity: 1,
-                    // transform: "translateX(0%)",
-                  };
-
                 case "entered":
                   return {
                     opacity: 1,
-                    // transform: "translateX(0%)",
                   };
 
                 case "exiting":
@@ -132,13 +127,20 @@ function CardTwo(props: React.PropsWithChildren) {
                       "transform",
                     ]),
                     opacity: 0,
-                    // transform: "translateX(-100%)",
                   };
 
                 case "exited":
                   return {
                     opacity: 0,
-                    // transform: "translateX(-100%)",
+                  };
+
+                case "entering":
+                  return {
+                    transition: theme.transitions.create([
+                      "opacity",
+                      "transform",
+                    ]),
+                    opacity: 1,
                   };
 
                 default:

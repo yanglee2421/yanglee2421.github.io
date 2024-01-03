@@ -17,7 +17,6 @@ import { CardRadio } from "./card-radio";
 import { FiveForm } from "./FiveForm";
 import { QueryBoard } from "./QueryBoard";
 import { SkeletonList } from "@/components/ui";
-import { SwitchHidden } from "./SwitchHidden";
 
 // React Imports
 import React from "react";
@@ -88,9 +87,7 @@ export function Component() {
         <TabPanel value="seven">
           <SkeletonList></SkeletonList>
         </TabPanel>
-        <TabPanel value="eight">
-          <SwitchHidden></SwitchHidden>
-        </TabPanel>
+        <TabPanel value="eight"></TabPanel>
       </TabContext>
     </>
   );

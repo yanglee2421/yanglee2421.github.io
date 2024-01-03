@@ -90,8 +90,7 @@ export function MenuDrawer(props: IconButtonProps) {
                   <MenuLink label="Virtualized List" to={"/virtualized-list"} />
                 </MenuGroup>
                 <MenuGroup label="Lab" icon={<ScienceOutlined />}>
-                  <MenuLink label="Fabric" to="/fabric" />
-                  <MenuLink label="Swiper" to="/swiper" />
+                  <MenuLink label="Transition" to="/transition" />
                   <MenuLink label="SSO" to="/sso-login" />
                   <MenuLink label="Blank" to="/blank" />
                 </MenuGroup>

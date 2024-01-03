@@ -5,23 +5,28 @@ import { CSSTransition, SwitchTransition } from "react-transition-group";
 import React from "react";
 
 // MUI Imports
-import { Button } from "@mui/material";
+import { Button, Card, CardHeader, CardContent } from "@mui/material";
 
-export function SwiperTrans() {
+export function FadeButton() {
   const [state, setState] = React.useState(false);
 
   return (
-    <SwitchTransition>
-      {state ? (
-        <MyItem key={1} setState={setState}>
-          Goodbye, world!
-        </MyItem>
-      ) : (
-        <MyItem key={2} setState={setState}>
-          Hello, world!
-        </MyItem>
-      )}
-    </SwitchTransition>
+    <Card>
+      <CardHeader title="Fade button"></CardHeader>
+      <CardContent>
+        <SwitchTransition>
+          {state ? (
+            <MyItem key={1} setState={setState}>
+              Goodbye, world!
+            </MyItem>
+          ) : (
+            <MyItem key={2} setState={setState}>
+              Hello, world!
+            </MyItem>
+          )}
+        </SwitchTransition>
+      </CardContent>
+    </Card>
   );
 }
 
@@ -48,12 +53,12 @@ function MyItem(props: MyItemProps) {
             "&.fade-enter": {
               opacity: 0,
             },
-            "&.fade-exit": {
-              opacity: 1,
-            },
             "&.fade-enter-active": {
               opacity: 1,
               transition: theme.transitions.create("opacity"),
+            },
+            "&.fade-exit": {
+              opacity: 1,
             },
             "&.fade-exit-active": {
               opacity: 0,

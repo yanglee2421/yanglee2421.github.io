@@ -4,8 +4,10 @@ import {
   Box,
   Button,
   IconButton,
-  Divider,
   ButtonGroup,
+  Card,
+  CardContent,
+  CardHeader,
 } from "@mui/material";
 import {
   ArrowBackIosNewRounded,
@@ -15,8 +17,78 @@ import {
 // React Imports
 import React from "react";
 
-// Components Imports
-import { SwiperTrans } from "./swiper-trans";
+export function Swiper() {
+  const ulRef = React.useRef<HTMLUListElement>(null);
+
+  const handlePrevClick = () => {
+    const rootStyle = globalThis.getComputedStyle(document.documentElement);
+    ulRef.current?.scrollBy({
+      left: -25 * Number.parseInt(rootStyle.fontSize),
+      behavior: "smooth",
+    });
+  };
+
+  const handleNextClick = () => {
+    const rootStyle = globalThis.getComputedStyle(document.documentElement);
+    ulRef.current?.scrollBy({
+      left: 25 * Number.parseInt(rootStyle.fontSize),
+      behavior: "smooth",
+    });
+  };
+
+  const count = 5;
+  const liEl = (() => {
+    const list = [];
+    for (let i = 0; i < count; i++) {
+      list.push(i);
+    }
+
+    return list.map((item) => <li key={item}>{item}</li>);
+  })();
+
+  const dotEl = (() => {
+    const list = [];
+    for (let i = 0; i < count; i++) {
+      list.push(i);
+    }
+
+    return list.map((item) => {
+      const handleDotClick = () => {
+        const rootStyle = globalThis.getComputedStyle(document.documentElement);
+        const el = ulRef.current;
+
+        el?.scroll({
+          left: item * 25 * Number.parseInt(rootStyle.fontSize),
+          behavior: "smooth",
+        });
+      };
+
+      return (
+        <Button key={item} onClick={handleDotClick}>
+          dix-{item}
+        </Button>
+      );
+    });
+  })();
+
+  return (
+    <Card>
+      <CardHeader title="Swiper"></CardHeader>
+      <CardContent>
+        <Box flex={1}>
+          <UlStyled ref={ulRef}>{liEl}</UlStyled>
+          <IconButton onClick={handlePrevClick}>
+            <ArrowBackIosNewRounded />
+          </IconButton>
+          <IconButton onClick={handleNextClick}>
+            <ArrowForwardIosRounded />
+          </IconButton>
+          <ButtonGroup>{dotEl}</ButtonGroup>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+}
 
 const UlStyled = styled("ul")(({ theme }) => {
   return {
@@ -45,79 +117,3 @@ const UlStyled = styled("ul")(({ theme }) => {
     },
   };
 });
-
-export const Swiper = () => {
-  const ulRef = React.useRef<HTMLUListElement>(null);
-
-  const handlePrevClick = () => {
-    const el = ulRef.current;
-
-    const rootStyle = globalThis.getComputedStyle(document.documentElement);
-    el?.scrollBy({
-      left: -25 * Number.parseInt(rootStyle.fontSize),
-      behavior: "smooth",
-    });
-  };
-  const handleNextClick = () => {
-    const rootStyle = globalThis.getComputedStyle(document.documentElement);
-    const el = ulRef.current;
-
-    el?.scrollBy({
-      left: 25 * Number.parseInt(rootStyle.fontSize),
-      behavior: "smooth",
-    });
-  };
-
-  const count = 5;
-  const liEl = React.useMemo(() => {
-    const list = [];
-    for (let i = 0; i < count; i++) {
-      list.push(i);
-    }
-
-    return list.map((item) => <li key={item}>{item}</li>);
-  }, [count]);
-
-  const dotEl = React.useMemo(() => {
-    const list = [];
-    for (let i = 0; i < count; i++) {
-      list.push(i);
-    }
-
-    return list.map((item) => {
-      const handleDotClick = () => {
-        const rootStyle = globalThis.getComputedStyle(document.documentElement);
-        const el = ulRef.current;
-
-        el?.scroll({
-          left: item * 25 * Number.parseInt(rootStyle.fontSize),
-          behavior: "smooth",
-        });
-      };
-
-      return (
-        <Button key={item} onClick={handleDotClick}>
-          dix-{item}
-        </Button>
-      );
-    });
-  }, [count]);
-
-  return (
-    <>
-      <Box flex={1}>
-        <UlStyled ref={ulRef}>{liEl}</UlStyled>
-        <IconButton onClick={handlePrevClick}>
-          <ArrowBackIosNewRounded />
-        </IconButton>
-        <IconButton onClick={handleNextClick}>
-          <ArrowForwardIosRounded />
-        </IconButton>
-        <br />
-        <ButtonGroup>{dotEl}</ButtonGroup>
-        <Divider>Divider</Divider>
-        <SwiperTrans />
-      </Box>
-    </>
-  );
-};

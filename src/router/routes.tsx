@@ -234,11 +234,15 @@ export const routes: RouteObject[] = [
             },
           },
           {
-            id: "swiper",
-            path: "swiper",
-            handle: { title: "Swiper" },
-            lazy() {
-              return import("@/pages/swiper");
+            id: "transition",
+            path: "transition",
+            handle: { title: "Transition" },
+            async lazy() {
+              const { Transition } = await import("@/pages/transition");
+
+              return {
+                Component: Transition,
+              };
             },
           },
 
