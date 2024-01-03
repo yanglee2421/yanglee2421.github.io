@@ -8,6 +8,10 @@ import {
   Select,
   MenuItem,
   SelectProps,
+  Fade,
+  Card,
+  CardContent,
+  Switch,
 } from "@mui/material";
 import { TabContext, TabList, TabListProps, TabPanel } from "@mui/lab";
 import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
@@ -17,6 +21,7 @@ import { CardRadio } from "./card-radio";
 import { FiveForm } from "./FiveForm";
 import { QueryBoard } from "./QueryBoard";
 import { SkeletonList } from "@/components/ui";
+import { SwitchTransition } from "react-transition-group";
 
 // React Imports
 import React from "react";
@@ -24,6 +29,7 @@ import React from "react";
 export function Component() {
   const [tab, setTab] = React.useState("five");
   const [selected, setSelected] = React.useState("five");
+  const [show, setShow] = React.useState(false);
 
   const tabChangeHandler: TabListProps["onChange"] = (evt, v) => {
     void evt;
@@ -32,6 +38,10 @@ export function Component() {
 
   const selecChgHandler: SelectProps["onChange"] = (evt) => {
     setSelected(String(evt.target.value));
+  };
+
+  const handleToggle = () => {
+    setShow((p) => !p);
   };
 
   return (
@@ -87,7 +97,24 @@ export function Component() {
         <TabPanel value="seven">
           <SkeletonList></SkeletonList>
         </TabPanel>
-        <TabPanel value="eight"></TabPanel>
+        <TabPanel value="eight">
+          <Switch checked={show} onChange={handleToggle}></Switch>
+          <SwitchTransition>
+            {show ? (
+              <Fade key="one" unmountOnExit>
+                <Card>
+                  <CardContent>one</CardContent>
+                </Card>
+              </Fade>
+            ) : (
+              <Fade key="two" unmountOnExit>
+                <Card>
+                  <CardContent>two</CardContent>
+                </Card>
+              </Fade>
+            )}
+          </SwitchTransition>
+        </TabPanel>
       </TabContext>
     </>
   );
