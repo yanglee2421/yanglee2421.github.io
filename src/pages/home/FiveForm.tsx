@@ -13,6 +13,7 @@ import { VisibilityOutlined, SearchOutlined } from "@mui/icons-material";
 // Components Imports
 import { SkeletonCard } from "@/components/ui";
 import { ItemText } from "@/components";
+import { CircularProgressWithLabel } from "./CircularProgressWithLabel";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
@@ -83,6 +84,11 @@ export function FiveForm() {
                   ),
                 }}
               />
+            </Grid>
+            <Grid item xs={12}>
+              <CircularProgressWithLabel
+                value={100}
+              ></CircularProgressWithLabel>
             </Grid>
           </Grid>
         </CardContent>
