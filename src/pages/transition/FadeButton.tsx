@@ -41,6 +41,7 @@ function MyItem(props: MyItemProps) {
       addEndListener={(done) =>
         nodeRef.current?.addEventListener("transitionend", done)
       }
+      unmountOnExit
       classNames="fade"
       {...restProps}
     >
@@ -50,19 +51,34 @@ function MyItem(props: MyItemProps) {
         variant="contained"
         sx={(theme) => {
           return {
+            // Enter stage
             "&.fade-enter": {
               opacity: 0,
+              transform: "scale(1.1)",
             },
             "&.fade-enter-active": {
+              transition: theme.transitions.create(["opacity", "transform"]),
               opacity: 1,
-              transition: theme.transitions.create("opacity"),
+              transform: "scale(1)",
             },
+            "&.fade-enter-done": {
+              opacity: 1,
+              transform: "scale(1)",
+            },
+
+            // Exit stage
             "&.fade-exit": {
               opacity: 1,
+              transform: "scale(1)",
             },
             "&.fade-exit-active": {
+              transition: theme.transitions.create(["opacity", "transform"]),
               opacity: 0,
-              transition: theme.transitions.create("opacity"),
+              transform: "scale(0.9)",
+            },
+            "&.fade-exit-done": {
+              opacity: 0,
+              transform: "scale(0.9)",
             },
           };
         }}

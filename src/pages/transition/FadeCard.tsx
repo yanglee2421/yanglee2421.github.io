@@ -26,7 +26,11 @@ export function FadeCard() {
       ></CardHeader>
       <CardContent>
         <SwitchTransition>
-          {show ? <CardOne></CardOne> : <CardTwo></CardTwo>}
+          {show ? (
+            <CardOne key="1">Card one</CardOne>
+          ) : (
+            <CardOne key="2">Card two</CardOne>
+          )}
         </SwitchTransition>
       </CardContent>
     </Card>
@@ -35,7 +39,7 @@ export function FadeCard() {
 
 function CardOne(props: React.PropsWithChildren) {
   // ** Props
-  const { ...restProps } = props;
+  const { children, ...restProps } = props;
 
   const nodeRef = React.useRef<HTMLDivElement>(null);
 
@@ -45,6 +49,7 @@ function CardOne(props: React.PropsWithChildren) {
       addEndListener={(done) => {
         nodeRef.current?.addEventListener("transitionend", done);
       }}
+      unmountOnExit
       {...restProps}
     >
       {(status) => {
@@ -53,9 +58,12 @@ function CardOne(props: React.PropsWithChildren) {
             ref={nodeRef}
             sx={(theme) => {
               switch (status) {
+                // Exit stage
                 case "entered":
                   return {
                     opacity: 1,
+                    transform: "scale(1)",
+                    color: "red",
                   };
 
                 case "exiting":
@@ -65,11 +73,15 @@ function CardOne(props: React.PropsWithChildren) {
                       "transform",
                     ]),
                     opacity: 0,
+                    transform: "scale(0.9)",
+                    color: "green",
                   };
 
+                // Enter stage
                 case "exited":
                   return {
                     opacity: 0,
+                    transform: "scale(1.1)",
                   };
 
                 case "entering":
@@ -79,77 +91,17 @@ function CardOne(props: React.PropsWithChildren) {
                       "transform",
                     ]),
                     opacity: 1,
+                    transform: "scale(1)",
                   };
 
+                case "unmounted":
                 default:
                   return {};
               }
             }}
           >
-            <CardHeader title="Card one"></CardHeader>
-            <CardContent></CardContent>
-          </Card>
-        );
-      }}
-    </Transition>
-  );
-}
-
-function CardTwo(props: React.PropsWithChildren) {
-  // ** Props
-  const { ...restProps } = props;
-
-  const nodeRef = React.useRef<HTMLDivElement>(null);
-
-  return (
-    <Transition
-      nodeRef={nodeRef}
-      addEndListener={(done) => {
-        nodeRef.current?.addEventListener("transitionend", done);
-      }}
-      {...restProps}
-    >
-      {(status) => {
-        return (
-          <Card
-            ref={nodeRef}
-            sx={(theme) => {
-              switch (status) {
-                case "entered":
-                  return {
-                    opacity: 1,
-                  };
-
-                case "exiting":
-                  return {
-                    transition: theme.transitions.create([
-                      "opacity",
-                      "transform",
-                    ]),
-                    opacity: 0,
-                  };
-
-                case "exited":
-                  return {
-                    opacity: 0,
-                  };
-
-                case "entering":
-                  return {
-                    transition: theme.transitions.create([
-                      "opacity",
-                      "transform",
-                    ]),
-                    opacity: 1,
-                  };
-
-                default:
-                  return {};
-              }
-            }}
-          >
-            <CardHeader title="Card two"></CardHeader>
-            <CardContent></CardContent>
+            <CardHeader title="Card transition"></CardHeader>
+            <CardContent>{children}</CardContent>
           </Card>
         );
       }}
