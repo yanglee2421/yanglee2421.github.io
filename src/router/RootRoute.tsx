@@ -24,7 +24,7 @@ export function RootRoute() {
   const acl = defineAbilityFor(auth.currentUser ? "admin" : "");
 
   const routeNode = (() => {
-    const currentRoute = matches.at(-1);
+    const currentRoute = matches[matches.length - 1];
 
     if (!currentRoute) return null;
 
@@ -73,7 +73,7 @@ export function RootRoute() {
   }, [matches]);
 
   React.useEffect(() => {
-    const currentRoute = matches.at(-1);
+    const currentRoute = matches[matches.length - 1];
 
     if (!currentRoute) return;
 
