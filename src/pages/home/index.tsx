@@ -100,19 +100,15 @@ export function Component() {
         <TabPanel value="eight">
           <Switch checked={show} onChange={handleToggle}></Switch>
           <SwitchTransition>
-            {show ? (
-              <Fade key="one" unmountOnExit>
-                <Card>
+            <Fade key={show ? "one" : "two"} unmountOnExit>
+              <Card>
+                {show ? (
                   <CardContent>one</CardContent>
-                </Card>
-              </Fade>
-            ) : (
-              <Fade key="two" unmountOnExit>
-                <Card>
+                ) : (
                   <CardContent>two</CardContent>
-                </Card>
-              </Fade>
-            )}
+                )}
+              </Card>
+            </Fade>
           </SwitchTransition>
         </TabPanel>
       </TabContext>

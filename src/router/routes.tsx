@@ -114,8 +114,12 @@ export const routes: RouteObject[] = [
       {
         id: "with-appbar",
         path: "",
-        lazy() {
-          return import("@/layout/main");
+        async lazy() {
+          const { LayoutWithAppbar } = await import("@/layout/");
+
+          return {
+            Component: LayoutWithAppbar,
+          };
         },
         children: [
           {
