@@ -12,6 +12,8 @@ import {
   Card,
   CardContent,
   Switch,
+  Chip,
+  alpha,
 } from "@mui/material";
 import { TabContext, TabList, TabListProps, TabPanel } from "@mui/lab";
 import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
@@ -21,7 +23,7 @@ import { CardRadio } from "./card-radio";
 import { FiveForm } from "./FiveForm";
 import { QueryBoard } from "./QueryBoard";
 import { SkeletonList } from "@/components/ui";
-import { SwitchTransition } from "react-transition-group";
+import { SwitchTransition, Transition } from "react-transition-group";
 
 // React Imports
 import React from "react";
@@ -30,6 +32,7 @@ export function Component() {
   const [tab, setTab] = React.useState("five");
   const [selected, setSelected] = React.useState("five");
   const [show, setShow] = React.useState(false);
+  const nodeRef = React.useRef<HTMLDivElement>(null);
 
   const tabChangeHandler: TabListProps["onChange"] = (evt, v) => {
     void evt;
@@ -95,7 +98,74 @@ export function Component() {
           <QueryBoard></QueryBoard>
         </TabPanel>
         <TabPanel value="seven">
-          <SkeletonList></SkeletonList>
+          <Switch checked={show} onChange={handleToggle}></Switch>
+          <Transition
+            in={show}
+            nodeRef={nodeRef}
+            addEndListener={(done) => {
+              nodeRef.current?.addEventListener("transitionend", done);
+            }}
+            unmountOnExit
+          >
+            {(status) => {
+              return (
+                <Box
+                  ref={nodeRef}
+                  display={"grid"}
+                  sx={(theme) => {
+                    switch (status) {
+                      // Exit stage
+                      case "entered":
+                        return {
+                          gridTemplateRows: "1fr",
+                        };
+
+                      case "exiting":
+                        return {
+                          transition: theme.transitions.create([
+                            "grid-template-rows",
+                          ]),
+                          gridTemplateRows: "0fr",
+                        };
+
+                      // Enter stage
+                      case "exited":
+                        return {
+                          gridTemplateRows: "0fr",
+                        };
+
+                      case "entering":
+                        return {
+                          transition: theme.transitions.create([
+                            "grid-template-rows",
+                          ]),
+                          gridTemplateRows: "1fr",
+                        };
+
+                      case "unmounted":
+                      default:
+                        return {};
+                    }
+                  }}
+                >
+                  <Box overflow={"hidden"}>
+                    <SkeletonList></SkeletonList>
+                  </Box>
+                </Box>
+              );
+            }}
+          </Transition>
+          <Box>
+            <Chip
+              label="Success"
+              sx={(theme) => {
+                return {
+                  color: theme.palette.success.dark,
+                  bgcolor: alpha(theme.palette.success.dark, 0.12),
+                };
+              }}
+            ></Chip>
+          </Box>
         </TabPanel>
         <TabPanel value="eight">
           <Switch checked={show} onChange={handleToggle}></Switch>
