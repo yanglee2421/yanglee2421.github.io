@@ -63,7 +63,6 @@ function CardOne(props: React.PropsWithChildren) {
                   return {
                     opacity: 1,
                     transform: "scale(1)",
-                    color: "red",
                   };
 
                 case "exiting":
@@ -74,7 +73,6 @@ function CardOne(props: React.PropsWithChildren) {
                     ]),
                     opacity: 0,
                     transform: "scale(0.9)",
-                    color: "green",
                   };
 
                 // Enter stage
