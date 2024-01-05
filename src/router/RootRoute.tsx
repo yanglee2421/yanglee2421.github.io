@@ -30,7 +30,7 @@ export function RootRoute() {
 
     switch (Reflect.get(Object(currentRoute.handle), "auth")) {
       case "guest": {
-        return auth.currentUser ? <HomeRoute /> : outlet;
+        return auth.currentUser ? <HomeRoute></HomeRoute> : outlet;
       }
 
       case "none":
@@ -40,7 +40,7 @@ export function RootRoute() {
       default: {
         // Not logged in
         if (!auth.currentUser) {
-          return <LoginRoute />;
+          return <LoginRoute></LoginRoute>;
         }
 
         // Authorized pass
@@ -59,7 +59,7 @@ export function RootRoute() {
         }
 
         // Not authorized
-        return <Navigate to="/403" />;
+        return <Navigate to="/403"></Navigate>;
       }
     }
   })();
