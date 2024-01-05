@@ -36,7 +36,7 @@ export function LayoutWithAppbar() {
         >
           <StyledBox
             ref={containerRef}
-            p={3}
+            p={2}
             mt={`${resizeEntry?.borderBoxSize.at(0)?.blockSize || 0}px`}
           >
             {outlet}

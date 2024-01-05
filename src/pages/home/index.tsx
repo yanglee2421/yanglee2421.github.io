@@ -49,16 +49,17 @@ export function Component() {
 
   return (
     <>
-      <Box p={2}>
-        <CardRadio />
+      <Box>
+        <CardRadio></CardRadio>
       </Box>
       <TabContext value={tab}>
-        <Box display={"flex"} gap={5} p={2}>
+        <Box display={"flex"} gap={5}>
           <Box
             flex={1}
             overflow={"hidden"}
             display={"flex"}
             alignItems={"center"}
+            paddingBlock={3}
           >
             <StyledTabList
               onChange={tabChangeHandler}
@@ -68,20 +69,22 @@ export function Component() {
             >
               <Tab
                 value="five"
-                label={<TabLabel icon={<Microsoft />}>five</TabLabel>}
-              />
+                label={<TabLabel icon={<Microsoft></Microsoft>}>five</TabLabel>}
+              ></Tab>
               <Tab
                 value="six"
-                label={<TabLabel icon={<Apple />}>Query Board</TabLabel>}
-              />
+                label={<TabLabel icon={<Apple></Apple>}>Query Board</TabLabel>}
+              ></Tab>
               <Tab
                 value="seven"
-                label={<TabLabel icon={<YouTube />}>seven</TabLabel>}
-              />
+                label={<TabLabel icon={<YouTube></YouTube>}>seven</TabLabel>}
+              ></Tab>
               <Tab
                 value="eight"
-                label={<TabLabel icon={<Instagram />}>eight</TabLabel>}
-              />
+                label={
+                  <TabLabel icon={<Instagram></Instagram>}>eight</TabLabel>
+                }
+              ></Tab>
             </StyledTabList>
           </Box>
           <Box display={"flex"} alignItems={"center"}>
@@ -91,13 +94,13 @@ export function Component() {
             </Select>
           </Box>
         </Box>
-        <TabPanel value="five">
+        <TabPanel value="five" sx={{ p: 0 }}>
           <FiveForm />
         </TabPanel>
-        <TabPanel value="six">
+        <TabPanel value="six" sx={{ p: 0 }}>
           <QueryBoard></QueryBoard>
         </TabPanel>
-        <TabPanel value="seven">
+        <TabPanel value="seven" sx={{ p: 0 }}>
           <Switch checked={show} onChange={handleToggle}></Switch>
           <Transition
             in={show}
@@ -167,7 +170,7 @@ export function Component() {
             ></Chip>
           </Box>
         </TabPanel>
-        <TabPanel value="eight">
+        <TabPanel value="eight" sx={{ p: 0 }}>
           <Switch checked={show} onChange={handleToggle}></Switch>
           <SwitchTransition>
             <Fade key={show ? "one" : "two"} unmountOnExit>
