@@ -4,7 +4,7 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
-  Grid,
+  Paper,
 } from "@mui/material";
 
 // Components Imports
@@ -12,64 +12,73 @@ import { FixedSizeList, ListChildComponentProps } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import InfiniteLoader from "react-window-infinite-loader";
 
+// Ps Imports
+import PerfectScrollbar from "perfect-scrollbar";
+import "perfect-scrollbar/css/perfect-scrollbar.css";
+
 // React Imports
 import React from "react";
 
 export function VirtualizedList() {
   const infiniteRef = React.useRef<InfiniteLoader>(null);
+  const scrollViewRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const scrollViewEl = scrollViewRef.current?.querySelector(".scrollview");
+    if (!scrollViewEl) {
+      return;
+    }
+
+    const ps = new PerfectScrollbar(scrollViewEl);
+
+    return () => {
+      ps.destroy();
+    };
+  }, []);
 
   return (
-    <>
-      <Grid container spacing={3}>
-        <Grid xs={12} md={6}>
-          <Box
-            sx={{
-              height: 420,
-              bgcolor: "background.paper",
-            }}
-          >
-            <AutoSizer>
-              {(size) => {
-                return (
-                  <FixedSizeList
-                    height={size.height}
-                    width={size.width}
-                    itemSize={46}
-                    itemCount={200}
-                    overscanCount={5}
-                  >
-                    {renderRow}
-                  </FixedSizeList>
-                );
-              }}
-            </AutoSizer>
-          </Box>
-        </Grid>
-        <Grid xs={12} md={6}>
-          <InfiniteLoader
-            ref={infiniteRef}
-            isItemLoaded={() => true}
-            itemCount={200}
-            loadMoreItems={() => {}}
-          >
-            {({ onItemsRendered, ref }) => {
-              return (
-                <FixedSizeList
-                  ref={ref}
-                  itemCount={200}
-                  onItemsRendered={onItemsRendered}
-                  height={520}
-                  width={400}
-                  itemSize={46}
-                >
-                  {renderRow}
-                </FixedSizeList>
-              );
-            }}
-          </InfiniteLoader>
-        </Grid>
-      </Grid>
-    </>
+    <Paper>
+      <Box
+        ref={scrollViewRef}
+        sx={{
+          height: 420,
+          bgcolor: "background.paper",
+          "& scrollview": {
+            overflow: "hidden !important",
+          },
+        }}
+      >
+        <AutoSizer>
+          {(size) => {
+            return (
+              <InfiniteLoader
+                ref={infiniteRef}
+                isItemLoaded={() => true}
+                itemCount={200}
+                loadMoreItems={() => {}}
+              >
+                {({ ref, onItemsRendered }) => {
+                  return (
+                    <FixedSizeList
+                      ref={ref}
+                      onItemsRendered={onItemsRendered}
+                      height={size.height}
+                      width={size.width}
+                      itemSize={46}
+                      itemCount={200}
+                      overscanCount={5}
+                      className="scrollview"
+                    >
+                      {renderRow}
+                    </FixedSizeList>
+                  );
+                }}
+              </InfiniteLoader>
+            );
+          }}
+        </AutoSizer>
+      </Box>
+    </Paper>
   );
 }
 
@@ -80,7 +89,10 @@ function renderRow(props: ListChildComponentProps) {
   return (
     <ListItem style={style} key={index} component="div" disablePadding>
       <ListItemButton>
-        <ListItemText primary={`Item ${index + 1}`} />
+        <ListItemText
+          primary={`Item ${index + 1}`}
+          secondary={`item description...`}
+        ></ListItemText>
       </ListItemButton>
     </ListItem>
   );

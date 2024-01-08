@@ -212,14 +212,6 @@ export const routes: RouteObject[] = [
 
           // ** List
           {
-            id: "infinite-list",
-            path: "infinite-list",
-            handle: { title: "Infinite List" },
-            lazy() {
-              return import("@/pages/infinite-list");
-            },
-          },
-          {
             id: "virtualized-list",
             path: "virtualized-list",
             handle: { title: "Virtualized List" },
@@ -229,14 +221,6 @@ export const routes: RouteObject[] = [
           },
 
           // ** Lab
-          {
-            id: "scrollbar",
-            path: "scrollbar",
-            handle: { title: "scrollbar" },
-            lazy() {
-              return import("@/pages/scrollbar");
-            },
-          },
           {
             id: "transition",
             path: "transition",
