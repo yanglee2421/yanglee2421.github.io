@@ -1,5 +1,5 @@
 // MUI Imports
-import { Box } from "@mui/material";
+import { Box, Button, Paper, Typography } from "@mui/material";
 
 // Table Imports
 import {
@@ -9,6 +9,12 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 
+// React Imports
+import React from "react";
+
+// Utils Imports
+import { timeout } from "@/utils";
+
 export function Table() {
   const table = useReactTable({
     columns,
@@ -16,8 +22,32 @@ export function Table() {
     getCoreRowModel: getCoreRowModel(),
   });
 
+  const [number, setNumber] = React.useState(0);
+  const [rolling, setRolling] = React.useState(false);
+  const rollRef = React.useRef(
+    new Roll(() => {
+      React.startTransition(() => {
+        setNumber(Math.floor(Math.random() * 100) + 1);
+      });
+    })
+  );
+
+  const handleRoll = async () => {
+    rollRef.current.play();
+    setRolling(true);
+    await timeout(1000);
+    rollRef.current.abort();
+    setRolling(false);
+  };
+
   return (
     <Box>
+      <Paper sx={{ padding: 3 }}>
+        <Typography variant="h1">{number}</Typography>
+        <Button onClick={handleRoll} disabled={rolling} variant="contained">
+          roll
+        </Button>
+      </Paper>
       <table>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => {
@@ -173,3 +203,17 @@ const columns = [
     },
   }),
 ];
+
+class Roll {
+  constructor(private readonly animate: () => void) {}
+
+  #animateId = 0;
+  play() {
+    this.#animateId = requestAnimationFrame(this.play.bind(this));
+
+    this.animate();
+  }
+  abort() {
+    cancelAnimationFrame(this.#animateId);
+  }
+}
