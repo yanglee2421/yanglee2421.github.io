@@ -209,6 +209,16 @@ export const routes: RouteObject[] = [
               return import("@/pages/posthog-events");
             },
           },
+          {
+            id: "table",
+            path: "table",
+            async lazy() {
+              const { Table } = await import("@/pages/table");
+              return {
+                Component: Table,
+              };
+            },
+          },
 
           // ** List
           {

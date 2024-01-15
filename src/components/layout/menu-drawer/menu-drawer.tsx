@@ -81,6 +81,7 @@ export function MenuDrawer(props: IconButtonProps) {
                   <MenuLink label="TinyMCE" to={"tinymce"} />
                 </MenuGroup>
                 <MenuGroup label="Table" icon={<GridOnOutlined />}>
+                  <MenuLink label="Table" to={"/table"}></MenuLink>
                   <MenuLink label="Data Grid" to={"/data-grid"} />
                   <MenuLink label="Posthog Insights" to={"/posthog-insights"} />
                   <MenuLink label="Posthog Events" to={"/posthog-events"} />
