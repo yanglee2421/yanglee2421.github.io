@@ -15,7 +15,6 @@ import {
   Grid,
   FormControlLabel,
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
 import {
   RefreshOutlined,
   ClearAllOutlined,
@@ -188,14 +187,14 @@ export function QueryBoard() {
             title="Query Return"
             subheader="There is query result"
             action={
-              <LoadingButton
+              <Button
                 onClick={() => {
                   query.refetch();
                 }}
-                loading={query.isRefetching}
+                disabled={query.isRefetching}
               >
                 refetch
-              </LoadingButton>
+              </Button>
             }
           ></CardHeader>
           <CardContent>

@@ -11,8 +11,9 @@ import { GlobalBg } from "@/components/ui";
 export function Blank() {
   return (
     <>
-      <GlobalBg />
+      <GlobalBg></GlobalBg>
       <Box
+        component={"form"}
         position={"relative"}
         display={"flex"}
         justifyContent={"center"}
@@ -20,24 +21,22 @@ export function Blank() {
         height={"100%"}
         color={"common.white"}
       >
-        <BlankMenu />
-        <StyledForm>
-          <StyledUl>
-            <li>
-              <label>
-                网页
-                <input type="radio" name="subject" />
-              </label>
-            </li>
-            <li>
-              <label>
-                图片
-                <input type="radio" name="subject" />
-              </label>
-            </li>
-          </StyledUl>
-          <StyledInput placeholder="Search..." />
-        </StyledForm>
+        <BlankMenu></BlankMenu>
+        <StyledUl>
+          <li>
+            <label>
+              网页
+              <input type="radio" name="subject" />
+            </label>
+          </li>
+          <li>
+            <label>
+              图片
+              <input type="radio" name="subject" />
+            </label>
+          </li>
+        </StyledUl>
+        <StyledInput placeholder="Search..." />
       </Box>
     </>
   );
@@ -53,8 +52,6 @@ const StyledInput = styled("input")({
   },
   textIndent: ".5rem",
 });
-
-const StyledForm = styled("form")({});
 
 const StyledUl = styled("ul")({
   display: "flex",

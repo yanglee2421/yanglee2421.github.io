@@ -5,12 +5,11 @@ import {
   IconButton,
   Link,
   Typography,
-  styled,
   useMediaQuery,
   useTheme,
+  Button,
 } from "@mui/material";
 import { Google, GitHub, FacebookOutlined, Twitter } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
 
 // Form Imports
 import { FormProvider, useForm } from "react-hook-form";
@@ -84,7 +83,8 @@ export function NotLogged() {
               omnis sed fugiat placeat alias illo praesentium.
             </Typography>
           </Box>
-          <StyledForm
+          <Box
+            component={"form"}
             onSubmit={handleSubmit}
             noValidate
             autoComplete="off"
@@ -106,17 +106,17 @@ export function NotLogged() {
                   Forgot Password?
                 </Link>
               </Box>
-              <LoadingButton
-                loading={mutation.isPending}
+              <Button
+                disabled={mutation.isPending}
                 type="submit"
                 variant="contained"
                 fullWidth
                 size="large"
               >
                 sign in
-              </LoadingButton>
+              </Button>
             </FormProvider>
-          </StyledForm>
+          </Box>
           <Box
             display={"flex"}
             justifyContent={"space-between"}
@@ -147,5 +147,3 @@ export function NotLogged() {
     </>
   );
 }
-
-const StyledForm = styled("form")({});

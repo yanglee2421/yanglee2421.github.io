@@ -1,7 +1,13 @@
 // MUI Imports
-import { Card, CardHeader, CardContent, Box, Alert } from "@mui/material";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  Box,
+  Alert,
+  Button,
+} from "@mui/material";
 import { DataGrid, GridColDef } from "@mui/x-data-grid";
-import { LoadingButton } from "@mui/lab";
 import { RefreshOutlined } from "@mui/icons-material";
 
 // API Imports
@@ -80,14 +86,14 @@ export function PosthogEvents() {
         <CardHeader
           title={event}
           action={
-            <LoadingButton
+            <Button
               onClick={() => query.refetch()}
               variant="contained"
-              loading={query.isRefetching}
+              disabled={query.isRefetching}
               startIcon={<RefreshOutlined />}
             >
               reload
-            </LoadingButton>
+            </Button>
           }
         />
         <CardContent>

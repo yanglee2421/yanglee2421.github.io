@@ -11,7 +11,6 @@ import {
   alpha,
 } from "@mui/material";
 import { RefreshOutlined, SaveOutlined } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
@@ -98,7 +97,11 @@ export function Account() {
         </Card>
 
         <FormProvider {...formCtx}>
-          <Card>
+          <Card
+            component={"form"}
+            onSubmit={handleSubmit}
+            onReset={handleReset}
+          >
             <CardHeader
               title="User profile"
               subheader="Update you profile"
@@ -131,16 +134,16 @@ export function Account() {
               </Grid>
             </CardContent>
             <CardActions>
-              <LoadingButton
-                onClick={handleSubmit}
-                loading={mutation.isPending}
+              <Button
+                disabled={mutation.isPending}
+                type="submit"
                 variant="contained"
                 startIcon={<SaveOutlined></SaveOutlined>}
               >
                 save
-              </LoadingButton>
+              </Button>
               <Button
-                onClick={handleReset}
+                type="reset"
                 variant="outlined"
                 startIcon={<RefreshOutlined></RefreshOutlined>}
               >

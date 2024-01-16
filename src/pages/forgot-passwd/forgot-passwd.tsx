@@ -2,7 +2,7 @@
 import { useTranslation } from "react-i18next";
 
 // MUI Imports
-import { Typography, Button, Box, styled } from "@mui/material";
+import { Typography, Button, Box } from "@mui/material";
 import { Send, ArrowBack } from "@mui/icons-material";
 
 // Form Imports
@@ -68,7 +68,8 @@ export function ForgotPasswd() {
               quae assumenda, necessitatibus amet, incidunt labore?
             </Typography>
           </Box>
-          <StyledForm
+          <Box
+            component={"form"}
             onSubmit={submitHandler}
             noValidate
             autoComplete="off"
@@ -90,7 +91,7 @@ export function ForgotPasswd() {
                 {t("send reset link", { ns: "button" })}
               </Button>
             </FormProvider>
-          </StyledForm>
+          </Box>
           <Button
             component={RouterLink}
             to={"/login"}
@@ -103,5 +104,3 @@ export function ForgotPasswd() {
     </>
   );
 }
-
-const StyledForm = styled("form")({});

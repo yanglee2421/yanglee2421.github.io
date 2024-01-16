@@ -1,5 +1,4 @@
 // MUI Imports
-import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Divider,
@@ -7,7 +6,7 @@ import {
   IconButton,
   Link,
   Typography,
-  styled,
+  Button,
 } from "@mui/material";
 import { FacebookOutlined, GitHub, Google, Twitter } from "@mui/icons-material";
 
@@ -72,7 +71,7 @@ export function Register() {
             asperiores nesciunt explicabo nisi nam eos.
           </Typography>
         </Box>
-        <StyledForm onSubmit={handleSubmit}>
+        <Box component={"form"} onSubmit={handleSubmit}>
           <FormProvider {...formCtx}>
             <ItemText name="email" label="Email" />
             <ItemPassword name="password" label="Password" />
@@ -91,17 +90,17 @@ export function Register() {
                 </Box>
               }
             />
-            <LoadingButton
+            <Button
               type="submit"
-              loading={mutation.isPending}
+              disabled={mutation.isPending}
               variant="contained"
               fullWidth
               size="large"
             >
               register
-            </LoadingButton>
+            </Button>
           </FormProvider>
-        </StyledForm>
+        </Box>
         <Box
           display={"flex"}
           justifyContent={"space-between"}
@@ -131,9 +130,3 @@ export function Register() {
     </Box>
   );
 }
-
-const StyledForm = styled("form")({
-  display: "flex",
-  flexDirection: "column",
-  gap: 4,
-});
