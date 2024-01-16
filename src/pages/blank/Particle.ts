@@ -8,7 +8,6 @@ class GetRandom {
 const getVelocity = new GetRandom(-1, 1);
 const getRadius = new GetRandom(2, 4);
 
-// 粒子类
 class Particle {
   xv = getVelocity.get();
   yv = getVelocity.get();
@@ -22,9 +21,6 @@ class Particle {
     this.color = `rgba(254,250,255,${1 - 1 / this.radius})`;
   }
 
-  /**
-   * 实例方法
-   */
   draw() {
     const ctx = this.canvas.getContext("2d")!;
     ctx.beginPath();
@@ -47,7 +43,6 @@ class Particle {
   }
 }
 
-// 粒子集合类
 export class Particles {
   #arr: Particle[] = [];
   constructor(
@@ -60,7 +55,6 @@ export class Particles {
     }
   }
 
-  // 绘线
   drawLine() {
     this.#arr.forEach((p1, index) => {
       this.#arr.slice(index + 1).forEach((p2) => {
@@ -82,13 +76,15 @@ export class Particles {
     });
   }
 
-  /**
-   * 动画功能
-   */
   #animateId = 0;
   animate() {
     this.#animateId = requestAnimationFrame(this.animate.bind(this));
+
     const ctx = this.canvas.getContext("2d")!;
+    if (!ctx) {
+      return;
+    }
+
     ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.#arr.forEach((particle) => particle.update());
     this.drawLine();
@@ -97,9 +93,6 @@ export class Particles {
     cancelAnimationFrame(this.#animateId);
   }
 
-  /**
-   * 处理鼠标事件
-   */
   #one: null | Particle = null;
   #controller = new AbortController();
   bindEvent() {

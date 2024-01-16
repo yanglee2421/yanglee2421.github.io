@@ -8,6 +8,7 @@ class GetRandom {
 const getXV = new GetRandom(-0.5, 0.5);
 const getYV = new GetRandom(1, 3);
 const getRadius = new GetRandom(1, 4);
+
 class Snowflake {
   x = 0;
   y = 0;

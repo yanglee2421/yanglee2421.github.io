@@ -13,7 +13,7 @@ import {
 import React from "react";
 
 // Utils Imports
-import { timeout } from "@/utils";
+import { timeout, AnimateController } from "@/utils";
 
 export function Table() {
   const table = useReactTable({
@@ -25,7 +25,7 @@ export function Table() {
   const [number, setNumber] = React.useState(0);
   const [rolling, setRolling] = React.useState(false);
   const rollRef = React.useRef(
-    new Roll(() => {
+    new AnimateController(() => {
       React.startTransition(() => {
         setNumber(Math.floor(Math.random() * 100) + 1);
       });
@@ -203,17 +203,3 @@ const columns = [
     },
   }),
 ];
-
-class Roll {
-  constructor(private readonly animate: () => void) {}
-
-  #animateId = 0;
-  play() {
-    this.#animateId = requestAnimationFrame(this.play.bind(this));
-
-    this.animate();
-  }
-  abort() {
-    cancelAnimationFrame(this.#animateId);
-  }
-}

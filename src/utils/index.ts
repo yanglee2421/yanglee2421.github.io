@@ -1,9 +1,8 @@
 // ** Web
-export * from "./class-snow";
-export * from "./class-particle";
 export * from "./getIsFirefox";
 export * from "./toDataURL";
 export * from "./toLink";
+export * from "./AnimateController";
 
 // ** ECMAScript
 export * from "./stringToColor";
