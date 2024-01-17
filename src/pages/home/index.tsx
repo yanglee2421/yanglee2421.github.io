@@ -7,8 +7,6 @@ import {
   MenuItem,
   SelectProps,
   Fade,
-  Chip,
-  alpha,
   Tab,
   TabsProps,
   Tabs,
@@ -32,6 +30,7 @@ import { CardRadio } from "./card-radio";
 import { FiveForm } from "./FiveForm";
 import { QueryBoard } from "./QueryBoard";
 import { SwitchTransition, TransitionGroup } from "react-transition-group";
+import { SevenForm } from "./SevenForm";
 
 // React Imports
 import React from "react";
@@ -79,19 +78,7 @@ export function Component() {
       case "2":
         return <QueryBoard></QueryBoard>;
       case "3":
-        return (
-          <Paper sx={{ padding: 3 }}>
-            <Chip
-              label="Success"
-              sx={(theme) => {
-                return {
-                  color: theme.palette.success.dark,
-                  bgcolor: alpha(theme.palette.success.dark, 0.12),
-                };
-              }}
-            ></Chip>
-          </Paper>
-        );
+        return <SevenForm></SevenForm>;
       case "4":
         return (
           <Paper sx={{ padding: 3 }}>
