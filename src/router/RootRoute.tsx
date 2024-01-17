@@ -23,47 +23,6 @@ export function RootRoute() {
   const [auth] = useAuth();
   const acl = defineAbilityFor(auth.currentUser ? "admin" : "");
 
-  const routeNode = (() => {
-    const currentRoute = matches[matches.length - 1];
-
-    if (!currentRoute) return null;
-
-    switch (Reflect.get(Object(currentRoute.handle), "auth")) {
-      case "guest": {
-        return auth.currentUser ? <HomeRoute></HomeRoute> : outlet;
-      }
-
-      case "none":
-        return outlet;
-
-      case "auth":
-      default: {
-        // Not logged in
-        if (!auth.currentUser) {
-          return <LoginRoute></LoginRoute>;
-        }
-
-        // Authorized pass
-        if (
-          acl.can(
-            String(
-              Reflect.get(Object(currentRoute.handle), "aclAction") || "read"
-            ),
-            String(
-              Reflect.get(Object(currentRoute.handle), "aclSubject") ||
-                "fallback"
-            )
-          )
-        ) {
-          return outlet;
-        }
-
-        // Not authorized
-        return <Navigate to="/403"></Navigate>;
-      }
-    }
-  })();
-
   React.useEffect(() => {
     void matches;
     NProgress.done();
@@ -77,7 +36,7 @@ export function RootRoute() {
 
     if (!currentRoute) return;
 
-    const title = Reflect.get(Object(currentRoute.handle), "title");
+    const title = Reflect.get(currentRoute.handle || {}, "title");
 
     if (!title) return;
 
@@ -86,7 +45,41 @@ export function RootRoute() {
     }
   }, [matches]);
 
+  const routeNode = (() => {
+    const currentRoute = matches[matches.length - 1];
+
+    if (!currentRoute) return null;
+
+    switch (Reflect.get(Object(currentRoute.handle), "auth")) {
+      case "guest": {
+        return auth.currentUser ? <HomeRoute /> : outlet;
+      }
+
+      case "none":
+        return outlet;
+
+      case "auth":
+      default: {
+        // Not logged in
+        if (!auth.currentUser) {
+          return <LoginRoute />;
+        }
+
+        // Authorized pass
+        if (
+          acl.can(
+            Reflect.get(currentRoute.handle || {}, "aclAction") || "read",
+            Reflect.get(currentRoute.handle || {}, "aclSubject") || "fallback"
+          )
+        ) {
+          return outlet;
+        }
+
+        // Not authorized
+        return <Navigate to="/403" />;
+      }
+    }
+  })();
+
   return <AclContext.Provider value={acl}>{routeNode}</AclContext.Provider>;
 }
-// ck_bc5124569889f94574e6fb878677c85db8300749
-// cs_40da90a7ae05b183a5cdd59148254ecdbc817c01
