@@ -36,7 +36,7 @@ export function RootRoute() {
       return destructor;
     }
 
-    const title = Reflect.get(currentRoute.handle || {}, "title");
+    const title = Reflect.get(Object(currentRoute.handle), "title");
 
     if (!title) {
       return destructor;
