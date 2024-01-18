@@ -71,50 +71,6 @@ export function Component() {
     });
   };
 
-  const tabPanelNode = (() => {
-    switch (tab) {
-      case "1":
-        return <FiveForm></FiveForm>;
-      case "2":
-        return <QueryBoard></QueryBoard>;
-      case "3":
-        return <SevenForm></SevenForm>;
-      case "4":
-        return (
-          <Paper sx={{ padding: 3 }}>
-            <Button
-              onClick={handleAddFruit}
-              variant="contained"
-              disabled={fruitsInBasket.length >= FRUITS.length}
-            >
-              Add fruit to basket
-            </Button>
-            <List>
-              <TransitionGroup>
-                {fruitsInBasket.map((item) => {
-                  return (
-                    <Collapse key={item}>
-                      <ListItem
-                        secondaryAction={
-                          <IconButton onClick={() => handleRemoveFruit(item)}>
-                            <DeleteOutlined></DeleteOutlined>
-                          </IconButton>
-                        }
-                      >
-                        {item}
-                      </ListItem>
-                    </Collapse>
-                  );
-                })}
-              </TransitionGroup>
-            </List>
-          </Paper>
-        );
-      default:
-        return null;
-    }
-  })();
-
   return (
     <>
       <Box>
@@ -164,7 +120,53 @@ export function Component() {
 
       <SwitchTransition>
         <Fade key={tab} unmountOnExit>
-          <Box>{tabPanelNode}</Box>
+          <Box>
+            {(() => {
+              switch (tab) {
+                case "1":
+                  return <FiveForm></FiveForm>;
+                case "2":
+                  return <QueryBoard></QueryBoard>;
+                case "3":
+                  return <SevenForm></SevenForm>;
+                case "4":
+                  return (
+                    <Paper sx={{ padding: 3 }}>
+                      <Button
+                        onClick={handleAddFruit}
+                        variant="contained"
+                        disabled={fruitsInBasket.length >= FRUITS.length}
+                      >
+                        Add fruit to basket
+                      </Button>
+                      <List>
+                        <TransitionGroup>
+                          {fruitsInBasket.map((item) => {
+                            return (
+                              <Collapse key={item}>
+                                <ListItem
+                                  secondaryAction={
+                                    <IconButton
+                                      onClick={() => handleRemoveFruit(item)}
+                                    >
+                                      <DeleteOutlined></DeleteOutlined>
+                                    </IconButton>
+                                  }
+                                >
+                                  {item}
+                                </ListItem>
+                              </Collapse>
+                            );
+                          })}
+                        </TransitionGroup>
+                      </List>
+                    </Paper>
+                  );
+                default:
+                  return null;
+              }
+            })()}
+          </Box>
         </Fade>
       </SwitchTransition>
     </>

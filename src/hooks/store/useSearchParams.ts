@@ -9,17 +9,9 @@ export const useRouterStore = create<SearchParamsStore>((set, get) => {
   return {
     search: window.location.search,
     setSearch(action) {
-      // Get next search
-      const search = (() => {
-        if (typeof action === "function") {
-          return action(get().search);
-        }
-
-        return action;
-      })();
-
-      // Set next search
-      return set({ search });
+      return set({
+        search: typeof action === "function" ? action(get().search) : action,
+      });
     },
   };
 });

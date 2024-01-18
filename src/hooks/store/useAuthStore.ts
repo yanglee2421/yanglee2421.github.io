@@ -37,15 +37,10 @@ export const useAuthStore = create<AuthStore>((set, get) => {
   return {
     updateAt: 0,
     setUpdateAt(action) {
-      const updateAt = (() => {
-        if (typeof action === "function") {
-          return action(get().updateAt);
-        }
-
-        return action;
-      })();
-
-      return set({ updateAt });
+      return set({
+        updateAt:
+          typeof action === "function" ? action(get().updateAt) : action,
+      });
     },
   };
 });

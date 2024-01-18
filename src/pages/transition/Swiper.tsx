@@ -37,53 +37,56 @@ export function Swiper() {
   };
 
   const count = 5;
-  const liEl = (() => {
-    const list = [];
-    for (let i = 0; i < count; i++) {
-      list.push(i);
-    }
-
-    return list.map((item) => <li key={item}>{item}</li>);
-  })();
-
-  const dotEl = (() => {
-    const list = [];
-    for (let i = 0; i < count; i++) {
-      list.push(i);
-    }
-
-    return list.map((item) => {
-      const handleDotClick = () => {
-        const rootStyle = globalThis.getComputedStyle(document.documentElement);
-        const el = ulRef.current;
-
-        el?.scroll({
-          left: item * 25 * Number.parseInt(rootStyle.fontSize),
-          behavior: "smooth",
-        });
-      };
-
-      return (
-        <Button key={item} onClick={handleDotClick}>
-          dix-{item}
-        </Button>
-      );
-    });
-  })();
 
   return (
     <Card>
       <CardHeader title="Swiper"></CardHeader>
       <CardContent>
         <Box flex={1}>
-          <UlStyled ref={ulRef}>{liEl}</UlStyled>
+          <UlStyled ref={ulRef}>
+            {(() => {
+              const list = [];
+              for (let i = 0; i < count; i++) {
+                list.push(i);
+              }
+
+              return list.map((item) => <li key={item}>{item}</li>);
+            })()}
+          </UlStyled>
           <IconButton onClick={handlePrevClick}>
             <ArrowBackIosNewRounded />
           </IconButton>
           <IconButton onClick={handleNextClick}>
             <ArrowForwardIosRounded />
           </IconButton>
-          <ButtonGroup>{dotEl}</ButtonGroup>
+          <ButtonGroup>
+            {(() => {
+              const list = [];
+              for (let i = 0; i < count; i++) {
+                list.push(i);
+              }
+
+              return list.map((item) => {
+                const handleDotClick = () => {
+                  const rootStyle = globalThis.getComputedStyle(
+                    document.documentElement
+                  );
+                  const el = ulRef.current;
+
+                  el?.scroll({
+                    left: item * 25 * Number.parseInt(rootStyle.fontSize),
+                    behavior: "smooth",
+                  });
+                };
+
+                return (
+                  <Button key={item} onClick={handleDotClick}>
+                    dix-{item}
+                  </Button>
+                );
+              });
+            })()}
+          </ButtonGroup>
         </Box>
       </CardContent>
     </Card>
