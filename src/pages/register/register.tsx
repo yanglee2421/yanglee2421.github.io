@@ -12,8 +12,8 @@ import { FacebookOutlined, GitHub, Google, Twitter } from "@mui/icons-material";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 // Components Imports
 import { ItemText, ItemPassword, ItemCheckbox } from "@/components";
@@ -23,18 +23,13 @@ import { Link as RouterLink } from "react-router-dom";
 import { useCreateUser } from "@/hooks/api-firebase";
 
 export function Register() {
-  const formCtx = useForm({
+  const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",
       password: "",
     },
 
-    resolver: yupResolver(
-      yup.object().shape({
-        email: yup.string().email().max(128).required(),
-        password: yup.string().min(8).max(16).required(),
-      })
-    ),
+    resolver: zodResolver(schema),
   });
 
   const mutation = useCreateUser();
@@ -130,3 +125,10 @@ export function Register() {
     </Box>
   );
 }
+
+const schema = z.object({
+  email: z.string().email().max(128),
+  password: z.string().min(8).max(16),
+});
+
+export type FormValues = z.infer<typeof schema>;

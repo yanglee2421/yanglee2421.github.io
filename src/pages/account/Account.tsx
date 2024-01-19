@@ -14,8 +14,8 @@ import { RefreshOutlined, SaveOutlined } from "@mui/icons-material";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 // Store Imports
 import { useAuth } from "@/hooks/store";
@@ -39,16 +39,12 @@ import toast from "react-hot-toast";
 export function Account() {
   const [auth, setUpdateAt] = useAuth();
 
-  const formCtx = useForm({
+  const formCtx = useForm<FormValues>({
     defaultValues: {
       displayName: auth.currentUser?.displayName || "",
     },
 
-    resolver: yupResolver(
-      yup.object().shape({
-        displayName: yup.string().max(128).required(),
-      })
-    ),
+    resolver: zodResolver(schema),
   });
 
   const mutation = useMutation<Auth, Error, { displayName: string }>({
@@ -156,3 +152,9 @@ export function Account() {
     </>
   );
 }
+
+const schema = z.object({
+  displayName: z.string().min(1),
+});
+
+export type FormValues = z.infer<typeof schema>;

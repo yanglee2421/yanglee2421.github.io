@@ -5,16 +5,14 @@ import {
   IconButton,
   Link,
   Typography,
-  useMediaQuery,
-  useTheme,
   Button,
 } from "@mui/material";
 import { Google, GitHub, FacebookOutlined, Twitter } from "@mui/icons-material";
 
 // Form Imports
 import { FormProvider, useForm } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 // Components Imports
 import { ItemPassword, ItemText } from "@/components";
@@ -27,123 +25,122 @@ import { Link as RouterLink } from "react-router-dom";
 
 export function NotLogged() {
   // Form Hooks
-  const formCtx = useForm({
+  const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",
       password: "",
     },
-    resolver: yupResolver(
-      yup.object().shape({
-        email: yup.string().email().max(128).required(),
-        password: yup.string().min(8).max(16).required(),
-      })
-    ),
+
+    resolver: zodResolver(zodSchema),
   });
 
   const mutation = useSignIn();
-  const theme = useTheme();
-  const isSm = useMediaQuery(theme.breakpoints.down("md"));
-
-  // Submit & Reset
-  const handleSubmit = formCtx.handleSubmit((data) => {
-    mutation.mutate(data, {
-      onError() {},
-      onSuccess() {},
-    });
-  });
 
   return (
-    <>
-      <Box display={"flex"} height={"100%"}>
-        <Box flex={1} overflow={"hidden"}>
-          {isSm && <h1>Hello small</h1>}
+    <Box display={"flex"} height={"100%"}>
+      <Box flex={1} overflow={"hidden"}></Box>
+      <Box
+        display={"flex"}
+        flexDirection={"column"}
+        justifyContent={"center"}
+        gap={4}
+        width={"100%"}
+        maxWidth={{ md: 450 }}
+        p={[6, 12]}
+        boxShadow={(theme) => theme.shadows[2]}
+      >
+        <Box>
+          <Typography variant="h4">Wellcome to here!</Typography>
+          <Typography
+            variant="body2"
+            sx={{
+              overflow: "hidden",
+              maxHeight(theme) {
+                return `calc(${theme.typography.body1.lineHeight}em * 3)`;
+              },
+            }}
+          >
+            Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis
+            sed fugiat placeat alias illo praesentium.
+          </Typography>
+        </Box>
+        <Box
+          component={"form"}
+          onSubmit={formCtx.handleSubmit(
+            (data) => {
+              mutation.mutate(data, {
+                onError() {},
+                onSuccess() {},
+              });
+            },
+            (error) => {
+              console.warn(error);
+            }
+          )}
+          noValidate
+          autoComplete="off"
+          sx={{ display: "flex", flexDirection: "column", gap: 4 }}
+        >
+          <FormProvider {...formCtx}>
+            <ItemText name="email" label="Email"></ItemText>
+            <ItemPassword name="password" label="Password"></ItemPassword>
+            <Box
+              display={"flex"}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+            >
+              <Link
+                variant="body2"
+                component={RouterLink}
+                to={"/forgot-passwd"}
+              >
+                Forgot Password?
+              </Link>
+            </Box>
+            <Button
+              disabled={mutation.isPending}
+              type="submit"
+              variant="contained"
+              fullWidth
+              size="large"
+            >
+              sign in
+            </Button>
+          </FormProvider>
         </Box>
         <Box
           display={"flex"}
-          flexDirection={"column"}
-          justifyContent={"center"}
-          gap={4}
-          width={"100%"}
-          maxWidth={{ md: 450 }}
-          p={[6, 12]}
-          boxShadow={(theme) => theme.shadows[2]}
+          justifyContent={"space-between"}
+          alignItems={"center"}
         >
-          <Box>
-            <Typography variant="h4">Wellcome to here!</Typography>
-            <Typography
-              variant="body2"
-              sx={{
-                overflow: "hidden",
-                maxHeight(theme) {
-                  return `calc(${theme.typography.body1.lineHeight}em * 3)`;
-                },
-              }}
-            >
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro
-              omnis sed fugiat placeat alias illo praesentium.
-            </Typography>
-          </Box>
-          <Box
-            component={"form"}
-            onSubmit={handleSubmit}
-            noValidate
-            autoComplete="off"
-            sx={{ display: "flex", flexDirection: "column", gap: 4 }}
-          >
-            <FormProvider {...formCtx}>
-              <ItemText name="email" label="Email" />
-              <ItemPassword name="password" label="Password" />
-              <Box
-                display={"flex"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-              >
-                <Link
-                  variant="body2"
-                  component={RouterLink}
-                  to={"/forgot-passwd"}
-                >
-                  Forgot Password?
-                </Link>
-              </Box>
-              <Button
-                disabled={mutation.isPending}
-                type="submit"
-                variant="contained"
-                fullWidth
-                size="large"
-              >
-                sign in
-              </Button>
-            </FormProvider>
-          </Box>
-          <Box
-            display={"flex"}
-            justifyContent={"space-between"}
-            alignItems={"center"}
-          >
-            <Typography variant="body2">New on our platform?</Typography>
-            <Link variant="body2" component={RouterLink} to={"/register"}>
-              Create an account
-            </Link>
-          </Box>
-          <Divider>Or</Divider>
-          <Box display={"flex"} justifyContent={"center"} gap={4}>
-            <IconButton>
-              <FacebookOutlined />
-            </IconButton>
-            <IconButton>
-              <Twitter />
-            </IconButton>
-            <IconButton>
-              <GitHub />
-            </IconButton>
-            <IconButton>
-              <Google />
-            </IconButton>
-          </Box>
+          <Typography variant="body2">New on our platform?</Typography>
+          <Link variant="body2" component={RouterLink} to={"/register"}>
+            Create an account
+          </Link>
+        </Box>
+        <Divider>Or</Divider>
+        <Box display={"flex"} justifyContent={"center"} gap={4}>
+          <IconButton>
+            <FacebookOutlined />
+          </IconButton>
+          <IconButton>
+            <Twitter />
+          </IconButton>
+          <IconButton>
+            <GitHub />
+          </IconButton>
+          <IconButton>
+            <Google />
+          </IconButton>
         </Box>
       </Box>
-    </>
+    </Box>
   );
 }
+
+const zodSchema = z.object({
+  email: z.string().email().max(128),
+  password: z.string().min(8).max(16),
+});
+
+export type FormValues = z.infer<typeof zodSchema>;
