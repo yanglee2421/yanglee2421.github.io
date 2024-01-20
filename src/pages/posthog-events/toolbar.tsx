@@ -1,12 +1,11 @@
 // MUI Imports
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import {
   GridToolbarQuickFilter,
   GridToolbarFilterButton,
   GridToolbarExport,
 } from "@mui/x-data-grid";
 import { ReadMoreOutlined } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
 
 export function toolbar(props: toolbarProps) {
   // ** Props
@@ -17,14 +16,14 @@ export function toolbar(props: toolbarProps) {
       <GridToolbarFilterButton />
       <GridToolbarExport sx={{ ml: 3 }} />
       {hasNextPage && (
-        <LoadingButton
+        <Button
           onClick={onClick}
-          loading={loading}
+          disabled={loading}
           startIcon={<ReadMoreOutlined />}
           sx={{ ml: 3 }}
         >
           load more
-        </LoadingButton>
+        </Button>
       )}
       <GridToolbarQuickFilter sx={{ ml: "auto" }} />
     </Box>

@@ -18,8 +18,8 @@ import {
   styled,
   SelectProps,
   Alert,
+  Button,
 } from "@mui/material";
-import { LoadingButton } from "@mui/lab";
 import { RefreshOutlined } from "@mui/icons-material";
 
 // React Imports
@@ -108,14 +108,14 @@ export function PosthogInsights() {
                 "& .MuiCardHeader-content": { mb: [2, 0] },
               }}
               action={
-                <LoadingButton
-                  loading={query.isRefetching}
+                <Button
+                  disabled={query.isRefetching}
                   onClick={() => query.refetch()}
                   color="success"
                   startIcon={<RefreshOutlined />}
                 >
                   refresh
-                </LoadingButton>
+                </Button>
               }
             />
             <CardContent>

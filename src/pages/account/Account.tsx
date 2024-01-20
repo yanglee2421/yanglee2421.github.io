@@ -11,12 +11,11 @@ import {
   alpha,
 } from "@mui/material";
 import { RefreshOutlined, SaveOutlined } from "@mui/icons-material";
-import { LoadingButton } from "@mui/lab";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 // Store Imports
 import { useAuth } from "@/hooks/store";
@@ -40,16 +39,12 @@ import toast from "react-hot-toast";
 export function Account() {
   const [auth, setUpdateAt] = useAuth();
 
-  const formCtx = useForm({
+  const formCtx = useForm<FormValues>({
     defaultValues: {
       displayName: auth.currentUser?.displayName || "",
     },
 
-    resolver: yupResolver(
-      yup.object().shape({
-        displayName: yup.string().max(128).required(),
-      })
-    ),
+    resolver: zodResolver(schema),
   });
 
   const mutation = useMutation<Auth, Error, { displayName: string }>({
@@ -98,7 +93,11 @@ export function Account() {
         </Card>
 
         <FormProvider {...formCtx}>
-          <Card>
+          <Card
+            component={"form"}
+            onSubmit={handleSubmit}
+            onReset={handleReset}
+          >
             <CardHeader
               title="User profile"
               subheader="Update you profile"
@@ -131,16 +130,16 @@ export function Account() {
               </Grid>
             </CardContent>
             <CardActions>
-              <LoadingButton
-                onClick={handleSubmit}
-                loading={mutation.isPending}
+              <Button
+                disabled={mutation.isPending}
+                type="submit"
                 variant="contained"
                 startIcon={<SaveOutlined></SaveOutlined>}
               >
                 save
-              </LoadingButton>
+              </Button>
               <Button
-                onClick={handleReset}
+                type="reset"
                 variant="outlined"
                 startIcon={<RefreshOutlined></RefreshOutlined>}
               >
@@ -153,3 +152,9 @@ export function Account() {
     </>
   );
 }
+
+const schema = z.object({
+  displayName: z.string().min(1),
+});
+
+export type FormValues = z.infer<typeof schema>;

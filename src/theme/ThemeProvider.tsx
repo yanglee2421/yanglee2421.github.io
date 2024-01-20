@@ -61,7 +61,7 @@ export function ThemeProvider(props: React.PropsWithChildren) {
     shadows: shadowsMap.get(mode),
 
     palette: configToPalette({
-      mode: mode,
+      mode,
       whiteColor: "#FFF",
       // lightColor: "rgb(58, 53, 65)",
       // darkColor: "rgb(231, 227, 252)",

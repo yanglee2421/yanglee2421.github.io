@@ -114,8 +114,12 @@ export const routes: RouteObject[] = [
       {
         id: "with-appbar",
         path: "",
-        lazy() {
-          return import("@/layout/main");
+        async lazy() {
+          const { LayoutWithAppbar } = await import("@/layout/");
+
+          return {
+            Component: LayoutWithAppbar,
+          };
         },
         children: [
           {
@@ -129,7 +133,6 @@ export const routes: RouteObject[] = [
               return import("@/pages/home");
             },
           },
-
           {
             id: "account",
             path: "account",
@@ -138,7 +141,6 @@ export const routes: RouteObject[] = [
               return import("@/pages/account");
             },
           },
-
           {
             id: "picture",
             path: "picture",
@@ -207,16 +209,18 @@ export const routes: RouteObject[] = [
               return import("@/pages/posthog-events");
             },
           },
-
-          // ** List
           {
-            id: "infinite-list",
-            path: "infinite-list",
-            handle: { title: "Infinite List" },
-            lazy() {
-              return import("@/pages/infinite-list");
+            id: "table",
+            path: "table",
+            async lazy() {
+              const { Table } = await import("@/pages/table");
+              return {
+                Component: Table,
+              };
             },
           },
+
+          // ** List
           {
             id: "virtualized-list",
             path: "virtualized-list",
@@ -228,43 +232,27 @@ export const routes: RouteObject[] = [
 
           // ** Lab
           {
-            id: "fabric",
-            path: "fabric",
-            handle: { title: "fabric" },
-            lazy() {
-              return import("@/pages/fabric");
-            },
-          },
-          {
-            id: "menu",
-            path: "menu",
-            handle: { title: "Menu" },
-            lazy() {
-              return import("@/pages/menu");
-            },
-          },
-          {
-            id: "scrollbar",
-            path: "scrollbar",
-            handle: { title: "scrollbar" },
-            lazy() {
-              return import("@/pages/scrollbar");
-            },
-          },
-          {
             id: "transition",
             path: "transition",
-            handle: { title: "transition" },
-            lazy() {
-              return import("@/pages/transition");
+            handle: { title: "Transition" },
+            async lazy() {
+              const { Transition } = await import("@/pages/transition");
+
+              return {
+                Component: Transition,
+              };
             },
           },
           {
             id: "swiper",
             path: "swiper",
-            handle: { title: "Swiper" },
-            lazy() {
-              return import("@/pages/swiper");
+            handle: "Swiper",
+            async lazy() {
+              const { SwiperPage } = await import("@/pages/swiper");
+
+              return {
+                Component: SwiperPage,
+              };
             },
           },
 

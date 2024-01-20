@@ -17,8 +17,7 @@ import React from "react";
 
 // Components Imports
 import { ScrollView } from "@/components/ui/ScrollView";
-import { MenuGroup } from "@/components/ui/menu-group";
-import { MenuLink } from "@/components/ui/menu-link";
+import { MenuGroup, MenuLink } from "@/components/ui";
 
 export function MenuDrawer(props: IconButtonProps) {
   // ** Props
@@ -82,18 +81,18 @@ export function MenuDrawer(props: IconButtonProps) {
                   <MenuLink label="TinyMCE" to={"tinymce"} />
                 </MenuGroup>
                 <MenuGroup label="Table" icon={<GridOnOutlined />}>
+                  <MenuLink label="Table" to={"/table"}></MenuLink>
                   <MenuLink label="Data Grid" to={"/data-grid"} />
                   <MenuLink label="Posthog Insights" to={"/posthog-insights"} />
                   <MenuLink label="Posthog Events" to={"/posthog-events"} />
                 </MenuGroup>
                 <MenuGroup label="List" icon={<FormatListNumberedOutlined />}>
-                  <MenuLink label="Infinite List" to={"/infinite-list"} />
                   <MenuLink label="Virtualized List" to={"/virtualized-list"} />
                 </MenuGroup>
                 <MenuGroup label="Lab" icon={<ScienceOutlined />}>
-                  <MenuLink label="Fabric" to="/fabric" />
-                  <MenuLink label="Swiper" to="/swiper" />
+                  <MenuLink label="Transition" to="/transition" />
                   <MenuLink label="SSO" to="/sso-login" />
+                  <MenuLink label="swiper" to="/swiper"></MenuLink>
                   <MenuLink label="Blank" to="/blank" />
                 </MenuGroup>
                 <MenuGroup label="Charts" icon={<DataSaverOffOutlined />}>

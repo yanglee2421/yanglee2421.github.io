@@ -2,7 +2,7 @@
 import React from "react";
 
 // MUI Imports
-import { Box, BoxProps, styled } from "@mui/material";
+import { Box, BoxProps } from "@mui/material";
 
 // Perfect Scrollbar Imports
 import PerfectScrollbar from "perfect-scrollbar";
@@ -33,14 +33,19 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
 
     React.useImperativeHandle(
       ref,
-      () => containerRef.current as HTMLDivElement,
+      () => {
+        return containerRef.current as HTMLDivElement;
+      },
       []
     );
 
     // Create scrollbar
     React.useEffect(() => {
       const containerEl = containerRef.current;
-      if (!containerEl) return;
+
+      if (!containerEl) {
+        return;
+      }
 
       psRef.current = new PerfectScrollbar(containerEl, options);
 
@@ -53,10 +58,16 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
     // Update scrollbar
     React.useEffect(() => {
       const containerEl = containerRef.current;
-      if (!containerEl) return;
+
+      if (!containerEl) {
+        return;
+      }
 
       const contentEl = contentRef.current;
-      if (!contentEl) return;
+
+      if (!contentEl) {
+        return;
+      }
 
       const observer = new ResizeObserver(() => {
         psRef.current?.update();
@@ -153,17 +164,17 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
     ]);
 
     return (
-      <StyledBox ref={containerRef} {...restProps}>
+      <Box
+        position={"relative"}
+        height={"100%"}
+        ref={containerRef}
+        {...restProps}
+      >
         <Box ref={contentRef}>{children}</Box>
-      </StyledBox>
+      </Box>
     );
   }
 );
-
-const StyledBox = styled(Box)({
-  position: "relative",
-  height: "100%",
-});
 
 export type ScrollViewProps = BoxProps & {
   options?: PerfectScrollbar.Options;

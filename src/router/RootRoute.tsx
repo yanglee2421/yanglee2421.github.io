@@ -23,70 +23,75 @@ export function RootRoute() {
   const [auth] = useAuth();
   const acl = defineAbilityFor(auth.currentUser ? "admin" : "");
 
-  const routeNode = (() => {
-    const currentRoute = matches.at(-1);
-
-    if (!currentRoute) return null;
-
-    switch (Reflect.get(Object(currentRoute.handle), "auth")) {
-      case "guest": {
-        return auth.currentUser ? <HomeRoute /> : outlet;
-      }
-
-      case "none":
-        return outlet;
-
-      case "auth":
-      default: {
-        // Not logged in
-        if (!auth.currentUser) {
-          return <LoginRoute />;
-        }
-
-        // Authorized pass
-        if (
-          acl.can(
-            String(
-              Reflect.get(Object(currentRoute.handle), "aclAction") || "read"
-            ),
-            String(
-              Reflect.get(Object(currentRoute.handle), "aclSubject") ||
-                "fallback"
-            )
-          )
-        ) {
-          return outlet;
-        }
-
-        // Not authorized
-        return <Navigate to="/403" />;
-      }
-    }
-  })();
-
   React.useEffect(() => {
-    void matches;
     NProgress.done();
-    return () => {
+
+    const destructor = () => {
       NProgress.start();
     };
-  }, [matches]);
 
-  React.useEffect(() => {
-    const currentRoute = matches.at(-1);
+    const currentRoute = matches[matches.length - 1];
 
-    if (!currentRoute) return;
+    if (!currentRoute) {
+      return destructor;
+    }
 
     const title = Reflect.get(Object(currentRoute.handle), "title");
 
-    if (!title) return;
+    if (!title) {
+      return destructor;
+    }
 
     if (typeof title === "string") {
       document.title = title;
     }
+
+    return destructor;
   }, [matches]);
 
-  return <AclContext.Provider value={acl}>{routeNode}</AclContext.Provider>;
+  return (
+    <AclContext.Provider value={acl}>
+      {(() => {
+        const currentRoute = matches[matches.length - 1];
+
+        if (!currentRoute) {
+          return null;
+        }
+
+        switch (Reflect.get(Object(currentRoute.handle), "auth")) {
+          case "none":
+            return outlet;
+
+          case "guest":
+            return auth.currentUser ? <HomeRoute /> : outlet;
+
+          case "auth":
+          default:
+            // Not logged in
+            if (!auth.currentUser) {
+              return <LoginRoute />;
+            }
+
+            // Authorized pass
+            if (
+              acl.can(
+                String(
+                  Reflect.get(Object(currentRoute.handle), "aclAction") ||
+                    "read"
+                ),
+                String(
+                  Reflect.get(Object(currentRoute.handle), "aclSubject") ||
+                    "fallback"
+                )
+              )
+            ) {
+              return outlet;
+            }
+
+            // Not authorized
+            return <Navigate to="/403" />;
+        }
+      })()}
+    </AclContext.Provider>
+  );
 }
-// ck_bc5124569889f94574e6fb878677c85db8300749
-// cs_40da90a7ae05b183a5cdd59148254ecdbc817c01

@@ -1,5 +1,4 @@
 // MUI Imports
-import { LoadingButton } from "@mui/lab";
 import {
   Box,
   Divider,
@@ -7,14 +6,14 @@ import {
   IconButton,
   Link,
   Typography,
-  styled,
+  Button,
 } from "@mui/material";
 import { FacebookOutlined, GitHub, Google, Twitter } from "@mui/icons-material";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 // Components Imports
 import { ItemText, ItemPassword, ItemCheckbox } from "@/components";
@@ -24,18 +23,13 @@ import { Link as RouterLink } from "react-router-dom";
 import { useCreateUser } from "@/hooks/api-firebase";
 
 export function Register() {
-  const formCtx = useForm({
+  const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",
       password: "",
     },
 
-    resolver: yupResolver(
-      yup.object().shape({
-        email: yup.string().email().max(128).required(),
-        password: yup.string().min(8).max(16).required(),
-      })
-    ),
+    resolver: zodResolver(schema),
   });
 
   const mutation = useCreateUser();
@@ -72,7 +66,7 @@ export function Register() {
             asperiores nesciunt explicabo nisi nam eos.
           </Typography>
         </Box>
-        <StyledForm onSubmit={handleSubmit}>
+        <Box component={"form"} onSubmit={handleSubmit}>
           <FormProvider {...formCtx}>
             <ItemText name="email" label="Email" />
             <ItemPassword name="password" label="Password" />
@@ -91,17 +85,17 @@ export function Register() {
                 </Box>
               }
             />
-            <LoadingButton
+            <Button
               type="submit"
-              loading={mutation.isPending}
+              disabled={mutation.isPending}
               variant="contained"
               fullWidth
               size="large"
             >
               register
-            </LoadingButton>
+            </Button>
           </FormProvider>
-        </StyledForm>
+        </Box>
         <Box
           display={"flex"}
           justifyContent={"space-between"}
@@ -132,8 +126,9 @@ export function Register() {
   );
 }
 
-const StyledForm = styled("form")({
-  display: "flex",
-  flexDirection: "column",
-  gap: 4,
+const schema = z.object({
+  email: z.string().email().max(128),
+  password: z.string().min(8).max(16),
 });
+
+export type FormValues = z.infer<typeof schema>;

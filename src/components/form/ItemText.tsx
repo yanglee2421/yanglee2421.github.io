@@ -8,11 +8,10 @@ export function ItemText(props: ItemTextProps) {
   // ** Props
   const { name, disabled, ...restProps } = props;
 
-  // Form Hooks
   const formCtx = useFormContext();
   const controller = useController({
-    name,
     control: formCtx.control,
+    name,
     defaultValue: "",
     disabled,
   });
@@ -24,8 +23,10 @@ export function ItemText(props: ItemTextProps) {
       helperText={controller.fieldState.error?.message}
       fullWidth
       {...restProps}
-    />
+    ></TextField>
   );
 }
 
-export type ItemTextProps = TextFieldProps & { name: string };
+export type ItemTextProps = TextFieldProps & {
+  name: string;
+};

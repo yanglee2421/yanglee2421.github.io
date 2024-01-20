@@ -12,9 +12,9 @@ import { Toaster } from "react-hot-toast";
 export function App() {
   return (
     <QueryProvider>
-      <Toaster />
+      <Toaster></Toaster>
       <ThemeProvider>
-        <RouterProvider router={router} />
+        <RouterProvider router={router}></RouterProvider>
       </ThemeProvider>
     </QueryProvider>
   );

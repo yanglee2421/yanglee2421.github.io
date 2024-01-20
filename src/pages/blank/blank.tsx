@@ -1,76 +1,74 @@
 // MUI Imports
-import { Box, styled } from "@mui/material";
+import { Box, Paper, TextField } from "@mui/material";
 
 // React Imports
-// import React from "react";
+import React from "react";
 
 // Components Imports
 import { BlankMenu } from "./blank-menu";
 import { GlobalBg } from "@/components/ui";
 
 export function Blank() {
+  const [count, setCount] = React.useState("");
+
+  React.useEffect(() => {
+    console.log("effect", count);
+
+    return () => {
+      console.log("clear effect");
+    };
+  }, [count]);
+
+  React.useInsertionEffect(() => {
+    console.log("intertion effect", count);
+
+    return () => {
+      console.log("clear intertion effect");
+    };
+  }, [count]);
+
+  React.useLayoutEffect(() => {
+    console.log("layout effect", count);
+
+    return () => {
+      console.log("clear layout effect");
+    };
+  }, [count]);
+
   return (
-    <>
-      <GlobalBg />
-      <Box
-        position={"relative"}
-        display={"flex"}
-        justifyContent={"center"}
-        alignItems={"center"}
-        height={"100%"}
-        color={"common.white"}
-      >
-        <BlankMenu />
-        <StyledForm>
-          <StyledUl>
-            <li>
-              <label>
-                网页
-                <input type="radio" name="subject" />
-              </label>
-            </li>
-            <li>
-              <label>
-                图片
-                <input type="radio" name="subject" />
-              </label>
-            </li>
-          </StyledUl>
-          <StyledInput placeholder="Search..." />
-        </StyledForm>
-      </Box>
-    </>
+    <Box
+      position={"relative"}
+      height={"100%"}
+      display={"flex"}
+      justifyContent={"center"}
+      alignItems={"center"}
+      color="common.white"
+    >
+      <GlobalBg></GlobalBg>
+      <BlankMenu></BlankMenu>
+      <Paper component={"form"} sx={{ padding: 3 }}>
+        <ul>
+          <li>
+            <label>
+              网页
+              <input type="radio" name="subject"></input>
+            </label>
+          </li>
+          <li>
+            <label>
+              图片
+              <input type="radio" name="subject"></input>
+            </label>
+          </li>
+        </ul>
+        <TextField
+          value={count}
+          onChange={(evt) => {
+            setCount(evt.target.value);
+          }}
+          placeholder="Search..."
+        ></TextField>
+      </Paper>
+    </Box>
   );
 }
-
-const StyledInput = styled("input")({
-  width: 300,
-  height: 46,
-  opacity: 0.85,
-  outline: "none",
-  "&:active,&:focus": {
-    opacity: 1,
-  },
-  textIndent: ".5rem",
-});
-
-const StyledForm = styled("form")({});
-
-const StyledUl = styled("ul")({
-  display: "flex",
-  gap: "1rem",
-  listStyle: "none",
-
-  '& input[type="radio"]': {
-    display: "none",
-  },
-
-  "& label": {
-    cursor: "pointer",
-    userSelect: "none",
-
-    "&:has(input:checked)": {
-      color: "red",
-    },
-  },
-});

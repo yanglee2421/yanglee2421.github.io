@@ -1,9 +1,13 @@
-export * from "./icon-cancel";
-export * from "./icon-confirm";
-export * from "./icon-copy";
-export * from "./icon-download";
-export * from "./icon-react";
-export * from "./icon-shopline";
-export * from "./icon-svelte";
-export * from "./icon-vite";
-export * from "./icon-vue";
+export * from "./Cancel";
+export * from "./Confirm";
+export * from "./Copy";
+export * from "./Download";
+
+// Code
+export * from "./React";
+export * from "./Svelte";
+export * from "./Vite";
+export * from "./Vue";
+
+// Ecommerce
+export * from "./Shopline";

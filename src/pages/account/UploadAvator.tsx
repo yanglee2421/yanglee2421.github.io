@@ -2,16 +2,16 @@
 import { useUploadAvator } from "@/hooks/api-firebase";
 
 // MUI Imports
-import { LoadingButton } from "@mui/lab";
 import { UploadOutlined } from "@mui/icons-material";
+import { Button } from "@mui/material";
 
 export function UploadAvator() {
   const avatorMutation = useUploadAvator();
 
   return (
-    <LoadingButton
+    <Button
       component="label"
-      loading={avatorMutation.isPending}
+      disabled={avatorMutation.isPending}
       variant="contained"
       startIcon={<UploadOutlined></UploadOutlined>}
     >
@@ -31,6 +31,6 @@ export function UploadAvator() {
         hidden
       />
       upload
-    </LoadingButton>
+    </Button>
   );
 }

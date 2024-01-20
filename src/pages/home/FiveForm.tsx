@@ -13,17 +13,18 @@ import { VisibilityOutlined, SearchOutlined } from "@mui/icons-material";
 // Components Imports
 import { SkeletonCard } from "@/components/ui";
 import { ItemText } from "@/components";
+import { CircularProgressWithLabel } from "./CircularProgressWithLabel";
 
 // Form Imports
 import { useForm, FormProvider } from "react-hook-form";
-import { yupResolver } from "@hookform/resolvers/yup";
-import * as yup from "yup";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { z } from "zod";
 
 // Utils Imports
 import { timeout } from "@/utils";
 
 export function FiveForm() {
-  const formCtx = useForm({
+  const formCtx = useForm<FormValues>({
     async defaultValues() {
       await timeout(1000 * 2);
       return {
@@ -31,11 +32,7 @@ export function FiveForm() {
       };
     },
 
-    resolver: yupResolver(
-      yup.object().shape({
-        input_text: yup.string().max(128).required(),
-      })
-    ),
+    resolver: zodResolver(schema),
   });
 
   // API pending
@@ -84,9 +81,20 @@ export function FiveForm() {
                 }}
               />
             </Grid>
+            <Grid item xs={12}>
+              <CircularProgressWithLabel
+                value={100}
+              ></CircularProgressWithLabel>
+            </Grid>
           </Grid>
         </CardContent>
       </Card>
     </FormProvider>
   );
 }
+
+const schema = z.object({
+  input_text: z.string().min(1).max(128),
+});
+
+export type FormValues = z.infer<typeof schema>;

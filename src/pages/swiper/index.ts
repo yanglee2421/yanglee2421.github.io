@@ -1,1 +1,1 @@
-export { Swiper as Component } from "./swiper";
+export * from "./SwiperPage";

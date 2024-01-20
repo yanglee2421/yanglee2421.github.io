@@ -1,1 +1,1 @@
-export { TransitionPage as Component } from "./transition";
+export * from "./Transition";

@@ -1,5 +1,5 @@
 // Components Imports
-import { TinyMCE } from "@/components/form";
+import { TinyMce } from "@/components/form";
 
 // React Imports
 import React from "react";
@@ -9,7 +9,7 @@ export function Tinymce() {
 
   return (
     <>
-      <TinyMCE value={html} onEditorChange={setHtml} />
+      <TinyMce value={html} onEditorChange={setHtml} />
     </>
   );
 }

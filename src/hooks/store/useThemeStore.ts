@@ -9,41 +9,25 @@ export const useThemeStore = create(
       return {
         mode: "auto",
         setMode(action) {
-          const mode = (() => {
-            if (typeof action === "function") {
-              return action(get().mode);
-            }
-
-            return action;
-          })();
-
-          return set({ mode });
+          return set({
+            mode: typeof action === "function" ? action(get().mode) : action,
+          });
         },
 
         bgAlpha: 0,
         setBgAlpha(action) {
-          const bgAlpha = (() => {
-            if (typeof action === "function") {
-              return action(get().bgAlpha);
-            }
-
-            return action;
-          })();
-
-          return set({ bgAlpha });
+          return set({
+            bgAlpha:
+              typeof action === "function" ? action(get().bgAlpha) : action,
+          });
         },
 
         bgBlur: 0,
         setBgBlur(action) {
-          const bgBlur = (() => {
-            if (typeof action === "function") {
-              return action(get().bgBlur);
-            }
-
-            return action;
-          })();
-
-          return set({ bgBlur });
+          return set({
+            bgBlur:
+              typeof action === "function" ? action(get().bgBlur) : action,
+          });
         },
       };
     },

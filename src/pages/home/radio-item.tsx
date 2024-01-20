@@ -8,11 +8,6 @@ export function RadioItem(props: RadioItemProps) {
   // ** Props
   const { checked, value, title, desc, name, ...restProps } = props;
 
-  const nameList = name.split(" ");
-  const firstName = nameList[0] || "";
-  const lastName = nameList[1] || "";
-  const avatarText = (firstName[0] || "") + (lastName[0] || "");
-
   return (
     <Box
       component={"label"}
@@ -36,11 +31,11 @@ export function RadioItem(props: RadioItemProps) {
         sx={{
           width: 64,
           height: 64,
-          color: stringToColor(avatarText.toUpperCase()),
-          bgcolor: alpha(stringToColor(avatarText.toUpperCase()), 0.12),
+          color: stringToColor(name),
+          bgcolor: alpha(stringToColor(name), 0.12),
         }}
       >
-        {avatarText.toUpperCase()}
+        {name.at(0)?.toUpperCase()}
       </Avatar>
       <Typography
         mt={2}
