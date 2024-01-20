@@ -9,7 +9,6 @@ import { fileURLToPath, URL } from "node:url";
 // https://vitejs.dev/config/
 export default defineConfig((configEnv) => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
-  const isBuild = configEnv.command === "build";
 
   return {
     plugins: [react()],
@@ -34,7 +33,7 @@ export default defineConfig((configEnv) => {
     },
 
     // Base URI
-    base: isBuild ? "./" : "/react-mui",
+    base: configEnv.command === "build" ? "./" : "/react-mui",
 
     // Env File Directory
     envDir: resolve(__dirname, "./"),
@@ -94,7 +93,7 @@ export default defineConfig((configEnv) => {
         },
       },
       fs: {
-        allow: [resolve(__dirname, "../../")],
+        allow: [resolve(__dirname, "./")],
       },
       // https: {
       //   cert: "",
