@@ -1,12 +1,10 @@
-# Simple workflow for deploying static content to GitHub Pages
-name: Deploy static content to Pages
+name: Deploy single page application to Pages
 
 on:
-  # Runs on pushes targeting the default branch
   push:
     branches: ["main"]
-
-  # Allows you to run this workflow manually from the Actions tab
+  pull_request:
+    branches: ["main"]
   workflow_dispatch:
 
 # Sets permissions of the GITHUB_TOKEN to allow deployment to GitHub Pages
@@ -22,7 +20,7 @@ concurrency:
   cancel-in-progress: false
 
 jobs:
-  build:
+  deploy:
     environment:
       name: github-pages
       url: ${{ steps.deployment.outputs.page_url }}
@@ -34,11 +32,11 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-      - name: Enable Pnpm
+      - name: Enable pnpm
         run: corepack enable
-      - name: Install deps
+      - name: Install dependencies
         run: pnpm i
-      - name: Generate static html
+      - name: Vite build
         run: pnpm build
       - name: Setup Pages
         uses: actions/configure-pages@v4
