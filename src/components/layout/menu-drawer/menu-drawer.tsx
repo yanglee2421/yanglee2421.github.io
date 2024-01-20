@@ -87,12 +87,12 @@ export function MenuDrawer(props: IconButtonProps) {
                   <MenuLink label="Posthog Events" to={"/posthog-events"} />
                 </MenuGroup>
                 <MenuGroup label="List" icon={<FormatListNumberedOutlined />}>
-                  <MenuLink label="Infinite List" to={"/infinite-list"} />
                   <MenuLink label="Virtualized List" to={"/virtualized-list"} />
                 </MenuGroup>
                 <MenuGroup label="Lab" icon={<ScienceOutlined />}>
                   <MenuLink label="Transition" to="/transition" />
                   <MenuLink label="SSO" to="/sso-login" />
+                  <MenuLink label="swiper" to="/swiper"></MenuLink>
                   <MenuLink label="Blank" to="/blank" />
                 </MenuGroup>
                 <MenuGroup label="Charts" icon={<DataSaverOffOutlined />}>

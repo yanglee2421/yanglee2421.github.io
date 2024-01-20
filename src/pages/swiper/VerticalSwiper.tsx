@@ -1,0 +1,51 @@
+// React Imports
+import React from "react";
+
+// Swiper Import
+import { Swiper, SwiperSlide } from "swiper/react";
+import { Pagination } from "swiper/modules";
+import "swiper/css";
+import "swiper/css/pagination";
+
+// MUI Imports
+import { Paper, styled } from "@mui/material";
+
+export function VerticalSwiper() {
+  const slideCount = 12;
+
+  return (
+    <Paper sx={{ padding: 3 }}>
+      <StyledSwiper
+        // ** Core
+        direction={"vertical"}
+        slidesPerGroup={2}
+        slidesPerView={2}
+        spaceBetween={16}
+        // ** Modules
+        modules={[Pagination]}
+        pagination={{
+          clickable: true,
+        }}
+      >
+        {(() => {
+          const nodeSet = new Set<React.ReactNode>();
+          for (let i = 0; i < slideCount; i++) {
+            nodeSet.add(
+              <StyledSwiperSlide key={i}>Slide {i}</StyledSwiperSlide>
+            );
+          }
+
+          return nodeSet;
+        })()}
+      </StyledSwiper>
+    </Paper>
+  );
+}
+
+const StyledSwiper = styled(Swiper)({
+  height: 420,
+});
+
+const StyledSwiperSlide = styled(SwiperSlide)({
+  border: "1px dashed red",
+});

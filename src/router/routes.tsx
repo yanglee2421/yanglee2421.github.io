@@ -243,6 +243,18 @@ export const routes: RouteObject[] = [
               };
             },
           },
+          {
+            id: "swiper",
+            path: "swiper",
+            handle: "Swiper",
+            async lazy() {
+              const { SwiperPage } = await import("@/pages/swiper");
+
+              return {
+                Component: SwiperPage,
+              };
+            },
+          },
 
           // ** Charts
           {

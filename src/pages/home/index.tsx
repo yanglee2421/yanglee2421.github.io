@@ -1,36 +1,14 @@
 // MUI Imports
-import {
-  useMediaQuery,
-  Theme,
-  Box,
-  Select,
-  MenuItem,
-  SelectProps,
-  Fade,
-  Tab,
-  TabsProps,
-  Tabs,
-  Paper,
-  List,
-  Button,
-  ListItem,
-  IconButton,
-  Collapse,
-} from "@mui/material";
-import {
-  Microsoft,
-  Apple,
-  YouTube,
-  Instagram,
-  DeleteOutlined,
-} from "@mui/icons-material";
+import { Box, Select, MenuItem, Fade, Tab, Tabs } from "@mui/material";
+import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
 
 // Components Imports
 import { CardRadio } from "./card-radio";
 import { FiveForm } from "./FiveForm";
 import { QueryBoard } from "./QueryBoard";
-import { SwitchTransition, TransitionGroup } from "react-transition-group";
+import { SwitchTransition } from "react-transition-group";
 import { SevenForm } from "./SevenForm";
+import { TabLabel } from "./TabLabel";
 
 // React Imports
 import React from "react";
@@ -38,38 +16,6 @@ import React from "react";
 export function Component() {
   const [tab, setTab] = React.useState("1");
   const [selected, setSelected] = React.useState("five");
-  const [fruitsInBasket, setFruitsInBasket] = React.useState(FRUITS.slice());
-
-  const handleTabChange: TabsProps["onChange"] = (evt, v) => {
-    void evt;
-    React.startTransition(() => {
-      setTab(v);
-    });
-  };
-
-  const handleSelectChange: SelectProps["onChange"] = (evt) => {
-    setSelected(String(evt.target.value));
-  };
-
-  const handleAddFruit = () => {
-    const nextHiddenItem = FRUITS.find((i) => {
-      return !fruitsInBasket.includes(i);
-    });
-
-    if (nextHiddenItem) {
-      setFruitsInBasket((prev) => {
-        return [nextHiddenItem, ...prev];
-      });
-    }
-  };
-
-  const handleRemoveFruit = (item: string) => {
-    setFruitsInBasket((prev) => {
-      return prev.filter((i) => {
-        return i !== item;
-      });
-    });
-  };
 
   return (
     <>
@@ -87,7 +33,12 @@ export function Component() {
         >
           <Tabs
             value={tab}
-            onChange={handleTabChange}
+            onChange={(evt, v) => {
+              void evt;
+              React.startTransition(() => {
+                setTab(v);
+              });
+            }}
             variant="scrollable"
             scrollButtons="auto"
             sx={{ alignItems: "center" }}
@@ -111,7 +62,13 @@ export function Component() {
           </Tabs>
         </Box>
         <Box display={"flex"} alignItems={"center"}>
-          <Select value={selected} onChange={handleSelectChange} size="small">
+          <Select
+            value={selected}
+            onChange={(evt) => {
+              setSelected(String(evt.target.value));
+            }}
+            size="small"
+          >
             <MenuItem value="five">woolworlds five</MenuItem>
             <MenuItem value="two">woolworlds two</MenuItem>
           </Select>
@@ -130,38 +87,6 @@ export function Component() {
                 case "3":
                   return <SevenForm></SevenForm>;
                 case "4":
-                  return (
-                    <Paper sx={{ padding: 3 }}>
-                      <Button
-                        onClick={handleAddFruit}
-                        variant="contained"
-                        disabled={fruitsInBasket.length >= FRUITS.length}
-                      >
-                        Add fruit to basket
-                      </Button>
-                      <List>
-                        <TransitionGroup>
-                          {fruitsInBasket.map((item) => {
-                            return (
-                              <Collapse key={item}>
-                                <ListItem
-                                  secondaryAction={
-                                    <IconButton
-                                      onClick={() => handleRemoveFruit(item)}
-                                    >
-                                      <DeleteOutlined></DeleteOutlined>
-                                    </IconButton>
-                                  }
-                                >
-                                  {item}
-                                </ListItem>
-                              </Collapse>
-                            );
-                          })}
-                        </TransitionGroup>
-                      </List>
-                    </Paper>
-                  );
                 default:
                   return null;
               }
@@ -172,40 +97,3 @@ export function Component() {
     </>
   );
 }
-
-const TabLabel = React.forwardRef((props: TabLabelProps, ref) => {
-  // ** Props
-  const { children, icon } = props;
-
-  const isExtraSmall = useMediaQuery<Theme>((theme) => {
-    return theme.breakpoints.down("sm");
-  });
-
-  return (
-    <Box
-      ref={ref}
-      display={"flex"}
-      alignItems={"center"}
-      sx={{
-        "& svg": {
-          mr: isExtraSmall ? 0 : 2,
-        },
-      }}
-    >
-      {icon}
-      {isExtraSmall || children}
-    </Box>
-  );
-});
-interface TabLabelProps {
-  children: React.ReactNode;
-  icon: React.ReactNode;
-}
-
-const FRUITS = [
-  "🍏 Apple",
-  "🍌 Banana",
-  "🍍 Pineapple",
-  "🥥 Coconut",
-  "🍉 Watermelon",
-];
