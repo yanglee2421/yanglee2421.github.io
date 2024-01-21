@@ -1,22 +1,29 @@
 export function toLink(str: unknown, msg = "") {
-  if (typeof str !== "string") return msg;
-  if (!str) return msg;
+  if (typeof str !== "string") {
+    return msg;
+  }
 
-  const reg =
-    /^(?<prefix>.*)(?<link>https?:\/\/.+\.\w{2,3}(:\d{2,5})?(\/\w+)*)(?<suffix>.*)$/gis;
+  if (!str) {
+    return msg;
+  }
 
-  const res = reg.exec(str);
-  if (!res) return str;
+  const groups =
+    /^(?<prefix>.*)(?<link>https?:\/\/.+\.\w{2,3}(:\d{2,5})?(\/\w+)*)(?<suffix>.*)$/gis.exec(
+      str
+    )?.groups;
 
-  const { groups } = res;
-  if (!groups) return str;
+  if (!groups) {
+    return msg;
+  }
 
-  const { link } = groups;
-  const a = (
-    <a key={link} href={link} target="_blank">
-      {link}
-    </a>
-  );
+  const link = groups.link;
 
-  return Object.values({ ...groups, link: a });
+  return Object.values({
+    ...groups,
+    link: (
+      <a key={link} href={link} target="_blank">
+        {link}
+      </a>
+    ),
+  });
 }

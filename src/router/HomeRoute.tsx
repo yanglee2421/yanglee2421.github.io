@@ -17,3 +17,4 @@ export function HomeRoute() {
     ></Navigate>
   );
 }
+__dirname;
