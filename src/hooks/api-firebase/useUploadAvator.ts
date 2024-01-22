@@ -7,10 +7,15 @@ import { getAuth, updateProfile, User } from "firebase/auth";
 import { app } from "@/api/firebase";
 
 // Store Imports
-import { useAuth } from "@/hooks/store";
+import { useAuthStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
 
 export function useUploadAvator() {
-  const [, setUpdateAt] = useAuth();
+  const update = useAuthStore(
+    useShallow((store) => {
+      return store.update;
+    })
+  );
   return useMutation<User, Error, Blob>({
     async mutationFn(blob) {
       const user = getAuth(app).currentUser;
@@ -30,7 +35,7 @@ export function useUploadAvator() {
       console.error(error);
     },
     onSuccess() {
-      setUpdateAt(Date.now());
+      update();
     },
   });
 }

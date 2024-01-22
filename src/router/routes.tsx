@@ -194,22 +194,6 @@ export const routes: RouteObject[] = [
             },
           },
           {
-            id: "posthog-insights",
-            path: "posthog-insights",
-            handle: { title: "Posthog Insights" },
-            lazy() {
-              return import("@/pages/posthog-insights");
-            },
-          },
-          {
-            id: "posthog-events",
-            path: "posthog-events",
-            handle: { title: "Posthog Events" },
-            lazy() {
-              return import("@/pages/posthog-events");
-            },
-          },
-          {
             id: "table",
             path: "table",
             async lazy() {
