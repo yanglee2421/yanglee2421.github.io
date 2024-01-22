@@ -1,1 +1,1 @@
-export * from "./NotLogged";
+export * from "./Unauthorized";
