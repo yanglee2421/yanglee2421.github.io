@@ -13,6 +13,7 @@ import { useShallow } from "zustand/react/shallow";
 import { useImmer } from "use-immer";
 import localforage from "localforage";
 import { timeout } from "@/utils";
+
 import snowVillage from "@/assets/images/snow-village.jpg";
 
 export function GlobalBg() {
@@ -30,7 +31,7 @@ export function GlobalBg() {
     width: number;
     height: number;
     loading: boolean;
-    error: Error | null;
+    error: unknown;
     imgSrc: string;
   }>({
     width: 0,
@@ -59,13 +60,13 @@ export function GlobalBg() {
             prev.imgSrc = URL.createObjectURL(file);
           });
         }
+
+        throw new Error("Invalid file");
       } catch (error) {
         console.error(error);
 
         updateBgImgState((prev) => {
-          if (error instanceof Error) {
-            prev.error = error;
-          }
+          prev.error = error;
         });
       } finally {
         updateBgImgState((prev) => {
@@ -98,72 +99,51 @@ export function GlobalBg() {
   }, [updateBgImgState]);
 
   return ReactDOM.createPortal(
-    <Box ref={containerRef} position={"fixed"} zIndex={-1} sx={{ inset: 0 }}>
-      {(() => {
-        if (bgImgState.loading) {
-          return (
-            <CircularProgress
-              size={24}
-              sx={{
-                position: "absolute",
-                left: 24,
-                bottom: 24,
-              }}
-            ></CircularProgress>
-          );
-        }
-
-        if (bgImgState.error) {
-          return (
-            <StyledImg
-              src={snowVillage}
-              alt="Background image"
-              width={bgImgState.width}
-              height={bgImgState.height}
-            ></StyledImg>
-          );
-        }
-
-        if (bgImgState.imgSrc) {
-          return (
-            <StyledImg
-              src={bgImgState.imgSrc}
-              alt="Background image"
-              onLoad={(evt) => {
-                URL.revokeObjectURL(evt.currentTarget.src);
-              }}
-              width={bgImgState.width}
-              height={bgImgState.height}
-            ></StyledImg>
-          );
-        }
-
-        return null;
-      })()}
+    <>
+      {bgImgState.loading && (
+        <CircularProgress
+          size={24}
+          sx={{
+            position: "fixed",
+            left: 24,
+            bottom: 24,
+          }}
+        ></CircularProgress>
+      )}
       <Box
-        position={"absolute"}
+        ref={containerRef}
+        position={"fixed"}
+        zIndex={-1}
         sx={{
           inset: `calc(${20 * (themeStore.bgBlur / 100)}px * -2)`,
-          zIndex: 0,
-          filter: `blur(${20 * (themeStore.bgBlur / 100)}px)`,
           transition(theme) {
             return theme.transitions.create(["filter", "inset"]);
           },
+          filter: `blur(${20 * (themeStore.bgBlur / 100)}px)`,
         }}
       >
         <Box
           position={"absolute"}
+          zIndex={1}
           bgcolor={alpha("#000", themeStore.bgAlpha / 100)}
           sx={{
             inset: 0,
-            zIndex: 0,
             transition(theme) {
               return theme.transitions.create(["background-color"]);
             },
           }}
         ></Box>
+        <StyledImg
+          src={bgImgState.imgSrc || snowVillage}
+          alt="Background image"
+          onLoad={(evt) => {
+            URL.revokeObjectURL(evt.currentTarget.src);
+          }}
+          width={bgImgState.width}
+          height={bgImgState.height}
+        ></StyledImg>
       </Box>
-    </Box>,
+    </>,
     document.body
   );
 }

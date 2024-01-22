@@ -11,30 +11,6 @@ import { GlobalBg } from "@/components/ui";
 export function Blank() {
   const [count, setCount] = React.useState("");
 
-  React.useEffect(() => {
-    console.log("effect", count);
-
-    return () => {
-      console.log("clear effect");
-    };
-  }, [count]);
-
-  React.useInsertionEffect(() => {
-    console.log("intertion effect", count);
-
-    return () => {
-      console.log("clear intertion effect");
-    };
-  }, [count]);
-
-  React.useLayoutEffect(() => {
-    console.log("layout effect", count);
-
-    return () => {
-      console.log("clear layout effect");
-    };
-  }, [count]);
-
   return (
     <Box
       position={"relative"}
