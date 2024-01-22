@@ -5,7 +5,7 @@ export function HomeRoute() {
   const matches = useMatches();
   const [searchParams] = useSearchParams();
 
-  if (!matches.at(-1)) {
+  if (!matches[matches.length - 1]) {
     return null;
   }
 
