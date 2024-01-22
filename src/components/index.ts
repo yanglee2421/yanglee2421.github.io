@@ -10,3 +10,5 @@ export * from "./ui";
 // ** Feature
 export * from "./lang-select";
 export * from "./CopyButton";
+
+export * from "./BlankMenu";

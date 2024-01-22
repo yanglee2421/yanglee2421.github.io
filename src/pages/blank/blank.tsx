@@ -5,7 +5,7 @@ import { Box, Paper, TextField } from "@mui/material";
 import React from "react";
 
 // Components Imports
-import { BlankMenu } from "./blank-menu";
+import { BlankMenu } from "@/components/BlankMenu";
 import { GlobalBg } from "@/components/ui";
 
 export function Blank() {

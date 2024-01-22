@@ -26,15 +26,9 @@ import React from "react";
 // Components Imports
 import { ScrollView } from "@/components";
 
-// Query Imports
-import { useBgImgMutation, useBgImgQuery } from "@/hooks/api-localforage";
-
 // Store Imports
 import { useThemeStore } from "@/hooks/store";
 import { useShallow } from "zustand/react/shallow";
-
-// Storage Imports
-import localforage from "localforage";
 
 export function BlankMenu() {
   const [showDrawer, setShowDrawer] = React.useState(false);
@@ -42,10 +36,6 @@ export function BlankMenu() {
   const isExtraSmall = useMediaQuery<Theme>((theme) => {
     return theme.breakpoints.down("sm");
   });
-
-  // Query Hooks
-  const bgImgQuery = useBgImgQuery();
-  const bgImgMutation = useBgImgMutation();
 
   const themeStore = useThemeStore(
     useShallow((store) => {
@@ -69,11 +59,10 @@ export function BlankMenu() {
   const handleBgImgChange: React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
-  >["onChange"] = (evt) => {
+  >["onChange"] = async (evt) => {
     const file = evt.target.files?.[0];
 
     if (file) {
-      bgImgMutation.mutate(file);
     }
   };
 
@@ -91,18 +80,6 @@ export function BlankMenu() {
     if (typeof v === "number") {
       themeStore.setBgBlur(v);
     }
-  };
-
-  const handleShare = async () => {
-    const file = await localforage.getItem<File>("bg-img");
-    if (!file) return;
-
-    navigator.share({
-      url: window.location.href,
-      title: "Share feature",
-      text: file.name,
-      files: [file],
-    });
   };
 
   return (
@@ -153,7 +130,7 @@ export function BlankMenu() {
                         title="click to change image"
                         sx={{ color: "common.white" }}
                       >
-                        <StyledImg
+                        {/* <StyledImg
                           src={bgImgQuery.data}
                           alt=""
                           sx={{
@@ -161,7 +138,7 @@ export function BlankMenu() {
                             aspectRatio: "16/9",
                             verticalAlign: "bottom",
                           }}
-                        />
+                        /> */}
                         <input
                           value={""}
                           onChange={handleBgImgChange}
@@ -185,9 +162,9 @@ export function BlankMenu() {
                     <CardActions>
                       <Button
                         size="small"
-                        LinkComponent={"a"}
-                        href={bgImgQuery.data || ""}
-                        download={`${Date.now()}.png`}
+                        // LinkComponent={"a"}
+                        // href={bgImgQuery.data || ""}
+                        // download={`${Date.now()}.png`}
                         title="download image"
                         startIcon={<Download fontSize="small" />}
                         sx={{ textTransform: "lowercase" }}
@@ -197,14 +174,11 @@ export function BlankMenu() {
                     </CardActions>
                   </Card>
                   <Card>
-                    <CardHeader title={"Share"} />
-                    <CardContent>
-                      <Button onClick={handleShare}>share</Button>
-                    </CardContent>
+                    <CardContent></CardContent>
                   </Card>
                 </Stack>
 
-                <Box height={1000}></Box>
+                <Box height={1000}>465464161</Box>
               </Box>
             </ScrollView>
           </Box>
@@ -214,4 +188,6 @@ export function BlankMenu() {
   );
 }
 
-const StyledImg = styled("img")({});
+const StyledImg = styled("img")({
+  objectFit: "cover",
+});
