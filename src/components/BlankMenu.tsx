@@ -130,7 +130,7 @@ export function BlankMenu() {
                         title="click to change image"
                         sx={{ color: "common.white" }}
                       >
-                        {/* <StyledImg
+                        <StyledImg
                           src={bgImgQuery.data}
                           alt=""
                           sx={{
@@ -138,7 +138,7 @@ export function BlankMenu() {
                             aspectRatio: "16/9",
                             verticalAlign: "bottom",
                           }}
-                        /> */}
+                        ></StyledImg>
                         <input
                           value={""}
                           onChange={handleBgImgChange}

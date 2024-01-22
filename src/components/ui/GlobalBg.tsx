@@ -42,6 +42,10 @@ export function GlobalBg() {
   });
 
   React.useEffect(() => {
+    if (bgImgState.loading) {
+      return;
+    }
+
     if (bgImgState.imgSrc) {
       return;
     }
@@ -74,7 +78,7 @@ export function GlobalBg() {
         });
       }
     })();
-  }, [bgImgState.imgSrc, updateBgImgState]);
+  }, [bgImgState.loading, bgImgState.imgSrc, updateBgImgState]);
 
   React.useEffect(() => {
     const containerEl = containerRef.current;
