@@ -5,15 +5,15 @@ import { NavLink } from "react-router-dom";
 import { Box, Button, Typography, Container } from "@mui/material";
 
 // Components Imports
-import { BlankMenu } from "./blank-menu";
-import { GlobalBg } from "@/components/ui";
+import { BackgroundImage } from "@/components/ui";
+import { Customer } from "@/components";
 
 export function NotFound() {
   return (
     <>
-      <GlobalBg />
       <Box display={"flex"} color="common.white">
-        <BlankMenu />
+        <BackgroundImage></BackgroundImage>
+        <Customer></Customer>
         <Container disableGutters sx={{ pt: 36, px: 16 }}>
           <Typography variant="h1">404</Typography>
           <Typography variant="h2">Page not found</Typography>
