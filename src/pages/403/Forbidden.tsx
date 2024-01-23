@@ -9,7 +9,7 @@ import {
 } from "@mui/material";
 
 // Components Imports
-import { GlobalBg } from "@/components/ui";
+import { BackgroundImage } from "@/components/ui";
 
 // Router Imports
 import { Link } from "react-router-dom";
@@ -18,7 +18,7 @@ import { grey } from "@mui/material/colors";
 export function Forbidden() {
   return (
     <>
-      <GlobalBg />
+      <BackgroundImage></BackgroundImage>
       <Box
         display={"flex"}
         flexDirection={"column"}
