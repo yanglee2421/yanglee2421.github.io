@@ -14,12 +14,12 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
     const {
       children,
       options,
+      onPsScrollX,
+      onPsScrollY,
       onPsScrollUp,
       onPsScrollDown,
       onPsScrollLeft,
       onPsScrollRight,
-      onPsScrollX,
-      onPsScrollY,
       onPsXReachStart,
       onPsXReachEnd,
       onPsYReachStart,
@@ -39,7 +39,6 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
       []
     );
 
-    // Create scrollbar
     React.useEffect(() => {
       const containerEl = containerRef.current;
 
@@ -55,7 +54,6 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
       };
     }, [options]);
 
-    // Update scrollbar
     React.useEffect(() => {
       const containerEl = containerRef.current;
 
@@ -72,7 +70,6 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
       const observer = new ResizeObserver(() => {
         psRef.current?.update();
       });
-
       observer.observe(containerEl);
       observer.observe(contentEl);
 
@@ -83,10 +80,12 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
       };
     }, []);
 
-    // Bind event handler
     React.useEffect(() => {
       const containerEl = containerRef.current;
-      if (!containerEl) return;
+
+      if (!containerEl) {
+        return;
+      }
 
       const map = new Map<string, (evt: Event) => void>();
 
@@ -165,9 +164,9 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
 
     return (
       <Box
+        ref={containerRef}
         position={"relative"}
         height={"100%"}
-        ref={containerRef}
         {...restProps}
       >
         <Box ref={contentRef}>{children}</Box>
@@ -178,14 +177,14 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
 
 export type ScrollViewProps = BoxProps & {
   options?: PerfectScrollbar.Options;
-  onPsScrollY?(evt: Event): void;
   onPsScrollX?(evt: Event): void;
+  onPsScrollY?(evt: Event): void;
   onPsScrollUp?(evt: Event): void;
   onPsScrollDown?(evt: Event): void;
   onPsScrollLeft?(evt: Event): void;
   onPsScrollRight?(evt: Event): void;
-  onPsYReachStart?(evt: Event): void;
-  onPsYReachEnd?(evt: Event): void;
   onPsXReachStart?(evt: Event): void;
   onPsXReachEnd?(evt: Event): void;
+  onPsYReachStart?(evt: Event): void;
+  onPsYReachEnd?(evt: Event): void;
 };

@@ -16,7 +16,8 @@ import { ExitToApp, PeopleOutline } from "@mui/icons-material";
 import React from "react";
 
 // Store Imports
-import { useAuth } from "@/hooks/store";
+import { useAuthStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
 
 // Utils Imports
 import { stringToColor } from "@/utils";
@@ -28,11 +29,12 @@ export function UserDropdown() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   // Login hooks
-  const [auth] = useAuth();
+  const authValue = useAuthStore(
+    useShallow((store) => {
+      return store.value;
+    })
+  );
 
-  const openHandler: React.MouseEventHandler<HTMLSpanElement> = (evt) => {
-    setAnchorEl(evt.currentTarget);
-  };
   const closeHandler = () => {
     setAnchorEl(null);
   };
@@ -40,24 +42,29 @@ export function UserDropdown() {
   return (
     <>
       <StyledBadge
-        onClick={openHandler}
+        onClick={(evt) => {
+          setAnchorEl(evt.currentTarget);
+        }}
         variant="dot"
         overlap="circular"
         anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
       >
         <Avatar
-          src={auth.currentUser?.photoURL || ""}
+          src={authValue.auth.currentUser?.photoURL || ""}
           alt="avator"
           sx={{
-            color: auth.currentUser?.displayName
-              ? stringToColor(auth.currentUser.displayName || "")
+            color: authValue.auth.currentUser?.displayName
+              ? stringToColor(authValue.auth.currentUser.displayName || "")
               : void 0,
-            bgcolor: auth.currentUser?.displayName
-              ? alpha(stringToColor(auth.currentUser.displayName || ""), 0.12)
+            bgcolor: authValue.auth.currentUser?.displayName
+              ? alpha(
+                  stringToColor(authValue.auth.currentUser.displayName || ""),
+                  0.12
+                )
               : void 0,
           }}
         >
-          {auth.currentUser?.displayName?.at(0)?.toUpperCase()}
+          {authValue.auth.currentUser?.displayName?.at(0)?.toUpperCase()}
         </Avatar>
       </StyledBadge>
       <Menu
@@ -80,7 +87,7 @@ export function UserDropdown() {
         <Divider></Divider>
         <MenuItem
           onClick={() => {
-            auth.signOut();
+            authValue.auth.signOut();
           }}
         >
           <ListItemIcon>

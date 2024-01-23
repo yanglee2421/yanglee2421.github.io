@@ -1,1 +1,1 @@
-export * from "./SystemError";
+export * from "./InternalServerError";

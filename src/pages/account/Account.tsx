@@ -18,7 +18,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 
 // Store Imports
-import { useAuth } from "@/hooks/store";
+import { useAuthStore } from "@/hooks/store";
 
 // Components Imports
 import { ItemText } from "@/components";
@@ -35,13 +35,21 @@ import { Auth, updateProfile } from "firebase/auth";
 
 // Toast Imports
 import toast from "react-hot-toast";
+import { useShallow } from "zustand/react/shallow";
 
 export function Account() {
-  const [auth, setUpdateAt] = useAuth();
+  const { authValue, updateAuth } = useAuthStore(
+    useShallow((store) => {
+      return {
+        authValue: store.value,
+        updateAuth: store.update,
+      };
+    })
+  );
 
   const formCtx = useForm<FormValues>({
     defaultValues: {
-      displayName: auth.currentUser?.displayName || "",
+      displayName: authValue.auth.currentUser?.displayName || "",
     },
 
     resolver: zodResolver(schema),
@@ -49,7 +57,9 @@ export function Account() {
 
   const mutation = useMutation<Auth, Error, { displayName: string }>({
     async mutationFn({ displayName }) {
+      const auth = authValue.auth;
       const user = auth.currentUser;
+
       if (!user) {
         throw new Error("Not authorization");
       }
@@ -64,7 +74,7 @@ export function Account() {
       toast.error(error.message);
     },
     onSuccess(data) {
-      setUpdateAt(Date.now());
+      updateAuth();
 
       formCtx.reset({
         displayName: data.currentUser?.displayName || "",
@@ -103,21 +113,27 @@ export function Account() {
               subheader="Update you profile"
               avatar={
                 <Avatar
-                  src={auth.currentUser?.photoURL || ""}
+                  src={authValue.auth.currentUser?.photoURL || ""}
                   alt="avator"
                   sx={{
-                    color: auth.currentUser?.displayName
-                      ? stringToColor(auth.currentUser.displayName || "")
+                    color: authValue.auth.currentUser?.displayName
+                      ? stringToColor(
+                          authValue.auth.currentUser.displayName || ""
+                        )
                       : void 0,
-                    bgcolor: auth.currentUser?.displayName
+                    bgcolor: authValue.auth.currentUser?.displayName
                       ? alpha(
-                          stringToColor(auth.currentUser.displayName || ""),
+                          stringToColor(
+                            authValue.auth.currentUser.displayName || ""
+                          ),
                           0.12
                         )
                       : void 0,
                   }}
                 >
-                  {auth.currentUser?.displayName?.at(0)?.toUpperCase()}
+                  {authValue.auth.currentUser?.displayName
+                    ?.at(0)
+                    ?.toUpperCase()}
                 </Avatar>
               }
               action={<UploadAvator></UploadAvator>}

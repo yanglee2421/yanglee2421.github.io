@@ -1,1 +1,1 @@
-export * from "./NotAuthorized";
+export * from "./Forbidden";

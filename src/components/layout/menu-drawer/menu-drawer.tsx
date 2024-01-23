@@ -27,13 +27,15 @@ export function MenuDrawer(props: IconButtonProps) {
   const closeHandler = () => {
     setOpen(false);
   };
-  const openHandler = () => {
-    setOpen(true);
-  };
 
   return (
     <>
-      <IconButton onClick={openHandler} {...restProps}>
+      <IconButton
+        onClick={() => {
+          setOpen(true);
+        }}
+        {...restProps}
+      >
         <Menu />
       </IconButton>
       <Drawer
@@ -71,7 +73,6 @@ export function MenuDrawer(props: IconButtonProps) {
                 <MenuLink icon={<HomeOutlined />} label="Home" to={"/"} />
                 <MenuGroup icon={<ArticleOutlined />} label="Pages">
                   <MenuLink label="Not Found" to={"/404"} />
-                  <MenuLink label="Account" to={"/account"} />
                   <MenuLink label="Picture" to={"/picture"} />
                 </MenuGroup>
                 <MenuGroup icon={<FeedOutlined />} label="Form">
@@ -83,15 +84,12 @@ export function MenuDrawer(props: IconButtonProps) {
                 <MenuGroup label="Table" icon={<GridOnOutlined />}>
                   <MenuLink label="Table" to={"/table"}></MenuLink>
                   <MenuLink label="Data Grid" to={"/data-grid"} />
-                  <MenuLink label="Posthog Insights" to={"/posthog-insights"} />
-                  <MenuLink label="Posthog Events" to={"/posthog-events"} />
                 </MenuGroup>
                 <MenuGroup label="List" icon={<FormatListNumberedOutlined />}>
                   <MenuLink label="Virtualized List" to={"/virtualized-list"} />
                 </MenuGroup>
                 <MenuGroup label="Lab" icon={<ScienceOutlined />}>
                   <MenuLink label="Transition" to="/transition" />
-                  <MenuLink label="SSO" to="/sso-login" />
                   <MenuLink label="swiper" to="/swiper"></MenuLink>
                   <MenuLink label="Blank" to="/blank" />
                 </MenuGroup>

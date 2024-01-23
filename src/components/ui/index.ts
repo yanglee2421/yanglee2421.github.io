@@ -4,7 +4,7 @@ export * from "./ScrollView";
 export * from "./MenuGroup";
 export * from "./MenuLink";
 
-export * from "./GlobalBg";
+export * from "./BackgroundImage";
 
 // ** Skeleton
 export * from "./SkeletonCard";

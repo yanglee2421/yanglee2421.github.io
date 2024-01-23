@@ -1,2 +1,2 @@
-export * from "./useBgImgQuery";
-export * from "./useBgImgMutation";
+export * from "./useForageFileMutation";
+export * from "./useForageFileQuery";

@@ -19,8 +19,8 @@ import "@fontsource/roboto/900.css";
 ReactDOM.createRoot(
   (() => {
     const containerId = "root";
-
     const existedEl = document.getElementById(containerId);
+
     if (existedEl) {
       return existedEl;
     }
@@ -28,10 +28,11 @@ ReactDOM.createRoot(
     const newEl = document.createElement("div");
     newEl.id = containerId;
     document.body.append(newEl);
+
     return newEl;
   })()
 ).render(
   <React.StrictMode>
-    <App />
+    <App></App>
   </React.StrictMode>
 );

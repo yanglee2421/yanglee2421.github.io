@@ -23,7 +23,7 @@ import { useSignIn } from "@/hooks/api-firebase";
 // Router Imports
 import { Link as RouterLink } from "react-router-dom";
 
-export function NotLogged() {
+export function Unauthorized() {
   // Form Hooks
   const formCtx = useForm<FormValues>({
     defaultValues: {

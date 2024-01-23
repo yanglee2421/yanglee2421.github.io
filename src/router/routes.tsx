@@ -9,6 +9,7 @@ export const routes: RouteObject[] = [
 
       return {
         Component: RootRoute,
+        errorElement: <Navigate to="/500" replace />,
       };
     },
     children: [
@@ -17,14 +18,14 @@ export const routes: RouteObject[] = [
         id: "401",
         path: "401",
         handle: {
-          title: "Login",
+          title: "401 Unauthorized",
           auth: "guest",
         },
         async lazy() {
-          const { NotLogged } = await import("@/pages/401");
+          const { Unauthorized } = await import("@/pages/401");
 
           return {
-            Component: NotLogged,
+            Component: Unauthorized,
           };
         },
       },
@@ -32,14 +33,14 @@ export const routes: RouteObject[] = [
         id: "403",
         path: "403",
         handle: {
-          title: "403, Not authorization",
-          auth: "none",
+          title: "403 Forbidden",
+          auth: "auth",
         },
         async lazy() {
-          const { NotAuthorized } = await import("@/pages/403");
+          const { Forbidden } = await import("@/pages/403");
 
           return {
-            Component: NotAuthorized,
+            Component: Forbidden,
           };
         },
       },
@@ -47,7 +48,7 @@ export const routes: RouteObject[] = [
         id: "404",
         path: "404",
         handle: {
-          title: "404, NotFound",
+          title: "404 Not Found",
           auth: "none",
         },
         async lazy() {
@@ -62,14 +63,14 @@ export const routes: RouteObject[] = [
         id: "500",
         path: "500",
         handle: {
-          title: "500, System error",
+          title: "500 Internal Server Error",
           auth: "none",
         },
         async lazy() {
-          const { SystemError } = await import("@/pages/500");
+          const { InternalServerError } = await import("@/pages/500");
 
           return {
-            Component: SystemError,
+            Component: InternalServerError,
           };
         },
       },
@@ -191,22 +192,6 @@ export const routes: RouteObject[] = [
             handle: { title: "Data Grid" },
             lazy() {
               return import("@/pages/data-grid");
-            },
-          },
-          {
-            id: "posthog-insights",
-            path: "posthog-insights",
-            handle: { title: "Posthog Insights" },
-            lazy() {
-              return import("@/pages/posthog-insights");
-            },
-          },
-          {
-            id: "posthog-events",
-            path: "posthog-events",
-            handle: { title: "Posthog Events" },
-            lazy() {
-              return import("@/pages/posthog-events");
             },
           },
           {

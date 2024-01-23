@@ -8,10 +8,15 @@ import { useMatches, Navigate, useOutlet } from "react-router-dom";
 import React from "react";
 
 // Store Imports
-import { useAuth } from "@/hooks/store";
+import { useAuthStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
 
 // Acl Imports
 import { defineAbilityFor, AclContext } from "@/configs/acl";
+
+// Firebase Imports
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+import { app } from "@/api/firebase";
 
 // Components Imports
 import { HomeRoute } from "./HomeRoute";
@@ -20,8 +25,22 @@ import { LoginRoute } from "./LoginRoute";
 export function RootRoute() {
   const matches = useMatches();
   const outlet = useOutlet();
-  const [auth] = useAuth();
-  const acl = defineAbilityFor(auth.currentUser ? "admin" : "");
+  const { authValue, updateAuth } = useAuthStore(
+    useShallow((store) => {
+      return {
+        authValue: store.value,
+        updateAuth: store.update,
+      };
+    })
+  );
+
+  const acl = defineAbilityFor(authValue.auth.currentUser ? "admin" : "");
+
+  React.useEffect(() => {
+    return onAuthStateChanged(getAuth(app), () => {
+      updateAuth();
+    });
+  }, [updateAuth]);
 
   React.useEffect(() => {
     NProgress.done();
@@ -63,12 +82,12 @@ export function RootRoute() {
             return outlet;
 
           case "guest":
-            return auth.currentUser ? <HomeRoute /> : outlet;
+            return authValue.auth.currentUser ? <HomeRoute /> : outlet;
 
           case "auth":
           default:
             // Not logged in
-            if (!auth.currentUser) {
+            if (!authValue.auth.currentUser) {
               return <LoginRoute />;
             }
 
