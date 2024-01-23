@@ -11,8 +11,7 @@ import { useShallow } from "zustand/react/shallow";
 
 // Utils Imports
 import { useImmer } from "use-immer";
-import localforage from "localforage";
-import { timeout } from "@/utils";
+import { useForageFileQuery } from "@/hooks/api-localforage";
 
 import snowVillage from "@/assets/images/snow-village.jpg";
 
@@ -26,55 +25,15 @@ export function BackgroundImage() {
     })
   );
 
+  const query = useForageFileQuery("bg-img");
   const containerRef = React.useRef<HTMLDivElement>(null);
   const [bgImgState, updateBgImgState] = useImmer<{
     width: number;
     height: number;
-    loading: boolean;
-    error: unknown;
-    imgSrc: string;
   }>({
     width: 0,
     height: 0,
-    loading: true,
-    error: null,
-    imgSrc: "",
   });
-
-  React.useEffect(() => {
-    if (bgImgState.imgSrc) {
-      return;
-    }
-
-    void (async () => {
-      updateBgImgState((prev) => {
-        prev.loading = true;
-      });
-
-      try {
-        const file = await localforage.getItem("bg-img");
-        await timeout(1000 * 2);
-
-        if (file instanceof File) {
-          updateBgImgState((prev) => {
-            prev.imgSrc = URL.createObjectURL(file);
-          });
-        }
-
-        throw new Error("Invalid file");
-      } catch (error) {
-        console.error(error);
-
-        updateBgImgState((prev) => {
-          prev.error = error;
-        });
-      } finally {
-        updateBgImgState((prev) => {
-          prev.loading = false;
-        });
-      }
-    })();
-  }, [bgImgState.imgSrc, updateBgImgState]);
 
   React.useEffect(() => {
     const containerEl = containerRef.current;
@@ -100,7 +59,7 @@ export function BackgroundImage() {
 
   return ReactDOM.createPortal(
     <>
-      {bgImgState.loading && (
+      {query.isPending && (
         <CircularProgress
           size={24}
           sx={{
@@ -134,11 +93,8 @@ export function BackgroundImage() {
           }}
         ></Box>
         <StyledImg
-          src={bgImgState.imgSrc || snowVillage}
+          src={query.data?.src || snowVillage}
           alt="Background image"
-          onLoad={(evt) => {
-            URL.revokeObjectURL(evt.currentTarget.src);
-          }}
           width={bgImgState.width}
           height={bgImgState.height}
         ></StyledImg>

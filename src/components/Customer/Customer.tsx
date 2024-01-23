@@ -35,8 +35,9 @@ import { useThemeStore } from "@/hooks/store";
 import { useShallow } from "zustand/react/shallow";
 
 // Utils Imports
-import { useImageState } from "./useImageState";
+import { useForageFileQuery } from "@/hooks/api-localforage";
 import { useResize } from "./useResize";
+import snowVillage from "@/assets/images/snow-village.jpg";
 
 export function Customer() {
   const [showDrawer, setShowDrawer] = React.useState(false);
@@ -56,7 +57,7 @@ export function Customer() {
     })
   );
 
-  const imageState = useImageState();
+  const query = useForageFileQuery("bg-img");
   const imgBoxRef = React.useRef<HTMLLabelElement>(null);
   const imageSize = useResize(imgBoxRef);
 
@@ -149,7 +150,7 @@ export function Customer() {
                         }}
                       >
                         <StyledImg
-                          src={imageState.src}
+                          src={query.data?.src || snowVillage}
                           alt="Background image preview"
                           width={imageSize.width}
                           height={imageSize.height}
@@ -178,8 +179,8 @@ export function Customer() {
                       <Button
                         size="small"
                         LinkComponent={"a"}
-                        href={imageState.src || ""}
-                        download={`${Date.now()}.png`}
+                        href={query.data?.src || snowVillage}
+                        download={query.data?.filename}
                         title="download image"
                         startIcon={
                           <DownloadOutlined fontSize="small"></DownloadOutlined>
