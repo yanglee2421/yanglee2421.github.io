@@ -95,6 +95,9 @@ export function BackgroundImage() {
         <StyledImg
           src={query.data?.src || snowVillage}
           alt="Background image"
+          onError={() => {
+            query.refetch();
+          }}
           width={bgImgState.width}
           height={bgImgState.height}
         ></StyledImg>

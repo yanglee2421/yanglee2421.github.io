@@ -17,11 +17,16 @@ import {
   Button,
   Slider,
   SliderProps,
+  Collapse,
+  FormLabel,
+  FormControl,
 } from "@mui/material";
 import {
   CloseOutlined,
   DownloadOutlined,
   SettingsOutlined,
+  AddOutlined,
+  RemoveOutlined,
 } from "@mui/icons-material";
 
 // React Imports
@@ -35,12 +40,21 @@ import { useThemeStore } from "@/hooks/store";
 import { useShallow } from "zustand/react/shallow";
 
 // Utils Imports
-import { useForageFileQuery } from "@/hooks/api-localforage";
+import {
+  useForageFileMutation,
+  useForageFileQuery,
+} from "@/hooks/api-localforage";
 import { useResize } from "./useResize";
 import snowVillage from "@/assets/images/snow-village.jpg";
+import { useImmer } from "use-immer";
 
 export function Customer() {
-  const [showDrawer, setShowDrawer] = React.useState(false);
+  const query = useForageFileQuery("bg-img");
+  const mutation = useForageFileMutation();
+  const [setting, updateSetting] = useImmer({
+    showDrawer: false,
+    wallpaperCollapsed: false,
+  });
 
   const isExtraSmall = useMediaQuery<Theme>((theme) => {
     return theme.breakpoints.down("sm");
@@ -57,25 +71,29 @@ export function Customer() {
     })
   );
 
-  const query = useForageFileQuery("bg-img");
   const imgBoxRef = React.useRef<HTMLLabelElement>(null);
   const imageSize = useResize(imgBoxRef);
 
   const handleDrawerClose = () => {
-    setShowDrawer(false);
+    updateSetting((prev) => {
+      prev.showDrawer = false;
+    });
   };
 
   const handleDrawerOpen = () => {
-    setShowDrawer(true);
+    updateSetting((prev) => {
+      prev.showDrawer = true;
+    });
   };
 
   const handleBgImgChange: React.DetailedHTMLProps<
     React.InputHTMLAttributes<HTMLInputElement>,
     HTMLInputElement
   >["onChange"] = async (evt) => {
-    const file = evt.target.files?.[0];
+    const file = evt.target.files?.item(0);
 
     if (file) {
+      mutation.mutate({ file, fileKey: "bg-img" });
     }
   };
 
@@ -100,12 +118,18 @@ export function Customer() {
       <IconButton
         onClick={handleDrawerOpen}
         color="inherit"
-        sx={{ position: "absolute", top: "1rem", right: "1rem" }}
+        sx={{
+          position: "absolute",
+          top: "1rem",
+          right: "1rem",
+          color: "common.white",
+          bgcolor: "action.active",
+        }}
       >
-        <SettingsOutlined></SettingsOutlined>
+        <SettingsOutlined color="inherit"></SettingsOutlined>
       </IconButton>
       <SwipeableDrawer
-        open={showDrawer}
+        open={setting.showDrawer}
         onOpen={handleDrawerOpen}
         onClose={handleDrawerClose}
         anchor={isExtraSmall ? "top" : "right"}
@@ -131,65 +155,135 @@ export function Customer() {
           <Divider></Divider>
           <Box flex={1} overflow={"hidden"}>
             <ScrollView>
-              <Box p={4} bgcolor={(theme) => theme.palette.background.default}>
-                <Stack spacing={6}>
+              <Box p={3} bgcolor={(theme) => theme.palette.background.default}>
+                <Stack spacing={3}>
                   <Card>
                     <CardHeader
                       title={<Typography variant="h6">Wallpaper</Typography>}
+                      subheader={
+                        <Typography variant="subtitle2" color="action.active">
+                          These settings are saved locally on your
+                        </Typography>
+                      }
+                      action={
+                        <IconButton
+                          onClick={() => {
+                            updateSetting((prev) => {
+                              prev.wallpaperCollapsed =
+                                !prev.wallpaperCollapsed;
+                            });
+                          }}
+                        >
+                          {setting.wallpaperCollapsed ? (
+                            <AddOutlined></AddOutlined>
+                          ) : (
+                            <RemoveOutlined></RemoveOutlined>
+                          )}
+                        </IconButton>
+                      }
                     ></CardHeader>
-                    <CardContent>
-                      <CardActionArea
-                        ref={imgBoxRef}
-                        component="label"
-                        title="click to change image"
-                        sx={{
-                          color: "common.white",
+                    <Collapse in={!setting.wallpaperCollapsed}>
+                      <CardContent>
+                        <CardActionArea
+                          ref={imgBoxRef}
+                          component="label"
+                          title="click to change image"
+                          sx={{
+                            color: "common.white",
+                            aspectRatio: "16/9",
+                          }}
+                        >
+                          {(() => {
+                            // API pending
+                            if (query.isPending) {
+                              return (
+                                <StyledImg
+                                  src={snowVillage}
+                                  alt="Background image preview"
+                                  width={imageSize.width}
+                                  height={imageSize.height}
+                                ></StyledImg>
+                              );
+                            }
 
-                          aspectRatio: "16/9",
-                          overflow: "hidden",
-                        }}
-                      >
-                        <StyledImg
-                          src={query.data?.src || snowVillage}
-                          alt="Background image preview"
-                          width={imageSize.width}
-                          height={imageSize.height}
-                        ></StyledImg>
-                        <input
-                          value={""}
-                          onChange={handleBgImgChange}
-                          type="file"
-                          hidden
-                        />
-                      </CardActionArea>
-                    </CardContent>
-                    <CardContent>
-                      <Slider
-                        value={themeStore.bgAlpha}
-                        onChange={handleBgAlphaChange}
-                        valueLabelDisplay="auto"
-                      />
-                      <Slider
-                        value={themeStore.bgBlur}
-                        onChange={handleBgBlurChange}
-                        valueLabelDisplay="auto"
-                      />
-                    </CardContent>
-                    <CardActions>
-                      <Button
-                        size="small"
-                        LinkComponent={"a"}
-                        href={query.data?.src || snowVillage}
-                        download={query.data?.filename}
-                        title="download image"
-                        startIcon={
-                          <DownloadOutlined fontSize="small"></DownloadOutlined>
-                        }
-                        sx={{ textTransform: "lowercase" }}
-                      >
-                        download
-                      </Button>
-                    </CardActions>
+                            // API failed
+                            if (query.isError) {
+                              return (
+                                <StyledImg
+                                  src={snowVillage}
+                                  alt={query.error.message}
+                                  width={imageSize.width}
+                                  height={imageSize.height}
+                                ></StyledImg>
+                              );
+                            }
+
+                            // API success
+                            if (query.isSuccess) {
+                              return (
+                                <StyledImg
+                                  src={query.data.src}
+                                  alt={query.data.filename}
+                                  onError={() => {
+                                    query.refetch();
+                                  }}
+                                  width={imageSize.width}
+                                  height={imageSize.height}
+                                ></StyledImg>
+                              );
+                            }
+                          })()}
+                          <input
+                            value={""}
+                            onChange={handleBgImgChange}
+                            type="file"
+                            accept="image/*"
+                            hidden
+                          />
+                        </CardActionArea>
+                      </CardContent>
+                      <CardContent>
+                        <FormControl fullWidth>
+                          <FormLabel>
+                            <Typography variant="overline">
+                              Background alpha
+                            </Typography>
+                          </FormLabel>
+                          <Slider
+                            value={themeStore.bgAlpha}
+                            onChange={handleBgAlphaChange}
+                            valueLabelDisplay="auto"
+                          ></Slider>
+                        </FormControl>
+                        <FormControl fullWidth>
+                          <FormLabel>
+                            <Typography variant="overline">
+                              Background blur
+                            </Typography>
+                          </FormLabel>
+                          <Slider
+                            value={themeStore.bgBlur}
+                            onChange={handleBgBlurChange}
+                            valueLabelDisplay="auto"
+                          ></Slider>
+                        </FormControl>
+                      </CardContent>
+                      <CardActions>
+                        <Button
+                          size="small"
+                          LinkComponent={"a"}
+                          href={query.data?.src || snowVillage}
+                          download={query.data?.filename}
+                          title="download image"
+                          startIcon={
+                            <DownloadOutlined fontSize="small"></DownloadOutlined>
+                          }
+                          sx={{ textTransform: "lowercase" }}
+                        >
+                          download
+                        </Button>
+                      </CardActions>
+                    </Collapse>
                   </Card>
                   <Card>
                     <CardContent></CardContent>

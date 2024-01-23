@@ -32,8 +32,6 @@ export function useForageFileQuery(fileKey: string) {
     },
 
     retry: false,
-    staleTime: Infinity,
-    gcTime: Infinity,
   });
 }
 

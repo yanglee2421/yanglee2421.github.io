@@ -2,7 +2,7 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import localforage from "localforage";
 
-export function useFOrageFileMutation() {
+export function useForageFileMutation() {
   const queryClient = useQueryClient();
 
   return useMutation<string, Error, Req>({
