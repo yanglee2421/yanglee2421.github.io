@@ -11,4 +11,4 @@ export * from "./ui";
 export * from "./lang-select";
 export * from "./CopyButton";
 
-export * from "./BlankMenu";
+export * from "./Customer";

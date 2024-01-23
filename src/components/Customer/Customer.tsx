@@ -18,7 +18,11 @@ import {
   Slider,
   SliderProps,
 } from "@mui/material";
-import { Close, Download, Menu } from "@mui/icons-material";
+import {
+  CloseOutlined,
+  DownloadOutlined,
+  SettingsOutlined,
+} from "@mui/icons-material";
 
 // React Imports
 import React from "react";
@@ -30,7 +34,11 @@ import { ScrollView } from "@/components";
 import { useThemeStore } from "@/hooks/store";
 import { useShallow } from "zustand/react/shallow";
 
-export function BlankMenu() {
+// Utils Imports
+import { useImageState } from "./useImageState";
+import { useResize } from "./useResize";
+
+export function Customer() {
   const [showDrawer, setShowDrawer] = React.useState(false);
 
   const isExtraSmall = useMediaQuery<Theme>((theme) => {
@@ -47,6 +55,10 @@ export function BlankMenu() {
       };
     })
   );
+
+  const imageState = useImageState();
+  const imgBoxRef = React.useRef<HTMLLabelElement>(null);
+  const imageSize = useResize(imgBoxRef);
 
   const handleDrawerClose = () => {
     setShowDrawer(false);
@@ -89,7 +101,7 @@ export function BlankMenu() {
         color="inherit"
         sx={{ position: "absolute", top: "1rem", right: "1rem" }}
       >
-        <Menu />
+        <SettingsOutlined></SettingsOutlined>
       </IconButton>
       <SwipeableDrawer
         open={showDrawer}
@@ -97,7 +109,7 @@ export function BlankMenu() {
         onClose={handleDrawerClose}
         anchor={isExtraSmall ? "top" : "right"}
         hideBackdrop
-        // variant="persistent"
+        variant="persistent"
         sx={{
           "& > .MuiPaper-root": {
             height: "100%",
@@ -112,7 +124,7 @@ export function BlankMenu() {
         >
           <Box p={2}>
             <IconButton onClick={handleDrawerClose}>
-              <Close />
+              <CloseOutlined></CloseOutlined>
             </IconButton>
           </Box>
           <Divider></Divider>
@@ -123,21 +135,24 @@ export function BlankMenu() {
                   <Card>
                     <CardHeader
                       title={<Typography variant="h6">Wallpaper</Typography>}
-                    />
+                    ></CardHeader>
                     <CardContent>
                       <CardActionArea
+                        ref={imgBoxRef}
                         component="label"
                         title="click to change image"
-                        sx={{ color: "common.white" }}
+                        sx={{
+                          color: "common.white",
+
+                          aspectRatio: "16/9",
+                          overflow: "hidden",
+                        }}
                       >
                         <StyledImg
-                          src={bgImgQuery.data}
-                          alt=""
-                          sx={{
-                            width: "100%",
-                            aspectRatio: "16/9",
-                            verticalAlign: "bottom",
-                          }}
+                          src={imageState.src}
+                          alt="Background image preview"
+                          width={imageSize.width}
+                          height={imageSize.height}
                         ></StyledImg>
                         <input
                           value={""}
@@ -162,11 +177,13 @@ export function BlankMenu() {
                     <CardActions>
                       <Button
                         size="small"
-                        // LinkComponent={"a"}
-                        // href={bgImgQuery.data || ""}
-                        // download={`${Date.now()}.png`}
+                        LinkComponent={"a"}
+                        href={imageState.src || ""}
+                        download={`${Date.now()}.png`}
                         title="download image"
-                        startIcon={<Download fontSize="small" />}
+                        startIcon={
+                          <DownloadOutlined fontSize="small"></DownloadOutlined>
+                        }
                         sx={{ textTransform: "lowercase" }}
                       >
                         download
@@ -177,7 +194,6 @@ export function BlankMenu() {
                     <CardContent></CardContent>
                   </Card>
                 </Stack>
-
                 <Box height={1000}>465464161</Box>
               </Box>
             </ScrollView>
@@ -190,4 +206,5 @@ export function BlankMenu() {
 
 const StyledImg = styled("img")({
   objectFit: "cover",
+  verticalAlign: "bottom",
 });

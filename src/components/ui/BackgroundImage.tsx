@@ -16,7 +16,7 @@ import { timeout } from "@/utils";
 
 import snowVillage from "@/assets/images/snow-village.jpg";
 
-export function GlobalBg() {
+export function BackgroundImage() {
   const themeStore = useThemeStore(
     useShallow((store) => {
       return {
@@ -42,10 +42,6 @@ export function GlobalBg() {
   });
 
   React.useEffect(() => {
-    if (bgImgState.loading) {
-      return;
-    }
-
     if (bgImgState.imgSrc) {
       return;
     }
@@ -57,7 +53,7 @@ export function GlobalBg() {
 
       try {
         const file = await localforage.getItem("bg-img");
-        await timeout(1000 * 3);
+        await timeout(1000 * 2);
 
         if (file instanceof File) {
           updateBgImgState((prev) => {
@@ -78,7 +74,7 @@ export function GlobalBg() {
         });
       }
     })();
-  }, [bgImgState.loading, bgImgState.imgSrc, updateBgImgState]);
+  }, [bgImgState.imgSrc, updateBgImgState]);
 
   React.useEffect(() => {
     const containerEl = containerRef.current;
@@ -150,13 +146,6 @@ export function GlobalBg() {
     </>,
     document.body
   );
-}
-
-export interface GlobalBgProps {
-  bgImg: string;
-  bgAlpha: number;
-  bgBlur: number;
-  loading: boolean;
 }
 
 const StyledImg = styled("img")({
