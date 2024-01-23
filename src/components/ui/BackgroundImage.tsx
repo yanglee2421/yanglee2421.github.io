@@ -12,7 +12,6 @@ import { useShallow } from "zustand/react/shallow";
 // Utils Imports
 import { useImmer } from "use-immer";
 import { useForageFileQuery } from "@/hooks/api-localforage";
-
 import snowVillage from "@/assets/images/snow-village.jpg";
 
 export function BackgroundImage() {
@@ -27,10 +26,7 @@ export function BackgroundImage() {
 
   const query = useForageFileQuery("bg-img");
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const [bgImgState, updateBgImgState] = useImmer<{
-    width: number;
-    height: number;
-  }>({
+  const [bgImgState, updateBgImgState] = useImmer({
     width: 0,
     height: 0,
   });
@@ -43,17 +39,19 @@ export function BackgroundImage() {
     }
 
     const observer = new ResizeObserver(([{ contentBoxSize }]) => {
-      updateBgImgState((prev) => {
-        const [size] = contentBoxSize;
-        prev.width = size.inlineSize;
-        prev.height = size.blockSize;
+      React.startTransition(() => {
+        updateBgImgState((prev) => {
+          const [size] = contentBoxSize;
+          prev.width = size.inlineSize;
+          prev.height = size.blockSize;
+        });
       });
     });
     observer.observe(containerEl);
 
     return () => {
-      observer.disconnect();
       observer.unobserve(containerEl);
+      observer.disconnect();
     };
   }, [updateBgImgState]);
 
@@ -92,15 +90,43 @@ export function BackgroundImage() {
             },
           }}
         ></Box>
-        <StyledImg
-          src={query.data?.src || snowVillage}
-          alt="Background image"
-          onError={() => {
-            query.refetch();
-          }}
-          width={bgImgState.width}
-          height={bgImgState.height}
-        ></StyledImg>
+        {(() => {
+          if (query.isPending) {
+            return (
+              <StyledImg
+                src={snowVillage}
+                alt="Background image"
+                width={bgImgState.width}
+                height={bgImgState.height}
+              ></StyledImg>
+            );
+          }
+
+          if (query.isError) {
+            return (
+              <StyledImg
+                src={snowVillage}
+                alt={query.error.message}
+                width={bgImgState.width}
+                height={bgImgState.height}
+              ></StyledImg>
+            );
+          }
+
+          if (query.isSuccess) {
+            return (
+              <StyledImg
+                src={query.data.src}
+                alt={query.data.filename}
+                onError={() => {
+                  query.refetch();
+                }}
+                width={bgImgState.width}
+                height={bgImgState.height}
+              ></StyledImg>
+            );
+          }
+        })()}
       </Box>
     </>,
     document.body

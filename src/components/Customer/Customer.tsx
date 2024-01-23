@@ -44,16 +44,18 @@ import {
   useForageFileMutation,
   useForageFileQuery,
 } from "@/hooks/api-localforage";
-import { useResize } from "./useResize";
 import snowVillage from "@/assets/images/snow-village.jpg";
 import { useImmer } from "use-immer";
 
 export function Customer() {
   const query = useForageFileQuery("bg-img");
   const mutation = useForageFileMutation();
+  const imgBoxRef = React.useRef<HTMLLabelElement>(null);
   const [setting, updateSetting] = useImmer({
     showDrawer: false,
     wallpaperCollapsed: false,
+    imageWidth: 0,
+    imageHeight: 0,
   });
 
   const isExtraSmall = useMediaQuery<Theme>((theme) => {
@@ -70,9 +72,6 @@ export function Customer() {
       };
     })
   );
-
-  const imgBoxRef = React.useRef<HTMLLabelElement>(null);
-  const imageSize = useResize(imgBoxRef);
 
   const handleDrawerClose = () => {
     updateSetting((prev) => {
@@ -112,6 +111,28 @@ export function Customer() {
       themeStore.setBgBlur(v);
     }
   };
+
+  React.useEffect(() => {
+    const el = imgBoxRef.current;
+
+    if (el instanceof HTMLElement) {
+      const observer = new ResizeObserver(([{ contentBoxSize }]) => {
+        React.startTransition(() => {
+          updateSetting((prev) => {
+            const [size] = contentBoxSize;
+            prev.imageWidth = size.inlineSize;
+            prev.imageHeight = size.blockSize;
+          });
+        });
+      });
+      observer.observe(el);
+
+      return () => {
+        observer.unobserve(el);
+        observer.disconnect();
+      };
+    }
+  }, [updateSetting]);
 
   return (
     <>
@@ -155,7 +176,12 @@ export function Customer() {
           <Divider></Divider>
           <Box flex={1} overflow={"hidden"}>
             <ScrollView>
-              <Box p={3} bgcolor={(theme) => theme.palette.background.default}>
+              <Box
+                p={3}
+                bgcolor={(theme) => {
+                  return theme.palette.background.default;
+                }}
+              >
                 <Stack spacing={3}>
                   <Card>
                     <CardHeader
@@ -200,8 +226,8 @@ export function Customer() {
                                 <StyledImg
                                   src={snowVillage}
                                   alt="Background image preview"
-                                  width={imageSize.width}
-                                  height={imageSize.height}
+                                  width={setting.imageWidth}
+                                  height={setting.imageHeight}
                                 ></StyledImg>
                               );
                             }
@@ -212,8 +238,8 @@ export function Customer() {
                                 <StyledImg
                                   src={snowVillage}
                                   alt={query.error.message}
-                                  width={imageSize.width}
-                                  height={imageSize.height}
+                                  width={setting.imageWidth}
+                                  height={setting.imageHeight}
                                 ></StyledImg>
                               );
                             }
@@ -227,8 +253,8 @@ export function Customer() {
                                   onError={() => {
                                     query.refetch();
                                   }}
-                                  width={imageSize.width}
-                                  height={imageSize.height}
+                                  width={setting.imageWidth}
+                                  height={setting.imageHeight}
                                 ></StyledImg>
                               );
                             }
