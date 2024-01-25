@@ -1,5 +1,5 @@
 // Router Imports
-import { useLocation, useOutlet } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 // MUI Imports
 import { Box, styled } from "@mui/material";
@@ -10,8 +10,7 @@ import { SwitchTransition, CSSTransition } from "react-transition-group";
 // React Imports
 import React from "react";
 
-export function DesktopLayout() {
-  const outlet = useOutlet();
+export function DesktopLayout(props: React.PropsWithChildren) {
   const location = useLocation();
   const containerRef = React.useRef<HTMLDivElement>(null);
 
@@ -27,7 +26,7 @@ export function DesktopLayout() {
           unmountOnExit
           classNames={"fade"}
         >
-          <StyledBox>{outlet}</StyledBox>
+          <StyledBox>{props.children}</StyledBox>
         </CSSTransition>
       </SwitchTransition>
     </>

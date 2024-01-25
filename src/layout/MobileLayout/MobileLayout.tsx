@@ -1,6 +1,3 @@
-// Router Imports
-import { useOutlet } from "react-router-dom";
-
 // MUI Imports
 import { AppBar, Toolbar, IconButton, Box } from "@mui/material";
 import { GitHub } from "@mui/icons-material";
@@ -17,9 +14,7 @@ import {
 // React Imports
 import React from "react";
 
-export function MobileLayout() {
-  const outlet = useOutlet();
-
+export function MobileLayout(props: React.PropsWithChildren) {
   const appbarRef = React.useRef<HTMLDivElement>(null);
   const [marginTop, setMarginTop] = React.useState(0);
 
@@ -60,7 +55,7 @@ export function MobileLayout() {
           <UserDropdown />
         </Toolbar>
       </AppBar>
-      <Box marginTop={`${marginTop}px`}>{outlet}</Box>
+      <Box marginTop={`${marginTop}px`}>{props.children}</Box>
     </>
   );
 }
