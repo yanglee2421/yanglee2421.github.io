@@ -1,9 +1,6 @@
 // ** ScrollBar
 export * from "./ScrollView";
 
-export * from "./MenuGroup";
-export * from "./MenuLink";
-
 export * from "./BackgroundImage";
 
 // ** Skeleton

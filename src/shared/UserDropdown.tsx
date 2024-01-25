@@ -3,6 +3,7 @@ import {
   Avatar,
   Badge,
   Divider,
+  Fade,
   ListItemIcon,
   ListItemText,
   Menu,
@@ -76,6 +77,7 @@ export function UserDropdown() {
           horizontal: "right",
         }}
         sx={{ "& .MuiMenu-paper": { width: 230, mt: 4 } }}
+        TransitionComponent={Fade}
       >
         <MenuItem component={Link} to={"/account"} onClick={closeHandler}>
           <ListItemIcon>

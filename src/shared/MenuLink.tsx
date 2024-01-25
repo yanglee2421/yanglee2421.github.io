@@ -24,12 +24,6 @@ export function MenuLink(props: MenuLinkProps) {
   // ** Props
   const { label, icon, to, end, caseSensitive, relative, ...restProps } = props;
 
-  // Icon node
-  const iconNode = React.useMemo(() => {
-    if (icon) return icon;
-    return <FiberManualRecordOutlined />;
-  }, [icon]);
-
   // Get isActive
   const path = useResolvedPath(to, { relative });
   const location = useLocation();
@@ -53,7 +47,9 @@ export function MenuLink(props: MenuLinkProps) {
 
   return (
     <ListItemButton component={Link} to={to} selected={isActive} {...restProps}>
-      <ListItemIcon>{iconNode}</ListItemIcon>
+      <ListItemIcon>
+        {icon || <FiberManualRecordOutlined></FiberManualRecordOutlined>}
+      </ListItemIcon>
       <ListItemText>{label}</ListItemText>
     </ListItemButton>
   );

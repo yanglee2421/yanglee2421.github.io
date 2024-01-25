@@ -4,26 +4,19 @@ import { useLocation, useOutlet } from "react-router-dom";
 // MUI Imports
 import { Box, styled } from "@mui/material";
 
-// Component Imports
-import { Appbar } from "@/components/layout";
+// Components Imports
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 
 // React Imports
 import React from "react";
 
-// Utils Imports
-import { useObserverResize } from "@/hooks";
-
-export function LayoutWithAppbar() {
+export function DesktopLayout() {
   const outlet = useOutlet();
   const location = useLocation();
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const appBarRef = React.useRef<HTMLElement>(null);
-  const resizeEntry = useObserverResize(appBarRef);
 
   return (
     <>
-      <Appbar ref={appBarRef}></Appbar>
       <SwitchTransition>
         <CSSTransition
           key={location.pathname}
@@ -34,13 +27,7 @@ export function LayoutWithAppbar() {
           unmountOnExit
           classNames={"fade"}
         >
-          <StyledBox
-            ref={containerRef}
-            p={2}
-            mt={`${resizeEntry?.borderBoxSize.at(0)?.blockSize || 0}px`}
-          >
-            {outlet}
-          </StyledBox>
+          <StyledBox>{outlet}</StyledBox>
         </CSSTransition>
       </SwitchTransition>
     </>
@@ -49,6 +36,8 @@ export function LayoutWithAppbar() {
 
 const StyledBox = styled(Box)(({ theme }) => {
   return {
+    padding: theme.spacing(2),
+
     // Enter stage
     "&.fade-enter": {
       opacity: 0,
