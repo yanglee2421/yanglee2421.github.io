@@ -1,29 +1,41 @@
 // Router Imports
-import { useLocation, useOutlet } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 
 // MUI Imports
-import { Box, styled } from "@mui/material";
+import { Box, Button, styled } from "@mui/material";
 
-// Component Imports
-import { Appbar } from "@/components/layout";
+// Components Imports
 import { SwitchTransition, CSSTransition } from "react-transition-group";
 
 // React Imports
 import React from "react";
 
-// Utils Imports
-import { useObserverResize } from "@/hooks";
+// Store Imports
+import { useAuthStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
 
-export function LayoutWithAppbar() {
-  const outlet = useOutlet();
+export function DesktopLayout(props: React.PropsWithChildren) {
   const location = useLocation();
   const containerRef = React.useRef<HTMLDivElement>(null);
-  const appBarRef = React.useRef<HTMLElement>(null);
-  const resizeEntry = useObserverResize(appBarRef);
+  const authValue = useAuthStore(
+    useShallow((store) => {
+      return store.value;
+    })
+  );
 
   return (
     <>
-      <Appbar ref={appBarRef}></Appbar>
+      <Box>
+        <Button
+          onClick={() => {
+            authValue.auth.signOut();
+          }}
+          color="error"
+          variant="contained"
+        >
+          logout
+        </Button>
+      </Box>
       <SwitchTransition>
         <CSSTransition
           key={location.pathname}
@@ -34,13 +46,7 @@ export function LayoutWithAppbar() {
           unmountOnExit
           classNames={"fade"}
         >
-          <StyledBox
-            ref={containerRef}
-            p={2}
-            mt={`${resizeEntry?.borderBoxSize.at(0)?.blockSize || 0}px`}
-          >
-            {outlet}
-          </StyledBox>
+          <StyledBox>{props.children}</StyledBox>
         </CSSTransition>
       </SwitchTransition>
     </>
@@ -49,6 +55,8 @@ export function LayoutWithAppbar() {
 
 const StyledBox = styled(Box)(({ theme }) => {
   return {
+    padding: theme.spacing(2),
+
     // Enter stage
     "&.fade-enter": {
       opacity: 0,

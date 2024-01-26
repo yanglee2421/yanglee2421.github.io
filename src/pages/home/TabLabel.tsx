@@ -25,7 +25,7 @@ export const TabLabel = React.forwardRef((props: TabLabelProps, ref) => {
       {...restProps}
     >
       {icon}
-      {extraSmall || children}
+      {extraSmall ? null : children}
     </Box>
   );
 });

@@ -9,7 +9,7 @@ export const routes: RouteObject[] = [
 
       return {
         Component: RootRoute,
-        errorElement: <Navigate to="/500" replace />,
+        // errorElement: <Navigate to="/500" replace />,
       };
     },
     children: [
@@ -116,10 +116,10 @@ export const routes: RouteObject[] = [
         id: "with-appbar",
         path: "",
         async lazy() {
-          const { LayoutWithAppbar } = await import("@/layout/");
+          const { Layout } = await import("@/layout");
 
           return {
-            Component: LayoutWithAppbar,
+            Component: Layout,
           };
         },
         children: [

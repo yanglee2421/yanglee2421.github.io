@@ -1,13 +1,5 @@
 // MUI Imports
-import {
-  Box,
-  Divider,
-  IconButton,
-  Link,
-  Typography,
-  Button,
-} from "@mui/material";
-import { Google, GitHub, FacebookOutlined, Twitter } from "@mui/icons-material";
+import { Box, Divider, Link, Typography, Button } from "@mui/material";
 
 // Form Imports
 import { FormProvider, useForm } from "react-hook-form";
@@ -23,6 +15,14 @@ import { useSignIn } from "@/hooks/api-firebase";
 // Router Imports
 import { Link as RouterLink } from "react-router-dom";
 
+// Assets Imports
+import GoogleLogo from "@/assets/images/google.png";
+
+// Firebase Imports
+import { useMutation } from "@tanstack/react-query";
+import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { app } from "@/api/firebase";
+
 export function Unauthorized() {
   // Form Hooks
   const formCtx = useForm<FormValues>({
@@ -35,6 +35,12 @@ export function Unauthorized() {
   });
 
   const mutation = useSignIn();
+
+  const mutationGoogle = useMutation({
+    mutationFn() {
+      return signInWithPopup(getAuth(app), new GoogleAuthProvider());
+    },
+  });
 
   return (
     <Box display={"flex"} height={"100%"}>
@@ -120,18 +126,16 @@ export function Unauthorized() {
         </Box>
         <Divider>Or</Divider>
         <Box display={"flex"} justifyContent={"center"} gap={4}>
-          <IconButton>
-            <FacebookOutlined />
-          </IconButton>
-          <IconButton>
-            <Twitter />
-          </IconButton>
-          <IconButton>
-            <GitHub />
-          </IconButton>
-          <IconButton>
-            <Google />
-          </IconButton>
+          <Button
+            color="secondary"
+            startIcon={<img src={GoogleLogo} alt="Google" width={22}></img>}
+            sx={{ "& .MuiButton-startIcon": { marginInlineEnd: 3 } }}
+            onClick={() => {
+              mutationGoogle.mutate();
+            }}
+          >
+            Sign in with Google
+          </Button>
         </Box>
       </Box>
     </Box>
@@ -144,3 +148,11 @@ const zodSchema = z.object({
 });
 
 export type FormValues = z.infer<typeof zodSchema>;
+
+const googleAuthProvider = new GoogleAuthProvider();
+googleAuthProvider.addScope(
+  "https://www.googleapis.com/auth/contacts.readonly"
+);
+googleAuthProvider.setCustomParameters({
+  login_hint: "user@example.com",
+});

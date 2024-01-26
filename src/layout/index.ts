@@ -1,1 +1,1 @@
-export * from "./LayoutWithAppbar";
+export * from "./Layout";

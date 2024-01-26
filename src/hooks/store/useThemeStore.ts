@@ -7,7 +7,7 @@ export const useThemeStore = create(
   persist<ThemeStore>(
     (set, get) => {
       return {
-        mode: "auto",
+        mode: "system",
         setMode(action) {
           return set({
             mode: typeof action === "function" ? action(get().mode) : action,
@@ -47,4 +47,4 @@ export interface ThemeStore {
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
 }
 
-type Mode = "auto" | "dark" | "light";
+type Mode = "system" | "dark" | "light";

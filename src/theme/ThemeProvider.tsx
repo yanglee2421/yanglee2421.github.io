@@ -43,7 +43,7 @@ export function ThemeProvider(props: React.PropsWithChildren) {
       case "dark":
       case "light":
         return themeStore.mode;
-      case "auto":
+      case "system":
       default:
         return isDark ? "dark" : "light";
     }
