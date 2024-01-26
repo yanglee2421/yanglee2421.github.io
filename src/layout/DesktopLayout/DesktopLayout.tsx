@@ -2,7 +2,7 @@
 import { useLocation } from "react-router-dom";
 
 // MUI Imports
-import { Box, styled } from "@mui/material";
+import { Box, Button, styled } from "@mui/material";
 
 // Components Imports
 import { SwitchTransition, CSSTransition } from "react-transition-group";
@@ -10,12 +10,32 @@ import { SwitchTransition, CSSTransition } from "react-transition-group";
 // React Imports
 import React from "react";
 
+// Store Imports
+import { useAuthStore } from "@/hooks/store";
+import { useShallow } from "zustand/react/shallow";
+
 export function DesktopLayout(props: React.PropsWithChildren) {
   const location = useLocation();
   const containerRef = React.useRef<HTMLDivElement>(null);
+  const authValue = useAuthStore(
+    useShallow((store) => {
+      return store.value;
+    })
+  );
 
   return (
     <>
+      <Box>
+        <Button
+          onClick={() => {
+            authValue.auth.signOut();
+          }}
+          color="error"
+          variant="contained"
+        >
+          logout
+        </Button>
+      </Box>
       <SwitchTransition>
         <CSSTransition
           key={location.pathname}
