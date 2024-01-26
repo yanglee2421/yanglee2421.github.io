@@ -1,9 +1,6 @@
 // MUI Imports
 import { Grid, Card, CardContent, Box, CardHeader } from "@mui/material";
 
-// Theme Imports
-import { ThemeToggle } from "@/theme";
-
 // Components Imports
 import { InputTextarea } from "./input-textarea";
 
@@ -21,9 +18,7 @@ export function Input() {
         </Grid>
         <Grid item xs={12} sm={6}>
           <Card>
-            <CardContent>
-              <ThemeToggle />
-            </CardContent>
+            <CardContent></CardContent>
           </Card>
         </Grid>
       </Grid>
