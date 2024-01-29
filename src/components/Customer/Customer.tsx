@@ -217,6 +217,7 @@ export function Customer() {
                           sx={{
                             color: "common.white",
                             aspectRatio: "16/9",
+                            overflow: "hidden",
                           }}
                         >
                           {(() => {
