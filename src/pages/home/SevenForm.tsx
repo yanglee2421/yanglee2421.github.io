@@ -9,6 +9,7 @@ import { z } from "zod";
 // Components Imports
 import { ItemText } from "@/components/form";
 import { IntInput } from "./IntInput";
+import { useTranslation } from "react-i18next";
 
 // React Imports
 // import React from "react";
@@ -22,6 +23,8 @@ export function SevenForm() {
 
     resolver: zodResolver(zodSchema),
   });
+
+  const { t } = useTranslation("button");
 
   return (
     <Paper sx={{ padding: 3 }}>
@@ -53,7 +56,7 @@ export function SevenForm() {
           <Grid item xs={12}>
             <Stack direction={"row"} spacing={3}>
               <Button type="submit" variant="contained">
-                submit
+                {t("submit")}
               </Button>
               <Button type="reset" variant="outlined">
                 reset

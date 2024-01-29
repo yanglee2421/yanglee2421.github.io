@@ -2,7 +2,12 @@
 import NProgress from "nprogress";
 
 // Router Imports
-import { useMatches, Navigate, useOutlet } from "react-router-dom";
+import {
+  useMatches,
+  Navigate,
+  useOutlet,
+  useSearchParams,
+} from "react-router-dom";
 
 // React Imports
 import React from "react";
@@ -21,6 +26,7 @@ import { app } from "@/api/firebase";
 // Components Imports
 import { HomeRoute } from "./HomeRoute";
 import { LoginRoute } from "./LoginRoute";
+import { useTranslation } from "react-i18next";
 
 export function RootRoute() {
   const matches = useMatches();
@@ -35,6 +41,18 @@ export function RootRoute() {
   );
 
   const acl = defineAbilityFor(authValue.auth.currentUser ? "admin" : "");
+
+  const { i18n } = useTranslation();
+  const [searchParams] = useSearchParams({
+    lang: "en",
+  });
+  const lang = searchParams.get("lang");
+
+  React.useEffect(() => {
+    if (typeof lang === "string") {
+      i18n.changeLanguage(lang);
+    }
+  }, [lang, i18n]);
 
   React.useEffect(() => {
     return onAuthStateChanged(getAuth(app), () => {
