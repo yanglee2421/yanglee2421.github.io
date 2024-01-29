@@ -73,6 +73,36 @@ export function Charts() {
           />
         </CardContent>
       </StyledCard>
+      <Card>
+        <CardContent>
+          <ReactApexcharts
+            type="radar"
+            height={350}
+            series={[
+              {
+                name: "Series 1",
+                data: [80, 50, 30, 40, 100, 20],
+              },
+              {
+                name: "Series 2",
+                data: [80, 50, 30, 40, 100, 20].reverse(),
+              },
+            ]}
+            options={{
+              xaxis: {
+                categories: [
+                  "January",
+                  "February",
+                  "March",
+                  "April",
+                  "May",
+                  "June",
+                ],
+              },
+            }}
+          ></ReactApexcharts>
+        </CardContent>
+      </Card>
     </>
   );
 }
