@@ -16,15 +16,132 @@ import {
   Theme,
   useTheme,
   styled,
+  Stack,
 } from "@mui/material";
 import { ArrowUpwardOutlined } from "@mui/icons-material";
 import { green } from "@mui/material/colors";
 
+import { useImmer } from "use-immer";
+
 export function Charts() {
   const theme = useTheme();
 
+  const data = {
+    global: [
+      {
+        feature: "product_type",
+        data: {
+          bath: 2,
+          cardigan: 4,
+          desk: 1,
+          jacket: 1,
+          jumper: 8,
+          pullover: 4,
+          sweater: 12,
+          sweatshirt: 1,
+          top: 1,
+        },
+      },
+      {
+        feature: "product_category",
+        data: {
+          "5": 7,
+          NORMAL: 31,
+        },
+      },
+    ],
+    sweater: [
+      {
+        feature: "pattern",
+        data: {
+          "light color": 9,
+          "solid color": 7,
+        },
+      },
+      {
+        feature: "sleeve_length",
+        data: {
+          long: 2,
+          middle: 5,
+          short: 9,
+        },
+      },
+      {
+        feature: "thickness",
+        data: {
+          thick: 4,
+          thicker: 6,
+          thickest: 6,
+        },
+      },
+      {
+        feature: "color",
+        data: {
+          black: 4,
+          blue: 5,
+          green: 7,
+        },
+      },
+      {
+        feature: "size",
+        data: {
+          L: 6,
+          M: 4,
+          XL: 6,
+        },
+      },
+    ],
+  };
+
+  const options = Object.keys(
+    Object(
+      data.global.find((item) => {
+        return item.feature === "product_type";
+      })?.data
+    )
+  ).filter((item) => {
+    return Object.keys(data).includes(item);
+  });
+
+  const [state, updateState] = useImmer(() => {
+    return {
+      productType: options.at(0) || "sweater",
+    };
+  });
+
+  void updateState;
+
+  const selectedFeature: (typeof data)[keyof typeof data] = Reflect.get(
+    data,
+    state.productType
+  );
+
+  const filteredFeature = selectedFeature.filter((item) => {
+    return Object.keys(item.data).length > 2;
+  });
+
+  const list: Record<string, number>[] = [];
+
+  for (let i = 0; i < 3; i++) {
+    const map = filteredFeature.reduce<Map<string, number>>((map, item) => {
+      const tuple = Object.entries(item.data)
+        .sort((prev, curr) => {
+          return curr[1] - prev[1];
+        })
+        .at(i);
+
+      if (tuple) {
+        map.set(tuple[0], tuple[1]);
+      }
+
+      return map;
+    }, new Map());
+
+    list.push(Object.fromEntries(map.entries()));
+  }
+
   return (
-    <>
+    <Stack spacing={6}>
       <StyledCard>
         <CardHeader
           title="Balance"
@@ -69,7 +186,7 @@ export function Charts() {
             type="line"
             height={400}
             series={series()}
-            options={options(theme)}
+            options={getOptions(theme)}
           />
         </CardContent>
       </StyledCard>
@@ -77,33 +194,81 @@ export function Charts() {
         <CardContent>
           <ReactApexcharts
             type="radar"
-            height={350}
-            series={[
-              {
-                name: "Series 1",
-                data: [80, 50, 30, 40, 100, 20],
-              },
-              {
-                name: "Series 2",
-                data: [80, 50, 30, 40, 100, 20].reverse(),
-              },
-            ]}
+            height={500}
+            series={list.map((item) => {
+              return {
+                name: Object.keys(item).join("/"),
+                data: Object.values(item),
+              };
+            })}
             options={{
+              chart: {
+                parentHeightOffset: 0,
+                toolbar: { show: false },
+                dropShadow: {
+                  top: 1,
+                  blur: 8,
+                  left: 1,
+                  opacity: 0.2,
+                  enabled: false,
+                },
+              },
+              markers: { size: 0 },
+              tooltip: {
+                marker: {
+                  show: true,
+                },
+                // custom(options) {
+                //   return void options;
+                // },
+              },
+              fill: { opacity: 0.1 },
+              stroke: {
+                width: 2,
+                show: true,
+              },
+              dataLabels: { enabled: true },
+              legend: {
+                labels: {
+                  colors: theme.palette.text.secondary,
+                },
+                markers: {
+                  offsetX: -3,
+                },
+                itemMargin: {
+                  vertical: 3,
+                  horizontal: 10,
+                },
+              },
+              plotOptions: {
+                radar: {
+                  polygons: {
+                    strokeColors: theme.palette.divider,
+                    connectorColors: theme.palette.divider,
+                  },
+                },
+              },
+              grid: {
+                show: false,
+                padding: {
+                  top: -20,
+                  bottom: -20,
+                },
+              },
+              yaxis: { show: false },
               xaxis: {
-                categories: [
-                  "January",
-                  "February",
-                  "March",
-                  "April",
-                  "May",
-                  "June",
-                ],
+                categories: filteredFeature.map((item) => item.feature),
+                labels: {
+                  style: {
+                    colors: theme.palette.text.disabled,
+                  },
+                },
               },
             }}
           ></ReactApexcharts>
         </CardContent>
       </Card>
-    </>
+    </Stack>
   );
 }
 
@@ -123,7 +288,7 @@ function series(): ApexOptions["series"] {
   ];
 }
 
-function options(theme: Theme): ApexOptions {
+function getOptions(theme: Theme): ApexOptions {
   return {
     chart: {
       parentHeightOffset: 0,
