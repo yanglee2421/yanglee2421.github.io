@@ -95,38 +95,38 @@ export function RootRoute() {
           return null;
         }
 
-        switch (Reflect.get(Object(currentRoute.handle), "auth")) {
+        const handle = currentRoute.handle || {};
+
+        switch (Reflect.get(handle, "auth")) {
           case "none":
             return outlet;
 
           case "guest":
-            return authValue.auth.currentUser ? <HomeRoute /> : outlet;
+            if (authValue.auth.currentUser) {
+              return <HomeRoute></HomeRoute>;
+            }
+
+            return outlet;
 
           case "auth":
           default:
             // Not logged in
             if (!authValue.auth.currentUser) {
-              return <LoginRoute />;
+              return <LoginRoute></LoginRoute>;
             }
 
             // Authorized pass
             if (
               acl.can(
-                String(
-                  Reflect.get(Object(currentRoute.handle), "aclAction") ||
-                    "read"
-                ),
-                String(
-                  Reflect.get(Object(currentRoute.handle), "aclSubject") ||
-                    "fallback"
-                )
+                String(Reflect.get(handle, "aclAction") || "read"),
+                String(Reflect.get(handle, "aclSubject") || "fallback")
               )
             ) {
               return outlet;
             }
 
             // Not authorized
-            return <Navigate to="/403" />;
+            return <Navigate to="/403"></Navigate>;
         }
       })()}
     </AclContext.Provider>
