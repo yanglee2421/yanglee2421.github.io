@@ -9,6 +9,7 @@ import { QueryBoard } from "./QueryBoard";
 import { SwitchTransition } from "react-transition-group";
 import { SevenForm } from "./SevenForm";
 import { TabLabel } from "./TabLabel";
+import { EightPanel } from "./EightPanel";
 
 // React Imports
 import React from "react";
@@ -88,7 +89,7 @@ export function Component() {
                   return <SevenForm></SevenForm>;
                 case "4":
                 default:
-                  return null;
+                  return <EightPanel></EightPanel>;
               }
             })()}
           </Box>
