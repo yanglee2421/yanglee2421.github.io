@@ -1,64 +1,71 @@
-import { Button, Grid } from "@mui/material";
+import { Grid, TextField } from "@mui/material";
 import React from "react";
 
 export function EightPanel() {
-  const [numberA, setNumberA] = React.useState(0);
-  const [numberB, setNumberB] = React.useState(0);
+  const [numberA, setNumberA] = React.useState("");
+  const [numberB, setNumberB] = React.useState("");
+  const deferredNumberA = React.useDeferredValue(numberA);
+  const timer = React.useRef(0);
 
   console.log("render");
-
-  const memoNode = React.useMemo(() => {
-    return <SlowRender>{numberB}</SlowRender>;
-  }, [numberB]);
 
   return (
     <>
       <Grid container spacing={6}>
         <Grid item xs={12}>
-          <Button
-            onClick={() => {
-              console.log("1");
-
-              setNumberA((p) => {
-                console.log("2");
-                return p + 1;
-              });
-              setNumberB((p) => p + 1);
-
-              console.log("3");
+          <TextField
+            value={numberA}
+            onChange={(evt) => {
+              setNumberA(evt.target.value);
+              setNumberB(evt.target.value);
             }}
-          >
-            not transition
-          </Button>
-          <Button
-            onClick={() => {
-              console.log("1");
-
-              setNumberA((p) => {
-                console.log("2");
-                return p + 1;
-              });
-
+            label="Not Transition"
+          ></TextField>
+          <TextField
+            value={numberA}
+            onChange={(evt) => {
+              setNumberA(evt.target.value);
               React.startTransition(() => {
-                setNumberB((p) => p + 1);
+                setNumberB(evt.target.value);
               });
-
-              console.log("3");
             }}
-          >
-            transition
-          </Button>
+            label="Transition"
+          ></TextField>
+          <TextField
+            value={numberA}
+            onChange={(evt) => {
+              setNumberA(evt.target.value);
+            }}
+            label="Deferred value"
+          ></TextField>
+          <TextField
+            value={numberA}
+            onChange={(evt) => {
+              setNumberA(evt.target.value);
+
+              cancelAnimationFrame(timer.current);
+              timer.current = requestAnimationFrame(() => {
+                setNumberB(evt.target.value);
+              });
+            }}
+            label="Anti-shake"
+          ></TextField>
         </Grid>
         <Grid item xs={12} sm={6}>
           {numberA}
         </Grid>
         <Grid item xs={12} sm={6}>
-          {memoNode}
+          <MemoSlowRender>{numberB}</MemoSlowRender>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <MemoSlowRender>{deferredNumberA}</MemoSlowRender>
         </Grid>
       </Grid>
     </>
   );
 }
+
+const MemoSlowRender = React.memo(SlowRender);
 
 function SlowRender(props: React.PropsWithChildren) {
   const begin = Date.now();
@@ -66,7 +73,7 @@ function SlowRender(props: React.PropsWithChildren) {
   console.log("render slow");
 
   while (true) {
-    if (Date.now() - begin > 1000) {
+    if (Date.now() - begin > 300) {
       break;
     }
   }
