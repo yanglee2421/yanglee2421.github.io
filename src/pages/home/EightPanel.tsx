@@ -1,11 +1,14 @@
-import { Grid, TextField } from "@mui/material";
+// MUI Imports
+import { ScrollView } from "@/components";
+import { Card, Grid, TextField, CardContent, CardHeader } from "@mui/material";
+
+// React Imports
 import React from "react";
 
 export function EightPanel() {
   const [numberA, setNumberA] = React.useState("");
   const [numberB, setNumberB] = React.useState("");
   const deferredNumberA = React.useDeferredValue(numberA);
-  const timer = React.useRef(0);
 
   console.log("render");
 
@@ -38,45 +41,58 @@ export function EightPanel() {
             }}
             label="Deferred value"
           ></TextField>
-          <TextField
-            value={numberA}
-            onChange={(evt) => {
-              setNumberA(evt.target.value);
-
-              cancelAnimationFrame(timer.current);
-              timer.current = requestAnimationFrame(() => {
-                setNumberB(evt.target.value);
-              });
-            }}
-            label="Anti-shake"
-          ></TextField>
         </Grid>
         <Grid item xs={12} sm={6}>
-          {numberA}
+          <Card>
+            <CardHeader title="Memo b"></CardHeader>
+            <CardContent>
+              <MemoSlowRenders>{numberB}</MemoSlowRenders>
+            </CardContent>
+          </Card>
         </Grid>
         <Grid item xs={12} sm={6}>
-          <MemoSlowRender>{numberB}</MemoSlowRender>
-        </Grid>
-        <Grid item xs={12} sm={6}>
-          <MemoSlowRender>{deferredNumberA}</MemoSlowRender>
+          <Card>
+            <CardHeader title="Memo deferred a"></CardHeader>
+            <CardContent>
+              <MemoSlowRenders>{deferredNumberA}</MemoSlowRenders>
+            </CardContent>
+          </Card>
         </Grid>
       </Grid>
     </>
   );
 }
 
-const MemoSlowRender = React.memo(SlowRender);
+const MemoSlowRenders = React.memo(SlowRenders);
+
+function SlowRenders(props: React.PropsWithChildren) {
+  return (
+    <ScrollView maxHeight={240}>
+      <ul>
+        {(() => {
+          const items: React.ReactNode[] = [];
+
+          for (let i = 0; i < 500; i++) {
+            items.push(
+              <SlowRender key={i}>
+                #{i}/{props.children}
+              </SlowRender>
+            );
+          }
+
+          return items;
+        })()}
+      </ul>
+    </ScrollView>
+  );
+}
 
 function SlowRender(props: React.PropsWithChildren) {
-  const begin = Date.now();
+  const begin = performance.now();
 
-  console.log("render slow");
+  console.count("slow render");
 
-  while (true) {
-    if (Date.now() - begin > 300) {
-      break;
-    }
-  }
+  while (performance.now() - begin < 1) {}
 
-  return <>{props.children}</>;
+  return <li>{props.children}</li>;
 }
