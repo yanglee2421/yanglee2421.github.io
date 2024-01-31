@@ -7,31 +7,31 @@ import {
   InputLabel,
 } from "@mui/material";
 
-// I18n Imports
-import { useTranslation } from "react-i18next";
-import { locales } from "@/i18n";
+// Router Imports
+import { useSearchParams } from "react-router-dom";
 
 export function LangSelect(props: LangSelectProps) {
   // ** Props
   const { required, sx, ...restProps } = props;
 
-  // I18n Hooks
-  const { i18n } = useTranslation();
-  const { language, changeLanguage } = i18n;
-
-  // Model & Change
-  const model = locales.find((item) => item.includes(language));
-  const handleChang: SelectProps["onChange"] = (evt) => {
-    const { value } = evt.target;
-    changeLanguage(String(value));
-  };
+  const [searchParams, setSearchParams] = useSearchParams({
+    lang: "en",
+  });
 
   return (
     <FormControl fullWidth required={required} sx={sx}>
       <InputLabel>Lang</InputLabel>
       <Select
-        value={model || ""}
-        onChange={handleChang}
+        value={searchParams.get("lang")}
+        onChange={(evt) => {
+          setSearchParams((prev) => {
+            if (typeof evt.target.value === "string") {
+              prev.set("lang", evt.target.value);
+            }
+
+            return prev;
+          });
+        }}
         label="Lang"
         {...restProps}
       >
@@ -42,7 +42,7 @@ export function LangSelect(props: LangSelectProps) {
 }
 
 function getOptions() {
-  return locales.map((item) => {
+  return ["zh-CN", "en-US", "fr-FR"].map((item) => {
     return (
       <MenuItem key={item} value={item}>
         {item}
