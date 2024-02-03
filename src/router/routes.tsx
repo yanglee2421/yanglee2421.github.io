@@ -250,6 +250,18 @@ export const routes: RouteObject[] = [
               return import("@/pages/charts");
             },
           },
+          {
+            id: "toast",
+            path: "toast",
+            handle: { title: "Toast" },
+            async lazy() {
+              const { Toast } = await import("@/pages/toast");
+
+              return {
+                Component: Toast,
+              };
+            },
+          },
         ],
       },
 

@@ -28,7 +28,7 @@ import React from "react";
 import { toUniqBy } from "@/utils";
 
 // Toast Imports
-import toast from "react-hot-toast";
+import toast from "react-toastify";
 
 // Image Compression Imports
 // import imageCompression from "browser-image-compression";

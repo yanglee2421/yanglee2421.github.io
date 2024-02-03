@@ -7,12 +7,13 @@ import { ThemeProvider } from "@/theme";
 import { QueryProvider } from "@/plugins";
 
 // Toast Imports
-import { Toaster } from "react-hot-toast";
+import { ToastContainer } from "react-toastify";
+import "react-toastify/ReactToastify.css";
 
 export function App() {
   return (
     <QueryProvider>
-      <Toaster></Toaster>
+      <ToastContainer limit={3}></ToastContainer>
       <ThemeProvider>
         <RouterProvider router={router}></RouterProvider>
       </ThemeProvider>
