@@ -1,5 +1,5 @@
 // MUI Imports
-import { Box, Select, MenuItem, Fade, Tab, Tabs } from "@mui/material";
+import { Box, Fade, Tab, Tabs } from "@mui/material";
 import { Microsoft, Apple, YouTube, Instagram } from "@mui/icons-material";
 
 // Components Imports
@@ -16,7 +16,6 @@ import React from "react";
 
 export function Component() {
   const [tab, setTab] = React.useState("1");
-  const [selected, setSelected] = React.useState("five");
 
   return (
     <>
@@ -24,56 +23,36 @@ export function Component() {
         <CardRadio></CardRadio>
       </Box>
 
-      <Box display={"flex"} gap={5}>
-        <Box
-          flex={1}
-          overflow={"hidden"}
-          display={"flex"}
-          alignItems={"center"}
-          paddingBlock={3}
+      <Box>
+        <Tabs
+          value={tab}
+          onChange={(evt, v) => {
+            void evt;
+            React.startTransition(() => {
+              setTab(v);
+            });
+          }}
+          variant="scrollable"
+          scrollButtons="auto"
+          sx={{ alignItems: "center" }}
         >
-          <Tabs
-            value={tab}
-            onChange={(evt, v) => {
-              void evt;
-              React.startTransition(() => {
-                setTab(v);
-              });
-            }}
-            variant="scrollable"
-            scrollButtons="auto"
-            sx={{ alignItems: "center" }}
-          >
-            <Tab
-              value="1"
-              label={<TabLabel icon={<Microsoft></Microsoft>}>five</TabLabel>}
-            ></Tab>
-            <Tab
-              value="2"
-              label={<TabLabel icon={<Apple></Apple>}>Query Board</TabLabel>}
-            ></Tab>
-            <Tab
-              value="3"
-              label={<TabLabel icon={<YouTube></YouTube>}>seven</TabLabel>}
-            ></Tab>
-            <Tab
-              value="4"
-              label={<TabLabel icon={<Instagram></Instagram>}>eight</TabLabel>}
-            ></Tab>
-          </Tabs>
-        </Box>
-        <Box display={"flex"} alignItems={"center"}>
-          <Select
-            value={selected}
-            onChange={(evt) => {
-              setSelected(String(evt.target.value));
-            }}
-            size="small"
-          >
-            <MenuItem value="five">woolworlds five</MenuItem>
-            <MenuItem value="two">woolworlds two</MenuItem>
-          </Select>
-        </Box>
+          <Tab
+            value="1"
+            label={<TabLabel icon={<Microsoft></Microsoft>}>five</TabLabel>}
+          ></Tab>
+          <Tab
+            value="2"
+            label={<TabLabel icon={<Apple></Apple>}>Query Board</TabLabel>}
+          ></Tab>
+          <Tab
+            value="3"
+            label={<TabLabel icon={<YouTube></YouTube>}>seven</TabLabel>}
+          ></Tab>
+          <Tab
+            value="4"
+            label={<TabLabel icon={<Instagram></Instagram>}>eight</TabLabel>}
+          ></Tab>
+        </Tabs>
       </Box>
 
       <SwitchTransition>

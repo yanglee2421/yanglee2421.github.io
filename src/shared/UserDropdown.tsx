@@ -124,7 +124,6 @@ const StyledBadge = styled(Badge)(({ theme }) => {
       },
     },
 
-    // ** Animate
     "@keyframes ripple": {
       "0%": {
         transform: "scale(.8)",

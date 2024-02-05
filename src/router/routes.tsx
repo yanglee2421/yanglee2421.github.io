@@ -187,14 +187,6 @@ export const routes: RouteObject[] = [
 
           // ** Table
           {
-            id: "data-grid",
-            path: "data-grid",
-            handle: { title: "Data Grid" },
-            lazy() {
-              return import("@/pages/data-grid");
-            },
-          },
-          {
             id: "table",
             path: "table",
             async lazy() {
@@ -248,6 +240,18 @@ export const routes: RouteObject[] = [
             handle: { title: "Charts" },
             lazy() {
               return import("@/pages/charts");
+            },
+          },
+          {
+            id: "toast",
+            path: "toast",
+            handle: { title: "Toast" },
+            async lazy() {
+              const { Toast } = await import("@/pages/toast");
+
+              return {
+                Component: Toast,
+              };
             },
           },
         ],

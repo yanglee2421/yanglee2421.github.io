@@ -19,46 +19,29 @@ export function MenuGroup(props: MenuGroupProps) {
   const { label, icon, children, ...restProps } = props;
 
   const [open, setOpen] = React.useState(true);
-  const toggleHandler = () => {
-    setOpen((p) => !p);
-  };
-
-  // Arrow icon node
-  const arrowNode = React.useMemo(() => {
-    return (
-      <KeyboardArrowRight
-        sx={{
-          transition(theme) {
-            return theme.transitions.create("transform");
-          },
-          transform: open ? "rotate(90deg)" : "",
-        }}
-      />
-    );
-  }, [open]);
-
-  // Menu icon node
-  const iconNode = React.useMemo(() => {
-    if (icon) return icon;
-    return <FiberManualRecordOutlined />;
-  }, [icon]);
 
   return (
     <>
       <ListItemButton
-        onClick={toggleHandler}
-        sx={{
-          backgroundColor(theme) {
-            return open ? theme.palette.action.selected : void 0;
-          },
+        onClick={() => {
+          setOpen((p) => !p);
         }}
         {...restProps}
       >
-        <ListItemIcon>{iconNode}</ListItemIcon>
+        <ListItemIcon>
+          {icon || <FiberManualRecordOutlined></FiberManualRecordOutlined>}
+        </ListItemIcon>
         <ListItemText>{label}</ListItemText>
-        {arrowNode}
+        <KeyboardArrowRight
+          sx={{
+            transition(theme) {
+              return theme.transitions.create("transform");
+            },
+            transform: open ? "rotate(90deg)" : "",
+          }}
+        ></KeyboardArrowRight>
       </ListItemButton>
-      <Collapse in={open} timeout={"auto"} unmountOnExit>
+      <Collapse in={open} unmountOnExit>
         {children}
       </Collapse>
     </>

@@ -11,7 +11,6 @@ import {
   Palette,
 } from "@mui/material";
 import { TypographyOptions } from "@mui/material/styles/createTypography";
-import { grey } from "@mui/material/colors";
 
 // Theme Imports
 import { configToPalette } from "./configToPalette";
@@ -62,11 +61,6 @@ export function ThemeProvider(props: React.PropsWithChildren) {
 
     palette: configToPalette({
       mode,
-      whiteColor: "#FFF",
-      // lightColor: "rgb(58, 53, 65)",
-      // darkColor: "rgb(231, 227, 252)",
-      lightColor: grey[900],
-      darkColor: grey[50],
     }),
     typography,
     components: cmponents(),
