@@ -45,7 +45,7 @@ export function MobileMenu(props: IconButtonProps) {
           display={"flex"}
           flexDirection={"column"}
           boxSizing={"border-box"}
-          width={{ xs: 320, sm: 420 }}
+          width={{ xs: 240, sm: 320 }}
           height={"100%"}
         >
           <Box
@@ -73,7 +73,6 @@ export function MobileMenu(props: IconButtonProps) {
                   label="Pages"
                 >
                   <MenuLink label="Not Found" to={"/404"}></MenuLink>
-                  <MenuLink label="Picture" to={"/picture"}></MenuLink>
                 </MenuGroup>
                 <MenuGroup icon={<FeedOutlined></FeedOutlined>} label="Form">
                   <MenuLink label="Input" to={"/input"}></MenuLink>

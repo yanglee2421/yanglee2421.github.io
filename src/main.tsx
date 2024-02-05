@@ -16,23 +16,12 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "@fontsource/roboto/900.css";
 
-ReactDOM.createRoot(
-  (() => {
-    const containerId = "root";
-    const existedEl = document.getElementById(containerId);
+const container = document.getElementById("root");
 
-    if (existedEl) {
-      return existedEl;
-    }
-
-    const newEl = document.createElement("div");
-    newEl.id = containerId;
-    document.body.append(newEl);
-
-    return newEl;
-  })()
-).render(
-  <React.StrictMode>
-    <App></App>
-  </React.StrictMode>
-);
+if (container) {
+  ReactDOM.createRoot(container).render(
+    <React.StrictMode>
+      <App></App>
+    </React.StrictMode>
+  );
+}

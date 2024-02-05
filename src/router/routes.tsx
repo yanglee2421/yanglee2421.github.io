@@ -187,14 +187,6 @@ export const routes: RouteObject[] = [
 
           // ** Table
           {
-            id: "data-grid",
-            path: "data-grid",
-            handle: { title: "Data Grid" },
-            lazy() {
-              return import("@/pages/data-grid");
-            },
-          },
-          {
             id: "table",
             path: "table",
             async lazy() {

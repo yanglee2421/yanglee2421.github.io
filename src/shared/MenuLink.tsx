@@ -46,9 +46,36 @@ export function MenuLink(props: MenuLinkProps) {
       locationPathname.charAt(toPathname.length) === "/");
 
   return (
-    <ListItemButton component={Link} to={to} selected={isActive} {...restProps}>
-      <ListItemIcon>
-        {icon || <FiberManualRecordOutlined></FiberManualRecordOutlined>}
+    <ListItemButton
+      component={Link}
+      to={to}
+      selected={isActive}
+      sx={{
+        bgcolor(theme) {
+          if (isActive) {
+            return `${theme.palette.primary.main} !important`;
+          }
+        },
+        color(theme) {
+          if (isActive) {
+            return `${theme.palette.primary.contrastText} !important`;
+          }
+        },
+      }}
+      {...restProps}
+    >
+      <ListItemIcon
+        sx={{
+          color(theme) {
+            if (isActive) {
+              return `${theme.palette.primary.contrastText} !important`;
+            }
+          },
+        }}
+      >
+        {icon || (
+          <FiberManualRecordOutlined color="inherit"></FiberManualRecordOutlined>
+        )}
       </ListItemIcon>
       <ListItemText>{label}</ListItemText>
     </ListItemButton>

@@ -1,54 +1,55 @@
 // MUI Imports
-import { PaletteOptions } from "@mui/material";
+import { PaletteOptions, alpha } from "@mui/material";
 
 export function configToPalette(params: PaletteConfig): PaletteOptions {
   // ** Params
   const { mode } = params;
 
   const blackColor = "#000";
-  const whiteColor = "#f00";
-  const mainColor = mode === "dark" ? blackColor : whiteColor;
-
-  const defaultBgColor = () => {
-    if (mode === "light") {
-      return whiteColor;
-    }
-
-    // return "#312D4B";
-    return "#28243D";
-  };
+  const whiteColor = "#fff";
+  const mainColor = mode === "light" ? blackColor : whiteColor;
 
   return {
     mode,
+    common: {
+      white: "#fff",
+      black: "#000",
+    },
     primary: {
       light: "#8592f2",
       main: "#6777ef",
       dark: "#4853a7",
+      contrastText: whiteColor,
     },
     secondary: {
       light: "#a6a8ad",
       main: "#909399",
       dark: "#64666b",
+      contrastText: whiteColor,
     },
     error: {
+      light: "#ff7072",
       main: "#ff4d4f",
       dark: "#b23537",
-      light: "#ff7072",
+      contrastText: whiteColor,
     },
     warning: {
+      light: "#ffc473",
       main: "#ffc107",
       dark: "#ffa426",
-      light: "#ffc473",
+      contrastText: whiteColor,
     },
     info: {
+      light: "#4492ff",
       main: "#1677ff",
       dark: "#0f53b2",
-      light: "#4492ff",
+      contrastText: whiteColor,
     },
     success: {
       light: "#74cf47",
       main: "#52c41a",
       dark: "#398912",
+      contrastText: whiteColor,
     },
     grey: {
       50: "#FAFAFA",
@@ -67,22 +68,27 @@ export function configToPalette(params: PaletteConfig): PaletteOptions {
       A700: "#616161",
     },
     text: {
-      primary: `rgba(${mainColor}, 0.87)`,
-      secondary: `rgba(${mainColor}, 0.6)`,
-      disabled: `rgba(${mainColor}, 0.38)`,
+      primary: alpha(mainColor, 0.87),
+      secondary: alpha(mainColor, 0.6),
+      disabled: alpha(mainColor, 0.38),
     },
-    divider: `rgba(${mainColor}, 0.12)`,
+    divider: alpha(mainColor, 0.12),
     background: {
-      paper: mode === "light" ? whiteColor : "#312D4B",
-      default: defaultBgColor(),
+      paper: mode === "dark" ? "black" : "white",
+      default: mode === "dark" ? "black" : "white",
     },
     action: {
-      active: `rgba(${mainColor}, 0.54)`,
-      hover: `rgba(${mainColor}, 0.04)`,
-      selected: `rgba(${mainColor}, 0.08)`,
-      disabled: `rgba(${mainColor}, 0.26)`,
-      disabledBackground: `rgba(${mainColor}, 0.12)`,
-      focus: `rgba(${mainColor}, 0.12)`,
+      active: alpha(mainColor, 0.54),
+      disabled: alpha(mainColor, 0.26),
+      disabledBackground: alpha(mainColor, 0.12),
+      focus: alpha(mainColor, 0.12),
+      hover: alpha(mainColor, 0.04),
+      selected: alpha(mainColor, 0.08),
+      activatedOpacity: 0.54,
+      disabledOpacity: 0.26,
+      focusOpacity: 0.12,
+      hoverOpacity: 0.04,
+      selectedOpacity: 0.08,
     },
   };
 }
