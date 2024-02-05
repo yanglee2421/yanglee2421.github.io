@@ -34,7 +34,7 @@ import { useMutation } from "@tanstack/react-query";
 import { Auth, updateProfile } from "firebase/auth";
 
 // Toast Imports
-import toast from "react-toastify";
+import { toast } from "react-toastify";
 import { useShallow } from "zustand/react/shallow";
 
 export function Account() {
