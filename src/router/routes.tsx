@@ -130,8 +130,12 @@ export const routes: RouteObject[] = [
               title: "首页",
               auth: "auth",
             },
-            lazy() {
-              return import("@/pages/home");
+            async lazy() {
+              const { Home } = await import("@/pages/home");
+
+              return {
+                Component: Home,
+              };
             },
           },
           {
