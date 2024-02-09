@@ -5,6 +5,9 @@ import { Card, Grid, TextField, CardContent, CardHeader } from "@mui/material";
 // React Imports
 import React from "react";
 
+// Components Imports
+import { SlowRender } from "@/components/shared";
+
 export function EightPanel() {
   const [numberA, setNumberA] = React.useState("");
   const [numberB, setNumberB] = React.useState("");
@@ -85,14 +88,4 @@ function SlowRenders(props: React.PropsWithChildren) {
       </ul>
     </ScrollView>
   );
-}
-
-function SlowRender(props: React.PropsWithChildren) {
-  const begin = performance.now();
-
-  console.count("slow render");
-
-  while (performance.now() - begin < 1) {}
-
-  return <li>{props.children}</li>;
 }
