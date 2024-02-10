@@ -227,7 +227,7 @@ export const routes: RouteObject[] = [
           {
             id: "swiper",
             path: "swiper",
-            handle: "Swiper",
+            handle: { title: "Swiper" },
             async lazy() {
               const { SwiperPage } = await import("@/pages/swiper");
 

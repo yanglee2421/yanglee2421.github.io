@@ -1,12 +1,5 @@
 // MUI Imports
-import {
-  Card,
-  CardContent,
-  Grid,
-  RadioGroup,
-  RadioGroupProps,
-  useTheme,
-} from "@mui/material";
+import { Card, CardContent, CardProps, Grid, RadioGroup } from "@mui/material";
 
 // React Imports
 import React from "react";
@@ -14,22 +7,21 @@ import React from "react";
 // Components Imports
 import { RadioItem } from "./radio-item";
 
-export function CardRadio() {
+export function CardRadio(props: CardProps) {
   const [value, setValue] = React.useState("one");
-  const handleChange: RadioGroupProps["onChange"] = (evt, v) => {
-    void evt;
-    setValue(v);
-  };
-
-  const theme = useTheme();
-  void theme;
 
   return (
-    <Card>
+    <Card {...props}>
       <CardContent>
-        <RadioGroup value={value} onChange={handleChange}>
+        <RadioGroup
+          value={value}
+          onChange={(evt, v) => {
+            void evt;
+            setValue(v);
+          }}
+        >
           <Grid container spacing={6}>
-            <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <RadioItem
                 title="Visual Search"
                 desc="lorem "
@@ -38,7 +30,7 @@ export function CardRadio() {
                 name="Kent Dodds"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <RadioItem
                 title="Visual Search"
                 desc="lorem "
@@ -47,7 +39,7 @@ export function CardRadio() {
                 name="Jed Watson"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <RadioItem
                 title="Visual Search"
                 desc="lorem "
@@ -56,7 +48,7 @@ export function CardRadio() {
                 name="Tim Neutkens"
               />
             </Grid>
-            <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+            <Grid item xs={12} sm={6} md={4} lg={3}>
               <RadioItem
                 title="Visual Search"
                 desc="lorem "
@@ -71,8 +63,3 @@ export function CardRadio() {
     </Card>
   );
 }
-/**
- * With auto margins, flex items can be centered, spaced away or packed into sub-groups.
- * Unlike justify-content, which is applied to the flex container, auto margins go on flex items.
- * They work by consuming all free space in the specified direction.
- */

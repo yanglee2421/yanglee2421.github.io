@@ -73,7 +73,7 @@ export function RootRoute() {
       return destructor;
     }
 
-    const title = Reflect.get(Object(currentRoute.handle), "title");
+    const title = Reflect.get(currentRoute.handle || {}, "title");
 
     if (!title) {
       return destructor;
@@ -95,7 +95,7 @@ export function RootRoute() {
           return null;
         }
 
-        const handle = currentRoute.handle || {};
+        const handle = Object(currentRoute.handle);
 
         switch (Reflect.get(handle, "auth")) {
           case "none":
