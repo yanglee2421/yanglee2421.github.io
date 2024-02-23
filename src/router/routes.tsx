@@ -1,19 +1,22 @@
-// Router Imports
-import { Navigate, RouteObject } from "react-router-dom";
+import { RouteObject } from "react-router-dom";
+import { ErrorBoundary } from "./ErrorBoundary";
 
 export const routes: RouteObject[] = [
   {
-    path: "",
+    ErrorBoundary,
+    async loader() {
+      console.log("root loader");
+
+      return {};
+    },
     async lazy() {
       const { RootRoute } = await import("./RootRoute");
 
       return {
         Component: RootRoute,
-        // errorElement: <Navigate to="/500" replace />,
       };
     },
     children: [
-      { path: "*", element: <Navigate to="/404" replace /> },
       {
         id: "401",
         path: "401",
@@ -21,56 +24,14 @@ export const routes: RouteObject[] = [
           title: "401 Unauthorized",
           auth: "guest",
         },
+        async loader() {
+          return null;
+        },
         async lazy() {
           const { Unauthorized } = await import("@/pages/401");
 
           return {
             Component: Unauthorized,
-          };
-        },
-      },
-      {
-        id: "403",
-        path: "403",
-        handle: {
-          title: "403 Forbidden",
-          auth: "auth",
-        },
-        async lazy() {
-          const { Forbidden } = await import("@/pages/403");
-
-          return {
-            Component: Forbidden,
-          };
-        },
-      },
-      {
-        id: "404",
-        path: "404",
-        handle: {
-          title: "404 Not Found",
-          auth: "none",
-        },
-        async lazy() {
-          const { NotFound } = await import("@/pages/404");
-
-          return {
-            Component: NotFound,
-          };
-        },
-      },
-      {
-        id: "500",
-        path: "500",
-        handle: {
-          title: "500 Internal Server Error",
-          auth: "none",
-        },
-        async lazy() {
-          const { InternalServerError } = await import("@/pages/500");
-
-          return {
-            Component: InternalServerError,
           };
         },
       },

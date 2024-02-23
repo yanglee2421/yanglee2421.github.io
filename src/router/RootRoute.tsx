@@ -1,29 +1,17 @@
-// NProgress Imports
 import NProgress from "nprogress";
-
-// Router Imports
 import {
   useMatches,
   Navigate,
   useOutlet,
   useSearchParams,
+  useNavigation,
 } from "react-router-dom";
-
-// React Imports
 import React from "react";
-
-// Store Imports
 import { useAuthStore } from "@/hooks/store";
 import { useShallow } from "zustand/react/shallow";
-
-// Acl Imports
 import { defineAbilityFor, AclContext } from "@/configs/acl";
-
-// Firebase Imports
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "@/api/firebase";
-
-// Components Imports
 import { HomeRoute } from "./HomeRoute";
 import { LoginRoute } from "./LoginRoute";
 import { useTranslation } from "react-i18next";
@@ -48,6 +36,20 @@ export function RootRoute() {
   });
   const lang = searchParams.get("lang");
 
+  const navigation = useNavigation();
+
+  React.useEffect(() => {
+    switch (navigation.state) {
+      case "idle":
+        NProgress.done();
+        break;
+      case "loading":
+        NProgress.start();
+        break;
+      default:
+    }
+  }, [navigation.state]);
+
   React.useEffect(() => {
     if (typeof lang === "string") {
       i18n.changeLanguage(lang);
@@ -61,29 +63,21 @@ export function RootRoute() {
   }, [updateAuth]);
 
   React.useEffect(() => {
-    NProgress.done();
-
-    const destructor = () => {
-      NProgress.start();
-    };
-
     const currentRoute = matches[matches.length - 1];
 
     if (!currentRoute) {
-      return destructor;
+      return;
     }
 
     const title = Reflect.get(currentRoute.handle || {}, "title");
 
     if (!title) {
-      return destructor;
+      return;
     }
 
     if (typeof title === "string") {
       document.title = title;
     }
-
-    return destructor;
   }, [matches]);
 
   return (
