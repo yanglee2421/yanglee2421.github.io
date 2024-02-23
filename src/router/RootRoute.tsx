@@ -1,7 +1,6 @@
 import NProgress from "nprogress";
 import {
   useMatches,
-  Navigate,
   useOutlet,
   useSearchParams,
   useNavigation,
@@ -15,10 +14,14 @@ import { app } from "@/api/firebase";
 import { HomeRoute } from "./HomeRoute";
 import { LoginRoute } from "./LoginRoute";
 import { useTranslation } from "react-i18next";
+import { Forbidden } from "@/pages/403/Forbidden";
 
 export function RootRoute() {
   const matches = useMatches();
   const outlet = useOutlet();
+  const navigation = useNavigation();
+  const { i18n } = useTranslation();
+  const [searchParams] = useSearchParams({ lang: "en" });
   const { authValue, updateAuth } = useAuthStore(
     useShallow((store) => {
       return {
@@ -29,20 +32,14 @@ export function RootRoute() {
   );
 
   const acl = defineAbilityFor(authValue.auth.currentUser ? "admin" : "");
-
-  const { i18n } = useTranslation();
-  const [searchParams] = useSearchParams({
-    lang: "en",
-  });
   const lang = searchParams.get("lang");
-
-  const navigation = useNavigation();
 
   React.useEffect(() => {
     switch (navigation.state) {
       case "idle":
         NProgress.done();
         break;
+      case "submitting":
       case "loading":
         NProgress.start();
         break;
@@ -104,12 +101,10 @@ export function RootRoute() {
 
           case "auth":
           default:
-            // Not logged in
             if (!authValue.auth.currentUser) {
               return <LoginRoute></LoginRoute>;
             }
 
-            // Authorized pass
             if (
               acl.can(
                 String(Reflect.get(handle, "aclAction") || "read"),
@@ -119,8 +114,7 @@ export function RootRoute() {
               return outlet;
             }
 
-            // Not authorized
-            return <Navigate to="/403"></Navigate>;
+            return <Forbidden></Forbidden>;
         }
       })()}
     </AclContext.Provider>

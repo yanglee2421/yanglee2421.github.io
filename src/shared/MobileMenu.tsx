@@ -85,7 +85,6 @@ export function MobileMenu(props: IconButtonProps) {
                   icon={<GridOnOutlined></GridOnOutlined>}
                 >
                   <MenuLink label="Table" to={"/table"}></MenuLink>
-                  <MenuLink label="Data Grid" to={"/data-grid"}></MenuLink>
                 </MenuGroup>
                 <MenuGroup
                   label="List"

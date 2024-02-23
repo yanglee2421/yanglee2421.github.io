@@ -1,27 +1,22 @@
 import { Button } from "@mui/material";
 import { isRouteErrorResponse, useRouteError, Link } from "react-router-dom";
+import { NotFound } from "@/pages/404/NotFound";
+import { InternalServerError } from "@/pages/500/InternalServerError";
 
 export function ErrorBoundary() {
   const error = useRouteError();
+  console.error(error);
 
   if (isRouteErrorResponse(error)) {
     switch (error.status) {
       case 404:
-        return (
-          <>
-            <h1>{error.statusText}</h1>
-            <p>{error.data}</p>
-            <Button component={Link} to={"/"}>
-              take me home
-            </Button>
-          </>
-        );
+        return <NotFound></NotFound>;
       default:
         return (
           <>
             <h1>{error.statusText}</h1>
             <p>{error.data}</p>
-            <Button component={Link} to={"/"}>
+            <Button variant="contained" component={Link} to={"/"}>
               take me home
             </Button>
           </>
@@ -30,18 +25,11 @@ export function ErrorBoundary() {
   }
 
   if (error instanceof Error) {
-    return (
-      <>
-        {error.message}
-        <Button component={Link} to={"/"}>
-          take me home
-        </Button>
-      </>
-    );
+    return <InternalServerError></InternalServerError>;
   }
 
   return (
-    <Button component={Link} to={"/"}>
+    <Button variant="contained" component={Link} to={"/"}>
       take me home
     </Button>
   );

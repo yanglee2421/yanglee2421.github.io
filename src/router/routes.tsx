@@ -3,12 +3,8 @@ import { ErrorBoundary } from "./ErrorBoundary";
 
 export const routes: RouteObject[] = [
   {
+    id: "root",
     ErrorBoundary,
-    async loader() {
-      console.log("root loader");
-
-      return {};
-    },
     async lazy() {
       const { RootRoute } = await import("./RootRoute");
 
@@ -18,17 +14,14 @@ export const routes: RouteObject[] = [
     },
     children: [
       {
-        id: "401",
-        path: "401",
+        id: "login",
+        path: "login",
         handle: {
-          title: "401 Unauthorized",
+          title: "Login",
           auth: "guest",
         },
-        async loader() {
-          return null;
-        },
         async lazy() {
-          const { Unauthorized } = await import("@/pages/401");
+          const { Unauthorized } = await import("@/pages/401/Unauthorized");
 
           return {
             Component: Unauthorized,
@@ -59,7 +52,6 @@ export const routes: RouteObject[] = [
           return import("@/pages/register");
         },
       },
-
       {
         id: "privacy-policy",
         path: "privacy-policy",
@@ -75,7 +67,6 @@ export const routes: RouteObject[] = [
       // With App Bar
       {
         id: "with-appbar",
-        path: "",
         async lazy() {
           const { Layout } = await import("@/layout");
 
@@ -197,8 +188,6 @@ export const routes: RouteObject[] = [
               };
             },
           },
-
-          // ** Charts
           {
             id: "charts",
             path: "charts",
@@ -222,7 +211,6 @@ export const routes: RouteObject[] = [
         ],
       },
 
-      // Without App Bar
       {
         id: "blank",
         path: "blank",
