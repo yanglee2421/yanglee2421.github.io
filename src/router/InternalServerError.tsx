@@ -1,4 +1,3 @@
-// Components Import
 import { BackgroundImage } from "@/components/ui";
 import { Customer } from "@/components";
 

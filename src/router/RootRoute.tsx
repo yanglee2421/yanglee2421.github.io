@@ -14,7 +14,7 @@ import { app } from "@/api/firebase";
 import { HomeRoute } from "./HomeRoute";
 import { LoginRoute } from "./LoginRoute";
 import { useTranslation } from "react-i18next";
-import { Forbidden } from "@/pages/403/Forbidden";
+import { Forbidden } from "./Forbidden";
 
 export function RootRoute() {
   const matches = useMatches();

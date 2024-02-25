@@ -1,4 +1,3 @@
-// MUI Imports
 import {
   IconButton,
   SwipeableDrawer,
@@ -16,7 +15,6 @@ import {
   CardActions,
   Button,
   Slider,
-  SliderProps,
   Collapse,
   FormLabel,
   FormControl,
@@ -28,18 +26,10 @@ import {
   AddOutlined,
   RemoveOutlined,
 } from "@mui/icons-material";
-
-// React Imports
 import React from "react";
-
-// Components Imports
 import { ScrollView } from "@/components";
-
-// Store Imports
 import { useThemeStore } from "@/hooks/store";
 import { useShallow } from "zustand/react/shallow";
-
-// Utils Imports
 import {
   useForageFileMutation,
   useForageFileQuery,
@@ -83,33 +73,6 @@ export function Customer() {
     updateSetting((prev) => {
       prev.showDrawer = true;
     });
-  };
-
-  const handleBgImgChange: React.DetailedHTMLProps<
-    React.InputHTMLAttributes<HTMLInputElement>,
-    HTMLInputElement
-  >["onChange"] = async (evt) => {
-    const file = evt.target.files?.item(0);
-
-    if (file) {
-      mutation.mutate({ file, fileKey: "bg-img" });
-    }
-  };
-
-  const handleBgAlphaChange: SliderProps["onChange"] = (evt, v) => {
-    void evt;
-
-    if (typeof v === "number") {
-      themeStore.setBgAlpha(v);
-    }
-  };
-
-  const handleBgBlurChange: SliderProps["onChange"] = (evt, v) => {
-    void evt;
-
-    if (typeof v === "number") {
-      themeStore.setBgBlur(v);
-    }
   };
 
   React.useEffect(() => {
@@ -221,7 +184,6 @@ export function Customer() {
                           }}
                         >
                           {(() => {
-                            // API pending
                             if (query.isPending) {
                               return (
                                 <StyledImg
@@ -233,7 +195,6 @@ export function Customer() {
                               );
                             }
 
-                            // API failed
                             if (query.isError) {
                               return (
                                 <StyledImg
@@ -245,7 +206,6 @@ export function Customer() {
                               );
                             }
 
-                            // API success
                             if (query.isSuccess) {
                               return (
                                 <StyledImg
@@ -262,7 +222,13 @@ export function Customer() {
                           })()}
                           <input
                             value={""}
-                            onChange={handleBgImgChange}
+                            onChange={async (evt) => {
+                              const file = evt.target.files?.item(0);
+
+                              if (file) {
+                                mutation.mutate({ file, fileKey: "bg-img" });
+                              }
+                            }}
                             type="file"
                             accept="image/*"
                             hidden
@@ -278,7 +244,13 @@ export function Customer() {
                           </FormLabel>
                           <Slider
                             value={themeStore.bgAlpha}
-                            onChange={handleBgAlphaChange}
+                            onChange={(evt, v) => {
+                              void evt;
+
+                              if (typeof v === "number") {
+                                themeStore.setBgAlpha(v);
+                              }
+                            }}
                             valueLabelDisplay="auto"
                           ></Slider>
                         </FormControl>
@@ -290,7 +262,13 @@ export function Customer() {
                           </FormLabel>
                           <Slider
                             value={themeStore.bgBlur}
-                            onChange={handleBgBlurChange}
+                            onChange={(evt, v) => {
+                              void evt;
+
+                              if (typeof v === "number") {
+                                themeStore.setBgBlur(v);
+                              }
+                            }}
                             valueLabelDisplay="auto"
                           ></Slider>
                         </FormControl>

@@ -1,30 +1,16 @@
-// MUI Imports
 import { Box, Divider, Link, Typography, Button } from "@mui/material";
-
-// Form Imports
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
-// Components Imports
 import { ItemPassword, ItemText } from "@/components";
-
-// Query Imports
 import { useSignIn } from "@/hooks/api-firebase";
-
-// Router Imports
 import { Link as RouterLink } from "react-router-dom";
-
-// Assets Imports
 import GoogleLogo from "@/assets/images/google.png";
-
-// Firebase Imports
 import { useMutation } from "@tanstack/react-query";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "@/api/firebase";
 
 export function Unauthorized() {
-  // Form Hooks
   const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",
