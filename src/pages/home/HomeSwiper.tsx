@@ -1,19 +1,14 @@
-// MUI Imports
 import { Box, IconButton } from "@mui/material";
 import {
   NavigateNextOutlined,
   NavigateBeforeOutlined,
 } from "@mui/icons-material";
-
-// Utils Imports
 import Swiper from "swiper";
 import { Navigation, Pagination, Autoplay, Scrollbar } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
-
-// React Imports
+// import "swiper/css/pagination";
+// import "swiper/css/scrollbar";
 import React from "react";
 import { useImmer } from "use-immer";
 
@@ -57,6 +52,7 @@ export function HomeSwiper() {
     }
 
     const swiper = new Swiper(swiperEl, {
+      autoHeight: true,
       modules: [Navigation, Pagination, Autoplay, Scrollbar],
       navigation: {
         prevEl,
@@ -105,7 +101,6 @@ export function HomeSwiper() {
       borderColor={(theme) => theme.palette.divider}
       position={"relative"}
       sx={{
-        aspectRatio: "16/9",
         overflow: "hidden",
         "& .swiper-slide": {
           display: "flex",
@@ -115,15 +110,12 @@ export function HomeSwiper() {
         },
       }}
     >
-      <Box
-        ref={scrollbarElRef}
-        className="swiper-scrollbar"
-        sx={{ zIndex: 2, position: "relative" }}
-      ></Box>
       <Box className="swiper-wrapper">
         <Box className="swiper-slide">Slide 1</Box>
         <Box className="swiper-slide">Slide 2</Box>
-        <Box className="swiper-slide">Slide 3</Box>
+        <Box className="swiper-slide">
+          <Box sx={{ height: 320 }}>Slide 3lorem</Box>
+        </Box>
       </Box>
 
       <IconButton
@@ -152,7 +144,8 @@ export function HomeSwiper() {
       >
         <NavigateNextOutlined></NavigateNextOutlined>
       </IconButton>
-      <Box className="swiper-pagination" ref={paginationElRef}></Box>
+      <Box ref={paginationElRef}></Box>
+      <Box ref={scrollbarElRef} sx={{ zIndex: 2, position: "relative" }}></Box>
     </Box>
   );
 }

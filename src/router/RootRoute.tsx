@@ -31,6 +31,8 @@ export function RootRoute() {
     })
   );
 
+  const currentRoute = matches[matches.length - 1];
+  const routeHandle = Object(currentRoute.handle);
   const acl = defineAbilityFor(authValue.auth.currentUser ? "admin" : "");
   const lang = searchParams.get("lang");
 
@@ -60,35 +62,23 @@ export function RootRoute() {
   }, [updateAuth]);
 
   React.useEffect(() => {
-    const currentRoute = matches[matches.length - 1];
-
-    if (!currentRoute) {
+    if (!routeHandle.title) {
       return;
     }
 
-    const title = Reflect.get(currentRoute.handle || {}, "title");
-
-    if (!title) {
-      return;
+    if (typeof routeHandle.title === "string") {
+      document.title = routeHandle.title;
     }
-
-    if (typeof title === "string") {
-      document.title = title;
-    }
-  }, [matches]);
+  }, [routeHandle.title]);
 
   return (
     <AclContext.Provider value={acl}>
       {(() => {
-        const currentRoute = matches[matches.length - 1];
-
         if (!currentRoute) {
           return null;
         }
 
-        const handle = Object(currentRoute.handle);
-
-        switch (Reflect.get(handle, "auth")) {
+        switch (String(routeHandle.auth)) {
           case "none":
             return outlet;
 
@@ -107,8 +97,8 @@ export function RootRoute() {
 
             if (
               acl.can(
-                String(Reflect.get(handle, "aclAction") || "read"),
-                String(Reflect.get(handle, "aclSubject") || "fallback")
+                String(routeHandle.aclAction || "read"),
+                String(routeHandle.aclSubject || "fallback")
               )
             ) {
               return outlet;
