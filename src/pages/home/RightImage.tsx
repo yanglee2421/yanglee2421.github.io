@@ -109,6 +109,7 @@ export function RightImage() {
             <Box
               fontSize={"24px"}
               width={340}
+              letterSpacing={"0.08em"}
               lineHeight={"1.8em"}
               marginBottom={"10px"}
             >
