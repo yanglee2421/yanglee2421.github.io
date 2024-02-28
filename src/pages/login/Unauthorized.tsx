@@ -10,8 +10,11 @@ import { useMutation } from "@tanstack/react-query";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "@/api/firebase";
 import { GuestGuard } from "@/components/guard/GuestGuard";
+import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
 
 export function Unauthorized() {
+  useHeadTitle("Login");
+
   const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",

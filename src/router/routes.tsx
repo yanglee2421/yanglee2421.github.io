@@ -16,10 +16,6 @@ export const routes: RouteObject[] = [
       {
         id: "login",
         path: "login",
-        handle: {
-          title: "Login",
-          auth: "guest",
-        },
         async lazy() {
           const { Unauthorized } = await import("@/pages/login/Unauthorized");
 
@@ -28,15 +24,9 @@ export const routes: RouteObject[] = [
           };
         },
       },
-
-      // Guest pages
       {
         id: "forgot-passwd",
         path: "forgot-passwd",
-        handle: {
-          title: "Forgot Password",
-          auth: "guest",
-        },
         lazy() {
           return import("@/pages/forgot-passwd");
         },
@@ -44,10 +34,6 @@ export const routes: RouteObject[] = [
       {
         id: "register",
         path: "register",
-        handle: {
-          title: "Register",
-          auth: "guest",
-        },
         lazy() {
           return import("@/pages/register");
         },
@@ -55,10 +41,6 @@ export const routes: RouteObject[] = [
       {
         id: "privacy-policy",
         path: "privacy-policy",
-        handle: {
-          title: "Privacy Policy",
-          auth: "none",
-        },
         lazy() {
           return import("@/pages/privacy-policy");
         },
@@ -78,10 +60,6 @@ export const routes: RouteObject[] = [
           {
             id: "home",
             index: true,
-            handle: {
-              title: "首页",
-              auth: "auth",
-            },
             async lazy() {
               const { Home } = await import("@/pages/home");
 
@@ -93,7 +71,6 @@ export const routes: RouteObject[] = [
           {
             id: "account",
             path: "account",
-            handle: { title: "Account" },
             lazy() {
               return import("@/pages/account");
             },
@@ -101,7 +78,6 @@ export const routes: RouteObject[] = [
           {
             id: "picture",
             path: "picture",
-            handle: { title: "Picture" },
             lazy() {
               return import("@/pages/picture");
             },
@@ -111,7 +87,6 @@ export const routes: RouteObject[] = [
           {
             id: "input",
             path: "input",
-            handle: { title: "Input" },
             lazy() {
               return import("@/pages/input");
             },
@@ -119,7 +94,6 @@ export const routes: RouteObject[] = [
           {
             id: "upload",
             path: "upload",
-            handle: { title: "Upload Image" },
             lazy() {
               return import("@/pages/upload");
             },
@@ -127,7 +101,6 @@ export const routes: RouteObject[] = [
           {
             id: "autocomplete",
             path: "autocomplete",
-            handle: { title: "AutoComplete" },
             lazy() {
               return import("@/pages/autocomplete");
             },
@@ -135,7 +108,6 @@ export const routes: RouteObject[] = [
           {
             id: "tinymce",
             path: "tinymce",
-            handle: { title: "TinyMCE" },
             lazy() {
               return import("@/pages/tinymce");
             },
@@ -157,7 +129,6 @@ export const routes: RouteObject[] = [
           {
             id: "virtualized-list",
             path: "virtualized-list",
-            handle: { title: "Virtualized List" },
             lazy() {
               return import("@/pages/virtualized-list");
             },
@@ -167,7 +138,6 @@ export const routes: RouteObject[] = [
           {
             id: "transition",
             path: "transition",
-            handle: { title: "Transition" },
             async lazy() {
               const { Transition } = await import("@/pages/transition");
 
@@ -179,7 +149,6 @@ export const routes: RouteObject[] = [
           {
             id: "swiper",
             path: "swiper",
-            handle: { title: "Swiper" },
             async lazy() {
               const { SwiperPage } = await import("@/pages/swiper");
 
@@ -191,7 +160,6 @@ export const routes: RouteObject[] = [
           {
             id: "charts",
             path: "charts",
-            handle: { title: "Charts" },
             lazy() {
               return import("@/pages/charts");
             },
@@ -199,7 +167,6 @@ export const routes: RouteObject[] = [
           {
             id: "toast",
             path: "toast",
-            handle: { title: "Toast" },
             async lazy() {
               const { Toast } = await import("@/pages/toast");
 
@@ -214,7 +181,6 @@ export const routes: RouteObject[] = [
       {
         id: "blank",
         path: "blank",
-        handle: { title: "blank" },
         lazy() {
           return import("@/pages/blank");
         },
