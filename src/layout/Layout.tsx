@@ -1,8 +1,5 @@
-// MUI Imports
 import { AppBar, Toolbar, IconButton, Box, styled } from "@mui/material";
 import { GitHub } from "@mui/icons-material";
-
-// Components Imports
 import {
   LanguageToggler,
   ModeToggler,
@@ -11,12 +8,9 @@ import {
   Searcher,
 } from "@/shared";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
-
-// Router Imports
 import { useOutlet, useLocation } from "react-router-dom";
-
-// React Imports
 import React from "react";
+import { AuthGuard } from "@/components/guard/AuthGuard";
 
 export function Layout() {
   const outlet = useOutlet();
@@ -75,7 +69,7 @@ export function Layout() {
           classNames={"fade"}
         >
           <StyledBox ref={containerRef} marginTop={`${marginTop}px`}>
-            {outlet}
+            <AuthGuard>{outlet}</AuthGuard>
           </StyledBox>
         </CSSTransition>
       </SwitchTransition>

@@ -1,21 +1,21 @@
-// Router Imports
 import { Navigate, useMatches, useSearchParams } from "react-router-dom";
 
-export function HomeRoute() {
+export function LoginRoute() {
   const matches = useMatches();
   const [searchParams] = useSearchParams();
 
-  if (!matches[matches.length - 1]) {
+  const currentRoute = matches[matches.length - 1];
+
+  if (!currentRoute) {
     return null;
   }
 
-  const pathname = searchParams.get("returnURL") || "/";
-  searchParams.delete("returnURL");
+  searchParams.set("returnURL", currentRoute.pathname);
 
   return (
     <Navigate
       to={{
-        pathname,
+        pathname: "/login",
         search: searchParams.toString(),
       }}
     ></Navigate>

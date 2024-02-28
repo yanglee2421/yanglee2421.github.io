@@ -1,4 +1,3 @@
-// MUI Imports
 import {
   Box,
   Button,
@@ -7,11 +6,7 @@ import {
   CardHeader,
   Stack,
 } from "@mui/material";
-
-// Components Imports
 import { BackgroundImage } from "@/components/ui";
-
-// Router Imports
 import { Link } from "react-router-dom";
 import { grey } from "@mui/material/colors";
 

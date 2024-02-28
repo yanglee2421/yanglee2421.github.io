@@ -21,7 +21,7 @@ export const routes: RouteObject[] = [
           auth: "guest",
         },
         async lazy() {
-          const { Unauthorized } = await import("@/pages/401/Unauthorized");
+          const { Unauthorized } = await import("@/pages/login/Unauthorized");
 
           return {
             Component: Unauthorized,
