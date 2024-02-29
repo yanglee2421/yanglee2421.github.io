@@ -28,28 +28,20 @@ export function RightImage() {
       <Grid item xs={12} sm={6}>
         <Box
           display={"grid"}
-          gridTemplateAreas={`
-          "A B C" 
-          "A D E"
-          "A F G"
-          `}
-          gridTemplateColumns={"140px 62px 1fr"}
+          gridTemplateColumns={"140px 62px 340px"}
+          gridTemplateRows={"auto auto 1fr"}
+          gridAutoFlow={"column"}
+          height={480}
           marginTop={"192px"}
         >
-          <Box gridArea={"A"}>
-            <Box
-              ref={tumbElRef}
-              height={"100%"}
-              borderRight="1px solid #000"
-            ></Box>
-          </Box>
-          <Box gridArea={"B"}></Box>
-          <Box gridArea={"C"}>
-            <Box marginBottom={"42px"} fontSize={14}>
-              vision
-            </Box>
-          </Box>
-          <Box gridArea={"D"}>
+          <Box
+            ref={tumbElRef}
+            gridColumn={"span 1/span 1"}
+            gridRow={"1/-1"}
+            borderRight="1px solid currentColor"
+          ></Box>
+          <Box></Box>
+          <Box>
             <Transition
               in={show}
               nodeRef={nodeRef}
@@ -63,7 +55,7 @@ export function RightImage() {
                   <Box
                     ref={nodeRef}
                     height={"100%"}
-                    borderLeft={"2px solid #000"}
+                    borderLeft={"2px solid currentColor"}
                     sx={(theme) => {
                       switch (status) {
                         // Enter stage
@@ -105,20 +97,20 @@ export function RightImage() {
               }}
             </Transition>
           </Box>
-          <Box gridArea={"E"}>
-            <Box
-              fontSize={"24px"}
-              width={340}
-              letterSpacing={"0.08em"}
-              lineHeight={"1.8em"}
-              marginBottom={"10px"}
-            >
-              We’re Changing the Way the World Thinks About Cars
-            </Box>
+          <Box></Box>
+          <Box marginBottom={12} fontSize={14}>
+            vision
           </Box>
-          <Box gridArea={"F"}></Box>
-          <Box gridArea={"G"}>
-            <Box width={340} lineHeight={"1.8em"} letterSpacing={"0.04em"}>
+          <Box
+            fontSize={"24px"}
+            letterSpacing={"0.08em"}
+            lineHeight={"1.8em"}
+            marginBottom={"10px"}
+          >
+            We’re Changing the Way the World Thinks About Cars
+          </Box>
+          <Box alignSelf={"flex-end"}>
+            <Box lineHeight={"1.8em"} letterSpacing={"0.04em"}>
               I'm a paragraph. Click here to add your own text and edit me. It’s
               easy. Just click “Edit Text” or double click me to add your own
               content and make changes to the font. I’m a great place for you to
