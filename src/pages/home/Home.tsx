@@ -6,6 +6,7 @@ import { useImmer } from "use-immer";
 import { toast } from "react-toastify";
 import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
 import { RightImage } from "./RightImage";
+import bgImg from "@/assets/images/snow-village.jpg";
 
 export function Home() {
   useHeadTitle("Home");
@@ -99,7 +100,15 @@ export function Home() {
           </Box>
         </CardContent>
       </Card>
-      <Box height={700}></Box>
+      <Box height={400}></Box>
+      <Box
+        height={400}
+        sx={{
+          backgroundImage: `url(${bgImg})`,
+          backgroundAttachment: "fixed",
+        }}
+      ></Box>
+      <Box height={400}></Box>
       <RightImage></RightImage>
     </Box>
   );

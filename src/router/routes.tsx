@@ -92,13 +92,6 @@ export const routes: RouteObject[] = [
             },
           },
           {
-            id: "upload",
-            path: "upload",
-            lazy() {
-              return import("@/pages/upload");
-            },
-          },
-          {
             id: "autocomplete",
             path: "autocomplete",
             lazy() {

@@ -1,20 +1,15 @@
-// MUI Imports
-import { Box, styled, CircularProgress, alpha } from "@mui/material";
-
-// React Imports
+import { Box, styled, CircularProgress, alpha, BoxProps } from "@mui/material";
 import React from "react";
 import ReactDOM from "react-dom";
-
-// Store Imports
 import { useThemeStore } from "@/hooks/store";
 import { useShallow } from "zustand/react/shallow";
-
-// Utils Imports
 import { useImmer } from "use-immer";
 import { useForageFileQuery } from "@/hooks/api-localforage";
 import snowVillage from "@/assets/images/snow-village.jpg";
 
-export function BackgroundImage() {
+export function BackgroundImage(props: Props) {
+  const { container, ...restProps } = props;
+
   const themeStore = useThemeStore(
     useShallow((store) => {
       return {
@@ -56,7 +51,19 @@ export function BackgroundImage() {
   }, [updateBgImgState]);
 
   return ReactDOM.createPortal(
-    <>
+    <Box
+      ref={containerRef}
+      position={"fixed"}
+      zIndex={-1}
+      sx={{
+        inset: `calc(${20 * (themeStore.bgBlur / 100)}px * -2)`,
+        transition(theme) {
+          return theme.transitions.create(["filter", "inset"]);
+        },
+        filter: `blur(${20 * (themeStore.bgBlur / 100)}px)`,
+      }}
+      {...restProps}
+    >
       {query.isPending && (
         <CircularProgress
           size={24}
@@ -68,70 +75,67 @@ export function BackgroundImage() {
         ></CircularProgress>
       )}
       <Box
-        ref={containerRef}
-        position={"fixed"}
-        zIndex={-1}
+        position={"absolute"}
+        zIndex={1}
+        bgcolor={alpha("#000", themeStore.bgAlpha / 100)}
         sx={{
-          inset: `calc(${20 * (themeStore.bgBlur / 100)}px * -2)`,
+          inset: 0,
           transition(theme) {
-            return theme.transitions.create(["filter", "inset"]);
+            return theme.transitions.create(["background-color"]);
           },
-          filter: `blur(${20 * (themeStore.bgBlur / 100)}px)`,
         }}
-      >
-        <Box
-          position={"absolute"}
-          zIndex={1}
-          bgcolor={alpha("#000", themeStore.bgAlpha / 100)}
-          sx={{
-            inset: 0,
-            transition(theme) {
-              return theme.transitions.create(["background-color"]);
-            },
-          }}
-        ></Box>
-        {(() => {
-          if (query.isPending) {
-            return (
-              <StyledImg
-                src={snowVillage}
-                alt="Background image"
-                width={bgImgState.width}
-                height={bgImgState.height}
-              ></StyledImg>
-            );
-          }
+      ></Box>
+      {(() => {
+        if (query.isPending) {
+          return (
+            <StyledImg
+              src={snowVillage}
+              alt="Background image"
+              width={bgImgState.width}
+              height={bgImgState.height}
+            ></StyledImg>
+          );
+        }
 
-          if (query.isError) {
-            return (
-              <StyledImg
-                src={snowVillage}
-                alt={query.error.message}
-                width={bgImgState.width}
-                height={bgImgState.height}
-              ></StyledImg>
-            );
-          }
+        if (query.isError) {
+          return (
+            <StyledImg
+              src={snowVillage}
+              alt={query.error.message}
+              width={bgImgState.width}
+              height={bgImgState.height}
+            ></StyledImg>
+          );
+        }
 
-          if (query.isSuccess) {
-            return (
-              <StyledImg
-                src={query.data.src}
-                alt={query.data.filename}
-                onError={() => {
-                  query.refetch();
-                }}
-                width={bgImgState.width}
-                height={bgImgState.height}
-              ></StyledImg>
-            );
-          }
-        })()}
-      </Box>
-    </>,
-    document.body
+        if (query.isSuccess) {
+          return (
+            <StyledImg
+              src={query.data.src}
+              alt={query.data.filename}
+              onError={() => {
+                query.refetch();
+              }}
+              width={bgImgState.width}
+              height={bgImgState.height}
+            ></StyledImg>
+          );
+        }
+      })()}
+    </Box>,
+    (() => {
+      if (container instanceof HTMLElement) {
+        return container;
+      }
+
+      return document.body;
+    })()
   );
 }
+
+type Props = BoxProps & {
+  container?: HTMLElement;
+};
 
 const StyledImg = styled("img")({
   position: "absolute",
