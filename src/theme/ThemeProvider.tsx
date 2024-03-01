@@ -1,4 +1,3 @@
-// MUI Imports
 import {
   BreakpointsOptions,
   createTheme,
@@ -8,40 +7,22 @@ import {
   GlobalStylesProps,
   Theme,
   ThemeProvider as MuiThemeProvider,
-  Palette,
 } from "@mui/material";
-import { TypographyOptions } from "@mui/material/styles/createTypography";
-
-// Theme Imports
 import { configToPalette } from "./configToPalette";
 import { shadowsMap } from "./shadowsMap";
-
-// React Imports
 import React from "react";
-
-// Hooks Imports
 import { useIsDark } from "@/hooks/dom";
 import { useThemeStore } from "@/hooks/store";
-import { useShallow } from "zustand/react/shallow";
 
 export function ThemeProvider(props: React.PropsWithChildren) {
-  // ** Props
-  const { children } = props;
-
-  const themeStore = useThemeStore(
-    useShallow((store) => {
-      return {
-        mode: store.mode,
-      };
-    })
-  );
+  const themeMode = useThemeStore((store) => store.mode);
   const isDark = useIsDark();
 
   const mode = (() => {
-    switch (themeStore.mode) {
+    switch (themeMode) {
       case "dark":
       case "light":
-        return themeStore.mode;
+        return themeMode;
       case "system":
       default:
         return isDark ? "dark" : "light";
@@ -62,27 +43,20 @@ export function ThemeProvider(props: React.PropsWithChildren) {
     palette: configToPalette({
       mode,
     }),
-    typography,
+    typography: {},
     components: cmponents(),
   });
 
   return (
     <MuiThemeProvider theme={theme}>
-      <GlobalStyles styles={themeToGlobalStyles(theme)} />
-      <CssBaseline />
-      {children}
+      <GlobalStyles styles={themeToGlobalStyles(theme)}></GlobalStyles>
+      <CssBaseline></CssBaseline>
+      {props.children}
     </MuiThemeProvider>
   );
 }
 
 function themeToGlobalStyles(theme: Theme): GlobalStylesProps["styles"] {
-  const isDark = theme.palette.mode === "dark";
-
-  // Nprogress Bar
-  const nprogressBarBg = isDark
-    ? theme.palette.primary.dark
-    : theme.palette.primary.light;
-
   return {
     // Ngrogress Bar
     "#nprogress .bar": {
@@ -94,12 +68,10 @@ function themeToGlobalStyles(theme: Theme): GlobalStylesProps["styles"] {
       width: "100%",
       height: 3,
 
-      backgroundColor: nprogressBarBg,
-    },
-
-    // React Root Element
-    "#root": {
-      height: "100%",
+      backgroundColor:
+        theme.palette.mode === "dark"
+          ? theme.palette.primary.dark
+          : theme.palette.primary.light,
     },
 
     // Body
@@ -120,72 +92,6 @@ function breakpoints(): BreakpointsOptions {
       xl: 1536,
     },
     unit: "px",
-  };
-}
-
-function typography(palette: Palette): TypographyOptions {
-  void palette;
-
-  return {
-    fontFamily: [
-      "Inter",
-      "sans-serif",
-      "-apple-system",
-      "BlinkMacSystemFont",
-      '"Segoe UI"',
-      "Roboto",
-      '"Helvetica Neue"',
-      "Arial",
-      "sans-serif",
-      '"Apple Color Emoji"',
-      '"Segoe UI Emoji"',
-      '"Segoe UI Symbol"',
-    ].join(","),
-    h1: {
-      fontWeight: 500,
-      letterSpacing: "-1.5px",
-    },
-    h2: {
-      fontWeight: 500,
-      letterSpacing: "-0.5px",
-    },
-    h3: {
-      fontWeight: 500,
-      letterSpacing: 0,
-    },
-    h4: {
-      fontWeight: 500,
-      letterSpacing: "0.25px",
-    },
-    h5: {
-      fontWeight: 500,
-      letterSpacing: 0,
-    },
-    h6: {
-      letterSpacing: "0.15px",
-    },
-    subtitle1: {
-      letterSpacing: "0.15px",
-    },
-    subtitle2: {
-      letterSpacing: "0.1px",
-    },
-    body1: {
-      letterSpacing: "0.15px",
-    },
-    body2: {
-      lineHeight: 1.5,
-      letterSpacing: "0.15px",
-    },
-    button: {
-      letterSpacing: "0.3px",
-    },
-    caption: {
-      letterSpacing: "0.4px",
-    },
-    overline: {
-      letterSpacing: "1px",
-    },
   };
 }
 
