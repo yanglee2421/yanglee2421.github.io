@@ -4,13 +4,10 @@ import { useDropzone } from "react-dropzone";
 import { fabric } from "fabric";
 import { useImmer } from "use-immer";
 import { toast } from "react-toastify";
-import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
 import { RightImage } from "./RightImage";
 import bgImg from "@/assets/images/snow-village.jpg";
 
 export function Home() {
-  useHeadTitle("Home");
-
   const [state, updateState] = useImmer<{
     fileURL: string;
   }>({

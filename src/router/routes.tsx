@@ -49,12 +49,8 @@ export const routes: RouteObject[] = [
           {
             id: "home",
             index: true,
-            async lazy() {
-              const { Home } = await import("@/pages/home");
-
-              return {
-                Component: Home,
-              };
+            lazy() {
+              return import("@/pages/home/Component");
             },
           },
           {

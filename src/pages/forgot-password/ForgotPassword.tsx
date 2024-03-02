@@ -4,7 +4,7 @@ import { Send, ArrowBack } from "@mui/icons-material";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ItemText } from "@/components/form";
+import { InputText } from "@/components/form/InputText";
 import { Link as RouterLink } from "react-router-dom";
 
 export function ForgotPassword() {
@@ -19,7 +19,7 @@ export function ForgotPassword() {
   });
 
   return (
-    <Box display={"flex"} height={"100%"}>
+    <Box position={"fixed"} display={"flex"} sx={{ inset: 0 }}>
       <Box flex={1} overflow={"hidden"}>
         left
       </Box>
@@ -70,7 +70,7 @@ export function ForgotPassword() {
           }}
         >
           <FormProvider {...formCtx}>
-            <ItemText name="email" label="Email" type="email" />
+            <InputText field="email" label="Email" type="email" />
             <Button
               type="submit"
               variant="contained"
@@ -94,4 +94,4 @@ const schema = z.object({
   email: z.string().email(),
 });
 
-export type FormValues = z.infer<typeof schema>;
+type FormValues = z.infer<typeof schema>;

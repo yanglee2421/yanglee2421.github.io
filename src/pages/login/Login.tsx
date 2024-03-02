@@ -10,11 +10,8 @@ import GoogleLogo from "@/assets/images/google.png";
 import { useMutation } from "@tanstack/react-query";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
 import { app } from "@/api/firebase";
-import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
 
 export function Login() {
-  useHeadTitle("Login");
-
   const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",
@@ -95,7 +92,7 @@ export function Login() {
               <Link
                 variant="body2"
                 component={RouterLink}
-                to={"/forgot-passwd"}
+                to={"/forgot-password"}
               >
                 Forgot Password?
               </Link>
