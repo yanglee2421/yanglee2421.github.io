@@ -65,7 +65,7 @@ export function Register() {
         >
           <FormProvider {...formCtx}>
             <InputText field="email" label="Email" />
-            <InputPassword field="password" label="Password" />
+            <InputPassword field="password" label="Password" sx={{ mt: 3 }} />
             <FormControlLabel
               control={<InputCheckbox field="isAgree" />}
               label={
