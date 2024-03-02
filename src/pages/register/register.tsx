@@ -5,16 +5,17 @@ import {
   Link,
   Typography,
   Button,
+  Checkbox,
 } from "@mui/material";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { InputCheckbox } from "@/components/form/InputCheckbox";
 import { InputText } from "@/components/form/InputText";
 import { InputPassword } from "@/components/form/InputPassword";
 import { Link as RouterLink } from "react-router-dom";
 import { useCreateUser } from "@/hooks/api-firebase/useCreateUser";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
+import React from "react";
 
 export function Register() {
   const formCtx = useForm<FormValues>({
@@ -25,6 +26,8 @@ export function Register() {
 
     resolver: zodResolver(schema),
   });
+
+  const [checked, setChecked] = React.useState(false);
 
   const mutation = useCreateUser();
 
@@ -66,7 +69,12 @@ export function Register() {
             <InputText field="email" label="Email" />
             <InputPassword field="password" label="Password" sx={{ mt: 3 }} />
             <FormControlLabel
-              control={<InputCheckbox field="isAgree" />}
+              checked={checked}
+              onChange={(evt, checked) => {
+                void evt;
+                setChecked(checked);
+              }}
+              control={<Checkbox />}
               label={
                 <Box display={"flex"} gap={".5ch"}>
                   <Typography variant="body2">I agree to</Typography>
@@ -79,10 +87,11 @@ export function Register() {
                   </Link>
                 </Box>
               }
-            />
+              sx={{ my: 1 }}
+            ></FormControlLabel>
             <Button
               type="submit"
-              disabled={mutation.isPending}
+              disabled={!checked || mutation.isPending}
               variant="contained"
               fullWidth
               size="large"
