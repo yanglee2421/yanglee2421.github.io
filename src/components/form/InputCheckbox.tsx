@@ -1,17 +1,12 @@
-// MUI Imports
 import { Checkbox, CheckboxProps } from "@mui/material";
-
-// Form Imports
 import { useFormContext, useController } from "react-hook-form";
 
-export function ItemCheckbox(props: ItemCheckboxProps) {
-  // ** Props
-  const { name, value, disabled, ...restProps } = props;
+export function InputCheckbox(props: Props) {
+  const { field, value, disabled, ...restProps } = props;
 
-  // Form Field
   const formCtx = useFormContext();
   const controller = useController({
-    name,
+    name: field,
     control: formCtx.control,
     defaultValue: false,
     disabled,
@@ -28,7 +23,7 @@ export function ItemCheckbox(props: ItemCheckboxProps) {
         );
       }}
       {...restProps}
-    />
+    ></Checkbox>
   );
 }
 
@@ -56,15 +51,13 @@ function toNextValue(checked: boolean, value: unknown, fieldValue: unknown) {
 
   const list = toList(fieldValue);
 
-  // The current value is already in the array
   if (list.includes(value)) {
     return checked ? list : list.filter((el) => !Object.is(el, value));
   }
 
-  // The array does not contain the current value
   return checked ? [...list, value] : list;
 }
 
-export type ItemCheckboxProps = CheckboxProps & {
-  name: string;
+type Props = CheckboxProps & {
+  field: string;
 };

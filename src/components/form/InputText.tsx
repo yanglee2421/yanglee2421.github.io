@@ -1,17 +1,13 @@
-// MUI Imports
 import { TextField, TextFieldProps } from "@mui/material";
-
-// Form Imports
 import { useFormContext, useController } from "react-hook-form";
 
-export function ItemText(props: ItemTextProps) {
-  // ** Props
-  const { name, disabled, ...restProps } = props;
+export function InputText(props: Props) {
+  const { field, disabled, ...restProps } = props;
 
   const formCtx = useFormContext();
   const controller = useController({
     control: formCtx.control,
-    name,
+    name: field,
     defaultValue: "",
     disabled,
   });
@@ -27,6 +23,6 @@ export function ItemText(props: ItemTextProps) {
   );
 }
 
-export type ItemTextProps = TextFieldProps & {
-  name: string;
+type Props = TextFieldProps & {
+  field: string;
 };

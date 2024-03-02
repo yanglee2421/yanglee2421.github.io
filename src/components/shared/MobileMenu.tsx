@@ -2,17 +2,12 @@ import {
   CloseOutlined,
   MenuOutlined,
   HomeOutlined,
-  FeedOutlined,
-  ArticleOutlined,
-  GridOnOutlined,
-  FormatListNumberedOutlined,
-  ScienceOutlined,
-  DataSaverOffOutlined,
+  TabOutlined,
+  DataUsageOutlined,
 } from "@mui/icons-material";
 import { IconButton, Drawer, Box, List, IconButtonProps } from "@mui/material";
 import React from "react";
 import { ScrollView } from "@/components/ui/ScrollView";
-import { MenuGroup } from "./MenuGroup";
 import { MenuLink } from "./MenuLink";
 
 export function MobileMenu(props: IconButtonProps) {
@@ -62,49 +57,16 @@ export function MobileMenu(props: IconButtonProps) {
                   label="Home"
                   to={"/"}
                 ></MenuLink>
-                <MenuGroup
-                  icon={<ArticleOutlined></ArticleOutlined>}
-                  label="Pages"
-                >
-                  <MenuLink label="Not Found" to={"/404"}></MenuLink>
-                </MenuGroup>
-                <MenuGroup icon={<FeedOutlined></FeedOutlined>} label="Form">
-                  <MenuLink label="Input" to={"/input"}></MenuLink>
-                  <MenuLink label="Upload" to={"/upload"}></MenuLink>
-                  <MenuLink label="Autocomplete" to={"autocomplete"}></MenuLink>
-                  <MenuLink label="TinyMCE" to={"tinymce"}></MenuLink>
-                </MenuGroup>
-                <MenuGroup
-                  label="Table"
-                  icon={<GridOnOutlined></GridOnOutlined>}
-                >
-                  <MenuLink label="Table" to={"/table"}></MenuLink>
-                </MenuGroup>
-                <MenuGroup
-                  label="List"
-                  icon={
-                    <FormatListNumberedOutlined></FormatListNumberedOutlined>
-                  }
-                >
-                  <MenuLink
-                    label="Virtualized List"
-                    to={"/virtualized-list"}
-                  ></MenuLink>
-                </MenuGroup>
-                <MenuGroup
-                  label="Lab"
-                  icon={<ScienceOutlined></ScienceOutlined>}
-                >
-                  <MenuLink label="Transition" to="/transition"></MenuLink>
-                  <MenuLink label="swiper" to="/swiper"></MenuLink>
-                  <MenuLink label="Blank" to="/blank"></MenuLink>
-                </MenuGroup>
-                <MenuGroup
+                <MenuLink
+                  label="Blank"
+                  to="/blank"
+                  icon={<TabOutlined></TabOutlined>}
+                ></MenuLink>
+                <MenuLink
                   label="Charts"
-                  icon={<DataSaverOffOutlined></DataSaverOffOutlined>}
-                >
-                  <MenuLink label="Charts" to="/charts"></MenuLink>
-                </MenuGroup>
+                  to="/charts"
+                  icon={<DataUsageOutlined></DataUsageOutlined>}
+                ></MenuLink>
               </List>
             </ScrollView>
           </Box>

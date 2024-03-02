@@ -6,14 +6,20 @@ import {
   CardHeader,
   Stack,
 } from "@mui/material";
-import { BackgroundImage } from "@/components/ui";
+import { ImageBackground } from "@/components/ui/ImageBackground";
 import { Link } from "react-router-dom";
 import { grey } from "@mui/material/colors";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
+import React from "react";
 
 export function Forbidden() {
+  const bgAlpha = useThemeStore((store) => store.bgAlpha);
+  const bgBlur = useThemeStore((store) => store.bgBlur);
+  const deferredAlpha = React.useDeferredValue(bgAlpha);
+  const deferredBlur = React.useDeferredValue(bgBlur);
+
   return (
-    <>
-      <BackgroundImage></BackgroundImage>
+    <ImageBackground alpha={deferredAlpha} blur={deferredBlur}>
       <Box
         display={"flex"}
         flexDirection={"column"}
@@ -142,6 +148,6 @@ export function Forbidden() {
           Take me home
         </Button>
       </Box>
-    </>
+    </ImageBackground>
   );
 }

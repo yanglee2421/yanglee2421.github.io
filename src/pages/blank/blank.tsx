@@ -1,36 +1,29 @@
-// MUI Imports
-import { Box, Paper, TextField } from "@mui/material";
-
-// React Imports
+import { Customer } from "@/components/shared/Customer";
+import { ImageBackground } from "@/components/ui/ImageBackground";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 import React from "react";
-
-// Components Imports
-import { Customer } from "@/components";
-import { BackgroundImage } from "@/components/ui";
+import { Button } from "@mui/material";
+import { Link } from "react-router-dom";
 
 export function Blank() {
-  const [count, setCount] = React.useState("");
+  const bgAlpha = useThemeStore((store) => store.bgAlpha);
+  const bgBlur = useThemeStore((store) => store.bgBlur);
+  const deferredAlpha = React.useDeferredValue(bgAlpha);
+  const deferredBlur = React.useDeferredValue(bgBlur);
 
   return (
-    <Box
-      position={"relative"}
-      height={"100%"}
-      display={"flex"}
-      justifyContent={"center"}
-      alignItems={"center"}
-      color="common.white"
+    <ImageBackground
+      alpha={deferredAlpha}
+      blur={deferredBlur}
+      position={"fixed"}
+      sx={{ inset: 0 }}
     >
-      <BackgroundImage></BackgroundImage>
       <Customer></Customer>
-      <Paper component={"form"} sx={{ padding: 3 }}>
-        <TextField
-          value={count}
-          onChange={(evt) => {
-            setCount(evt.target.value);
-          }}
-          placeholder="Search..."
-        ></TextField>
-      </Paper>
-    </Box>
+      <Link to={{ pathname: "/" }}>
+        <Button variant="contained" size="large">
+          Take me home
+        </Button>
+      </Link>
+    </ImageBackground>
   );
 }

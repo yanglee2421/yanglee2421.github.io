@@ -5,7 +5,7 @@ import {
   alpha as muiAlpha,
   BoxProps,
 } from "@mui/material";
-import { useForageFileQuery } from "@/hooks/api-localforage";
+import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
 import React from "react";
 import { useImmer } from "use-immer";
 

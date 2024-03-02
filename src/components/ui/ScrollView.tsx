@@ -1,16 +1,10 @@
-// React Imports
 import React from "react";
-
-// MUI Imports
 import { Box, BoxProps } from "@mui/material";
-
-// Perfect Scrollbar Imports
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
-export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
+export const ScrollView = React.forwardRef<HTMLDivElement, Props>(
   (props, ref) => {
-    // ** Props
     const {
       children,
       options,
@@ -42,7 +36,7 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
     React.useEffect(() => {
       const containerEl = containerRef.current;
 
-      if (!containerEl) {
+      if (!(containerEl instanceof HTMLElement)) {
         return;
       }
 
@@ -89,10 +83,6 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
 
       const map = new Map<string, (evt: Event) => void>();
 
-      /**
-       * Scroll X
-       * Scroll Y
-       */
       if (typeof onPsScrollX === "function") {
         map.set("ps-scroll-x", onPsScrollX);
       }
@@ -100,12 +90,6 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
         map.set("ps-scroll-y", onPsScrollY);
       }
 
-      /**
-       * Scroll up
-       * Scroll down
-       * Scroll left
-       * Scroll right
-       */
       if (typeof onPsScrollUp === "function") {
         map.set("ps-scroll-up", onPsScrollUp);
       }
@@ -119,12 +103,6 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
         map.set("ps-scroll-right", onPsScrollRight);
       }
 
-      /**
-       * X start
-       * X end
-       * Y start
-       * Y end
-       */
       if (typeof onPsXReachStart === "function") {
         map.set("ps-x-reach-start", onPsXReachStart);
       }
@@ -175,7 +153,7 @@ export const ScrollView = React.forwardRef<HTMLDivElement, ScrollViewProps>(
   }
 );
 
-export type ScrollViewProps = BoxProps & {
+type Props = BoxProps & {
   options?: PerfectScrollbar.Options;
   onPsScrollX?(evt: Event): void;
   onPsScrollY?(evt: Event): void;

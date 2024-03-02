@@ -1,14 +1,8 @@
-// MUI Imports
 import { Box } from "@mui/material";
-
-// Components Imports
 import { Transition } from "react-transition-group";
-
-// React Imports
 import React from "react";
 
 export function FadeTransition(props: React.PropsWithChildren) {
-  // ** Props
   const { children, ...restProps } = props;
 
   const nodeRef = React.useRef<HTMLDivElement>(null);

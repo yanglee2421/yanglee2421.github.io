@@ -16,12 +16,8 @@ export const routes: RouteObject[] = [
       {
         id: "login",
         path: "login",
-        async lazy() {
-          const { Unauthorized } = await import("@/pages/login/Unauthorized");
-
-          return {
-            Component: Unauthorized,
-          };
+        lazy() {
+          return import("@/pages/login/Component");
         },
       },
       {
@@ -62,13 +58,21 @@ export const routes: RouteObject[] = [
             },
           },
           {
-            id: "blank",
-            path: "blank",
+            id: "charts",
+            path: "charts",
             lazy() {
-              return import("@/pages/blank");
+              return import("@/pages/charts/Component");
             },
           },
         ],
+      },
+
+      {
+        id: "blank",
+        path: "blank",
+        lazy() {
+          return import("@/pages/blank/Component");
+        },
       },
     ],
   },

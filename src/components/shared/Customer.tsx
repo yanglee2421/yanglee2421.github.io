@@ -30,10 +30,8 @@ import React from "react";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 import { useShallow } from "zustand/react/shallow";
-import {
-  useForageFileMutation,
-  useForageFileQuery,
-} from "@/hooks/api-localforage";
+import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
+import { useForageFileMutation } from "@/hooks/api-localforage/useForageFileMutation";
 import snowVillage from "@/assets/images/snow-village.jpg";
 import { useImmer } from "use-immer";
 
