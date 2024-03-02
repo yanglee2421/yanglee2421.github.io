@@ -1,4 +1,4 @@
-export function toDataURL(blob: Blob) {
+export function blobToDataURL(blob: Blob) {
   return new Promise<string>((res, rej) => {
     const reader = new FileReader();
     reader.readAsDataURL(blob);

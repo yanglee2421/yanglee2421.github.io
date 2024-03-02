@@ -1,8 +1,6 @@
-// MUI Imports
 import { PaletteOptions, alpha } from "@mui/material";
 
 export function configToPalette(params: PaletteConfig): PaletteOptions {
-  // ** Params
   const { mode } = params;
 
   const blackColor = "#000";

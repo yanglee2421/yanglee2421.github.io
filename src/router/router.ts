@@ -1,4 +1,3 @@
-// Router Imports
 import { createHashRouter, createBrowserRouter } from "react-router-dom";
 import { routes } from "./routes";
 

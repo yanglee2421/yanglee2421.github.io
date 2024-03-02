@@ -1,6 +1,6 @@
-export function toCountdown(...targetTime: ConstructorParameters<typeof Date>) {
+export function countdown(date: Date) {
   const [day, restDay] = toTimeCarry(
-    new Date(...targetTime).getTime() - Date.now(),
+    date.getTime() - Date.now(),
     1000 * 60 * 60 * 24
   );
   const [hour, restHour] = toTimeCarry(restDay, 1000 * 60 * 60);

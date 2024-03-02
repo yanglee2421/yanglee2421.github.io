@@ -1,12 +1,7 @@
-// Router Imports
 import { RouterProvider } from "react-router-dom";
-import { router } from "@/router";
-
-// Provider Imports
-import { ThemeProvider } from "@/theme";
-import { QueryProvider } from "@/plugins";
-
-// Toast Imports
+import { router } from "@/router/router";
+import { ThemeProvider } from "@/theme/ThemeProvider";
+import { QueryProvider } from "@/components/providers/QueryProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 

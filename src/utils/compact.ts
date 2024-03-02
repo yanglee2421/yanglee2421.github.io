@@ -1,4 +1,4 @@
-export function toCompact<TData>(list: Array<TData | Falsey>) {
+export function compact<TData>(list: Array<TData | Falsey>) {
   return list.filter(Boolean) as TData[];
 }
 

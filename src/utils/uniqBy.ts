@@ -1,4 +1,4 @@
-export function toUniqBy(items: unknown[], ops: Partial<Ops> = {}) {
+export function uniqBy(items: unknown[], ops: Partial<Ops> = {}) {
   const { overwrite = false, key = "id" } = ops;
 
   const map = new Map();

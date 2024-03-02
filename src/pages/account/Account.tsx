@@ -16,7 +16,7 @@ import { z } from "zod";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { ItemText } from "@/components/form";
 import { UploadAvator } from "./UploadAvator";
-import { stringToColor } from "@/utils";
+import { stringToColor } from "@/utils/stringToColor";
 import { useMutation } from "@tanstack/react-query";
 import { Auth, updateProfile } from "firebase/auth";
 import { toast } from "react-toastify";

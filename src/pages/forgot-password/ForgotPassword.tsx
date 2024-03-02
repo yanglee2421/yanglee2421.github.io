@@ -1,25 +1,15 @@
-// I18n Imports
 import { useTranslation } from "react-i18next";
-
-// MUI Imports
 import { Typography, Button, Box } from "@mui/material";
 import { Send, ArrowBack } from "@mui/icons-material";
-
-// Form Imports
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
-// Components Imports
 import { ItemText } from "@/components/form";
-
-// Router Imports
 import { Link as RouterLink } from "react-router-dom";
 
-export function ForgotPasswd() {
+export function ForgotPassword() {
   const { t } = useTranslation();
 
-  // Form Hooks
   const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",

@@ -1,4 +1,4 @@
-import { useAcl } from "@/configs/acl/useAcl";
+import { useAcl } from "@/hooks/useAcl";
 import React from "react";
 import { Forbidden } from "./Forbidden";
 

@@ -25,24 +25,17 @@ export const routes: RouteObject[] = [
         },
       },
       {
-        id: "forgot-passwd",
-        path: "forgot-passwd",
+        id: "forgot-password",
+        path: "forgot-password",
         lazy() {
-          return import("@/pages/forgot-passwd");
+          return import("@/pages/forgot-password/Component");
         },
       },
       {
         id: "register",
         path: "register",
         lazy() {
-          return import("@/pages/register");
-        },
-      },
-      {
-        id: "privacy-policy",
-        path: "privacy-policy",
-        lazy() {
-          return import("@/pages/privacy-policy");
+          return import("@/pages/register/Component");
         },
       },
 
@@ -69,114 +62,13 @@ export const routes: RouteObject[] = [
             },
           },
           {
-            id: "account",
-            path: "account",
+            id: "blank",
+            path: "blank",
             lazy() {
-              return import("@/pages/account");
-            },
-          },
-          {
-            id: "picture",
-            path: "picture",
-            lazy() {
-              return import("@/pages/picture");
-            },
-          },
-
-          // ** Form
-          {
-            id: "input",
-            path: "input",
-            lazy() {
-              return import("@/pages/input");
-            },
-          },
-          {
-            id: "autocomplete",
-            path: "autocomplete",
-            lazy() {
-              return import("@/pages/autocomplete");
-            },
-          },
-          {
-            id: "tinymce",
-            path: "tinymce",
-            lazy() {
-              return import("@/pages/tinymce");
-            },
-          },
-
-          // ** Table
-          {
-            id: "table",
-            path: "table",
-            async lazy() {
-              const { Table } = await import("@/pages/table");
-              return {
-                Component: Table,
-              };
-            },
-          },
-
-          // ** List
-          {
-            id: "virtualized-list",
-            path: "virtualized-list",
-            lazy() {
-              return import("@/pages/virtualized-list");
-            },
-          },
-
-          // ** Lab
-          {
-            id: "transition",
-            path: "transition",
-            async lazy() {
-              const { Transition } = await import("@/pages/transition");
-
-              return {
-                Component: Transition,
-              };
-            },
-          },
-          {
-            id: "swiper",
-            path: "swiper",
-            async lazy() {
-              const { SwiperPage } = await import("@/pages/swiper");
-
-              return {
-                Component: SwiperPage,
-              };
-            },
-          },
-          {
-            id: "charts",
-            path: "charts",
-            lazy() {
-              return import("@/pages/charts");
-            },
-          },
-          {
-            id: "toast",
-            path: "toast",
-            async lazy() {
-              const { Toast } = await import("@/pages/toast");
-
-              return {
-                Component: Toast,
-              };
+              return import("@/pages/blank");
             },
           },
         ],
-      },
-
-      {
-        id: "blank",
-        path: "blank",
-        lazy() {
-          return import("@/pages/blank");
-        },
       },
     ],
   },
