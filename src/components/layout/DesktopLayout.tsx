@@ -1,17 +1,24 @@
-import { Box, Typography, IconButton } from "@mui/material";
+import { Box, Typography, IconButton, styled } from "@mui/material";
 import { ScrollView } from "@/components/ui/ScrollView";
 import {
   RadioButtonCheckedOutlined,
   RadioButtonUncheckedOutlined,
+  Google,
 } from "@mui/icons-material";
 import React from "react";
 import { useImmer } from "use-immer";
+import { Link } from "react-router-dom";
+import { Transition } from "react-transition-group";
 
 export function DesktopLayout(props: React.PropsWithChildren) {
   const [state, updateState] = useImmer({
-    width: 260,
     collapsed: false,
+    isHovered: false,
   });
+
+  const logoTextRef = React.useRef<HTMLElement>(null);
+
+  const explandedContainer = state.isHovered || !state.collapsed;
 
   return (
     <Box
@@ -22,39 +29,62 @@ export function DesktopLayout(props: React.PropsWithChildren) {
       flexShrink={1}
     >
       <Box display={"flex"} flexBasis={"auto"} flexGrow={1} flexShrink={1}>
+        {/* Navigation Aside */}
         <Box
           component={"aside"}
           position={"sticky"}
           top={0}
-          height={"100dvh"}
-          width={state.collapsed ? 68 : 260}
           sx={{
+            inlineSize: state.collapsed ? collapsedWidth : explandedWidth,
+            minInlineSize: state.collapsed ? collapsedWidth : explandedWidth,
+            blockSize: "100dvh",
             transition(theme) {
-              return theme.transitions.create("width");
+              return theme.transitions.create([
+                "inline-size",
+                "min-inline-size",
+              ]);
             },
           }}
         >
+          {/* Navigation Aside Container */}
           <Box
+            component={"div"}
+            onMouseEnter={() => {
+              updateState((draft) => {
+                draft.isHovered = true;
+              });
+            }}
+            onMouseLeave={() => {
+              updateState((draft) => {
+                draft.isHovered = false;
+              });
+            }}
             position={"relative"}
-            width={"100%"}
-            height={"100%"}
             borderRight={(theme) => `1px solid ${theme.palette.divider}`}
             sx={{
+              inlineSize: "100%",
+              minInlineSize: "100%",
+              blockSize: "100%",
               transition(theme) {
-                return theme.transitions.create("width");
+                return theme.transitions.create([
+                  "inline-size",
+                  "min-inline-size",
+                ]);
               },
               "&:hover": {
-                width: 260,
+                inlineSize: explandedWidth,
+                minInlineSize: explandedWidth,
               },
             }}
           >
+            {/* Navigation Aside Container Background */}
             <Box
               position={"relative"}
               zIndex={3}
-              height={"100%"}
               display={"flex"}
               flexDirection={"column"}
               sx={{
+                blockSize: "100%",
                 overflowX: "hidden",
                 overflowY: "auto",
                 backgroundColor(theme) {
@@ -62,27 +92,107 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                 },
               }}
             >
-              <Box>
-                <Typography>App Name</Typography>
-                <IconButton
-                  onClick={() => {
-                    updateState((draft) => {
-                      draft.collapsed = !draft.collapsed;
-                    });
-                  }}
-                >
-                  {state.collapsed ? (
-                    <RadioButtonUncheckedOutlined></RadioButtonUncheckedOutlined>
-                  ) : (
-                    <RadioButtonCheckedOutlined></RadioButtonCheckedOutlined>
-                  )}
-                </IconButton>
+              {/* Navigation Aside Header */}
+              <Box
+                display={"flex"}
+                justifyContent={"space-between"}
+                alignItems={"center"}
+                paddingInline={2}
+                paddingBlock={3}
+              >
+                <StyledLink to={{ pathname: "/" }}>
+                  <Google fontSize="large"></Google>
+                  <Transition
+                    in={explandedContainer}
+                    nodeRef={logoTextRef}
+                    addEndListener={(done) => {
+                      logoTextRef.current?.addEventListener(
+                        "transitionend",
+                        done
+                      );
+                    }}
+                    unmountOnExit
+                  >
+                    {(status) => {
+                      return (
+                        <Typography
+                          ref={logoTextRef}
+                          variant="h5"
+                          noWrap
+                          sx={(theme) => {
+                            switch (status) {
+                              case "exited":
+                                return {
+                                  opacity: 0,
+                                  marginInlineStart: 0,
+                                };
+                              case "entering":
+                                return {
+                                  opacity: 1,
+                                  marginInlineStart: "10px",
+                                  transition: theme.transitions.create([
+                                    "opacity",
+                                    "margin-inline-start",
+                                  ]),
+                                };
+
+                              case "entered":
+                                return {
+                                  opacity: 1,
+                                  marginInlineStart: "10px",
+                                };
+                              case "exiting":
+                                return {
+                                  opacity: 0,
+                                  marginInlineStart: 0,
+                                  transition: theme.transitions.create([
+                                    "opacity",
+                                    "margin-inline-start",
+                                  ]),
+                                };
+
+                              case "unmounted":
+                              default:
+                                return {};
+                            }
+                          }}
+                        >
+                          App Name
+                        </Typography>
+                      );
+                    }}
+                  </Transition>
+                </StyledLink>
+
+                {explandedContainer && (
+                  <IconButton
+                    onClick={() => {
+                      updateState((draft) => {
+                        draft.collapsed = !draft.collapsed;
+                      });
+                    }}
+                  >
+                    {state.collapsed ? (
+                      <RadioButtonUncheckedOutlined></RadioButtonUncheckedOutlined>
+                    ) : (
+                      <RadioButtonCheckedOutlined></RadioButtonCheckedOutlined>
+                    )}
+                  </IconButton>
+                )}
               </Box>
-              <ScrollView>navigation</ScrollView>
+
+              {/* Navigation Aside Scroll */}
+              <ScrollView options={{ wheelPropagation: false }}>
+                <Box height={2000}>navigation</Box>
+              </ScrollView>
             </Box>
           </Box>
         </Box>
-        <Box display={"flex"} flexDirection={"column"}>
+        <Box
+          display={"flex"}
+          flexDirection={"column"}
+          sx={{ inlineSize: "100%" }}
+        >
           <Box component={"header"}>navbar</Box>
           <Box component={"main"}>{props.children}</Box>
           <Box component={"footer"}>footer</Box>
@@ -91,3 +201,15 @@ export function DesktopLayout(props: React.PropsWithChildren) {
     </Box>
   );
 }
+
+const explandedWidth = 260;
+const collapsedWidth = 68;
+
+const StyledLink = styled(Link)({
+  display: "flex",
+  alignItems: "center",
+  minBlockSize: 24,
+  textDecoration: "none",
+  color: "inherit",
+  marginInlineStart: 8,
+});
