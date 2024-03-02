@@ -1,19 +1,13 @@
-// MUI Imports
 import { Box, Button, Paper, Typography } from "@mui/material";
-
-// Table Imports
 import {
   useReactTable,
   createColumnHelper,
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
-
-// React Imports
 import React from "react";
-
-// Utils Imports
-import { timeout, AnimateController } from "@/utils";
+import { timeout } from "@/utils/timeout";
+import { AnimateController } from "@/utils/AnimateController";
 
 export function Table() {
   const table = useReactTable({

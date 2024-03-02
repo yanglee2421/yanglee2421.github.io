@@ -2,12 +2,10 @@ import {
   Box,
   Divider,
   FormControlLabel,
-  IconButton,
   Link,
   Typography,
   Button,
 } from "@mui/material";
-import { FacebookOutlined, GitHub, Google, Twitter } from "@mui/icons-material";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
@@ -16,6 +14,7 @@ import { InputText } from "@/components/form/InputText";
 import { InputPassword } from "@/components/form/InputPassword";
 import { Link as RouterLink } from "react-router-dom";
 import { useCreateUser } from "@/hooks/api-firebase/useCreateUser";
+import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
 
 export function Register() {
   const formCtx = useForm<FormValues>({
@@ -104,18 +103,7 @@ export function Register() {
         </Box>
         <Divider>Or</Divider>
         <Box display={"flex"} justifyContent={"center"} gap={4}>
-          <IconButton>
-            <FacebookOutlined />
-          </IconButton>
-          <IconButton>
-            <Twitter />
-          </IconButton>
-          <IconButton>
-            <GitHub />
-          </IconButton>
-          <IconButton>
-            <Google />
-          </IconButton>
+          <SignInWithGoogle></SignInWithGoogle>
         </Box>
       </Box>
     </Box>
@@ -127,4 +115,4 @@ const schema = z.object({
   password: z.string().min(8).max(16),
 });
 
-export type FormValues = z.infer<typeof schema>;
+type FormValues = z.infer<typeof schema>;

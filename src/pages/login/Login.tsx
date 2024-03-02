@@ -6,10 +6,7 @@ import { InputText } from "@/components/form/InputText";
 import { InputPassword } from "@/components/form/InputPassword";
 import { useSignIn } from "@/hooks/api-firebase/useSignIn";
 import { Link as RouterLink } from "react-router-dom";
-import GoogleLogo from "@/assets/images/google.png";
-import { useMutation } from "@tanstack/react-query";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-import { app } from "@/api/firebase";
+import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
 
 export function Login() {
   const formCtx = useForm<FormValues>({
@@ -22,12 +19,6 @@ export function Login() {
   });
 
   const mutation = useSignIn();
-
-  const mutationGoogle = useMutation({
-    mutationFn() {
-      return signInWithPopup(getAuth(app), new GoogleAuthProvider());
-    },
-  });
 
   return (
     <Box
@@ -120,16 +111,7 @@ export function Login() {
         </Box>
         <Divider>Or</Divider>
         <Box display={"flex"} justifyContent={"center"} gap={4}>
-          <Button
-            color="secondary"
-            startIcon={<img src={GoogleLogo} alt="Google" width={22}></img>}
-            sx={{ "& .MuiButton-startIcon": { marginInlineEnd: 3 } }}
-            onClick={() => {
-              mutationGoogle.mutate();
-            }}
-          >
-            Sign in with Google
-          </Button>
+          <SignInWithGoogle></SignInWithGoogle>
         </Box>
       </Box>
     </Box>
@@ -141,12 +123,4 @@ const schema = z.object({
   password: z.string().min(8).max(16),
 });
 
-export type FormValues = z.infer<typeof schema>;
-
-const googleAuthProvider = new GoogleAuthProvider();
-googleAuthProvider.addScope(
-  "https://www.googleapis.com/auth/contacts.readonly"
-);
-googleAuthProvider.setCustomParameters({
-  login_hint: "user@example.com",
-});
+type FormValues = z.infer<typeof schema>;
