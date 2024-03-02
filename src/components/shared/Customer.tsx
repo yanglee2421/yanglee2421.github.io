@@ -27,8 +27,8 @@ import {
   RemoveOutlined,
 } from "@mui/icons-material";
 import React from "react";
-import { ScrollView } from "@/components";
-import { useThemeStore } from "@/hooks/store";
+import { ScrollView } from "@/components/ui/ScrollView";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 import { useShallow } from "zustand/react/shallow";
 import {
   useForageFileMutation,
@@ -40,7 +40,9 @@ import { useImmer } from "use-immer";
 export function Customer() {
   const query = useForageFileQuery("bg-img");
   const mutation = useForageFileMutation();
+
   const imgBoxRef = React.useRef<HTMLLabelElement>(null);
+
   const [setting, updateSetting] = useImmer({
     showDrawer: false,
     wallpaperCollapsed: false,
@@ -78,23 +80,25 @@ export function Customer() {
   React.useEffect(() => {
     const el = imgBoxRef.current;
 
-    if (el instanceof HTMLElement) {
-      const observer = new ResizeObserver(([{ contentBoxSize }]) => {
-        React.startTransition(() => {
-          updateSetting((prev) => {
-            const [size] = contentBoxSize;
-            prev.imageWidth = size.inlineSize;
-            prev.imageHeight = size.blockSize;
-          });
+    if (!(el instanceof HTMLElement)) {
+      return;
+    }
+
+    const observer = new ResizeObserver(([{ contentBoxSize }]) => {
+      React.startTransition(() => {
+        updateSetting((prev) => {
+          const [size] = contentBoxSize;
+          prev.imageWidth = size.inlineSize;
+          prev.imageHeight = size.blockSize;
         });
       });
-      observer.observe(el);
+    });
 
-      return () => {
-        observer.unobserve(el);
-        observer.disconnect();
-      };
-    }
+    observer.observe(el);
+
+    return () => {
+      observer.disconnect();
+    };
   }, [updateSetting]);
 
   return (
@@ -206,19 +210,17 @@ export function Customer() {
                               );
                             }
 
-                            if (query.isSuccess) {
-                              return (
-                                <StyledImg
-                                  src={query.data.src}
-                                  alt={query.data.filename}
-                                  onError={() => {
-                                    query.refetch();
-                                  }}
-                                  width={setting.imageWidth}
-                                  height={setting.imageHeight}
-                                ></StyledImg>
-                              );
-                            }
+                            return (
+                              <StyledImg
+                                src={query.data.src}
+                                alt={query.data.filename}
+                                onError={() => {
+                                  query.refetch();
+                                }}
+                                width={setting.imageWidth}
+                                height={setting.imageHeight}
+                              ></StyledImg>
+                            );
                           })()}
                           <input
                             value={""}

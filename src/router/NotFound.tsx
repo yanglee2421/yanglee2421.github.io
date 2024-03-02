@@ -1,39 +1,27 @@
-// Router Imports
 import { NavLink } from "react-router-dom";
-
-// MUI Imports
-import { Box, Button, Typography, Container } from "@mui/material";
-
-// Components Imports
-import { BackgroundImage } from "@/components/ui";
-import { Customer } from "@/components";
+import { Button } from "@mui/material";
+import { ImageBackground } from "@/components/ui/ImageBackground";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
+import { Customer } from "@/components/shared/Customer";
+import React from "react";
 
 export function NotFound() {
+  const bgAlpha = useThemeStore((store) => store.bgAlpha);
+  const bgBlur = useThemeStore((store) => store.bgBlur);
+  const deferredAlpha = React.useDeferredValue(bgAlpha);
+  const deferredBlur = React.useDeferredValue(bgBlur);
+
   return (
-    <>
-      <Box display={"flex"} color="common.white">
-        <BackgroundImage></BackgroundImage>
-        <Customer></Customer>
-        <Container disableGutters sx={{ pt: 36, px: 16 }}>
-          <Typography variant="h1">404</Typography>
-          <Typography variant="h2">Page not found</Typography>
-          <Typography mt={6}>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Pariatur
-            eum nulla possimus officiis, placeat ut minima quo blanditiis maxime
-            aut eius tenetur assumenda recusandae, laudantium quae ex.
-            Voluptates, qui iusto!
-          </Typography>
-          <Button
-            component={NavLink}
-            to="/"
-            variant="contained"
-            size="large"
-            sx={{ mt: 6, borderRadius: 50 }}
-          >
-            Take me home
-          </Button>
-        </Container>
-      </Box>
-    </>
+    <ImageBackground
+      position={"fixed"}
+      alpha={deferredAlpha}
+      blur={deferredBlur}
+      sx={{ inset: 0 }}
+    >
+      <Customer></Customer>
+      <NavLink to={{ pathname: "/" }}>
+        <Button variant="contained">Take me home</Button>
+      </NavLink>
+    </ImageBackground>
   );
 }

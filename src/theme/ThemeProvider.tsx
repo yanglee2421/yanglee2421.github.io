@@ -12,7 +12,7 @@ import { configToPalette } from "./configToPalette";
 import { shadowsMap } from "./shadowsMap";
 import React from "react";
 import { useIsDark } from "@/hooks/dom";
-import { useThemeStore } from "@/hooks/store";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 
 export function ThemeProvider(props: React.PropsWithChildren) {
   const themeMode = useThemeStore((store) => store.mode);

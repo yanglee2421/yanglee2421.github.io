@@ -1,4 +1,3 @@
-// MUI Imports
 import {
   CloseOutlined,
   MenuOutlined,
@@ -11,17 +10,12 @@ import {
   DataSaverOffOutlined,
 } from "@mui/icons-material";
 import { IconButton, Drawer, Box, List, IconButtonProps } from "@mui/material";
-
-// React Imports
 import React from "react";
-
-// Components Imports
-import { ScrollView } from "@/components/ui";
+import { ScrollView } from "@/components/ui/ScrollView";
 import { MenuGroup } from "./MenuGroup";
 import { MenuLink } from "./MenuLink";
 
 export function MobileMenu(props: IconButtonProps) {
-  // ** Props
   const { ...restProps } = props;
 
   const [open, setOpen] = React.useState(false);

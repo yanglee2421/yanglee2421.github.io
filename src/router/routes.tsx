@@ -50,7 +50,7 @@ export const routes: RouteObject[] = [
       {
         id: "with-appbar",
         async lazy() {
-          const { Layout } = await import("@/layout");
+          const { Layout } = await import("@/components/layout/Layout");
 
           return {
             Component: Layout,

@@ -1,8 +1,5 @@
-// Vite Imports
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
-
-// NodeJs Imports
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, URL } from "node:url";
 
@@ -12,15 +9,11 @@ export default defineConfig((configEnv) => {
 
   return {
     plugins: [react()],
-
-    // Path Alias
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
       },
     },
-
-    // CSS Configuration
     css: {
       preprocessorOptions: {
         scss: {
@@ -32,20 +25,13 @@ export default defineConfig((configEnv) => {
       },
     },
 
-    // Base URI
     base: configEnv.command === "build" ? "./" : "/react-mui",
-
-    // Env File Directory
     envDir: resolve(__dirname, "./"),
+    assetsInclude: [],
 
-    // Build Configuration
     build: {
       outDir: resolve(__dirname, "./docs"),
       emptyOutDir: true,
-
-      manifest: false,
-      sourcemap: false,
-      chunkSizeWarningLimit: 500,
 
       rollupOptions: {
         input: {
@@ -73,9 +59,12 @@ export default defineConfig((configEnv) => {
       cssTarget: ["es2020", "edge88", "firefox78", "chrome87", "safari14"],
       cssMinify: "esbuild",
       cssCodeSplit: true,
+
+      manifest: false,
+      sourcemap: false,
+      chunkSizeWarningLimit: 500,
     },
 
-    // Dev Server
     server: {
       port: 3006,
       strictPort: true,
@@ -95,10 +84,6 @@ export default defineConfig((configEnv) => {
       fs: {
         allow: [resolve(__dirname, "./")],
       },
-      // https: {
-      //   cert: "",
-      //   key: "",
-      // },
     },
   };
 });
