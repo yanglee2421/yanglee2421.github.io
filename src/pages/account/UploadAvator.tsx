@@ -1,7 +1,4 @@
-// Query Imports
-import { useUploadAvator } from "@/hooks/api-firebase";
-
-// MUI Imports
+import { useUploadAvator } from "@/hooks/api-firebase/useUploadAvator";
 import { UploadOutlined } from "@mui/icons-material";
 import { Button } from "@mui/material";
 

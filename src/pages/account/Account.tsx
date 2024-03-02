@@ -1,4 +1,3 @@
-// MUI Imports
 import {
   Card,
   CardHeader,
@@ -11,29 +10,15 @@ import {
   alpha,
 } from "@mui/material";
 import { RefreshOutlined, SaveOutlined } from "@mui/icons-material";
-
-// Form Imports
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-
-// Store Imports
-import { useAuthStore } from "@/hooks/store";
-
-// Components Imports
-import { ItemText } from "@/components";
+import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { ItemText } from "@/components/form";
 import { UploadAvator } from "./UploadAvator";
-
-// Utils Imports
 import { stringToColor } from "@/utils";
-
-// Query Imports
 import { useMutation } from "@tanstack/react-query";
-
-// Firebase Imports
 import { Auth, updateProfile } from "firebase/auth";
-
-// Toast Imports
 import { toast } from "react-toastify";
 import { useShallow } from "zustand/react/shallow";
 
