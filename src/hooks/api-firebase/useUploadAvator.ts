@@ -1,21 +1,12 @@
-// Query Imports
 import { useMutation } from "@tanstack/react-query";
-
-// Firebase Imports
 import { ref, getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
 import { getAuth, updateProfile, User } from "firebase/auth";
 import { app } from "@/api/firebase";
-
-// Store Imports
-import { useAuthStore } from "@/hooks/store";
-import { useShallow } from "zustand/react/shallow";
+import { useAuthStore } from "@/hooks/store/useAuthStore";
 
 export function useUploadAvator() {
-  const update = useAuthStore(
-    useShallow((store) => {
-      return store.update;
-    })
-  );
+  const update = useAuthStore((store) => store.update);
+
   return useMutation<User, Error, Blob>({
     async mutationFn(blob) {
       const user = getAuth(app).currentUser;

@@ -1,7 +1,7 @@
 import NProgress from "nprogress";
 import { useOutlet, useSearchParams, useNavigation } from "react-router-dom";
 import React from "react";
-import { useAuthStore } from "@/hooks/store";
+import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { defineAbilityFor, AclContext } from "@/configs/acl";
 import { getAuth, onAuthStateChanged } from "firebase/auth";
 import { app } from "@/api/firebase";

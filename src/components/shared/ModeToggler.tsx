@@ -1,4 +1,3 @@
-// MUI Imports
 import {
   IconButton,
   MenuItem,
@@ -12,16 +11,11 @@ import {
   LightModeOutlined,
   DesktopWindowsOutlined,
 } from "@mui/icons-material";
-
-// Store Imports
-import { useThemeStore } from "@/hooks/store";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 import { useShallow } from "zustand/react/shallow";
-
-// React Imports
 import React from "react";
 
 export function ModeToggler(props: Props) {
-  // ** Props
   const { ...restProps } = props;
 
   const { mode, setMode } = useThemeStore(

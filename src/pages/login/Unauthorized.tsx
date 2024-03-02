@@ -2,7 +2,7 @@ import { Box, Divider, Link, Typography, Button } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { ItemPassword, ItemText } from "@/components";
+import { ItemPassword, ItemText } from "@/components/form";
 import { useSignIn } from "@/hooks/api-firebase";
 import { Link as RouterLink } from "react-router-dom";
 import GoogleLogo from "@/assets/images/google.png";

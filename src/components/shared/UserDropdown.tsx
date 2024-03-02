@@ -1,4 +1,3 @@
-// MUI Imports
 import {
   Avatar,
   Badge,
@@ -12,29 +11,15 @@ import {
   styled,
 } from "@mui/material";
 import { ExitToApp, PeopleOutline } from "@mui/icons-material";
-
-// React Imports
 import React from "react";
-
-// Store Imports
-import { useAuthStore } from "@/hooks/store";
-import { useShallow } from "zustand/react/shallow";
-
-// Utils Imports
+import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { stringToColor } from "@/utils";
-
-// Router Imports
 import { Link } from "react-router-dom";
 
 export function UserDropdown() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
-  // Login hooks
-  const authValue = useAuthStore(
-    useShallow((store) => {
-      return store.value;
-    })
-  );
+  const authValue = useAuthStore((store) => store.value);
 
   const closeHandler = () => {
     setAnchorEl(null);
