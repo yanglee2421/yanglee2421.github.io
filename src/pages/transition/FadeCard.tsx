@@ -1,14 +1,7 @@
-// Transition Imports
 import { SwitchTransition } from "react-transition-group";
-
-// React Imports
 import React from "react";
-
-// MUI Imports
 import { Switch, Card, CardHeader, CardContent } from "@mui/material";
-
-// Components Imports
-import { FadeTransition } from "@/components/ui";
+import { FadeTransition } from "@/components/ui/FadeTransition";
 
 export function FadeCard() {
   const [show, setShow] = React.useState(false);

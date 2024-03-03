@@ -14,7 +14,7 @@ import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
-import { ItemText } from "@/components/form";
+import { InputText } from "@/components/form/InputText";
 import { UploadAvator } from "./UploadAvator";
 import { stringToColor } from "@/utils/stringToColor";
 import { useMutation } from "@tanstack/react-query";
@@ -126,7 +126,10 @@ export function Account() {
             <CardContent>
               <Grid container spacing={4}>
                 <Grid item xs={12} sm={6}>
-                  <ItemText name="displayName" label="Display Name"></ItemText>
+                  <InputText
+                    field="displayName"
+                    label="Display Name"
+                  ></InputText>
                 </Grid>
               </Grid>
             </CardContent>

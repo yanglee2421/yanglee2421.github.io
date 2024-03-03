@@ -1,4 +1,3 @@
-// MUI Imports
 import {
   TextField,
   styled,
@@ -11,27 +10,12 @@ import {
   Link,
 } from "@mui/material";
 import { CloseOutlined, UploadFileOutlined } from "@mui/icons-material";
-
-// Components Imports
 import { CardSnippet } from "./CardSnippet";
-
-// Dropzone Imports
 import { useDropzone } from "react-dropzone";
-
-// Assets Imports
 import uploadPng from "@/assets/images/upload.png";
-
-// React Imports
 import React from "react";
-
-// Utils Imports
-import { toUniqBy } from "@/utils";
-
-// Toast Imports
+import { uniqBy } from "@/utils/uniqBy";
 import { toast } from "react-toastify";
-
-// Image Compression Imports
-// import imageCompression from "browser-image-compression";
 
 export function UploadMultipleFiles() {
   const [files, setFiles] = React.useState<File[]>([]);
@@ -43,7 +27,7 @@ export function UploadMultipleFiles() {
     //   "image/*": [".png", ".jpg", ".jpeg", ".gif"],
     // },
     onDrop(acceptedFiles) {
-      setFiles(toUniqBy(acceptedFiles, { key: "name" }));
+      setFiles(uniqBy(acceptedFiles, { key: "name" }));
     },
     onDropRejected() {
       toast.error("You can only upload 3 files & maximum size of 20 MB.");

@@ -20,6 +20,6 @@ export function App() {
   );
 }
 
-export const router = import.meta.env.PROD
+const router = import.meta.env.PROD
   ? createHashRouter(routes)
   : createBrowserRouter(routes, { basename: "/react-mui" });

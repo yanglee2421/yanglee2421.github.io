@@ -1,23 +1,10 @@
-// Components Imports
 import { CardSnippet } from "./CardSnippet";
-
-// MUI Imports
 import { TextField, styled, Box, Typography } from "@mui/material";
-
-// React Imports
 import React from "react";
-
-// Dropzone Imports
 import { useDropzone } from "react-dropzone";
-
-// Assets Imports
 import uploadPng from "@/assets/images/upload.png";
-
-// Image Compression Imports
 import imageCompression from "browser-image-compression";
-
-// Utils Imports
-import { toUniqBy } from "@/utils";
+import { uniqBy } from "@/utils/uniqBy";
 
 export function UploadSingleFiles() {
   const [dataURL, setDataURL] = React.useState("");
@@ -29,7 +16,7 @@ export function UploadSingleFiles() {
       "image/*": [".png", ".jpg", ".jpeg", ".gif"],
     },
     async onDrop(acceptedFiles) {
-      setFiles(toUniqBy(acceptedFiles, { key: "name" }));
+      setFiles(uniqBy(acceptedFiles, { key: "name" }));
       const file = acceptedFiles.at(0);
       if (!file) return;
 
