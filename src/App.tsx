@@ -1,7 +1,11 @@
-import { RouterProvider } from "react-router-dom";
-import { router } from "@/router/router";
+import { routes } from "@/router/routes";
+import {
+  createHashRouter,
+  createBrowserRouter,
+  RouterProvider,
+} from "react-router-dom";
 import { ThemeProvider } from "@/theme/ThemeProvider";
-import { QueryProvider } from "@/components/providers/QueryProvider";
+import { QueryProvider } from "@/components/QueryProvider";
 import { ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 
@@ -15,3 +19,7 @@ export function App() {
     </QueryProvider>
   );
 }
+
+export const router = import.meta.env.PROD
+  ? createHashRouter(routes)
+  : createBrowserRouter(routes, { basename: "/react-mui" });
