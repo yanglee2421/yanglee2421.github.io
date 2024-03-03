@@ -1,19 +1,23 @@
+import React from "react";
+
+import type {
+  IconButtonProps} from "@mui/material";
 import {
   IconButton,
   MenuItem,
   ListItemIcon,
   ListItemText,
-  Menu,
-  IconButtonProps,
+  Menu
 } from "@mui/material";
 import {
   DarkModeOutlined,
   LightModeOutlined,
   DesktopWindowsOutlined,
 } from "@mui/icons-material";
-import { useThemeStore } from "@/hooks/store/useThemeStore";
+
 import { useShallow } from "zustand/react/shallow";
-import React from "react";
+
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 
 export function ModeToggler(props: Props) {
   const { ...restProps } = props;

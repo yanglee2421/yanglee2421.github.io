@@ -1,5 +1,6 @@
+import type {
+  MongoAbility} from "@casl/ability";
 import {
-  MongoAbility,
   createMongoAbility,
   AbilityBuilder,
 } from "@casl/ability";

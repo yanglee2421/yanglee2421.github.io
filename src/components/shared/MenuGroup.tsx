@@ -2,12 +2,13 @@
 import React from "react";
 
 // MUI Imports
+import type {
+  ListItemButtonProps} from "@mui/material";
 import {
   ListItemButton,
   Collapse,
   ListItemIcon,
-  ListItemText,
-  ListItemButtonProps,
+  ListItemText
 } from "@mui/material";
 import {
   FiberManualRecordOutlined,

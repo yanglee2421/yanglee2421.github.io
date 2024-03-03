@@ -16,9 +16,39 @@ module.exports = {
       "warn",
       { allowConstantExport: true },
     ],
+    "@typescript-eslint/consistent-type-imports": "error",
     "import/default": "off",
     "import/no-named-as-default": "off",
     "import/no-named-as-default-member": "off",
+    "import/order": [
+      "error",
+      {
+        groups: [
+          "builtin",
+          "external",
+          ["internal", "parent", "sibling", "index"],
+          ["object", "unknown"],
+        ],
+        pathGroups: [
+          {
+            pattern: "react",
+            group: "external",
+            position: "before",
+          },
+          {
+            pattern: "~/**",
+            group: "external",
+            position: "before",
+          },
+          {
+            pattern: "@/**",
+            group: "internal",
+          },
+        ],
+        pathGroupsExcludedImportTypes: ["react", "type"],
+        "newlines-between": "always-and-inside-groups",
+      },
+    ],
   },
   settings: {
     "import/resolver": {

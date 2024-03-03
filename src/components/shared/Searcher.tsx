@@ -1,16 +1,18 @@
 // MUI Imports
+import React from "react";
+
+import type {
+  IconButtonProps} from "@mui/material";
 import {
   IconButton,
   Backdrop,
   Box,
   OutlinedInput,
-  InputAdornment,
-  IconButtonProps,
+  InputAdornment
 } from "@mui/material";
 import { Search } from "@mui/icons-material";
 
 // React Imports
-import React from "react";
 
 // Form Imports
 import { useForm, FormProvider, useController } from "react-hook-form";

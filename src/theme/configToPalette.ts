@@ -1,4 +1,5 @@
-import { PaletteOptions, alpha } from "@mui/material";
+import type { PaletteOptions} from "@mui/material";
+import { alpha } from "@mui/material";
 
 export function configToPalette(params: PaletteConfig): PaletteOptions {
   const { mode } = params;

@@ -4,8 +4,10 @@ import { Send, ArrowBack } from "@mui/icons-material";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
-import { InputText } from "@/components/form/InputText";
+
 import { Link as RouterLink } from "react-router-dom";
+
+import { InputText } from "@/components/form/InputText";
 
 export function ForgotPassword() {
   const { t } = useTranslation();

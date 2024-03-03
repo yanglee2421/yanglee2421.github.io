@@ -1,5 +1,6 @@
 // Zustand Imports
-import React from "react";
+import type React from "react";
+
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
 

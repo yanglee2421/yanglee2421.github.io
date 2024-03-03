@@ -1,4 +1,6 @@
 // MUI Imports
+import React from "react";
+
 import {
   Card,
   CardHeader,
@@ -10,7 +12,6 @@ import {
 import { CodeOutlined } from "@mui/icons-material";
 
 // React Imports
-import React from "react";
 
 export function CardSnippet(props: CardSnippetProps) {
   // ** Props

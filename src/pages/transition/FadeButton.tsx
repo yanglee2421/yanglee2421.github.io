@@ -1,6 +1,8 @@
-import { SwitchTransition } from "react-transition-group";
 import React from "react";
+
+import { SwitchTransition } from "react-transition-group";
 import { Card, CardHeader, CardContent, Switch, Button } from "@mui/material";
+
 import { FadeCssTransition } from "@/components/ui/FadeCssTransition";
 
 export function FadeButton() {

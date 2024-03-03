@@ -2,20 +2,22 @@
 import React from "react";
 
 // MUI Imports
+import type {
+  ListItemButtonProps} from "@mui/material";
 import {
   ListItemButton,
-  ListItemButtonProps,
   ListItemIcon,
   ListItemText,
 } from "@mui/material";
 import { FiberManualRecordOutlined } from "@mui/icons-material";
 
 // Router Imports
-import {
+import type {
   To,
+  RelativeRoutingType} from "react-router-dom";
+import {
   useResolvedPath,
   useLocation,
-  RelativeRoutingType,
   UNSAFE_NavigationContext,
   Link,
 } from "react-router-dom";

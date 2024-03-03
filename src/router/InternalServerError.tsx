@@ -1,9 +1,11 @@
+import React from "react";
+
 import { NavLink } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
+
 import { ImageBackground } from "@/components/ui/ImageBackground";
 import { Customer } from "@/components/shared/Customer";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
-import React from "react";
 import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
 
 export function InternalServerError() {

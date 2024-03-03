@@ -2,10 +2,12 @@ import { Box, Divider, Link, Typography, Button } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+
+import { Link as RouterLink } from "react-router-dom";
+
 import { InputText } from "@/components/form/InputText";
 import { InputPassword } from "@/components/form/InputPassword";
 import { useSignIn } from "@/hooks/api-firebase/useSignIn";
-import { Link as RouterLink } from "react-router-dom";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
 
 export function Login() {

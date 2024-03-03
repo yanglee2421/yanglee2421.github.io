@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Avatar,
   Badge,
@@ -11,10 +13,12 @@ import {
   styled,
 } from "@mui/material";
 import { ExitToApp, PeopleOutline } from "@mui/icons-material";
-import React from "react";
+
+import { Link } from "react-router-dom";
+
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { stringToColor } from "@/utils/stringToColor";
-import { Link } from "react-router-dom";
+
 
 export function UserDropdown() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);

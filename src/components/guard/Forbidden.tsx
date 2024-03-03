@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Box,
   Button,
@@ -6,11 +8,12 @@ import {
   CardHeader,
   Stack,
 } from "@mui/material";
-import { ImageBackground } from "@/components/ui/ImageBackground";
+
 import { Link } from "react-router-dom";
 import { grey } from "@mui/material/colors";
+
+import { ImageBackground } from "@/components/ui/ImageBackground";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
-import React from "react";
 
 export function Forbidden() {
   const bgAlpha = useThemeStore((store) => store.bgAlpha);

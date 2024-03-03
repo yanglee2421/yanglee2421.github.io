@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   CloseOutlined,
   MenuOutlined,
@@ -5,8 +7,9 @@ import {
   TabOutlined,
   DataUsageOutlined,
 } from "@mui/icons-material";
-import { IconButton, Drawer, Box, List, IconButtonProps } from "@mui/material";
-import React from "react";
+import type { IconButtonProps } from "@mui/material";
+import { IconButton, Drawer, Box, List } from "@mui/material";
+
 import { ScrollView } from "@/components/ui/ScrollView";
 import { MenuLink } from "./MenuLink";
 

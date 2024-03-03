@@ -1,4 +1,6 @@
 // MUI Imports
+import React from "react";
+
 import { Box, IconButton, Paper, alpha } from "@mui/material";
 import {
   ArrowBackIosNewRounded,
@@ -6,7 +8,6 @@ import {
 } from "@mui/icons-material";
 
 // React Imports
-import React from "react";
 
 // Swiper Imports
 import { Swiper, SwiperSlide } from "swiper/react";

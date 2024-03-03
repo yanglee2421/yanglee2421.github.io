@@ -13,14 +13,20 @@ import { RefreshOutlined, SaveOutlined } from "@mui/icons-material";
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+
+import { useMutation } from "@tanstack/react-query";
+
+import type { Auth} from "firebase/auth";
+import { updateProfile } from "firebase/auth";
+
+import { toast } from "react-toastify";
+
+import { useShallow } from "zustand/react/shallow";
+
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { InputText } from "@/components/form/InputText";
 import { UploadAvator } from "./UploadAvator";
 import { stringToColor } from "@/utils/stringToColor";
-import { useMutation } from "@tanstack/react-query";
-import { Auth, updateProfile } from "firebase/auth";
-import { toast } from "react-toastify";
-import { useShallow } from "zustand/react/shallow";
 
 export function Account() {
   const { authValue, updateAuth } = useAuthStore(

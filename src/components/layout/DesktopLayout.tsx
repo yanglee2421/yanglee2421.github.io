@@ -1,14 +1,16 @@
-import { Box, Typography, IconButton, styled } from "@mui/material";
-import { ScrollView } from "@/components/ui/ScrollView";
+import React from "react";
+
 import {
   RadioButtonCheckedOutlined,
   RadioButtonUncheckedOutlined,
   Google,
 } from "@mui/icons-material";
-import React from "react";
+import { Box, Typography, IconButton, styled } from "@mui/material";
 import { useImmer } from "use-immer";
 import { Link } from "react-router-dom";
 import { Transition } from "react-transition-group";
+
+import { ScrollView } from "@/components/ui/ScrollView";
 
 export function DesktopLayout(props: React.PropsWithChildren) {
   const [state, updateState] = useImmer({

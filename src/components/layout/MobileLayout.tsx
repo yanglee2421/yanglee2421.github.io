@@ -1,13 +1,18 @@
+import React from "react";
+
 import { AppBar, Toolbar, IconButton, Box, styled } from "@mui/material";
 import { GitHub } from "@mui/icons-material";
+
+import { SwitchTransition, CSSTransition } from "react-transition-group";
+
+import { useOutlet, useLocation } from "react-router-dom";
+
 import { LanguageToggler } from "@/components/shared/LanguageToggler";
 import { ModeToggler } from "@/components/shared/ModeToggler";
 import { MobileMenu } from "@/components/shared/MobileMenu";
 import { UserDropdown } from "@/components/shared/UserDropdown";
 import { Searcher } from "@/components/shared/Searcher";
-import { SwitchTransition, CSSTransition } from "react-transition-group";
-import { useOutlet, useLocation } from "react-router-dom";
-import React from "react";
+
 import { AuthGuard } from "@/components/guard/AuthGuard";
 
 export function MobileLayout() {

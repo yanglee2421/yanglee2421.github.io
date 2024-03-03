@@ -1,16 +1,19 @@
-import {
+import React from "react";
+
+import type {
   BreakpointsOptions,
+  Components,
+  GlobalStylesProps,
+  Theme} from "@mui/material";
+import {
   createTheme,
   CssBaseline,
-  Components,
   GlobalStyles,
-  GlobalStylesProps,
-  Theme,
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
+
 import { configToPalette } from "./configToPalette";
 import { shadowsMap } from "./shadowsMap";
-import React from "react";
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 

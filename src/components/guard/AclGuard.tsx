@@ -1,5 +1,6 @@
-import { useAcl } from "@/hooks/useAcl";
 import React from "react";
+
+import { useAcl } from "@/hooks/useAcl";
 import { Forbidden } from "./Forbidden";
 
 export function AclGuard(props: Props) {

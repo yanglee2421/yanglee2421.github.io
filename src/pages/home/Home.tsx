@@ -4,6 +4,7 @@ import { useDropzone } from "react-dropzone";
 import { fabric } from "fabric";
 import { useImmer } from "use-immer";
 import { toast } from "react-toastify";
+
 import { RightImage } from "./RightImage";
 import bgImg from "@/assets/images/snow-village.jpg";
 

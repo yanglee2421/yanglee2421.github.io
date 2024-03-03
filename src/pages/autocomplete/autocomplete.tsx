@@ -1,13 +1,15 @@
 // MUI Imports
+import React from "react";
+
+import type {
+  AutocompleteProps,
+  AutocompleteRenderInputParams} from "@mui/material";
 import {
   Autocomplete,
-  AutocompleteProps,
-  AutocompleteRenderInputParams,
   TextField,
 } from "@mui/material";
 
 // React Imports
-import React from "react";
 
 export function AutoComplete() {
   const [model, setModel] = React.useState<Option | null>(null);

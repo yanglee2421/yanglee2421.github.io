@@ -1,5 +1,6 @@
-import { Box } from "@mui/material";
 import React from "react";
+
+import { Box } from "@mui/material";
 import { CSSTransition } from "react-transition-group";
 
 export function FadeCssTransition(props: React.PropsWithChildren) {

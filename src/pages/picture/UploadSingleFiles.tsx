@@ -1,9 +1,12 @@
-import { CardSnippet } from "./CardSnippet";
-import { TextField, styled, Box, Typography } from "@mui/material";
 import React from "react";
+
+import { TextField, styled, Box, Typography } from "@mui/material";
 import { useDropzone } from "react-dropzone";
-import uploadPng from "@/assets/images/upload.png";
+
 import imageCompression from "browser-image-compression";
+
+import uploadPng from "@/assets/images/upload.png";
+import { CardSnippet } from "./CardSnippet";
 import { uniqBy } from "@/utils/uniqBy";
 
 export function UploadSingleFiles() {

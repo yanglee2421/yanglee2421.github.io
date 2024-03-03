@@ -1,4 +1,5 @@
-// MUI Imports
+import React from "react";
+
 import {
   Box,
   ListItem,
@@ -6,18 +7,13 @@ import {
   ListItemText,
   Paper,
 } from "@mui/material";
-
-// Components Imports
-import { FixedSizeList, ListChildComponentProps } from "react-window";
+import type { ListChildComponentProps } from "react-window";
+import { FixedSizeList } from "react-window";
 import AutoSizer from "react-virtualized-auto-sizer";
 import InfiniteLoader from "react-window-infinite-loader";
-
-// Ps Imports
 import PerfectScrollbar from "perfect-scrollbar";
-import "perfect-scrollbar/css/perfect-scrollbar.css";
 
-// React Imports
-import React from "react";
+import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 export function VirtualizedList() {
   const infiniteRef = React.useRef<InfiniteLoader>(null);

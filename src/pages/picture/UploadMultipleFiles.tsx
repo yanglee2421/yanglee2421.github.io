@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   TextField,
   styled,
@@ -10,12 +12,15 @@ import {
   Link,
 } from "@mui/material";
 import { CloseOutlined, UploadFileOutlined } from "@mui/icons-material";
-import { CardSnippet } from "./CardSnippet";
+
 import { useDropzone } from "react-dropzone";
-import uploadPng from "@/assets/images/upload.png";
-import React from "react";
-import { uniqBy } from "@/utils/uniqBy";
+
 import { toast } from "react-toastify";
+
+import { CardSnippet } from "./CardSnippet";
+import uploadPng from "@/assets/images/upload.png";
+import { uniqBy } from "@/utils/uniqBy";
+
 
 export function UploadMultipleFiles() {
   const [files, setFiles] = React.useState<File[]>([]);

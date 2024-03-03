@@ -1,4 +1,5 @@
-import { Switch, SwitchProps } from "@mui/material";
+import type { SwitchProps } from "@mui/material";
+import { Switch } from "@mui/material";
 import { useFormContext, useController } from "react-hook-form";
 
 export function InputSwitch(props: Props) {

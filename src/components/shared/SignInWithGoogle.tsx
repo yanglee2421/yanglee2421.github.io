@@ -1,7 +1,9 @@
 import { Button } from "@mui/material";
-import GoogleLogo from "@/assets/images/google.png";
+
 import { useMutation } from "@tanstack/react-query";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+
+import GoogleLogo from "@/assets/images/google.png";
 import { app } from "@/api/firebase";
 
 export function SignInWithGoogle() {

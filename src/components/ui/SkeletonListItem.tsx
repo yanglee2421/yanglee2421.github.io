@@ -1,15 +1,17 @@
 // MUI Imports
+import React from "react";
+
+import type {
+  ListItemProps} from "@mui/material";
 import {
   Skeleton,
   ListItem,
   ListItemText,
   ListItemAvatar,
-  Avatar,
-  ListItemProps,
+  Avatar
 } from "@mui/material";
 
 // React Imports
-import React from "react";
 
 export const SkeletonListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
   (props, ref) => {

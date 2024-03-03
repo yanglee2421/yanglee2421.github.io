@@ -1,5 +1,6 @@
 import { Button } from "@mui/material";
 import { isRouteErrorResponse, useRouteError, Link } from "react-router-dom";
+
 import { NotFound } from "./NotFound";
 import { InternalServerError } from "./InternalServerError";
 

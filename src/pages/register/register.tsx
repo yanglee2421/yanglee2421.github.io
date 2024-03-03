@@ -1,3 +1,5 @@
+import React from "react";
+
 import {
   Box,
   Divider,
@@ -10,12 +12,13 @@ import {
 import { useForm, FormProvider } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { z } from "zod";
+
+import { Link as RouterLink } from "react-router-dom";
+
 import { InputText } from "@/components/form/InputText";
 import { InputPassword } from "@/components/form/InputPassword";
-import { Link as RouterLink } from "react-router-dom";
 import { useCreateUser } from "@/hooks/api-firebase/useCreateUser";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
-import React from "react";
 
 export function Register() {
   const formCtx = useForm<FormValues>({

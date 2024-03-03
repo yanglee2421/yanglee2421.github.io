@@ -1,13 +1,17 @@
+import React from "react";
+
+import type {
+  BoxProps} from "@mui/material";
 import {
   Box,
   styled,
   CircularProgress,
-  alpha as muiAlpha,
-  BoxProps,
+  alpha as muiAlpha
 } from "@mui/material";
-import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
-import React from "react";
+
 import { useImmer } from "use-immer";
+
+import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
 
 export function ImageBackground(props: Props) {
   const { alpha, blur, children, ...restProps } = props;

@@ -1,9 +1,12 @@
+import React from "react";
+
+import { Button } from "@mui/material";
+
+import { Link } from "react-router-dom";
+
 import { Customer } from "@/components/shared/Customer";
 import { ImageBackground } from "@/components/ui/ImageBackground";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
-import React from "react";
-import { Button } from "@mui/material";
-import { Link } from "react-router-dom";
 
 export function Blank() {
   const bgAlpha = useThemeStore((store) => store.bgAlpha);

@@ -1,12 +1,19 @@
+import React from "react";
+
 import NProgress from "nprogress";
 import { useOutlet, useSearchParams, useNavigation } from "react-router-dom";
-import React from "react";
+
+import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+import { useTranslation } from "react-i18next";
+
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { AclContext } from "@/hooks/useAcl";
 import { defineAbilityFor } from "@/utils/defineAbilityFor";
-import { getAuth, onAuthStateChanged } from "firebase/auth";
+
+
 import { app } from "@/api/firebase";
-import { useTranslation } from "react-i18next";
+
 
 export function RootRoute() {
   const outlet = useOutlet();

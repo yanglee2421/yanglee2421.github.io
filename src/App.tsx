@@ -1,12 +1,15 @@
-import { routes } from "@/router/routes";
 import {
   createHashRouter,
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
+
+import { ToastContainer } from "react-toastify";
+
+import { routes } from "@/router/routes";
 import { ThemeProvider } from "@/theme/ThemeProvider";
 import { QueryProvider } from "@/components/QueryProvider";
-import { ToastContainer } from "react-toastify";
+
 import "react-toastify/ReactToastify.css";
 
 export function App() {

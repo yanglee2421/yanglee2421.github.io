@@ -1,9 +1,12 @@
 // Firebase Imports
-import { getAuth, Auth } from "firebase/auth";
+import type { Auth } from "firebase/auth";
+import { getAuth } from "firebase/auth";
+
+import { create } from "zustand";
+
 import { app } from "@/api/firebase";
 
 // Zustand Imports
-import { create } from "zustand";
 
 export const useAuthStore = create<AuthStore>((set, get) => {
   return {
