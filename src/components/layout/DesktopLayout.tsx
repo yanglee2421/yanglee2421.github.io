@@ -108,7 +108,7 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                 paddingBlock={3}
               >
                 <StyledLink to={{ pathname: "/" }}>
-                  <Materio></Materio>
+                  <Materio width={28} height={22}></Materio>
                   <Transition
                     in={explandedContainer}
                     nodeRef={logoTextRef}
