@@ -5,7 +5,7 @@ import { signOut, getAuth } from "firebase/auth";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { useImmer } from "use-immer";
-import { app } from "@/api/firebase/firebase";
+import { app } from "@/api/firebase/app";
 import bgImg from "@/assets/images/snow-village.jpg";
 import { RightImage } from "./RightImage";
 
