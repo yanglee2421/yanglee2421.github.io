@@ -1,4 +1,3 @@
-// React Imports
 import {
   FiberManualRecordOutlined,
   KeyboardArrowRight,
@@ -13,10 +12,7 @@ import React from "react";
 
 import type { ListItemButtonProps } from "@mui/material";
 
-// MUI Imports
-
 export function MenuGroup(props: MenuGroupProps) {
-  // ** Props
   const { label, icon, children, ...restProps } = props;
 
   const [open, setOpen] = React.useState(true);

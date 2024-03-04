@@ -1,7 +1,6 @@
 import {
   RadioButtonCheckedOutlined,
   RadioButtonUncheckedOutlined,
-  Google,
 } from "@mui/icons-material";
 import { Box, Typography, IconButton, styled } from "@mui/material";
 import React from "react";
@@ -9,6 +8,7 @@ import { Link } from "react-router-dom";
 import { Transition } from "react-transition-group";
 import { useImmer } from "use-immer";
 
+import { Materio } from "@/components/svg/Materio";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 
@@ -108,7 +108,7 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                 paddingBlock={3}
               >
                 <StyledLink to={{ pathname: "/" }}>
-                  <Google fontSize="large"></Google>
+                  <Materio></Materio>
                   <Transition
                     in={explandedContainer}
                     nodeRef={logoTextRef}

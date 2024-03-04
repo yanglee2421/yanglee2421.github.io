@@ -4,7 +4,7 @@ import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
 import { SignUp } from "./SignUp";
 
 export function Component() {
-  useHeadTitle("Register");
+  useHeadTitle("Join Materio");
 
   return (
     <GuestGuard>
