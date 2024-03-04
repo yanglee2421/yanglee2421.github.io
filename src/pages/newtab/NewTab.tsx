@@ -6,7 +6,7 @@ import { Customer } from "@/components/shared/Customer";
 import { ImageBackground } from "@/components/ui/ImageBackground";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 
-export function Blank() {
+export function NewTab() {
   const bgAlpha = useThemeStore((store) => store.bgAlpha);
   const bgBlur = useThemeStore((store) => store.bgBlur);
   const deferredAlpha = React.useDeferredValue(bgAlpha);

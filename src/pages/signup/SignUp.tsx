@@ -18,7 +18,7 @@ import { InputText } from "@/components/form/InputText";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
 import { useCreateUser } from "@/hooks/api-firebase/useCreateUser";
 
-export function Register() {
+export function SignUp() {
   const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",
@@ -75,12 +75,8 @@ export function Register() {
               control={<Checkbox />}
               label={
                 <Box display={"flex"} gap={".5ch"}>
-                  <Typography variant="body2">I agree to</Typography>
-                  <Link
-                    variant="body2"
-                    component={RouterLink}
-                    to={"/privacy-policy"}
-                  >
+                  <Typography color="secondary">I agree to</Typography>
+                  <Link component={RouterLink} to={"/privacy-policy"}>
                     privacy policy & terms
                   </Link>
                 </Box>
@@ -103,8 +99,8 @@ export function Register() {
           justifyContent={"space-between"}
           alignItems={"center"}
         >
-          <Typography variant="body2">Already have an account?</Typography>
-          <Link variant="body2" component={RouterLink} to={"/login"}>
+          <Typography color="secondary">Already have an account?</Typography>
+          <Link component={RouterLink} to={"/signin"}>
             Sign in insead
           </Link>
         </Box>

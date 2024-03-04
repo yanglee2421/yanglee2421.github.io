@@ -1,11 +1,11 @@
 import { AuthGuard } from "@/components/guard/AuthGuard";
 
-import { Charts } from "./Charts";
+import { NewTab } from "./NewTab";
 
 export function Component() {
   return (
     <AuthGuard>
-      <Charts></Charts>
+      <NewTab></NewTab>
     </AuthGuard>
   );
 }

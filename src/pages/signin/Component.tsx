@@ -1,14 +1,14 @@
 import { GuestGuard } from "@/components/guard/GuestGuard";
 import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
 
-import { Login } from "./Login";
+import { SignIn } from "./SignIn";
 
 export function Component() {
-  useHeadTitle("Login");
+  useHeadTitle("Sign in to Materio");
 
   return (
     <GuestGuard>
-      <Login></Login>
+      <SignIn></SignIn>
     </GuestGuard>
   );
 }

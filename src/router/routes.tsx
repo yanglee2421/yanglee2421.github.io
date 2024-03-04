@@ -15,10 +15,10 @@ export const routes: RouteObject[] = [
     },
     children: [
       {
-        id: "login",
-        path: "login",
+        id: "signin",
+        path: "signin",
         lazy() {
-          return import("@/pages/login/Component");
+          return import("@/pages/signin/Component");
         },
       },
       {
@@ -29,10 +29,10 @@ export const routes: RouteObject[] = [
         },
       },
       {
-        id: "register",
-        path: "register",
+        id: "signup",
+        path: "signup",
         lazy() {
-          return import("@/pages/register/Component");
+          return import("@/pages/signup/Component");
         },
       },
 
@@ -54,21 +54,14 @@ export const routes: RouteObject[] = [
               return import("@/pages/home/Component");
             },
           },
-          {
-            id: "charts",
-            path: "charts",
-            lazy() {
-              return import("@/pages/charts/Component");
-            },
-          },
         ],
       },
 
       {
-        id: "blank",
-        path: "blank",
+        id: "newtab",
+        path: "newtab",
         lazy() {
-          return import("@/pages/blank/Component");
+          return import("@/pages/newtab/Component");
         },
       },
     ],

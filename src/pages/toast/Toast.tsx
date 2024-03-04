@@ -1,11 +1,6 @@
-// Toast Imports
 import { Button, Stack } from "@mui/material";
 import React from "react";
 import { toast } from "react-toastify";
-
-// MUI Imports
-
-// React Imports
 
 export function Toast() {
   const loadingRef = React.useRef<string | number>(Math.random());

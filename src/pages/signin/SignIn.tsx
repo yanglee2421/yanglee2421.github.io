@@ -9,7 +9,7 @@ import { InputText } from "@/components/form/InputText";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
 import { useSignIn } from "@/hooks/api-firebase/useSignIn";
 
-export function Login() {
+export function SignIn() {
   const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",
@@ -80,11 +80,7 @@ export function Login() {
               justifyContent={"flex-end"}
               alignItems={"center"}
             >
-              <Link
-                variant="body2"
-                component={RouterLink}
-                to={"/forgot-password"}
-              >
+              <Link component={RouterLink} to={"/forgot-password"}>
                 Forgot Password?
               </Link>
             </Box>
@@ -104,8 +100,8 @@ export function Login() {
           justifyContent={"space-between"}
           alignItems={"center"}
         >
-          <Typography variant="body2">New on our platform?</Typography>
-          <Link variant="body2" component={RouterLink} to={"/register"}>
+          <Typography color="secondary">New on our platform?</Typography>
+          <Link component={RouterLink} to={"/signup"}>
             Create an account
           </Link>
         </Box>

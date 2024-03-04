@@ -10,16 +10,21 @@ import { Transition } from "react-transition-group";
 import { useImmer } from "use-immer";
 
 import { ScrollView } from "@/components/ui/ScrollView";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 
 export function DesktopLayout(props: React.PropsWithChildren) {
   const [state, updateState] = useImmer({
-    collapsed: false,
     isHovered: false,
   });
 
+  const asideMenuCollapsed = useThemeStore((store) => store.asideMenuCollapsed);
+  const setAsideMenuCollapsed = useThemeStore(
+    (store) => store.setAsideMenuCollapsed,
+  );
+
   const logoTextRef = React.useRef<HTMLElement>(null);
 
-  const explandedContainer = state.isHovered || !state.collapsed;
+  const explandedContainer = state.isHovered || !asideMenuCollapsed;
 
   return (
     <Box
@@ -34,10 +39,11 @@ export function DesktopLayout(props: React.PropsWithChildren) {
         <Box
           component={"aside"}
           position={"sticky"}
+          zIndex={(theme) => theme.zIndex.drawer + 1}
           top={0}
           sx={{
-            inlineSize: state.collapsed ? collapsedWidth : explandedWidth,
-            minInlineSize: state.collapsed ? collapsedWidth : explandedWidth,
+            inlineSize: asideMenuCollapsed ? collapsedWidth : explandedWidth,
+            minInlineSize: asideMenuCollapsed ? collapsedWidth : explandedWidth,
             blockSize: "100dvh",
             transition(theme) {
               return theme.transitions.create([
@@ -168,12 +174,10 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                 {explandedContainer && (
                   <IconButton
                     onClick={() => {
-                      updateState((draft) => {
-                        draft.collapsed = !draft.collapsed;
-                      });
+                      setAsideMenuCollapsed((prev) => !prev);
                     }}
                   >
-                    {state.collapsed ? (
+                    {asideMenuCollapsed ? (
                       <RadioButtonUncheckedOutlined></RadioButtonUncheckedOutlined>
                     ) : (
                       <RadioButtonCheckedOutlined></RadioButtonCheckedOutlined>

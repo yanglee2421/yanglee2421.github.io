@@ -81,7 +81,7 @@ export function ForgotPassword() {
             </Button>
           </FormProvider>
         </Box>
-        <Button component={RouterLink} to={"/login"} startIcon={<ArrowBack />}>
+        <Button component={RouterLink} to={"/signin"} startIcon={<ArrowBack />}>
           Back to login
         </Button>
       </Box>

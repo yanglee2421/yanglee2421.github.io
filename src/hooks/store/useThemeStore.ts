@@ -30,6 +30,16 @@ export const useThemeStore = create(
               typeof action === "function" ? action(get().bgBlur) : action,
           });
         },
+
+        asideMenuCollapsed: false,
+        setAsideMenuCollapsed(action) {
+          return set({
+            asideMenuCollapsed:
+              typeof action === "function"
+                ? action(get().asideMenuCollapsed)
+                : action,
+          });
+        },
       };
     },
     {
@@ -46,6 +56,8 @@ export interface ThemeStore {
   setBgBlur: React.Dispatch<React.SetStateAction<number>>;
   mode: Mode;
   setMode: React.Dispatch<React.SetStateAction<Mode>>;
+  asideMenuCollapsed: boolean;
+  setAsideMenuCollapsed: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 type Mode = "system" | "dark" | "light";
