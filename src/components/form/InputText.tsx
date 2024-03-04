@@ -1,6 +1,5 @@
 import { TextField } from "@mui/material";
 import { useFormContext, useController } from "react-hook-form";
-
 import type { TextFieldProps } from "@mui/material";
 
 export function InputText(props: Props) {

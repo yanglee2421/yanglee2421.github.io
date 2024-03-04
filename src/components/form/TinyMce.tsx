@@ -1,6 +1,5 @@
 import { Editor } from "@tinymce/tinymce-react";
 import React from "react";
-
 import type { IAllProps } from "@tinymce/tinymce-react";
 
 export function TinyMce(props: IAllProps) {

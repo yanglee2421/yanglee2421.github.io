@@ -28,13 +28,11 @@ import {
 import React from "react";
 import { useImmer } from "use-immer";
 import { useShallow } from "zustand/react/shallow";
-
 import snowVillage from "@/assets/images/snow-village.jpg";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useForageFileMutation } from "@/hooks/api-localforage/useForageFileMutation";
 import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
-
 import type { Theme } from "@mui/material";
 
 export function Customer() {

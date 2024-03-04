@@ -13,10 +13,8 @@ import {
 import React from "react";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
-
 import uploadPng from "@/assets/images/upload.png";
 import { uniqBy } from "@/utils/uniqBy";
-
 import { CardSnippet } from "./CardSnippet";
 
 export function UploadMultipleFiles() {

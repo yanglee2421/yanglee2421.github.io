@@ -17,13 +17,10 @@ import { useForm, FormProvider } from "react-hook-form";
 import { toast } from "react-toastify";
 import { z } from "zod";
 import { useShallow } from "zustand/react/shallow";
-
 import { InputText } from "@/components/form/InputText";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { stringToColor } from "@/utils/stringToColor";
-
 import { UploadAvator } from "./UploadAvator";
-
 import type { Auth } from "firebase/auth";
 
 export function Account() {

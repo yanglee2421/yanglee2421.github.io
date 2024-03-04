@@ -5,13 +5,10 @@ import {
   ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
 import React from "react";
-
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
-
 import { configToPalette } from "./configToPalette";
 import { shadowsMap } from "./shadowsMap";
-
 import type {
   BreakpointsOptions,
   Components,

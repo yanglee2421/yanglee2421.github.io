@@ -12,9 +12,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useShallow } from "zustand/react/shallow";
-
 import { useThemeStore } from "@/hooks/store/useThemeStore";
-
 import type { IconButtonProps } from "@mui/material";
 
 export function ModeToggler(props: Props) {

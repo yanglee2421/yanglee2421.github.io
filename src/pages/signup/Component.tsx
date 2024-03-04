@@ -1,6 +1,5 @@
 import { GuestGuard } from "@/components/guard/GuestGuard";
 import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
-
 import { SignUp } from "./SignUp";
 
 export function Component() {

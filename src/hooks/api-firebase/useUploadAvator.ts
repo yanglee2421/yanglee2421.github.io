@@ -1,10 +1,8 @@
 import { useMutation } from "@tanstack/react-query";
 import { getAuth, updateProfile } from "firebase/auth";
 import { ref, getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
-
 import { app } from "@/api/firebase/firebase";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
-
 import type { User } from "firebase/auth";
 
 export function useUploadAvator() {

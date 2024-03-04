@@ -10,7 +10,6 @@ import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
-
 import type { ListChildComponentProps } from "react-window";
 
 import "perfect-scrollbar/css/perfect-scrollbar.css";

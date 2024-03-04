@@ -1,5 +1,4 @@
 import { alpha } from "@mui/material";
-
 import type { PaletteOptions } from "@mui/material";
 
 export function configToPalette(params: PaletteConfig): PaletteOptions {

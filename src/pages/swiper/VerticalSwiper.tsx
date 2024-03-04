@@ -3,8 +3,8 @@ import React from "react";
 import { Pagination } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
 
-import "swiper/css";
 import "swiper/css/pagination";
+import "swiper/css";
 
 export function VerticalSwiper() {
   const slideCount = 12;

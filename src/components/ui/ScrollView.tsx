@@ -1,7 +1,6 @@
 import { Box } from "@mui/material";
 import PerfectScrollbar from "perfect-scrollbar";
 import React from "react";
-
 import type { BoxProps } from "@mui/material";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 

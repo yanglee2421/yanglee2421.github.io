@@ -3,7 +3,6 @@ import { AppBar, Toolbar, IconButton, Box, styled } from "@mui/material";
 import React from "react";
 import { useOutlet, useLocation } from "react-router-dom";
 import { SwitchTransition, CSSTransition } from "react-transition-group";
-
 import { AuthGuard } from "@/components/guard/AuthGuard";
 import { LanguageToggler } from "@/components/shared/LanguageToggler";
 import { MobileMenu } from "@/components/shared/MobileMenu";

@@ -6,7 +6,7 @@
     "plugin:react-hooks/recommended",
     "plugin:import/recommended",
     "plugin:import/typescript",
-    "prettier"
+    "prettier",
   ],
   "parser": "@typescript-eslint/parser",
   "plugins": ["react-refresh"],
@@ -19,31 +19,30 @@
           "builtin",
           "external",
           "internal",
-          "unknown",
           "parent",
           "sibling",
           "index",
-          "object",
-          "type"
+          "type",
+          "unknown",
         ],
         "pathGroups": [],
-        "newlines-between": "always-and-inside-groups",
+        "newlines-between": "never",
         "alphabetize": {
           "order": "asc",
-          "caseInsensitive": true
-        }
-      }
+          "caseInsensitive": true,
+        },
+      },
     ],
     "import/default": "off",
     "import/no-named-as-default": "off",
-    "import/no-named-as-default-member": "off"
+    "import/no-named-as-default-member": "off",
   },
   "ignorePatterns": ["dist", "docs", "public"],
   "settings": {
     "import/resolver": {
       "typescript": {
-        "project": "./tsconfig.json"
-      }
-    }
-  }
+        "project": "./tsconfig.json",
+      },
+    },
+  },
 }

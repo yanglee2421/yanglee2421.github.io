@@ -1,5 +1,4 @@
 import { Stack } from "@mui/material";
-
 import { FadeButton } from "./FadeButton";
 import { FadeCard } from "./FadeCard";
 import { FruitList } from "./FruitList";

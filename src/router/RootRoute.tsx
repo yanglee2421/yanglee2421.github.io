@@ -3,7 +3,6 @@ import NProgress from "nprogress";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { useOutlet, useSearchParams, useNavigation } from "react-router-dom";
-
 import { app } from "@/api/firebase/firebase";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { AclContext } from "@/hooks/useAcl";

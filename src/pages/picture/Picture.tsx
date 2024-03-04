@@ -1,7 +1,4 @@
-// MUI Imports
 import { Stack } from "@mui/material";
-
-// Components Imports
 import { UploadMultipleFiles } from "./UploadMultipleFiles";
 import { UploadSingleFiles } from "./UploadSingleFiles";
 

@@ -1,7 +1,6 @@
 import { Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
-
 import { app } from "@/api/firebase/firebase";
 import GoogleLogo from "@/assets/images/google.png";
 

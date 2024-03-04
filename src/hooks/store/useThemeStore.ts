@@ -1,6 +1,5 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-
 import type React from "react";
 
 export const useThemeStore = create(

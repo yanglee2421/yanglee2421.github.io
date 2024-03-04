@@ -1,6 +1,5 @@
 import { UploadOutlined } from "@mui/icons-material";
 import { Button } from "@mui/material";
-
 import { useUploadAvator } from "@/hooks/api-firebase/useUploadAvator";
 
 export function UploadAvator() {

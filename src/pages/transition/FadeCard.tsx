@@ -1,7 +1,6 @@
 import { Switch, Card, CardHeader, CardContent } from "@mui/material";
 import React from "react";
 import { SwitchTransition } from "react-transition-group";
-
 import { FadeTransition } from "@/components/ui/FadeTransition";
 
 export function FadeCard() {

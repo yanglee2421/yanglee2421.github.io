@@ -9,7 +9,6 @@ import {
   ListItemText,
 } from "@mui/material";
 import React from "react";
-
 import type { ListItemButtonProps } from "@mui/material";
 
 export function MenuGroup(props: MenuGroupProps) {

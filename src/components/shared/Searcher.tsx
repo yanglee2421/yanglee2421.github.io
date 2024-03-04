@@ -8,7 +8,6 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useForm, FormProvider, useController } from "react-hook-form";
-
 import type { IconButtonProps } from "@mui/material";
 
 export function Searcher(props: SearcherProps) {

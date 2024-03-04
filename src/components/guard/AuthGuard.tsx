@@ -1,7 +1,5 @@
 import React from "react";
-
 import { useAuthStore } from "@/hooks/store/useAuthStore";
-
 import { LoginRoute } from "./LoginRoute";
 
 export function AuthGuard(props: React.PropsWithChildren) {

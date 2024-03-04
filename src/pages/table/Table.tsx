@@ -6,7 +6,6 @@ import {
   flexRender,
 } from "@tanstack/react-table";
 import React from "react";
-
 import { AnimateController } from "@/utils/AnimateController";
 import { timeout } from "@/utils/timeout";
 
