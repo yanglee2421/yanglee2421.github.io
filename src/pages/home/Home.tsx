@@ -1,18 +1,15 @@
 import { DownloadOutlined, UploadFileOutlined } from "@mui/icons-material";
 import { Box, Button, Card, CardContent, CardHeader } from "@mui/material";
 import { fabric } from "fabric";
-import { signOut, getAuth } from "firebase/auth";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { useImmer } from "use-immer";
-import { app } from "@/api/firebase/app";
 import bgImg from "@/assets/images/snow-village.jpg";
+import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { RightImage } from "./RightImage";
 
 export function Home() {
-  const [state, updateState] = useImmer<{
-    fileURL: string;
-  }>({
+  const [state, updateState] = useImmer({
     fileURL: "",
   });
 
@@ -37,11 +34,13 @@ export function Home() {
     multiple: false,
   });
 
+  const authValue = useAuthStore();
+
   return (
     <Box>
       <Button
         onClick={() => {
-          signOut(getAuth(app));
+          authValue.value.auth.signOut();
         }}
         color="error"
         variant="contained"
@@ -84,7 +83,7 @@ export function Home() {
               </Button>
             )
           }
-        ></CardHeader>
+        />
         <CardContent>
           <Box
             {...dropzone.getRootProps()}
@@ -100,24 +99,20 @@ export function Home() {
             {state.fileURL ? (
               <img src={state.fileURL} alt="upload file" height={360}></img>
             ) : (
-              <UploadFileOutlined
-                fontSize="inherit"
-                color="inherit"
-              ></UploadFileOutlined>
+              <UploadFileOutlined fontSize="inherit" color="inherit" />
             )}
           </Box>
         </CardContent>
       </Card>
-      <Box height={400}></Box>
+      <Box height={320} />
       <Box
-        height={400}
         sx={{
           backgroundImage: `url(${bgImg})`,
           backgroundAttachment: "fixed",
+          aspectRatio: "8/3",
         }}
-      ></Box>
-      <Box height={400}></Box>
-      <RightImage></RightImage>
+      />
+      <RightImage />
     </Box>
   );
 }

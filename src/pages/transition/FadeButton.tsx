@@ -18,9 +18,9 @@ export function FadeButton() {
               void evt;
               setState(checked);
             }}
-          ></Switch>
+          />
         }
-      ></CardHeader>
+      />
       <CardContent>
         <SwitchTransition>
           <FadeCssTransition key={state ? 1 : 2}>

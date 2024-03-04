@@ -20,7 +20,7 @@ export function NotFound() {
       blur={deferredBlur}
       sx={{ inset: 0 }}
     >
-      <Customer></Customer>
+      <Customer />
       <Box
         color="common.white"
         textAlign={"center"}

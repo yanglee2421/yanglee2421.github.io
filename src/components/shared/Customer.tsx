@@ -112,7 +112,7 @@ export function Customer() {
           bgcolor: "action.active",
         }}
       >
-        <SettingsOutlined color="inherit"></SettingsOutlined>
+        <SettingsOutlined color="inherit" />
       </IconButton>
       <SwipeableDrawer
         open={setting.showDrawer}
@@ -135,10 +135,10 @@ export function Customer() {
         >
           <Box p={2}>
             <IconButton onClick={handleDrawerClose}>
-              <CloseOutlined></CloseOutlined>
+              <CloseOutlined />
             </IconButton>
           </Box>
-          <Divider></Divider>
+          <Divider />
           <Box flex={1} overflow={"hidden"}>
             <ScrollView>
               <Box
@@ -166,13 +166,13 @@ export function Customer() {
                           }}
                         >
                           {setting.wallpaperCollapsed ? (
-                            <AddOutlined></AddOutlined>
+                            <AddOutlined />
                           ) : (
-                            <RemoveOutlined></RemoveOutlined>
+                            <RemoveOutlined />
                           )}
                         </IconButton>
                       }
-                    ></CardHeader>
+                    />
                     <Collapse in={!setting.wallpaperCollapsed}>
                       <CardContent>
                         <CardActionArea
@@ -193,7 +193,7 @@ export function Customer() {
                                   alt="Background image preview"
                                   width={setting.imageWidth}
                                   height={setting.imageHeight}
-                                ></StyledImg>
+                                />
                               );
                             }
 
@@ -204,7 +204,7 @@ export function Customer() {
                                   alt={query.error.message}
                                   width={setting.imageWidth}
                                   height={setting.imageHeight}
-                                ></StyledImg>
+                                />
                               );
                             }
 
@@ -217,7 +217,7 @@ export function Customer() {
                                 }}
                                 width={setting.imageWidth}
                                 height={setting.imageHeight}
-                              ></StyledImg>
+                              />
                             );
                           })()}
                           <input
@@ -252,7 +252,7 @@ export function Customer() {
                               }
                             }}
                             valueLabelDisplay="auto"
-                          ></Slider>
+                          />
                         </FormControl>
                         <FormControl fullWidth>
                           <FormLabel>
@@ -270,7 +270,7 @@ export function Customer() {
                               }
                             }}
                             valueLabelDisplay="auto"
-                          ></Slider>
+                          />
                         </FormControl>
                       </CardContent>
                       <CardActions>
@@ -280,18 +280,13 @@ export function Customer() {
                           href={query.data?.src || snowVillage}
                           download={query.data?.filename}
                           title="download image"
-                          startIcon={
-                            <DownloadOutlined fontSize="small"></DownloadOutlined>
-                          }
+                          startIcon={<DownloadOutlined fontSize="small" />}
                           sx={{ textTransform: "lowercase" }}
                         >
                           download
                         </Button>
                       </CardActions>
                     </Collapse>
-                  </Card>
-                  <Card>
-                    <CardContent></CardContent>
                   </Card>
                 </Stack>
                 <Box height={1000}>465464161</Box>

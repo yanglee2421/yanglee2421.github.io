@@ -51,8 +51,8 @@ export function ThemeProvider(props: React.PropsWithChildren) {
 
   return (
     <MuiThemeProvider theme={theme}>
-      <GlobalStyles styles={themeToGlobalStyles(theme)}></GlobalStyles>
-      <CssBaseline></CssBaseline>
+      <GlobalStyles styles={themeToGlobalStyles(theme)} />
+      <CssBaseline />
       {props.children}
     </MuiThemeProvider>
   );

@@ -15,7 +15,7 @@ export function InternalServerError() {
 
   return (
     <ImageBackground alpha={deferredAlpha} blur={deferredBlur}>
-      <Customer></Customer>
+      <Customer />
       <Box
         color="common.white"
         textAlign={"center"}

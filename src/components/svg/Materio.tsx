@@ -1,12 +1,8 @@
 import React from "react";
 
-export const Materio = React.forwardRef<
-  SVGSVGElement,
-  React.SVGAttributes<SVGSVGElement>
->((props, ref) => {
+export function Materio(props: React.SVGProps<SVGSVGElement>) {
   return (
     <svg
-      ref={ref}
       width="1.2658em"
       height="1em"
       viewBox="0 0 100 79"
@@ -82,4 +78,4 @@ export const Materio = React.forwardRef<
       />
     </svg>
   );
-});
+}

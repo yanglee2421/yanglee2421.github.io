@@ -1,26 +1,31 @@
 import React from "react";
 
-export function Camera() {
+export function Camera(
+  props: React.DetailedHTMLProps<
+    React.VideoHTMLAttributes<HTMLVideoElement>,
+    HTMLVideoElement
+  >,
+) {
   const videoRef = React.useRef<HTMLVideoElement>(null);
+
   React.useEffect(() => {
     const video = videoRef.current;
-    if (!video) return;
+
+    if (!(video instanceof HTMLVideoElement)) {
+      return;
+    }
 
     handleCamera(video);
-  }, [videoRef]);
+  }, []);
 
-  return (
-    <div>
-      <video ref={videoRef} width={300} height={200}></video>
-    </div>
-  );
+  return <video ref={videoRef} {...props}></video>;
 }
 
 async function handleCamera(video: HTMLVideoElement) {
   const mediaStream = await navigator.mediaDevices.getUserMedia({
     video: {
-      width: 300,
-      height: 200,
+      width: video.width,
+      height: video.height,
     },
     audio: {},
   });
