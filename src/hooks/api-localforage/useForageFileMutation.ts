@@ -1,4 +1,3 @@
-// Query Imports
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import localforage from "localforage";
 

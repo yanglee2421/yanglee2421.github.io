@@ -1,4 +1,3 @@
-// React Imports
 import React from "react";
 
 export function useIsDark() {
@@ -14,9 +13,8 @@ export function useIsDark() {
         controller.abort();
       };
     },
-    () => {
-      return mediaQuery.matches;
-    },
+
+    () => mediaQuery.matches,
   );
 }
 

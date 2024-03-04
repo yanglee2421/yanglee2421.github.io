@@ -22,21 +22,20 @@ export const routes: RouteObject[] = [
         },
       },
       {
-        id: "forgot-password",
-        path: "forgot-password",
-        lazy() {
-          return import("@/pages/forgot-password/Component");
-        },
-      },
-      {
         id: "signup",
         path: "signup",
         lazy() {
           return import("@/pages/signup/Component");
         },
       },
+      {
+        id: "forgot-password",
+        path: "forgot-password",
+        lazy() {
+          return import("@/pages/forgot-password/Component");
+        },
+      },
 
-      // With App Bar
       {
         id: "with-appbar",
         async lazy() {
