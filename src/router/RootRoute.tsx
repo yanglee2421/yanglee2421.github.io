@@ -4,13 +4,10 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { useOutlet, useSearchParams, useNavigation } from "react-router-dom";
 
-import { app } from "@/api/firebase";
+import { app } from "@/api/firebase/firebase";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { AclContext } from "@/hooks/useAcl";
 import { defineAbilityFor } from "@/utils/defineAbilityFor";
-
-
-
 
 export function RootRoute() {
   const outlet = useOutlet();

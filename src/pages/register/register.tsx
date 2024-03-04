@@ -13,7 +13,6 @@ import { useForm, FormProvider } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
 import { z } from "zod";
 
-
 import { InputPassword } from "@/components/form/InputPassword";
 import { InputText } from "@/components/form/InputText";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
@@ -47,18 +46,15 @@ export function Register() {
         boxShadow={(theme) => theme.shadows[2]}
       >
         <Box>
-          <Typography variant="h4">Hello</Typography>
+          <Typography variant="h5">Adventure starts here 🚀</Typography>
           <Typography
-            variant="body2"
+            color={"secondary"}
             overflow={"hidden"}
             maxHeight={(theme) => {
               return `calc(${theme.typography.body2.lineHeight}em * 3)`;
             }}
           >
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit.
-            Reprehenderit illo recusandae accusantium voluptas sapiente
-            voluptate, eaque amet porro harum veniam natus. Optio, quod debitis
-            asperiores nesciunt explicabo nisi nam eos.
+            Make your app management easy and fun!
           </Typography>
         </Box>
         <Box
@@ -89,7 +85,7 @@ export function Register() {
                   </Link>
                 </Box>
               }
-              sx={{ my: 1 }}
+              sx={{ my: 2 }}
             ></FormControlLabel>
             <Button
               type="submit"

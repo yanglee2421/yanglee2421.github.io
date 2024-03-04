@@ -1,4 +1,3 @@
-
 import { Box } from "@mui/material";
 import PerfectScrollbar from "perfect-scrollbar";
 import React from "react";
@@ -33,7 +32,7 @@ export const ScrollView = React.forwardRef<HTMLDivElement, Props>(
       () => {
         return containerRef.current as HTMLDivElement;
       },
-      []
+      [],
     );
 
     React.useEffect(() => {
@@ -153,7 +152,7 @@ export const ScrollView = React.forwardRef<HTMLDivElement, Props>(
         <Box ref={contentRef}>{children}</Box>
       </Box>
     );
-  }
+  },
 );
 
 type Props = BoxProps & {

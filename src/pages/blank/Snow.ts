@@ -1,5 +1,8 @@
 class GetRandom {
-  constructor(private readonly min: number, private readonly max: number) {}
+  constructor(
+    private readonly min: number,
+    private readonly max: number,
+  ) {}
   get() {
     return Math.random() * (this.max - this.min) + this.min;
   }
@@ -55,7 +58,7 @@ export class Snow {
   #snowflake: Snowflake[] = [];
   constructor(
     private readonly canvas: HTMLCanvasElement,
-    public readonly number = 100
+    public readonly number = 100,
   ) {}
 
   #animationId = 0;

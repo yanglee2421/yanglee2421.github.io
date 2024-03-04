@@ -1,4 +1,3 @@
-
 import {
   RadioButtonCheckedOutlined,
   RadioButtonUncheckedOutlined,
@@ -110,7 +109,7 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                     addEndListener={(done) => {
                       logoTextRef.current?.addEventListener(
                         "transitionend",
-                        done
+                        done,
                       );
                     }}
                     unmountOnExit

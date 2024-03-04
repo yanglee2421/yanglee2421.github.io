@@ -17,7 +17,6 @@ import { Link } from "react-router-dom";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { stringToColor } from "@/utils/stringToColor";
 
-
 export function UserDropdown() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
@@ -47,7 +46,7 @@ export function UserDropdown() {
             bgcolor: authValue.auth.currentUser?.displayName
               ? alpha(
                   stringToColor(authValue.auth.currentUser.displayName || ""),
-                  0.12
+                  0.12,
                 )
               : void 0,
           }}

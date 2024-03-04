@@ -1,4 +1,3 @@
-
 import { CloseOutlined, UploadFileOutlined } from "@mui/icons-material";
 import {
   TextField,
@@ -19,7 +18,6 @@ import uploadPng from "@/assets/images/upload.png";
 import { uniqBy } from "@/utils/uniqBy";
 
 import { CardSnippet } from "./CardSnippet";
-
 
 export function UploadMultipleFiles() {
   const [files, setFiles] = React.useState<File[]>([]);
@@ -115,10 +113,10 @@ export function UploadMultipleFiles() {
                       <Typography variant="body2">
                         {Math.round(file.size / 100) / 10 > 1000
                           ? `${(Math.round(file.size / 100) / 10000).toFixed(
-                              1
+                              1,
                             )} mb`
                           : `${(Math.round(file.size / 100) / 10).toFixed(
-                              1
+                              1,
                             )} kb`}
                       </Typography>
                     </Box>

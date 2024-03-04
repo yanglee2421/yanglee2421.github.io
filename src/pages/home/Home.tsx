@@ -1,10 +1,12 @@
 import { DownloadOutlined, UploadFileOutlined } from "@mui/icons-material";
 import { Box, Button, Card, CardContent, CardHeader } from "@mui/material";
 import { fabric } from "fabric";
+import { signOut, getAuth } from "firebase/auth";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { useImmer } from "use-immer";
 
+import { app } from "@/api/firebase/firebase";
 import bgImg from "@/assets/images/snow-village.jpg";
 
 import { RightImage } from "./RightImage";
@@ -39,6 +41,15 @@ export function Home() {
 
   return (
     <Box>
+      <Button
+        onClick={() => {
+          signOut(getAuth(app));
+        }}
+        color="error"
+        variant="contained"
+      >
+        sign out
+      </Button>
       <Card>
         <CardHeader
           title="Upload Single Files"

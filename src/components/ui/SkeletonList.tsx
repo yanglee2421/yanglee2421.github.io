@@ -19,5 +19,5 @@ export const SkeletonList = React.forwardRef<HTMLUListElement, ListProps>(
         <SkeletonListItem></SkeletonListItem>
       </List>
     );
-  }
+  },
 );

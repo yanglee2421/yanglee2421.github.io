@@ -11,7 +11,6 @@ import { ModeToggler } from "@/components/shared/ModeToggler";
 import { Searcher } from "@/components/shared/Searcher";
 import { UserDropdown } from "@/components/shared/UserDropdown";
 
-
 export function MobileLayout() {
   const outlet = useOutlet();
   const location = useLocation();

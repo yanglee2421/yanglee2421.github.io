@@ -1,7 +1,7 @@
 export function countdown(date: Date) {
   const [day, restDay] = toTimeCarry(
     date.getTime() - Date.now(),
-    1000 * 60 * 60 * 24
+    1000 * 60 * 60 * 24,
   );
   const [hour, restHour] = toTimeCarry(restDay, 1000 * 60 * 60);
   const [min, restMin] = toTimeCarry(restHour, 1000 * 60);

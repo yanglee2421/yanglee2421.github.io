@@ -3,7 +3,7 @@ import { IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { useSearchParams } from "react-router-dom";
 
-import type { IconButtonProps} from "@mui/material";
+import type { IconButtonProps } from "@mui/material";
 
 export function LanguageToggler(props: Props) {
   const { ...restProps } = props;

@@ -70,7 +70,7 @@ export function Searcher(props: SearcherProps) {
           return;
         }
       },
-      { signal }
+      { signal },
     );
     document.addEventListener(
       "keyup",
@@ -80,7 +80,7 @@ export function Searcher(props: SearcherProps) {
           return;
         }
       },
-      { signal }
+      { signal },
     );
 
     return () => {

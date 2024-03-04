@@ -21,7 +21,7 @@ export function InputCheckbox(props: Props) {
       onChange={(evt, checked) => {
         void evt;
         controller.field.onChange(
-          toNextValue(checked, value, controller.field.value)
+          toNextValue(checked, value, controller.field.value),
         );
       }}
       {...restProps}

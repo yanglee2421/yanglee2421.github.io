@@ -1,4 +1,3 @@
-
 import { Box, Button, Paper, Typography } from "@mui/material";
 import {
   useReactTable,
@@ -25,7 +24,7 @@ export function Table() {
       React.startTransition(() => {
         setNumber(Math.floor(Math.random() * 100) + 1);
       });
-    })
+    }),
   );
 
   const handleRoll = async () => {
@@ -56,7 +55,7 @@ export function Table() {
                         ? null
                         : flexRender(
                             header.column.columnDef.header,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </th>
                   );
@@ -74,7 +73,7 @@ export function Table() {
                     <td key={cell.id}>
                       {flexRender(
                         cell.column.columnDef.cell,
-                        cell.getContext()
+                        cell.getContext(),
                       )}
                     </td>
                   );
@@ -94,7 +93,7 @@ export function Table() {
                         ? null
                         : flexRender(
                             header.column.columnDef.footer,
-                            header.getContext()
+                            header.getContext(),
                           )}
                     </th>
                   );

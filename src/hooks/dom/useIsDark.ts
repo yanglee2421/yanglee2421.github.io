@@ -16,7 +16,7 @@ export function useIsDark() {
     },
     () => {
       return mediaQuery.matches;
-    }
+    },
   );
 }
 

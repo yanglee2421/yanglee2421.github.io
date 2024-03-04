@@ -27,7 +27,7 @@ export function VerticalSwiper() {
           const nodeSet = new Set<React.ReactNode>();
           for (let i = 0; i < slideCount; i++) {
             nodeSet.add(
-              <StyledSwiperSlide key={i}>Slide {i}</StyledSwiperSlide>
+              <StyledSwiperSlide key={i}>Slide {i}</StyledSwiperSlide>,
             );
           }
 

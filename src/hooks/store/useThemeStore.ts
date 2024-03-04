@@ -35,8 +35,8 @@ export const useThemeStore = create(
     {
       name: import.meta.env.VITE_ZUSTAND_PERSIST,
       storage: createJSONStorage(() => globalThis.localStorage),
-    }
-  )
+    },
+  ),
 );
 
 export interface ThemeStore {

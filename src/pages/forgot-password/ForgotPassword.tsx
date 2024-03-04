@@ -6,7 +6,6 @@ import { useTranslation } from "react-i18next";
 import { Link as RouterLink } from "react-router-dom";
 import { z } from "zod";
 
-
 import { InputText } from "@/components/form/InputText";
 
 export function ForgotPassword() {
@@ -38,19 +37,17 @@ export function ForgotPassword() {
         }}
       >
         <Box>
-          <Typography variant="h4">{t("hello")}</Typography>
+          <Typography variant="h5">Forgot Password 🔒</Typography>
           <Typography
-            variant="body2"
             mt={1}
+            color="secondary"
             overflow={"hidden"}
             maxHeight={(theme) => {
               return `calc(${theme.typography.body2.lineHeight}em * 3)`;
             }}
           >
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Rerum
-            velit exercitationem vitae deserunt dolorum consequuntur culpa
-            repellendus, quibusdam deleniti error atque in excepturi corrupti
-            quae assumenda, necessitatibus amet, incidunt labore?
+            Enter your email and we'll send you instructions to reset your
+            password
           </Typography>
         </Box>
         <Box
@@ -61,7 +58,7 @@ export function ForgotPassword() {
             },
             (error) => {
               console.warn(error);
-            }
+            },
           )}
           noValidate
           autoComplete="off"

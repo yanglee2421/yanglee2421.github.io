@@ -42,9 +42,9 @@ export function Login() {
         boxShadow={(theme) => theme.shadows[2]}
       >
         <Box>
-          <Typography variant="h4">Wellcome to here!</Typography>
+          <Typography variant="h5">Welcome to Materio!👋🏻</Typography>
           <Typography
-            variant="body2"
+            color="secondary"
             sx={{
               overflow: "hidden",
               maxHeight(theme) {
@@ -52,8 +52,7 @@ export function Login() {
               },
             }}
           >
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Porro omnis
-            sed fugiat placeat alias illo praesentium.
+            Please sign-in to your account and start the adventure
           </Typography>
         </Box>
         <Box
@@ -67,7 +66,7 @@ export function Login() {
             },
             (error) => {
               console.warn(error);
-            }
+            },
           )}
           noValidate
           autoComplete="off"

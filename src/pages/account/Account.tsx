@@ -24,7 +24,7 @@ import { stringToColor } from "@/utils/stringToColor";
 
 import { UploadAvator } from "./UploadAvator";
 
-import type { Auth} from "firebase/auth";
+import type { Auth } from "firebase/auth";
 
 export function Account() {
   const { authValue, updateAuth } = useAuthStore(
@@ -33,7 +33,7 @@ export function Account() {
         authValue: store.value,
         updateAuth: store.update,
       };
-    })
+    }),
   );
 
   const formCtx = useForm<FormValues>({
@@ -107,15 +107,15 @@ export function Account() {
                   sx={{
                     color: authValue.auth.currentUser?.displayName
                       ? stringToColor(
-                          authValue.auth.currentUser.displayName || ""
+                          authValue.auth.currentUser.displayName || "",
                         )
                       : void 0,
                     bgcolor: authValue.auth.currentUser?.displayName
                       ? alpha(
                           stringToColor(
-                            authValue.auth.currentUser.displayName || ""
+                            authValue.auth.currentUser.displayName || "",
                           ),
-                          0.12
+                          0.12,
                         )
                       : void 0,
                   }}

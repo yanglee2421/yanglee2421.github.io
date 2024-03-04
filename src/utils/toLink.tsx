@@ -9,7 +9,7 @@ export function toLink(str: unknown, msg = "") {
 
   const groups =
     /^(?<prefix>.*)(?<link>https?:\/\/.+\.\w{2,3}(:\d{2,5})?(\/\w+)*)(?<suffix>.*)$/gis.exec(
-      str
+      str,
     )?.groups;
 
   if (!groups) {

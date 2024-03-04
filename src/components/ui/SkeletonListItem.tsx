@@ -5,12 +5,11 @@ import {
   ListItem,
   ListItemText,
   ListItemAvatar,
-  Avatar
+  Avatar,
 } from "@mui/material";
 import React from "react";
 
-import type {
-  ListItemProps} from "@mui/material";
+import type { ListItemProps } from "@mui/material";
 
 // React Imports
 
@@ -29,5 +28,5 @@ export const SkeletonListItem = React.forwardRef<HTMLLIElement, ListItemProps>(
         ></ListItemText>
       </ListItem>
     );
-  }
+  },
 );

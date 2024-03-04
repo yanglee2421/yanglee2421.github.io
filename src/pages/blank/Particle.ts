@@ -1,5 +1,8 @@
 class GetRandom {
-  constructor(private readonly min: number, private readonly max: number) {}
+  constructor(
+    private readonly min: number,
+    private readonly max: number,
+  ) {}
   get() {
     return Math.random() * (this.max - this.min) + this.min;
   }
@@ -48,7 +51,7 @@ export class Particles {
   constructor(
     private readonly canvas: HTMLCanvasElement,
     particleNum = 100,
-    private lineMax = 100
+    private lineMax = 100,
   ) {
     for (let i = 0; i < particleNum; i++) {
       this.#arr.push(new Particle(this.canvas));
@@ -109,7 +112,7 @@ export class Particles {
         this.#one.yv = 0;
         this.#arr.push(this.#one);
       },
-      { signal }
+      { signal },
     );
     this.canvas.addEventListener(
       "mousemove",
@@ -118,7 +121,7 @@ export class Particles {
         this.#one.x = offsetX;
         this.#one.y = offsetY;
       },
-      { signal }
+      { signal },
     );
     this.canvas.addEventListener(
       "mouseout",
@@ -129,7 +132,7 @@ export class Particles {
           this.#one = null;
         }
       },
-      { signal }
+      { signal },
     );
   }
   abortEvent() {

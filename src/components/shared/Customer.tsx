@@ -35,11 +35,7 @@ import { useForageFileMutation } from "@/hooks/api-localforage/useForageFileMuta
 import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 
-import type {
-  Theme} from "@mui/material";
-
-
-
+import type { Theme } from "@mui/material";
 
 export function Customer() {
   const query = useForageFileQuery("bg-img");
@@ -66,7 +62,7 @@ export function Customer() {
         bgBlur: store.bgBlur,
         setBgBlur: store.setBgBlur,
       };
-    })
+    }),
   );
 
   const handleDrawerClose = () => {

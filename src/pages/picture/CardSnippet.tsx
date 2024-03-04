@@ -10,7 +10,6 @@ import {
 } from "@mui/material";
 import React from "react";
 
-
 // React Imports
 
 export function CardSnippet(props: CardSnippetProps) {

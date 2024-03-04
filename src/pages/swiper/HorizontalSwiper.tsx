@@ -88,7 +88,7 @@ export function HorizontalSwiper() {
                 >
                   {i}
                 </Box>
-              </SwiperSlide>
+              </SwiperSlide>,
             );
           }
 

@@ -7,12 +7,11 @@ import {
   ListItemButton,
   Collapse,
   ListItemIcon,
-  ListItemText
+  ListItemText,
 } from "@mui/material";
 import React from "react";
 
-import type {
-  ListItemButtonProps} from "@mui/material";
+import type { ListItemButtonProps } from "@mui/material";
 
 // MUI Imports
 

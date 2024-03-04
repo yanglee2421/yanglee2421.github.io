@@ -8,15 +8,14 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
-  Menu
+  Menu,
 } from "@mui/material";
 import React from "react";
 import { useShallow } from "zustand/react/shallow";
 
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 
-import type {
-  IconButtonProps} from "@mui/material";
+import type { IconButtonProps } from "@mui/material";
 
 export function ModeToggler(props: Props) {
   const { ...restProps } = props;
@@ -27,7 +26,7 @@ export function ModeToggler(props: Props) {
         mode: store.mode,
         setMode: store.setMode,
       };
-    })
+    }),
   );
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);

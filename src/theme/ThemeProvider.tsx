@@ -1,4 +1,3 @@
-
 import {
   createTheme,
   CssBaseline,
@@ -17,7 +16,8 @@ import type {
   BreakpointsOptions,
   Components,
   GlobalStylesProps,
-  Theme} from "@mui/material";
+  Theme,
+} from "@mui/material";
 
 export function ThemeProvider(props: React.PropsWithChildren) {
   const themeMode = useThemeStore((store) => store.mode);

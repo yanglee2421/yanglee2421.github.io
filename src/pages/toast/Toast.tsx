@@ -95,7 +95,7 @@ export function Toast() {
               pending: "pending",
               error: "error",
               success: "success",
-            }
+            },
           );
         }}
       >
