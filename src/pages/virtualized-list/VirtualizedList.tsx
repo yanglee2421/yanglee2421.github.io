@@ -6,13 +6,12 @@ import {
   Paper,
 } from "@mui/material";
 import PerfectScrollbar from "perfect-scrollbar";
+import "perfect-scrollbar/css/perfect-scrollbar.css";
 import React from "react";
 import AutoSizer from "react-virtualized-auto-sizer";
 import { FixedSizeList } from "react-window";
 import InfiniteLoader from "react-window-infinite-loader";
 import type { ListChildComponentProps } from "react-window";
-
-import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 export function VirtualizedList() {
   const infiniteRef = React.useRef<InfiniteLoader>(null);
