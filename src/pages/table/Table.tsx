@@ -1,4 +1,3 @@
-import React from "react";
 
 import { Box, Button, Paper, Typography } from "@mui/material";
 import {
@@ -7,9 +6,10 @@ import {
   getCoreRowModel,
   flexRender,
 } from "@tanstack/react-table";
+import React from "react";
 
-import { timeout } from "@/utils/timeout";
 import { AnimateController } from "@/utils/AnimateController";
+import { timeout } from "@/utils/timeout";
 
 export function Table() {
   const table = useReactTable({

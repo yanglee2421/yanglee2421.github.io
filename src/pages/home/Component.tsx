@@ -1,5 +1,6 @@
-import { Home } from "./Home";
 import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
+
+import { Home } from "./Home";
 
 export function Component() {
   useHeadTitle("Home");

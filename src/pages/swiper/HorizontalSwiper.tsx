@@ -1,16 +1,9 @@
-// MUI Imports
-import React from "react";
-
-import { Box, IconButton, Paper, alpha } from "@mui/material";
 import {
   ArrowBackIosNewRounded,
   ArrowForwardIosRounded,
 } from "@mui/icons-material";
-
-// React Imports
-
-// Swiper Imports
-import { Swiper, SwiperSlide } from "swiper/react";
+import { Box, IconButton, Paper, alpha } from "@mui/material";
+import React from "react";
 import {
   Navigation,
   Pagination,
@@ -18,16 +11,17 @@ import {
   A11y,
   Autoplay,
 } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+import { useImmer } from "use-immer";
+
+import type { Swiper as SwiperType } from "swiper/types";
+
 import "swiper/css";
 import "swiper/css/navigation";
 import "swiper/css/pagination";
 import "swiper/css/scrollbar";
 import "swiper/css/a11y";
 import "swiper/css/autoplay";
-
-// Utils Imports
-import { useImmer } from "use-immer";
-import type { Swiper as SwiperType } from "swiper/types";
 
 export function HorizontalSwiper() {
   const slideCount = 12;

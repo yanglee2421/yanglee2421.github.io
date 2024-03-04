@@ -1,6 +1,7 @@
-import type { CheckboxProps } from "@mui/material";
 import { Checkbox } from "@mui/material";
 import { useFormContext, useController } from "react-hook-form";
+
+import type { CheckboxProps } from "@mui/material";
 
 export function InputCheckbox(props: Props) {
   const { field, value, disabled, ...restProps } = props;

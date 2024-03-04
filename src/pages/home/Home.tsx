@@ -1,12 +1,13 @@
-import { Box, Button, Card, CardContent, CardHeader } from "@mui/material";
 import { DownloadOutlined, UploadFileOutlined } from "@mui/icons-material";
-import { useDropzone } from "react-dropzone";
+import { Box, Button, Card, CardContent, CardHeader } from "@mui/material";
 import { fabric } from "fabric";
-import { useImmer } from "use-immer";
+import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
+import { useImmer } from "use-immer";
+
+import bgImg from "@/assets/images/snow-village.jpg";
 
 import { RightImage } from "./RightImage";
-import bgImg from "@/assets/images/snow-village.jpg";
 
 export function Home() {
   const [state, updateState] = useImmer<{

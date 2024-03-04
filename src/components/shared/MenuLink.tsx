@@ -1,20 +1,6 @@
-// React Imports
-import React from "react";
-
-// MUI Imports
-import type {
-  ListItemButtonProps} from "@mui/material";
-import {
-  ListItemButton,
-  ListItemIcon,
-  ListItemText,
-} from "@mui/material";
 import { FiberManualRecordOutlined } from "@mui/icons-material";
-
-// Router Imports
-import type {
-  To,
-  RelativeRoutingType} from "react-router-dom";
+import { ListItemButton, ListItemIcon, ListItemText } from "@mui/material";
+import React from "react";
 import {
   useResolvedPath,
   useLocation,
@@ -22,11 +8,12 @@ import {
   Link,
 } from "react-router-dom";
 
+import type { ListItemButtonProps } from "@mui/material";
+import type { To, RelativeRoutingType } from "react-router-dom";
+
 export function MenuLink(props: MenuLinkProps) {
-  // ** Props
   const { label, icon, to, end, caseSensitive, relative, ...restProps } = props;
 
-  // Get isActive
   const path = useResolvedPath(to, { relative });
   const location = useLocation();
   const { navigator } = React.useContext(UNSAFE_NavigationContext);

@@ -1,5 +1,4 @@
-import React from "react";
-
+import { ExitToApp, PeopleOutline } from "@mui/icons-material";
 import {
   Avatar,
   Badge,
@@ -12,8 +11,7 @@ import {
   alpha,
   styled,
 } from "@mui/material";
-import { ExitToApp, PeopleOutline } from "@mui/icons-material";
-
+import React from "react";
 import { Link } from "react-router-dom";
 
 import { useAuthStore } from "@/hooks/store/useAuthStore";

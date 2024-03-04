@@ -1,6 +1,7 @@
 import { GuestGuard } from "@/components/guard/GuestGuard";
-import { ForgotPassword } from "./ForgotPassword";
 import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
+
+import { ForgotPassword } from "./ForgotPassword";
 
 export function Component() {
   useHeadTitle("Forgot Password");

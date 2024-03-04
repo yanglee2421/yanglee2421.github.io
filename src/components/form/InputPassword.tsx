@@ -1,9 +1,9 @@
+import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 import React from "react";
+import { useFormContext, useController } from "react-hook-form";
 
 import type { TextFieldProps } from "@mui/material";
-import { IconButton, InputAdornment, TextField } from "@mui/material";
-import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
-import { useFormContext, useController } from "react-hook-form";
 
 export function InputPassword(props: Props) {
   const { field, disabled, ...restProps } = props;

@@ -1,8 +1,9 @@
 // TinyMCE Imports
+
+import { Editor } from "@tinymce/tinymce-react";
 import React from "react";
 
 import type { IAllProps } from "@tinymce/tinymce-react";
-import { Editor } from "@tinymce/tinymce-react";
 
 // React Imports
 

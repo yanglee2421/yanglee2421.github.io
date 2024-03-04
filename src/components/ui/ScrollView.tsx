@@ -1,8 +1,9 @@
+
+import { Box } from "@mui/material";
+import PerfectScrollbar from "perfect-scrollbar";
 import React from "react";
 
 import type { BoxProps } from "@mui/material";
-import { Box } from "@mui/material";
-import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
 export const ScrollView = React.forwardRef<HTMLDivElement, Props>(

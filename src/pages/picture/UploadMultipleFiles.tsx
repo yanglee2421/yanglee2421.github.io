@@ -1,5 +1,5 @@
-import React from "react";
 
+import { CloseOutlined, UploadFileOutlined } from "@mui/icons-material";
 import {
   TextField,
   styled,
@@ -11,15 +11,14 @@ import {
   IconButton,
   Link,
 } from "@mui/material";
-import { CloseOutlined, UploadFileOutlined } from "@mui/icons-material";
-
+import React from "react";
 import { useDropzone } from "react-dropzone";
-
 import { toast } from "react-toastify";
 
-import { CardSnippet } from "./CardSnippet";
 import uploadPng from "@/assets/images/upload.png";
 import { uniqBy } from "@/utils/uniqBy";
+
+import { CardSnippet } from "./CardSnippet";
 
 
 export function UploadMultipleFiles() {

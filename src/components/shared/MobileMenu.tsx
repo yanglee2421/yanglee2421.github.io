@@ -1,4 +1,3 @@
-import React from "react";
 
 import {
   CloseOutlined,
@@ -7,11 +6,14 @@ import {
   TabOutlined,
   DataUsageOutlined,
 } from "@mui/icons-material";
-import type { IconButtonProps } from "@mui/material";
 import { IconButton, Drawer, Box, List } from "@mui/material";
+import React from "react";
 
 import { ScrollView } from "@/components/ui/ScrollView";
+
 import { MenuLink } from "./MenuLink";
+
+import type { IconButtonProps } from "@mui/material";
 
 export function MobileMenu(props: IconButtonProps) {
   const { ...restProps } = props;

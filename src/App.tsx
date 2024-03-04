@@ -3,12 +3,11 @@ import {
   createBrowserRouter,
   RouterProvider,
 } from "react-router-dom";
-
 import { ToastContainer } from "react-toastify";
 
+import { QueryProvider } from "@/components/QueryProvider";
 import { routes } from "@/router/routes";
 import { ThemeProvider } from "@/theme/ThemeProvider";
-import { QueryProvider } from "@/components/QueryProvider";
 
 import "react-toastify/ReactToastify.css";
 

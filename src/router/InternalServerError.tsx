@@ -1,12 +1,11 @@
-import React from "react";
-
-import { NavLink } from "react-router-dom";
 import { Box, Button, Typography } from "@mui/material";
+import React from "react";
+import { NavLink } from "react-router-dom";
 
-import { ImageBackground } from "@/components/ui/ImageBackground";
 import { Customer } from "@/components/shared/Customer";
-import { useThemeStore } from "@/hooks/store/useThemeStore";
+import { ImageBackground } from "@/components/ui/ImageBackground";
 import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 
 export function InternalServerError() {
   useHeadTitle("Internal Server Error");

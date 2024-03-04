@@ -1,10 +1,10 @@
 // Firebase Imports
-import type { Auth } from "firebase/auth";
 import { getAuth } from "firebase/auth";
-
 import { create } from "zustand";
 
 import { app } from "@/api/firebase";
+
+import type { Auth } from "firebase/auth";
 
 // Zustand Imports
 

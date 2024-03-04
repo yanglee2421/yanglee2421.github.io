@@ -1,13 +1,12 @@
-import React from "react";
-
 import { TextField, styled, Box, Typography } from "@mui/material";
+import imageCompression from "browser-image-compression";
+import React from "react";
 import { useDropzone } from "react-dropzone";
 
-import imageCompression from "browser-image-compression";
-
 import uploadPng from "@/assets/images/upload.png";
-import { CardSnippet } from "./CardSnippet";
 import { uniqBy } from "@/utils/uniqBy";
+
+import { CardSnippet } from "./CardSnippet";
 
 export function UploadSingleFiles() {
   const [dataURL, setDataURL] = React.useState("");

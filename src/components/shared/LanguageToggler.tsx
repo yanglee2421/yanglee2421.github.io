@@ -1,9 +1,9 @@
+import { TranslateOutlined } from "@mui/icons-material";
+import { IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
+import { useSearchParams } from "react-router-dom";
 
 import type { IconButtonProps} from "@mui/material";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import { TranslateOutlined } from "@mui/icons-material";
-import { useSearchParams } from "react-router-dom";
 
 export function LanguageToggler(props: Props) {
   const { ...restProps } = props;

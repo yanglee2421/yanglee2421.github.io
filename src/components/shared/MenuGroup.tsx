@@ -1,19 +1,20 @@
 // React Imports
-import React from "react";
-
-// MUI Imports
-import type {
-  ListItemButtonProps} from "@mui/material";
+import {
+  FiberManualRecordOutlined,
+  KeyboardArrowRight,
+} from "@mui/icons-material";
 import {
   ListItemButton,
   Collapse,
   ListItemIcon,
   ListItemText
 } from "@mui/material";
-import {
-  FiberManualRecordOutlined,
-  KeyboardArrowRight,
-} from "@mui/icons-material";
+import React from "react";
+
+import type {
+  ListItemButtonProps} from "@mui/material";
+
+// MUI Imports
 
 export function MenuGroup(props: MenuGroupProps) {
   // ** Props

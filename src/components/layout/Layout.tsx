@@ -1,7 +1,8 @@
 import { useOutlet } from "react-router-dom";
 
-import { DesktopLayout } from "./DesktopLayout";
 import { AuthGuard } from "@/components/guard/AuthGuard";
+
+import { DesktopLayout } from "./DesktopLayout";
 
 export function Layout() {
   const outlet = useOutlet();

@@ -1,4 +1,5 @@
 import { AuthGuard } from "@/components/guard/AuthGuard";
+
 import { Charts } from "./Charts";
 
 export function Component() {

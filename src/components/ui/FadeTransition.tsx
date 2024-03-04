@@ -1,6 +1,5 @@
-import React from "react";
-
 import { Box } from "@mui/material";
+import React from "react";
 import { Transition } from "react-transition-group";
 
 export function FadeTransition(props: React.PropsWithChildren) {

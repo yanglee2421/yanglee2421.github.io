@@ -1,5 +1,3 @@
-import React from "react";
-
 import {
   Box,
   Button,
@@ -8,9 +6,9 @@ import {
   CardHeader,
   Stack,
 } from "@mui/material";
-
-import { Link } from "react-router-dom";
 import { grey } from "@mui/material/colors";
+import React from "react";
+import { Link } from "react-router-dom";
 
 import { ImageBackground } from "@/components/ui/ImageBackground";
 import { useThemeStore } from "@/hooks/store/useThemeStore";

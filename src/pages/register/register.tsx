@@ -1,5 +1,4 @@
-import React from "react";
-
+import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
   Divider,
@@ -9,16 +8,16 @@ import {
   Button,
   Checkbox,
 } from "@mui/material";
+import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
-import { zodResolver } from "@hookform/resolvers/zod";
+import { Link as RouterLink } from "react-router-dom";
 import { z } from "zod";
 
-import { Link as RouterLink } from "react-router-dom";
 
-import { InputText } from "@/components/form/InputText";
 import { InputPassword } from "@/components/form/InputPassword";
-import { useCreateUser } from "@/hooks/api-firebase/useCreateUser";
+import { InputText } from "@/components/form/InputText";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
+import { useCreateUser } from "@/hooks/api-firebase/useCreateUser";
 
 export function Register() {
   const formCtx = useForm<FormValues>({

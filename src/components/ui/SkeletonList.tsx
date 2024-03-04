@@ -1,11 +1,12 @@
 // MUI Imports
-import React from "react";
 
-import type { ListProps } from "@mui/material";
 import { List } from "@mui/material";
+import React from "react";
 
 // Components Imports
 import { SkeletonListItem } from "./SkeletonListItem";
+
+import type { ListProps } from "@mui/material";
 
 // React Imports
 

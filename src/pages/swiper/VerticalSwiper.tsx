@@ -1,14 +1,10 @@
-// React Imports
+import { Paper, styled } from "@mui/material";
 import React from "react";
-
-// Swiper Import
-import { Swiper, SwiperSlide } from "swiper/react";
 import { Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
+
 import "swiper/css";
 import "swiper/css/pagination";
-
-// MUI Imports
-import { Paper, styled } from "@mui/material";
 
 export function VerticalSwiper() {
   const slideCount = 12;

@@ -1,13 +1,14 @@
 // Query Imports
 import { useMutation } from "@tanstack/react-query";
-import type {
-  UserCredential} from "firebase/auth";
 import {
   createUserWithEmailAndPassword,
   getAuth
 } from "firebase/auth";
 
 import { app } from "@/api/firebase";
+
+import type {
+  UserCredential} from "firebase/auth";
 
 export function useCreateUser() {
   return useMutation<UserCredential, Error, CreateUserData>({

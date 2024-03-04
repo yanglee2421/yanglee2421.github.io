@@ -1,6 +1,7 @@
 import { GuestGuard } from "@/components/guard/GuestGuard";
-import { Login } from "./Login";
 import { useHeadTitle } from "@/hooks/dom/useHeadTitle";
+
+import { Login } from "./Login";
 
 export function Component() {
   useHeadTitle("Login");

@@ -1,24 +1,17 @@
-// MUI Imports
-import React from "react";
-
-import type {
-  IconButtonProps} from "@mui/material";
+import { Search } from "@mui/icons-material";
 import {
   IconButton,
   Backdrop,
   Box,
   OutlinedInput,
-  InputAdornment
+  InputAdornment,
 } from "@mui/material";
-import { Search } from "@mui/icons-material";
-
-// React Imports
-
-// Form Imports
+import React from "react";
 import { useForm, FormProvider, useController } from "react-hook-form";
 
+import type { IconButtonProps } from "@mui/material";
+
 export function Searcher(props: SearcherProps) {
-  // ** Props
   const { ...restProps } = props;
 
   const [open, setOpen] = React.useState(false);

@@ -1,6 +1,7 @@
+import { ErrorBoundary } from "./ErrorBoundary";
+
 import type { RouteObject } from "react-router-dom";
 
-import { ErrorBoundary } from "./ErrorBoundary";
 
 export const routes: RouteObject[] = [
   {

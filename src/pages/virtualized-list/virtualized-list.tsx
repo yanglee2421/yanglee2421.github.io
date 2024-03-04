@@ -1,5 +1,3 @@
-import React from "react";
-
 import {
   Box,
   ListItem,
@@ -7,11 +5,13 @@ import {
   ListItemText,
   Paper,
 } from "@mui/material";
-import type { ListChildComponentProps } from "react-window";
-import { FixedSizeList } from "react-window";
-import AutoSizer from "react-virtualized-auto-sizer";
-import InfiniteLoader from "react-window-infinite-loader";
 import PerfectScrollbar from "perfect-scrollbar";
+import React from "react";
+import AutoSizer from "react-virtualized-auto-sizer";
+import { FixedSizeList } from "react-window";
+import InfiniteLoader from "react-window-infinite-loader";
+
+import type { ListChildComponentProps } from "react-window";
 
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 
