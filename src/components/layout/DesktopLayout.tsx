@@ -2,7 +2,7 @@ import {
   RadioButtonCheckedOutlined,
   RadioButtonUncheckedOutlined,
 } from "@mui/icons-material";
-import { Box, Typography, IconButton, styled } from "@mui/material";
+import { Box, Typography, IconButton, styled, Divider } from "@mui/material";
 import React from "react";
 import { Link } from "react-router-dom";
 import { Transition } from "react-transition-group";
@@ -125,6 +125,7 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                           ref={logoTextRef}
                           variant="h5"
                           noWrap
+                          color="ActiveBorder"
                           sx={(theme) => {
                             switch (status) {
                               case "exited":
@@ -177,13 +178,16 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                     }}
                   >
                     {asideMenuCollapsed ? (
-                      <RadioButtonUncheckedOutlined></RadioButtonUncheckedOutlined>
+                      <RadioButtonUncheckedOutlined />
                     ) : (
-                      <RadioButtonCheckedOutlined></RadioButtonCheckedOutlined>
+                      <RadioButtonCheckedOutlined />
                     )}
                   </IconButton>
                 )}
               </Box>
+
+              {/* Navigation Header Divider */}
+              <Divider sx={{ my: 0 }} />
 
               {/* Navigation Aside Scroll */}
               <ScrollView options={{ wheelPropagation: false }}>
@@ -209,11 +213,13 @@ export function DesktopLayout(props: React.PropsWithChildren) {
 const explandedWidth = 260;
 const collapsedWidth = 68;
 
-const StyledLink = styled(Link)({
-  display: "flex",
-  alignItems: "center",
-  minBlockSize: 24,
-  textDecoration: "none",
-  color: "inherit",
-  marginInlineStart: 8,
+const StyledLink = styled(Link)(({ theme }) => {
+  return {
+    display: "flex",
+    alignItems: "center",
+    minBlockSize: 24,
+    textDecoration: "none",
+    marginInlineStart: 12,
+    color: theme.palette.primary.main,
+  };
 });
