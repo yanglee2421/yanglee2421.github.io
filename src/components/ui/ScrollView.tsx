@@ -32,21 +32,6 @@ export function ScrollView(props: Props) {
       return;
     }
 
-    psRef.current = new PerfectScrollbar(containerEl, options);
-
-    return () => {
-      psRef.current?.destroy();
-      psRef.current = null;
-    };
-  }, [options]);
-
-  React.useEffect(() => {
-    const containerEl = containerRef.current;
-
-    if (!(containerEl instanceof HTMLElement)) {
-      return;
-    }
-
     const contentEl = contentRef.current;
 
     if (!(contentEl instanceof HTMLElement)) {
@@ -54,15 +39,29 @@ export function ScrollView(props: Props) {
     }
 
     const observer = new ResizeObserver(() => {
-      psRef.current?.update();
+      if (contentEl.clientHeight > containerEl.clientHeight) {
+        psRef.current
+          ? psRef.current.update()
+          : (() => {
+              psRef.current = new PerfectScrollbar(containerEl, options);
+            })();
+
+        return;
+      }
+
+      psRef.current?.destroy();
+      psRef.current = null;
     });
+
     observer.observe(containerEl);
     observer.observe(contentEl);
 
     return () => {
+      psRef.current?.destroy();
+      psRef.current = null;
       observer.disconnect();
     };
-  }, []);
+  }, [options]);
 
   React.useEffect(() => {
     const containerEl = containerRef.current;
@@ -76,6 +75,7 @@ export function ScrollView(props: Props) {
     if (typeof onPsScrollX === "function") {
       map.set("ps-scroll-x", onPsScrollX);
     }
+
     if (typeof onPsScrollY === "function") {
       map.set("ps-scroll-y", onPsScrollY);
     }
@@ -83,12 +83,15 @@ export function ScrollView(props: Props) {
     if (typeof onPsScrollUp === "function") {
       map.set("ps-scroll-up", onPsScrollUp);
     }
+
     if (typeof onPsScrollDown === "function") {
       map.set("ps-scroll-down", onPsScrollDown);
     }
+
     if (typeof onPsScrollLeft === "function") {
       map.set("ps-scroll-left", onPsScrollLeft);
     }
+
     if (typeof onPsScrollRight === "function") {
       map.set("ps-scroll-right", onPsScrollRight);
     }
@@ -96,12 +99,15 @@ export function ScrollView(props: Props) {
     if (typeof onPsXReachStart === "function") {
       map.set("ps-x-reach-start", onPsXReachStart);
     }
+
     if (typeof onPsXReachEnd === "function") {
       map.set("ps-x-reach-end", onPsXReachEnd);
     }
+
     if (typeof onPsYReachStart === "function") {
       map.set("ps-y-reach-start", onPsYReachStart);
     }
+
     if (typeof onPsYReachEnd === "function") {
       map.set("ps-y-reach-end", onPsYReachEnd);
     }
