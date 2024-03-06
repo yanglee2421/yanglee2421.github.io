@@ -4,5 +4,5 @@ import { Home } from "./Home";
 export function Component() {
   useHeadTitle("Home");
 
-  return <Home></Home>;
+  return <Home />;
 }

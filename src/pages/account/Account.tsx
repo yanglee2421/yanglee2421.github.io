@@ -6,7 +6,6 @@ import {
   CardContent,
   CardActions,
   Grid,
-  Stack,
   Button,
   Avatar,
   alpha,
@@ -79,71 +78,60 @@ export function Account() {
   };
 
   return (
-    <Stack spacing={6} padding={4}>
-      <Card>
-        <CardHeader></CardHeader>
-        <CardContent>
-          <Grid container spacing={4}></Grid>
-        </CardContent>
-      </Card>
-
+    <Card component={"form"} onSubmit={handleSubmit} onReset={handleReset}>
       <FormProvider {...formCtx}>
-        <Card component={"form"} onSubmit={handleSubmit} onReset={handleReset}>
-          <CardHeader
-            title="User profile"
-            subheader="Update you profile"
-            avatar={
-              <Avatar
-                src={authValue.auth.currentUser?.photoURL || ""}
-                alt="avator"
-                sx={{
-                  color: authValue.auth.currentUser?.displayName
-                    ? stringToColor(
+        <CardHeader
+          title="User profile"
+          subheader="Update you profile"
+          avatar={
+            <Avatar
+              src={authValue.auth.currentUser?.photoURL || ""}
+              alt="avator"
+              sx={{
+                color: authValue.auth.currentUser?.displayName
+                  ? stringToColor(authValue.auth.currentUser.displayName || "")
+                  : void 0,
+                bgcolor: authValue.auth.currentUser?.displayName
+                  ? alpha(
+                      stringToColor(
                         authValue.auth.currentUser.displayName || "",
-                      )
-                    : void 0,
-                  bgcolor: authValue.auth.currentUser?.displayName
-                    ? alpha(
-                        stringToColor(
-                          authValue.auth.currentUser.displayName || "",
-                        ),
-                        0.12,
-                      )
-                    : void 0,
-                }}
-              >
-                {authValue.auth.currentUser?.displayName?.at(0)?.toUpperCase()}
-              </Avatar>
-            }
-            action={<UploadAvator></UploadAvator>}
-          ></CardHeader>
-          <CardContent>
-            <Grid container spacing={4}>
-              <Grid item xs={12} sm={6}>
-                <InputText field="displayName" label="Display Name"></InputText>
-              </Grid>
+                      ),
+                      0.12,
+                    )
+                  : void 0,
+              }}
+            >
+              {authValue.auth.currentUser?.displayName?.at(0)?.toUpperCase()}
+            </Avatar>
+          }
+          action={<UploadAvator />}
+        />
+        <CardContent>
+          <Grid container spacing={4}>
+            <Grid item xs={12} sm={6}>
+              <InputText field="displayName" label="Display Name" />
             </Grid>
-          </CardContent>
-          <CardActions>
-            <Button
-              disabled={mutation.isPending}
-              type="submit"
-              variant="contained"
-              startIcon={<SaveOutlined></SaveOutlined>}
-            >
-              save
-            </Button>
-            <Button
-              type="reset"
-              variant="outlined"
-              startIcon={<RefreshOutlined></RefreshOutlined>}
-            >
-              reset
-            </Button>
-          </CardActions>
-        </Card>
+          </Grid>
+        </CardContent>
+        <CardActions>
+          <Button
+            disabled={mutation.isPending}
+            type="submit"
+            variant="contained"
+            startIcon={<SaveOutlined />}
+          >
+            save
+          </Button>
+          <Button
+            type="reset"
+            variant="outlined"
+            startIcon={<RefreshOutlined />}
+          >
+            reset
+          </Button>
+        </CardActions>
       </FormProvider>
-    </Stack>
+    </Card>
   );
 }
 

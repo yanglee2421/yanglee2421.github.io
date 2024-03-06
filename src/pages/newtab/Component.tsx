@@ -4,7 +4,7 @@ import { NewTab } from "./NewTab";
 export function Component() {
   return (
     <AuthGuard>
-      <NewTab></NewTab>
+      <NewTab />
     </AuthGuard>
   );
 }

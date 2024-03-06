@@ -51,7 +51,7 @@ export function UploadSingleFiles() {
           minRows={4}
           maxRows={16}
           InputProps={{ readOnly: true }}
-        ></TextField>
+        />
       }
     >
       <StyledBox {...dropzone.getRootProps()}>

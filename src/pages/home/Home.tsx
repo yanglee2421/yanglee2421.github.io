@@ -76,7 +76,7 @@ export function Home() {
                   a.click();
                   a.remove();
                 }}
-                startIcon={<DownloadOutlined></DownloadOutlined>}
+                startIcon={<DownloadOutlined />}
                 variant="outlined"
               >
                 download

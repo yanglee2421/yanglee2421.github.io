@@ -1,5 +1,5 @@
 import { Account } from "./Account";
 
 export function Component() {
-  return <Account></Account>;
+  return <Account />;
 }
