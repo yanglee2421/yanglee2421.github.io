@@ -24,7 +24,7 @@ export function InputCheckbox(props: Props) {
         );
       }}
       {...restProps}
-    ></Checkbox>
+    />
   );
 }
 

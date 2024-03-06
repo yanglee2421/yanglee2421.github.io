@@ -86,7 +86,7 @@ function renderRow(props: ListChildComponentProps) {
         <ListItemText
           primary={`Item ${index + 1}`}
           secondary={`item description...`}
-        ></ListItemText>
+        />
       </ListItemButton>
     </ListItem>
   );

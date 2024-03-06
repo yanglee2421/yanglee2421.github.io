@@ -14,7 +14,7 @@ const container = document.getElementById("root");
 if (container) {
   ReactDOM.createRoot(container).render(
     <React.StrictMode>
-      <App></App>
+      <App />
     </React.StrictMode>,
   );
 }

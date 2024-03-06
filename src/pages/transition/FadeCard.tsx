@@ -18,27 +18,21 @@ export function FadeCard() {
               void evt;
               setShow(checked);
             }}
-          ></Switch>
+          />
         }
-      ></CardHeader>
+      />
       <CardContent>
         <SwitchTransition>
           <FadeTransition key={show ? 1 : 2}>
             {show ? (
               <Card>
-                <CardHeader
-                  title="Title one"
-                  subheader="subheader one"
-                ></CardHeader>
-                <CardContent></CardContent>
+                <CardHeader title="Title one" subheader="subheader one" />
+                <CardContent />
               </Card>
             ) : (
               <Card>
-                <CardHeader
-                  title="Title two"
-                  subheader="subheader two"
-                ></CardHeader>
-                <CardContent></CardContent>
+                <CardHeader title="Title two" subheader="subheader two" />
+                <CardContent />
               </Card>
             )}
           </FadeTransition>

@@ -50,7 +50,7 @@ export function FruitList() {
                         });
                       }}
                     >
-                      <DeleteOutlined></DeleteOutlined>
+                      <DeleteOutlined />
                     </IconButton>
                   }
                 >
