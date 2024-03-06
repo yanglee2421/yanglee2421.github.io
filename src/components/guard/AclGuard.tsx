@@ -9,7 +9,7 @@ export function AclGuard(props: Props) {
     return props.children;
   }
 
-  return <Forbidden></Forbidden>;
+  return <Forbidden />;
 }
 
 type Props = {
