@@ -63,6 +63,7 @@ export default defineConfig((configEnv) => {
       manifest: false,
       sourcemap: false,
       chunkSizeWarningLimit: 500,
+      assetsInlineLimit: 0,
     },
 
     server: {

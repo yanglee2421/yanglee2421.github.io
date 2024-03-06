@@ -107,7 +107,7 @@ export function Home() {
       <Box height={320} />
       <Box
         sx={{
-          backgroundImage: `url(${bgImg})`,
+          backgroundImage: `url(${new URL(bgImg, import.meta.url).href})`,
           backgroundAttachment: "fixed",
           aspectRatio: "8/3",
         }}

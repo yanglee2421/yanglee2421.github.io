@@ -6,6 +6,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useImmer } from "use-immer";
+import bgImg from "@/assets/images/snow-village.jpg";
 import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
 import type { BoxProps } from "@mui/material";
 
@@ -45,6 +46,8 @@ export function ImageBackground(props: Props) {
     };
   }, [updateState]);
 
+  const fallbackBgImg = new URL(bgImg, import.meta.url).href;
+
   return (
     <Box position={"relative"} {...restProps}>
       {/* Background */}
@@ -65,7 +68,7 @@ export function ImageBackground(props: Props) {
           if (query.isPending) {
             return (
               <StyledImg
-                src="@/assets/images/snow-village.jpg"
+                src={fallbackBgImg}
                 alt="Background image"
                 width={state.width}
                 height={state.height}
@@ -76,7 +79,7 @@ export function ImageBackground(props: Props) {
           if (query.isError) {
             return (
               <StyledImg
-                src="@/assets/images/snow-village.jpg"
+                src={fallbackBgImg}
                 alt={query.error.message}
                 width={state.width}
                 height={state.height}
