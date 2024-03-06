@@ -18,7 +18,7 @@ export function NewTab() {
       position={"fixed"}
       sx={{ inset: 0 }}
     >
-      <Customer></Customer>
+      <Customer />
       <Link to={{ pathname: "/" }}>
         <Button variant="contained" size="large">
           Take me home

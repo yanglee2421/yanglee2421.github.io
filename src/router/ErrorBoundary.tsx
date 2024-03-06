@@ -10,14 +10,14 @@ export function ErrorBoundary() {
   if (isRouteErrorResponse(error)) {
     switch (error.status) {
       case 404:
-        return <NotFound></NotFound>;
+        return <NotFound />;
       default:
-        return <InternalServerError></InternalServerError>;
+        return <InternalServerError />;
     }
   }
 
   if (error instanceof Error) {
-    return <InternalServerError></InternalServerError>;
+    return <InternalServerError />;
   }
 
   return (

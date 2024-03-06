@@ -33,7 +33,7 @@ export function SignUp() {
 
   return (
     <Box position={"fixed"} display={"flex"} sx={{ inset: 0 }}>
-      <Box flex={1} overflow={"hidden"}></Box>
+      <Box flex={1} overflow={"hidden"} />
       <Box
         width={"100%"}
         maxWidth={{ sm: 450 }}

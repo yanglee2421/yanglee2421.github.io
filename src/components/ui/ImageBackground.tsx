@@ -72,7 +72,7 @@ export function ImageBackground(props: Props) {
                 alt="Background image"
                 width={state.width}
                 height={state.height}
-              ></StyledImg>
+              />
             );
           }
 
@@ -83,7 +83,7 @@ export function ImageBackground(props: Props) {
                 alt={query.error.message}
                 width={state.width}
                 height={state.height}
-              ></StyledImg>
+              />
             );
           }
 
@@ -96,7 +96,7 @@ export function ImageBackground(props: Props) {
               }}
               width={state.width}
               height={state.height}
-            ></StyledImg>
+            />
           );
         })()}
 
@@ -111,7 +111,7 @@ export function ImageBackground(props: Props) {
               return theme.transitions.create(["background-color"]);
             },
           }}
-        ></Box>
+        />
 
         {/* Spin Icon */}
         {query.isPending && (
@@ -123,7 +123,7 @@ export function ImageBackground(props: Props) {
               left: 24,
               bottom: 24,
             }}
-          ></CircularProgress>
+          />
         )}
       </Box>
 

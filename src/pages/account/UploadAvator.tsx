@@ -10,7 +10,7 @@ export function UploadAvator() {
       component="label"
       disabled={avatorMutation.isPending}
       variant="contained"
-      startIcon={<UploadOutlined></UploadOutlined>}
+      startIcon={<UploadOutlined />}
     >
       <input
         value={""}

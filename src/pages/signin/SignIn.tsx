@@ -29,7 +29,7 @@ export function SignIn() {
         inset: 0,
       }}
     >
-      <Box flex={1} overflow={"hidden"}></Box>
+      <Box flex={1} overflow={"hidden"} />
       <Box
         display={"flex"}
         flexDirection={"column"}

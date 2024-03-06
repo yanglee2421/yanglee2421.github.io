@@ -6,9 +6,9 @@ import { FruitList } from "./FruitList";
 export function Transition() {
   return (
     <Stack spacing={6}>
-      <FadeButton></FadeButton>
-      <FadeCard></FadeCard>
-      <FruitList></FruitList>
+      <FadeButton />
+      <FadeCard />
+      <FruitList />
     </Stack>
   );
 }

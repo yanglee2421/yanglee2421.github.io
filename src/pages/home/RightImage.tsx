@@ -39,8 +39,8 @@ export function RightImage() {
             gridColumn={"span 1/span 1"}
             gridRow={"1/-1"}
             borderRight="1px solid currentColor"
-          ></Box>
-          <Box></Box>
+          />
+          <Box />
           <Box>
             <Transition
               in={show}
@@ -92,12 +92,12 @@ export function RightImage() {
                           return {};
                       }
                     }}
-                  ></Box>
+                  />
                 );
               }}
             </Transition>
           </Box>
-          <Box></Box>
+          <Box />
           <Box marginBottom={12} fontSize={14}>
             vision
           </Box>
@@ -119,7 +119,6 @@ export function RightImage() {
           </Box>
         </Box>
       </Grid>
-      <Grid item xs={12} sm={6}></Grid>
     </Grid>
   );
 }

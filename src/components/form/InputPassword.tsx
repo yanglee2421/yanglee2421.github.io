@@ -40,7 +40,7 @@ export function InputPassword(props: Props) {
       inputProps={{ inputMode: "text" }}
       fullWidth
       {...restProps}
-    ></TextField>
+    />
   );
 }
 

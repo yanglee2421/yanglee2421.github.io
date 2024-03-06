@@ -12,9 +12,9 @@ import { ThemeProvider } from "@/theme/ThemeProvider";
 export function App() {
   return (
     <QueryProvider>
-      <ToastContainer limit={3}></ToastContainer>
+      <ToastContainer limit={3} />
       <ThemeProvider>
-        <RouterProvider router={router}></RouterProvider>
+        <RouterProvider router={router} />
       </ThemeProvider>
     </QueryProvider>
   );

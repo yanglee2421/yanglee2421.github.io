@@ -106,8 +106,8 @@ export function HorizontalSwiper() {
           },
           userSelect: "none",
         }}
-      ></Box>
-      <Box id={paginationId} sx={{ userSelect: "none" }}></Box>
+      />
+      <Box id={paginationId} sx={{ userSelect: "none" }} />
       <Box>
         <IconButton id={prevElId} disabled={navigationState.isBeginning}>
           <ArrowBackIosNewRounded></ArrowBackIosNewRounded>
