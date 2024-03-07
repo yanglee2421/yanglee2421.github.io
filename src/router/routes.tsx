@@ -1,14 +1,14 @@
-import { ErrorBoundary } from "./ErrorBoundary";
 import type { RouteObject } from "react-router-dom";
 
 export const routes: RouteObject[] = [
   {
     id: "root",
-    ErrorBoundary,
     async lazy() {
+      const { ErrorBoundary } = await import("./ErrorBoundary");
       const { RootRoute } = await import("./RootRoute");
 
       return {
+        ErrorBoundary,
         Component: RootRoute,
       };
     },

@@ -25,7 +25,7 @@ export default defineConfig((configEnv) => {
       },
     },
 
-    base: configEnv.command === "build" ? "./" : "/react-mui",
+    base: configEnv.mode === "production" ? "./" : "/react-mui",
     envDir: resolve(__dirname, "./"),
     assetsInclude: [],
 
