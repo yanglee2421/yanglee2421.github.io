@@ -15,7 +15,9 @@ export const routes: RouteObject[] = [
     children: [
       {
         path: "*",
-        element: null,
+        Component() {
+          return null;
+        },
         loader() {
           throw new Response("Error: No route matches URL", {
             status: 404,
