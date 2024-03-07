@@ -14,6 +14,19 @@ export const routes: RouteObject[] = [
     },
     children: [
       {
+        path: "*",
+        element: null,
+        loader() {
+          throw new Response("Error: No route matches URL", {
+            status: 404,
+            statusText: "Not Found",
+          });
+        },
+        shouldRevalidate() {
+          return false;
+        },
+      },
+      {
         id: "signin",
         path: "signin",
         lazy() {
@@ -34,7 +47,6 @@ export const routes: RouteObject[] = [
           return import("@/pages/forgot-password/Component");
         },
       },
-
       {
         id: "with-appbar",
         async lazy() {
