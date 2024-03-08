@@ -67,18 +67,13 @@ function themeToGlobalStyles(theme: Theme): GlobalStylesProps["styles"] {
       top: 0,
       zIndex: theme.zIndex.appBar + 1,
 
-      width: "100%",
-      height: 3,
+      inlineSize: "100%",
+      blockSize: 3,
 
       backgroundColor:
         theme.palette.mode === "dark"
           ? theme.palette.primary.dark
           : theme.palette.primary.light,
-    },
-
-    // Body
-    "html, body": {
-      height: "100%",
     },
   };
 }

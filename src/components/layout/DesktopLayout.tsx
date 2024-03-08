@@ -201,9 +201,17 @@ export function DesktopLayout(props: React.PropsWithChildren) {
           flexDirection={"column"}
           sx={{ inlineSize: "100%" }}
         >
-          <Box component={"header"}>navbar</Box>
-          <Box component={"main"}>{props.children}</Box>
-          <Box component={"footer"}>footer</Box>
+          <Box component={"header"}></Box>
+          <Box
+            component={"main"}
+            flexGrow={1}
+            flexShrink={1}
+            flexBasis={"auto"}
+            padding={3}
+          >
+            {props.children}
+          </Box>
+          <Box component={"footer"}></Box>
         </Box>
       </Box>
     </Box>

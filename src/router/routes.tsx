@@ -66,6 +66,13 @@ export const routes: RouteObject[] = [
               return import("@/pages/home/Component");
             },
           },
+          {
+            id: "table",
+            path: "table",
+            lazy() {
+              return import("@/pages/table/Component");
+            },
+          },
         ],
       },
 
