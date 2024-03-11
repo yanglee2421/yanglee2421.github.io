@@ -72,6 +72,7 @@ export default defineConfig((configEnv) => {
       hmr: {
         port: 3006,
       },
+      host: true,
       proxy: {
         "/api": {
           target: "https://data-warpdriven.warpdriven.ai",
