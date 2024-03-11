@@ -126,6 +126,8 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                           variant="h5"
                           noWrap
                           color="ActiveBorder"
+                          fontWeight={500}
+                          fontSize={20}
                           sx={(theme) => {
                             switch (status) {
                               case "exited":
@@ -164,7 +166,7 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                             }
                           }}
                         >
-                          App Name
+                          MATERIO
                         </Typography>
                       );
                     }}
@@ -176,11 +178,12 @@ export function DesktopLayout(props: React.PropsWithChildren) {
                     onClick={() => {
                       setAsideMenuCollapsed((prev) => !prev);
                     }}
+                    size="small"
                   >
                     {asideMenuCollapsed ? (
-                      <RadioButtonUncheckedOutlined />
+                      <RadioButtonUncheckedOutlined fontSize="small" />
                     ) : (
-                      <RadioButtonCheckedOutlined />
+                      <RadioButtonCheckedOutlined fontSize="small" />
                     )}
                   </IconButton>
                 )}
