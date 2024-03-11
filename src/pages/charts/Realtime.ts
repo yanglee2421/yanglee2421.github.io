@@ -1,42 +1,40 @@
 import { random } from "./random";
 
 export class Realtime {
-  lastDate = 0;
-  TICKINTERVAL = 1000;
-  XAXISRANGE = 1000 * 7;
+  lastX = Date.now();
+  interval = 1000;
+  range = 1000 * 8;
   data: Array<{
     x: number;
     y: number;
   }> = [];
 
-  getDayWiseTimeSeries(baseval: number, count: number, yrange: Yrange) {
-    for (let i = 0; i < count; i++) {
+  constructor() {
+    for (let i = 0; i < this.range / this.interval; i++) {
+      this.lastX += this.interval;
+
       this.data.push({
-        x: baseval,
-        y: Math.floor(random() * (yrange.max - yrange.min + 1)) + yrange.min,
+        x: this.lastX,
+        y: 0,
       });
-      this.lastDate = baseval;
-      baseval += this.TICKINTERVAL;
     }
   }
 
-  getNewSeries(baseval: number, yrange: Yrange) {
-    const newDate = baseval + this.TICKINTERVAL;
-    this.lastDate = newDate;
-
-    for (let i = 0; i < this.data.length - 12; i++) {
-      this.data[i].x = this.lastDate - this.XAXISRANGE - this.TICKINTERVAL;
-      this.data[i].y = 0;
-    }
+  update() {
+    this.lastX += this.interval;
 
     this.data.push({
-      x: newDate,
-      y: Math.floor(random() * (yrange.max - yrange.min + 1)) + yrange.min,
+      x: this.lastX,
+      y: Math.floor(random() * 100),
+    });
+
+    const minX = this.lastX - this.range - this.interval;
+
+    this.data.forEach((item) => {
+      if (item.x < minX) {
+        item.x = minX;
+        item.y = 0;
+      }
     });
   }
-}
-
-interface Yrange {
-  min: number;
-  max: number;
 }

@@ -1,8 +1,8 @@
 import { Container, Grid, Paper, Box } from "@mui/material";
-import { Realtime } from "./Realtime";
-import ReactApexChart from "react-apexcharts";
 import React from "react";
+import ReactApexChart from "react-apexcharts";
 import { AnimateController } from "@/utils/AnimateController";
+import { Realtime } from "./Realtime";
 
 export function Charts() {
   const paperRef = React.useRef<HTMLDivElement>(null);
@@ -15,10 +15,7 @@ export function Charts() {
       if (now - updateAt > 999) {
         updateAt = now;
 
-        realtime.getNewSeries(realtime.lastDate, {
-          min: 10,
-          max: 90,
-        });
+        realtime.update();
 
         ApexCharts.exec("realtime", "updateSeries", [
           {
@@ -61,7 +58,7 @@ export function Charts() {
                 },
                 xaxis: {
                   type: "datetime",
-                  range: realtime.XAXISRANGE,
+                  range: realtime.range,
                   labels: {
                     // show: false,
                   },
@@ -99,8 +96,3 @@ export function Charts() {
 }
 
 const realtime = new Realtime();
-realtime.getDayWiseTimeSeries(new Date().getTime(), 7, {
-  min: 10,
-  max: 90,
-});
-console.log(realtime.data, realtime.lastDate);
