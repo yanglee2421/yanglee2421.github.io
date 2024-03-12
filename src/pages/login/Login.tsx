@@ -1,5 +1,13 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Divider, Link, Typography, Button, Paper } from "@mui/material";
+import {
+  Box,
+  Divider,
+  Link,
+  Typography,
+  Button,
+  Paper,
+  Stack,
+} from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
 import { z } from "zod";
@@ -45,7 +53,7 @@ export function Login() {
         <Typography color="secondary">
           Please sign-in to your account and start the adventure
         </Typography>
-        <Box
+        <Stack
           component={"form"}
           onSubmit={formCtx.handleSubmit(
             (data) => {
@@ -61,12 +69,17 @@ export function Login() {
           noValidate
           autoComplete="off"
           mt={3}
+          spacing={3}
         >
           <FormProvider {...formCtx}>
             <InputText field="email" label="Email" />
-            <InputPassword field="password" label="Password" sx={{ mt: 3 }} />
-            <Box textAlign={"end"} my={2}>
-              <Link component={RouterLink} to={"/forgot-password"}>
+            <InputPassword field="password" label="Password" />
+            <Box>
+              <Link
+                component={RouterLink}
+                to={"/forgot-password"}
+                underline="hover"
+              >
                 Forgot Password?
               </Link>
             </Box>
@@ -80,15 +93,15 @@ export function Login() {
               sign in
             </Button>
           </FormProvider>
-        </Box>
+        </Stack>
         <Box
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
-          mt={3}
+          pt={2}
         >
           <Typography color="secondary">New on our platform?</Typography>
-          <Link component={RouterLink} to={"/signup"}>
+          <Link component={RouterLink} to={"/signup"} underline="hover">
             Create an account
           </Link>
         </Box>
@@ -97,12 +110,11 @@ export function Login() {
             color(theme) {
               return theme.palette.text.secondary;
             },
-            my: 2,
           }}
         >
           Or
         </Divider>
-        <Box textAlign={"center"}>
+        <Box textAlign={"center"} mt={2}>
           <SignInButtonGroup />
         </Box>
       </Paper>
