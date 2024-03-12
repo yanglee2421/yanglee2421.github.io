@@ -99,7 +99,7 @@ export function SignUp() {
           alignItems={"center"}
         >
           <Typography color="secondary">Already have an account?</Typography>
-          <Link component={RouterLink} to={"/signin"}>
+          <Link component={RouterLink} to={"/login"}>
             Sign in insead
           </Link>
         </Box>

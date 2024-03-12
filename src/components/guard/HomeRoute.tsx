@@ -17,6 +17,6 @@ export function HomeRoute() {
         pathname,
         search: searchParams.toString(),
       }}
-    ></Navigate>
+    />
   );
 }

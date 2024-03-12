@@ -15,9 +15,9 @@ export function LoginRoute() {
   return (
     <Navigate
       to={{
-        pathname: "/signin",
+        pathname: "/login",
         search: searchParams.toString(),
       }}
-    ></Navigate>
+    />
   );
 }

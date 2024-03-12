@@ -1,14 +1,14 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import { Box, Divider, Link, Typography, Button } from "@mui/material";
+import { Box, Divider, Link, Typography, Button, Paper } from "@mui/material";
 import { FormProvider, useForm } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
 import { z } from "zod";
 import { InputPassword } from "@/components/form/InputPassword";
 import { InputText } from "@/components/form/InputText";
-import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
+import { SignInButtonGroup } from "@/components/shared/SignInButtonGroup";
 import { useSignIn } from "@/hooks/api-firebase/useSignIn";
 
-export function SignIn() {
+export function Login() {
   const formCtx = useForm<FormValues>({
     defaultValues: {
       email: "",
@@ -30,30 +30,21 @@ export function SignIn() {
       }}
     >
       <Box flex={1} overflow={"hidden"} />
-      <Box
-        display={"flex"}
-        flexDirection={"column"}
-        justifyContent={"center"}
-        gap={4}
-        width={"100%"}
-        maxWidth={{ md: 450 }}
-        p={[6, 12]}
-        boxShadow={(theme) => theme.shadows[2]}
+      <Paper
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          justifyContent: "center",
+          width: "100%",
+          maxWidth: 450,
+          p: [6, 12],
+          borderRadius: 0,
+        }}
       >
-        <Box>
-          <Typography variant="h5">Welcome to Materio!👋🏻</Typography>
-          <Typography
-            color="secondary"
-            sx={{
-              overflow: "hidden",
-              maxHeight(theme) {
-                return `calc(${theme.typography.body1.lineHeight}em * 3)`;
-              },
-            }}
-          >
-            Please sign-in to your account and start the adventure
-          </Typography>
-        </Box>
+        <Typography variant="h5">Welcome to Materio!👋🏻</Typography>
+        <Typography color="secondary">
+          Please sign-in to your account and start the adventure
+        </Typography>
         <Box
           component={"form"}
           onSubmit={formCtx.handleSubmit(
@@ -69,16 +60,12 @@ export function SignIn() {
           )}
           noValidate
           autoComplete="off"
-          sx={{ display: "flex", flexDirection: "column", gap: 4 }}
+          mt={3}
         >
           <FormProvider {...formCtx}>
-            <InputText field="email" label="Email"></InputText>
-            <InputPassword field="password" label="Password"></InputPassword>
-            <Box
-              display={"flex"}
-              justifyContent={"flex-end"}
-              alignItems={"center"}
-            >
+            <InputText field="email" label="Email" />
+            <InputPassword field="password" label="Password" sx={{ mt: 3 }} />
+            <Box textAlign={"end"} my={2}>
               <Link component={RouterLink} to={"/forgot-password"}>
                 Forgot Password?
               </Link>
@@ -98,17 +85,27 @@ export function SignIn() {
           display={"flex"}
           justifyContent={"space-between"}
           alignItems={"center"}
+          mt={3}
         >
           <Typography color="secondary">New on our platform?</Typography>
           <Link component={RouterLink} to={"/signup"}>
             Create an account
           </Link>
         </Box>
-        <Divider>Or</Divider>
-        <Box display={"flex"} justifyContent={"center"} gap={4}>
-          <SignInWithGoogle></SignInWithGoogle>
+        <Divider
+          sx={{
+            color(theme) {
+              return theme.palette.text.secondary;
+            },
+            my: 2,
+          }}
+        >
+          Or
+        </Divider>
+        <Box textAlign={"center"}>
+          <SignInButtonGroup />
         </Box>
-      </Box>
+      </Paper>
     </Box>
   );
 }

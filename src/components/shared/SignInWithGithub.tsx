@@ -1,13 +1,13 @@
 import { Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
 import { app } from "@/api/firebase/app";
-import { Google } from "@/components/svg/Google";
+import { Github } from "@/components/svg/Github";
 
-export function SignInWithGoogle() {
+export function SignInWithGithub() {
   const mutation = useMutation({
     mutationFn() {
-      return signInWithPopup(getAuth(app), new GoogleAuthProvider());
+      return signInWithPopup(getAuth(app), new GithubAuthProvider());
     },
   });
 
@@ -17,7 +17,7 @@ export function SignInWithGoogle() {
         mutation.mutate();
       }}
       disabled={mutation.isPending}
-      startIcon={<Google width={26} height={26} />}
+      startIcon={<Github width={26} height={26} />}
       sx={{
         fontWeight: 400,
         "& .MuiButton-startIcon": {
@@ -25,7 +25,7 @@ export function SignInWithGoogle() {
         },
       }}
     >
-      Sign in with Google
+      Sign in with Github
     </Button>
   );
 }

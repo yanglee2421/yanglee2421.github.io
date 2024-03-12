@@ -29,10 +29,10 @@ export const routes: RouteObject[] = [
         },
       },
       {
-        id: "signin",
-        path: "signin",
+        id: "login",
+        path: "login",
         lazy() {
-          return import("@/pages/signin/Component");
+          return import("@/pages/login/Component");
         },
       },
       {
