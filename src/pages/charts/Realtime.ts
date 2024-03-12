@@ -10,7 +10,7 @@ export class Realtime {
   }> = [];
 
   constructor() {
-    for (let i = 0; i < this.range / this.interval; i++) {
+    for (let i = 0; i < this.range / this.interval + 2; i++) {
       this.lastX += this.interval;
 
       this.data.push({
