@@ -13,12 +13,12 @@ import {
 import React from "react";
 import { useForm, FormProvider } from "react-hook-form";
 import { Link as RouterLink } from "react-router-dom";
+import { toast } from "react-toastify";
 import { z } from "zod";
 import { InputPassword } from "@/components/form/InputPassword";
 import { InputText } from "@/components/form/InputText";
 import { SignInButtonGroup } from "@/components/shared/SignInButtonGroup";
 import { useCreateUser } from "@/hooks/api-firebase/useCreateUser";
-import { toast } from "react-toastify";
 
 export function SignUp() {
   const formCtx = useForm<FormValues>({
