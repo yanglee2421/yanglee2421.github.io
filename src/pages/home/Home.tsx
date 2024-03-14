@@ -6,6 +6,7 @@ import { toast } from "react-toastify";
 import { useImmer } from "use-immer";
 import bgImg from "@/assets/images/snow-village.jpg";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { CodeBlock } from "./CodeBlock";
 import { RightImage } from "./RightImage";
 
 export function Home() {
@@ -37,7 +38,7 @@ export function Home() {
   const authValue = useAuthStore();
 
   return (
-    <Box>
+    <Box component={"div"} className="markdown-body">
       <Button
         onClick={() => {
           authValue.value.auth.signOut();
@@ -47,6 +48,7 @@ export function Home() {
       >
         sign out
       </Button>
+      <CodeBlock />
       <Card>
         <CardHeader
           title="Upload Single Files"
