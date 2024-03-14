@@ -43,6 +43,16 @@ export function ScrollView(props: Props) {
         psRef.current
           ? psRef.current.update()
           : (() => {
+              Reflect.set(containerEl, "", () => {
+                const originRect =
+                  Element.prototype.getBoundingClientRect.call(containerEl);
+
+                originRect.width = containerEl.clientWidth;
+                originRect.height = containerEl.clientHeight;
+
+                return originRect;
+              });
+
               psRef.current = new PerfectScrollbar(containerEl, options);
             })();
 
