@@ -39,7 +39,10 @@ export function ScrollView(props: Props) {
     }
 
     const observer = new ResizeObserver(() => {
-      if (contentEl.clientHeight > containerEl.clientHeight) {
+      if (
+        contentEl.clientHeight > containerEl.clientHeight ||
+        contentEl.clientWidth > containerEl.clientWidth
+      ) {
         psRef.current
           ? psRef.current.update()
           : (() => {
