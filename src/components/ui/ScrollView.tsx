@@ -59,6 +59,7 @@ export function ScrollView(props: Props) {
         return;
       }
 
+      Reflect.deleteProperty(containerEl, "getBoundingClientRect");
       psRef.current?.destroy();
       psRef.current = null;
     });
@@ -67,6 +68,7 @@ export function ScrollView(props: Props) {
     observer.observe(contentEl);
 
     return () => {
+      Reflect.deleteProperty(containerEl, "getBoundingClientRect");
       psRef.current?.destroy();
       psRef.current = null;
       observer.disconnect();
