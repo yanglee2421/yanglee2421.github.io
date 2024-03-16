@@ -1,41 +1,34 @@
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import localforage from "localforage";
 
-export function useForageFileQuery(fileKey: string) {
-  const queryClient = useQueryClient();
-
-  return useQuery<Res>({
-    queryKey: ["localforage", "file", fileKey],
+export function useForageFileQuery(key: string) {
+  return useQuery<string[]>({
+    queryKey: ["localforage", key],
     async queryFn() {
-      const prev = queryClient.getQueryData<Res>([
-        "localforage",
-        "file",
-        fileKey,
-      ]);
+      const data = await localforage.getItem(key);
 
-      if (typeof prev?.src === "string") {
-        URL.revokeObjectURL(prev.src);
+      if (!Array.isArray(data)) {
+        throw new Error("excepted array");
       }
 
-      const file = await localforage.getItem(fileKey);
+      const files = data.filter((item): item is Blob => item instanceof Blob);
 
-      if (file instanceof File) {
-        return {
-          filename: file.name,
-          type: file.type,
-          src: URL.createObjectURL(file),
-        };
+      const oldList = map.get(key);
+
+      if (oldList) {
+        oldList.forEach(URL.revokeObjectURL);
       }
 
-      throw new Error("no file");
+      map.set(
+        key,
+        files.map((item) => URL.createObjectURL(item)),
+      );
+
+      return map.get(key) || [];
     },
 
     retry: false,
   });
 }
 
-interface Res {
-  filename: string;
-  type: string;
-  src: string;
-}
+const map = new Map<string, string[]>();

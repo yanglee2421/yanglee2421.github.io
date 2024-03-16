@@ -5,24 +5,18 @@ import {
   useMediaQuery,
   Typography,
   styled,
-  CardActionArea,
   Slider,
   FormLabel,
   FormControl,
-  alpha,
-  Button,
-  RadioGroup,
-  FormControlLabel,
-  Radio,
 } from "@mui/material";
 import React from "react";
 import { useImmer } from "use-immer";
 import snowVillage from "@/assets/images/snow-village.jpg";
-import { useForageFileMutation } from "@/hooks/api-localforage/useForageFileMutation";
 import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 import { CollapsedCard } from "./CollapseCard";
 import type { Theme } from "@mui/material";
+import { WallpaperSwitcher } from "./WallpaperSwitcher";
 
 export function WallpaperCard() {
   const bgAlpha = useThemeStore((store) => store.bgAlpha);
@@ -36,7 +30,6 @@ export function WallpaperCard() {
 
   const fileKey = smallScreen ? "bg-img" : "mobile-bgimg";
   const query = useForageFileQuery(fileKey);
-  const mutation = useForageFileMutation();
 
   const [setting, updateSetting] = useImmer({
     imageWidth: 0,
@@ -143,82 +136,13 @@ export function WallpaperCard() {
             <FileDownloadOutlined />
           </IconButton>
 
-          <CardActionArea
-            component="label"
-            title="click to change image"
-            sx={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 3,
-              backgroundColor: alpha("#000", 0.2),
-              opacity: 0,
-              transition(theme) {
-                return theme.transitions.create(["opacity"]);
-              },
-              "&:hover": {
-                opacity: 1,
-              },
-              display: "flex",
-            }}
-          >
-            <Button
-              component="span"
-              disableRipple
-              disableFocusRipple
-              disableTouchRipple
-              disableElevation
-              variant="contained"
-              color="inherit"
-              sx={{
-                color: "common.white",
-                bgcolor: alpha("#000", 0.3),
-                "&:hover": {
-                  bgcolor: alpha("#000", 0.3),
-                },
-              }}
-            >
-              Change
-            </Button>
-            <input
-              value={""}
-              onChange={async (evt) => {
-                const file = evt.target.files?.item(0);
-
-                if (file) {
-                  mutation.mutate({ file, fileKey });
-                }
-              }}
-              type="file"
-              accept="image/*"
-              hidden
-            />
-          </CardActionArea>
+          <WallpaperSwitcher />
         </Box>
       )}
 
-      <FormControl>
-        <FormLabel>
-          <Typography variant="overline">Source</Typography>
-        </FormLabel>
-
-        <RadioGroup
-          value={setting.wallpaperSource}
-          onChange={(evt, value) => {
-            void evt;
-            updateSetting((draft) => {
-              draft.wallpaperSource = value;
-            });
-          }}
-          row
-        >
-          <FormControlLabel control={<Radio />} label="Bing" value="bing" />
-          <FormControlLabel control={<Radio />} label="Custom" value="custom" />
-        </RadioGroup>
-      </FormControl>
-
       <FormControl fullWidth>
         <FormLabel>
-          <Typography variant="overline">Background alpha</Typography>
+          <Typography variant="overline">mask concentration</Typography>
         </FormLabel>
         <Slider
           value={bgAlpha}
@@ -234,7 +158,7 @@ export function WallpaperCard() {
       </FormControl>
       <FormControl fullWidth>
         <FormLabel>
-          <Typography variant="overline">Background blur</Typography>
+          <Typography variant="overline">blur</Typography>
         </FormLabel>
         <Slider
           value={bgBlur}

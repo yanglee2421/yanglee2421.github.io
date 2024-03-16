@@ -4,7 +4,7 @@ import { CollapsedCard } from "./CollapseCard";
 
 export function RestoreCard() {
   return (
-    <CollapsedCard title="Restore Setting" subheader="Restore default settings">
+    <CollapsedCard title="Restore" subheader="Restore default settings">
       <Box textAlign={"center"}>
         <Button
           startIcon={<LoopOutlined />}
