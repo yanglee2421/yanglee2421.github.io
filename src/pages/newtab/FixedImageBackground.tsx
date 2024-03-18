@@ -107,7 +107,7 @@ export function FixedImageBackground(props: Props) {
       />
 
       {/* Spin Icon */}
-      {query.isLoading && (
+      {query.isPending && (
         <CircularProgress
           size={24}
           sx={{

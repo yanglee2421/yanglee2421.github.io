@@ -140,7 +140,7 @@ export function WallpaperSwitcher() {
                       return;
                     }
 
-                    mutation.trigger(file);
+                    mutation(file);
                   }}
                 />
                 {(() => {

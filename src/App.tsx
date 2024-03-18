@@ -6,19 +6,16 @@ import {
 import { ToastContainer } from "react-toastify";
 import "react-toastify/ReactToastify.css";
 import { QueryProvider } from "@/components/QueryProvider";
-import { SwrProvider } from "@/components/SwrProvider";
 import { routes } from "@/router/routes";
 import { ThemeProvider } from "@/theme/ThemeProvider";
 
 export function App() {
   return (
     <QueryProvider>
-      <SwrProvider>
-        <ToastContainer limit={3} />
-        <ThemeProvider>
-          <RouterProvider router={router} />
-        </ThemeProvider>
-      </SwrProvider>
+      <ToastContainer limit={3} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryProvider>
   );
 }

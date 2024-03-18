@@ -1,13 +1,13 @@
 import localforage from "localforage";
-import useSWR from "swr";
 import { fileToFileKey } from "@/utils/fileToFileKey";
 import { toStringTag } from "@/utils/toStringTag";
+import { useFileQuery } from "./useFileQuery";
 
 export function useForageFile(fileKey: string) {
-  return useSWR(
-    ["localforage_files", fileKey],
-    async ([storageKey, fileKey]) => {
-      const data = await localforage.getItem(storageKey);
+  return useFileQuery({
+    queryKey: ["localforage_files", fileKey],
+    async queryFn() {
+      const data = await localforage.getItem("localforage_files");
 
       if (!Array.isArray(data)) {
         throw new Error("excepted an array, got a" + toStringTag(data));
@@ -24,5 +24,5 @@ export function useForageFile(fileKey: string) {
 
       throw new Error("no such a file");
     },
-  );
+  });
 }

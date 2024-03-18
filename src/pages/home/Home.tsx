@@ -7,6 +7,7 @@ import { useImmer } from "use-immer";
 import bgImg from "@/assets/images/justHer.jpg";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { CodeBlock } from "./CodeBlock";
+import { QueryLabs } from "./QueryLabs";
 import { RightImage } from "./RightImage";
 
 export function Home() {
@@ -115,6 +116,7 @@ export function Home() {
         }}
       />
       <RightImage />
+      <QueryLabs />
     </Box>
   );
 }
