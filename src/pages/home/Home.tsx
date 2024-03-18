@@ -4,7 +4,7 @@ import { fabric } from "fabric";
 import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { useImmer } from "use-immer";
-import bgImg from "@/assets/images/snow-village.jpg";
+import bgImg from "@/assets/images/justHer.jpg";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { CodeBlock } from "./CodeBlock";
 import { RightImage } from "./RightImage";

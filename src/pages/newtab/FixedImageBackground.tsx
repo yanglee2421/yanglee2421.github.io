@@ -7,8 +7,12 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useImmer } from "use-immer";
-import fallbackBgImg from "@/assets/images/snow-village.jpg";
-import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
+import bgImg from "@/assets/images/justHer.jpg";
+import {
+  useForageFiles,
+  FileStorageKey,
+} from "@/hooks/api-localforage/useForageFiles";
+import { useForageFile } from "@/hooks/api-localforage/useForageFile";
 import type { BoxProps, Theme } from "@mui/material";
 
 export function FixedImageBackground(props: Props) {
@@ -20,7 +24,11 @@ export function FixedImageBackground(props: Props) {
     return theme.breakpoints.up("sm");
   });
 
-  const query = useForageFileQuery(smallScreen ? "bg-img" : "mobile-bgimg");
+  const query = useForageFiles(
+    smallScreen ? FileStorageKey.smBgImg : FileStorageKey.xsBgImg,
+  );
+
+  const sQuery = useForageFile("bg-img");
 
   const [state, updateState] = useImmer({
     width: 0,
@@ -90,8 +98,8 @@ export function FixedImageBackground(props: Props) {
 
         return (
           <StyledImg
-            src={query.data.src}
-            alt={query.data.filename}
+            src={fallbackBgImg}
+            alt={""}
             onError={() => {
               query.refetch();
             }}
@@ -141,3 +149,5 @@ const StyledImg = styled("img")({
   zIndex: 2,
   objectFit: "cover",
 });
+
+const fallbackBgImg = new URL(bgImg, import.meta.url).href;

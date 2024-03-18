@@ -11,8 +11,8 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useImmer } from "use-immer";
-import snowVillage from "@/assets/images/snow-village.jpg";
-import { useForageFileQuery } from "@/hooks/api-localforage/useForageFileQuery";
+import snowVillage from "@/assets/images/justHer.jpg";
+import { useForageFile } from "@/hooks/api-localforage/useForageFile";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 import { CollapsedCard } from "./CollapseCard";
 import type { Theme } from "@mui/material";
@@ -29,7 +29,7 @@ export function WallpaperCard() {
   });
 
   const fileKey = smallScreen ? "bg-img" : "mobile-bgimg";
-  const query = useForageFileQuery(fileKey);
+  const query = useForageFile(fileKey);
 
   const [setting, updateSetting] = useImmer({
     imageWidth: 0,
