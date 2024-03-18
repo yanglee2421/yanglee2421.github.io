@@ -1,39 +1,28 @@
-import { useQuery } from "@tanstack/react-query";
 import localforage from "localforage";
-import { nonPersistentQueryClient } from "@/lib/nonPersistentQueryClient";
-import { FileStorageKey } from "./useForageFiles";
+import useSWR from "swr";
 import { fileToFileKey } from "@/utils/fileToFileKey";
+import { toStringTag } from "@/utils/toStringTag";
 
 export function useForageFile(fileKey: string) {
-  const queryKey = ["localforage_file", "file", fileKey];
+  return useSWR(
+    ["localforage_files", fileKey],
+    async ([storageKey, fileKey]) => {
+      const data = await localforage.getItem(storageKey);
 
-  return useQuery<File>(
-    {
-      queryKey,
-      async queryFn() {
-        const xsData = await localforage.getItem(FileStorageKey.xsBgImg);
-        const smData = await localforage.getItem(FileStorageKey.smBgImg);
-        const data = [];
+      if (!Array.isArray(data)) {
+        throw new Error("excepted an array, got a" + toStringTag(data));
+      }
 
-        if (Array.isArray(smData)) {
-          data.push(...smData);
-        }
+      const file = data.find(
+        (item): item is File =>
+          item instanceof File && fileToFileKey(item) === fileKey,
+      );
 
-        if (Array.isArray(xsData)) {
-          data.push(...xsData);
-        }
+      if (file instanceof File) {
+        return file;
+      }
 
-        const files = data.filter((item): item is File => item instanceof File);
-
-        const file = files.find((item) => fileToFileKey(item) === fileKey);
-
-        if (file instanceof File) {
-          return file;
-        }
-
-        throw new Error("No such a file");
-      },
+      throw new Error("no such a file");
     },
-    nonPersistentQueryClient,
   );
 }

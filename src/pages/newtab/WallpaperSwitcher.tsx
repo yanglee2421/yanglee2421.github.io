@@ -1,4 +1,4 @@
-import { useForageFileMutation } from "@/hooks/api-localforage/useForageFileMutation";
+import { CloseOutlined } from "@mui/icons-material";
 import {
   alpha,
   Box,
@@ -14,14 +14,18 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
-import { useImmer } from "use-immer";
 import ReactDOM from "react-dom";
+import { useImmer } from "use-immer";
 import { ScrollView } from "@/components/ui/ScrollView";
-import { CloseOutlined } from "@mui/icons-material";
+import { useForageFileMutation } from "@/hooks/api-localforage/useForageFileMutation";
+import { useForageFiles } from "@/hooks/api-localforage/useForageFiles";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
+import { fileToFileKey } from "@/utils/fileToFileKey";
 
 export function WallpaperSwitcher() {
   const mutation = useForageFileMutation();
-  void mutation;
+  const query = useForageFiles();
+  const setSmBgImgKey = useThemeStore((store) => store.setSmBgImgKey);
 
   const [state, updateState] = useImmer({
     showDialog: false,
@@ -125,7 +129,42 @@ export function WallpaperSwitcher() {
               </RadioGroup>
             </FormControl>
             <ScrollView height={360}>
-              <Box height={1000}></Box>
+              <Box height={1000}>
+                <input
+                  type="file"
+                  name=""
+                  id=""
+                  onChange={(evt) => {
+                    const file = evt.target.files?.item(0);
+                    if (!file) {
+                      return;
+                    }
+
+                    mutation.trigger(file);
+                  }}
+                />
+                {(() => {
+                  if (query.data) {
+                    return query.data.map((item, idx) => {
+                      return (
+                        <img
+                          key={idx}
+                          src={URL.createObjectURL(item)}
+                          alt=""
+                          onLoad={(evt) => {
+                            URL.revokeObjectURL(evt.currentTarget.src);
+                          }}
+                          onClick={() => {
+                            setSmBgImgKey(fileToFileKey(item));
+                          }}
+                          width={160}
+                          height={90}
+                        />
+                      );
+                    });
+                  }
+                })()}
+              </Box>
             </ScrollView>
           </DialogContent>
         </Dialog>,

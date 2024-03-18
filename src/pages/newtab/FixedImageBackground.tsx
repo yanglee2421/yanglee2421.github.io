@@ -8,11 +8,8 @@ import {
 import React from "react";
 import { useImmer } from "use-immer";
 import bgImg from "@/assets/images/justHer.jpg";
-import {
-  useForageFiles,
-  FileStorageKey,
-} from "@/hooks/api-localforage/useForageFiles";
 import { useForageFile } from "@/hooks/api-localforage/useForageFile";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 import type { BoxProps, Theme } from "@mui/material";
 
 export function FixedImageBackground(props: Props) {
@@ -24,11 +21,9 @@ export function FixedImageBackground(props: Props) {
     return theme.breakpoints.up("sm");
   });
 
-  const query = useForageFiles(
-    smallScreen ? FileStorageKey.smBgImg : FileStorageKey.xsBgImg,
-  );
-
-  const sQuery = useForageFile("bg-img");
+  const xsBgImgKey = useThemeStore((store) => store.xsBgImgKey);
+  const smBgImgKey = useThemeStore((store) => store.smBgImgKey);
+  const query = useForageFile(smallScreen ? smBgImgKey : xsBgImgKey);
 
   const [state, updateState] = useImmer({
     width: 0,
@@ -74,22 +69,14 @@ export function FixedImageBackground(props: Props) {
     >
       {/* Image */}
       {(() => {
-        if (query.isPending) {
+        if (query.data) {
           return (
             <StyledImg
-              src={fallbackBgImg}
-              alt="Background image"
-              width={state.width}
-              height={state.height}
-            />
-          );
-        }
-
-        if (query.isError) {
-          return (
-            <StyledImg
-              src={fallbackBgImg}
-              alt={query.error.message}
+              src={URL.createObjectURL(query.data)}
+              alt={query.data.name}
+              onLoad={(evt) => {
+                URL.revokeObjectURL(evt.currentTarget.src);
+              }}
               width={state.width}
               height={state.height}
             />
@@ -99,10 +86,7 @@ export function FixedImageBackground(props: Props) {
         return (
           <StyledImg
             src={fallbackBgImg}
-            alt={""}
-            onError={() => {
-              query.refetch();
-            }}
+            alt="Background image"
             width={state.width}
             height={state.height}
           />
@@ -123,7 +107,7 @@ export function FixedImageBackground(props: Props) {
       />
 
       {/* Spin Icon */}
-      {query.isPending && (
+      {query.isLoading && (
         <CircularProgress
           size={24}
           sx={{

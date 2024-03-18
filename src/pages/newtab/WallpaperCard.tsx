@@ -15,21 +15,22 @@ import snowVillage from "@/assets/images/justHer.jpg";
 import { useForageFile } from "@/hooks/api-localforage/useForageFile";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
 import { CollapsedCard } from "./CollapseCard";
-import type { Theme } from "@mui/material";
 import { WallpaperSwitcher } from "./WallpaperSwitcher";
+import type { Theme } from "@mui/material";
 
 export function WallpaperCard() {
   const bgAlpha = useThemeStore((store) => store.bgAlpha);
   const setBgAlpha = useThemeStore((store) => store.setBgAlpha);
   const bgBlur = useThemeStore((store) => store.bgBlur);
   const setBgBlur = useThemeStore((store) => store.setBgBlur);
+  const xsBgImgKey = useThemeStore((store) => store.xsBgImgKey);
+  const smBgImgKey = useThemeStore((store) => store.smBgImgKey);
 
   const smallScreen = useMediaQuery<Theme>((theme) => {
     return theme.breakpoints.up("sm");
   });
 
-  const fileKey = smallScreen ? "bg-img" : "mobile-bgimg";
-  const query = useForageFile(fileKey);
+  const query = useForageFile(smallScreen ? smBgImgKey : xsBgImgKey);
 
   const [setting, updateSetting] = useImmer({
     imageWidth: 0,
@@ -84,22 +85,15 @@ export function WallpaperCard() {
           }}
         >
           {(() => {
-            if (query.isPending) {
+            if (query.data) {
               return (
                 <StyledImg
-                  src={fallbackImage}
-                  alt="Background image preview"
-                  width={setting.imageWidth}
-                  height={setting.imageHeight}
-                />
-              );
-            }
-
-            if (query.isError) {
-              return (
-                <StyledImg
-                  src={fallbackImage}
-                  alt={query.error.message}
+                  key="xxx"
+                  src={URL.createObjectURL(query.data)}
+                  alt={query.data.name}
+                  onLoad={(evt) => {
+                    URL.revokeObjectURL(evt.currentTarget.src);
+                  }}
                   width={setting.imageWidth}
                   height={setting.imageHeight}
                 />
@@ -108,33 +102,19 @@ export function WallpaperCard() {
 
             return (
               <StyledImg
-                key="xxx"
-                src={query.data.src}
-                alt={query.data.filename}
-                onError={() => {
-                  query.refetch();
-                }}
+                src={fallbackImage}
+                alt="fallback background image"
                 width={setting.imageWidth}
                 height={setting.imageHeight}
               />
             );
           })()}
 
-          <IconButton
-            LinkComponent={"a"}
-            href={query.data?.src || fallbackImage}
-            download={query.data?.filename}
-            title="download image"
-            sx={{
-              position: "absolute",
-              top: "0.75rem",
-              right: "0.75rem",
-              zIndex: 4,
-              color: "common.white",
-            }}
-          >
-            <FileDownloadOutlined />
-          </IconButton>
+          {(() => {
+            if (query.data) {
+              return <DownloadButton file={query.data} />;
+            }
+          })()}
 
           <WallpaperSwitcher />
         </Box>
@@ -184,3 +164,34 @@ const StyledImg = styled("img")(() => {
     zIndex: 2,
   };
 });
+
+function DownloadButton(props: { file: File }) {
+  const [downloadLink, setDownloadLink] = React.useState("");
+
+  React.useEffect(() => {
+    const href = URL.createObjectURL(props.file);
+    setDownloadLink(href);
+
+    return () => {
+      URL.revokeObjectURL(href);
+    };
+  }, [props.file, setDownloadLink]);
+
+  return (
+    <IconButton
+      LinkComponent={"a"}
+      href={downloadLink}
+      download={props.file.name}
+      title="download image"
+      sx={{
+        position: "absolute",
+        top: "0.75rem",
+        right: "0.75rem",
+        zIndex: 4,
+        color: "common.white",
+      }}
+    >
+      <FileDownloadOutlined />
+    </IconButton>
+  );
+}
