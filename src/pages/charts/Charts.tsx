@@ -1,7 +1,7 @@
 import { Container, Grid, Paper, Box } from "@mui/material";
 import React from "react";
 import ReactApexChart from "react-apexcharts";
-import { AnimateController } from "@/utils/AnimateController";
+import { AnimateController } from "@/libs/AnimateController";
 import { Realtime } from "./Realtime";
 
 export function Charts() {

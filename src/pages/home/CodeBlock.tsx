@@ -7,7 +7,7 @@ import RemarkMath from "remark-math";
 import "@/assets/scss/highlight.scss";
 import "@/assets/scss/markdown.scss";
 import "@/assets/scss/scrollbar.scss";
-import markdown from "./markdown.md?raw";
+import markdown from "@/data/markdown.md?raw";
 
 export function CodeBlock() {
   return (

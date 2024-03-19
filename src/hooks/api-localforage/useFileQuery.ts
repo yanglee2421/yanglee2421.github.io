@@ -1,5 +1,5 @@
 import React from "react";
-import { FileQueryClient } from "@/utils/FileQueryClient";
+import { FileQueryClient } from "@/libs/FileQueryClient";
 
 export function useFileQuery<TData>({
   queryKey,
