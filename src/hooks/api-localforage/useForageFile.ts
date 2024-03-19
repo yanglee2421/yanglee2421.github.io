@@ -13,10 +13,9 @@ export function useForageFile(fileKey: string) {
         throw new Error("excepted an array, got a" + toStringTag(data));
       }
 
-      const file = data.find(
-        (item): item is File =>
-          item instanceof File && fileToFileKey(item) === fileKey,
-      );
+      const file = data.find((item): item is File => {
+        return item instanceof File && fileToFileKey(item) === fileKey;
+      });
 
       if (file instanceof File) {
         return file;
