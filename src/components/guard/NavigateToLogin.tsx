@@ -1,6 +1,6 @@
 import { Navigate, useMatches, useSearchParams } from "react-router-dom";
 
-export function LoginRoute() {
+export function NavigateToLogin() {
   const matches = useMatches();
   const [searchParams] = useSearchParams();
 

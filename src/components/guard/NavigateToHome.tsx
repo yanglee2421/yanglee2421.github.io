@@ -1,6 +1,6 @@
 import { Navigate, useMatches, useSearchParams } from "react-router-dom";
 
-export function HomeRoute() {
+export function NavigateToHome() {
   const matches = useMatches();
   const [searchParams] = useSearchParams();
 

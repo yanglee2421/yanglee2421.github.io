@@ -2,7 +2,7 @@ import { getAuth, onAuthStateChanged } from "firebase/auth";
 import React from "react";
 import { app } from "@/api/firebase/app";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
-import { LoginRoute } from "./LoginRoute";
+import { NavigateToLogin } from "./NavigateToLogin";
 
 export function AuthGuard(props: React.PropsWithChildren) {
   const authValue = useAuthStore((s) => s.value);
@@ -16,5 +16,5 @@ export function AuthGuard(props: React.PropsWithChildren) {
     return props.children;
   }
 
-  return <LoginRoute />;
+  return <NavigateToLogin />;
 }
