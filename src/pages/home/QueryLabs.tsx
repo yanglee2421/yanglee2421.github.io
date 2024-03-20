@@ -43,13 +43,13 @@ export function QueryLabs() {
           label="Show right"
         />
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} md={4}>
         {state.showRight && <RightLab />}
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} md={4}>
         {state.showCenter && <CenterLab />}
       </Grid>
-      <Grid item xs={12} sm={6}>
+      <Grid item xs={12} sm={6} md={4}>
         {state.showLeft && <LeftLab />}
       </Grid>
     </Grid>
@@ -71,7 +71,7 @@ function LeftLab() {
           query.refetch();
         }}
       >
-        refetch
+        refetch left
       </button>
       {query.data}
     </>
@@ -93,7 +93,7 @@ function RightLab() {
           query.refetch();
         }}
       >
-        refetch
+        refetch right
       </button>
       {query.data}
     </>
@@ -114,7 +114,7 @@ function CenterLab() {
           query.refetch();
         }}
       >
-        refetch
+        refetch center
       </button>
       {query.data}
     </>
