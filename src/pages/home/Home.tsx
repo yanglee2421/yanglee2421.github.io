@@ -1,7 +1,7 @@
 import { Box, Button } from "@mui/material";
 import bgImg from "@/assets/images/justHer.jpg";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
-import { CodeBlock } from "./CodeBlock";
+import { ChatStream } from "./ChatStream";
 import { QueryLabs } from "./QueryLabs";
 import { WebpToPng } from "./WebpToPng";
 
@@ -19,7 +19,9 @@ export function Home() {
       >
         sign out
       </Button>
-      <QueryLabs />
+      <div className="markdown-body">
+        <ChatStream />
+      </div>
       <Box
         sx={{
           backgroundImage: `url(${new URL(bgImg, import.meta.url).href})`,
@@ -27,9 +29,7 @@ export function Home() {
           aspectRatio: "8/3",
         }}
       />
-      <div className="markdown-body">
-        <CodeBlock />
-      </div>
+      <QueryLabs />
       <WebpToPng />
     </Box>
   );

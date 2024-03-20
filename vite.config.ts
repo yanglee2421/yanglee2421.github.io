@@ -74,8 +74,8 @@ export default defineConfig((configEnv) => {
       },
       host: false,
       proxy: {
-        "/api": {
-          target: "https://data-warpdriven.warpdriven.ai",
+        "/dev": {
+          target: "http://localhost:3002",
           rewrite(path) {
             return path.replace(/^\/dev/, "");
           },
