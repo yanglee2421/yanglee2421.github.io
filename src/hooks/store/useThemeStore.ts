@@ -57,7 +57,7 @@ export const useThemeStore = create(
       };
     },
     {
-      name: import.meta.env.VITE_ZUSTAND_PERSIST,
+      name: "useThemeStore",
       storage: createJSONStorage(() => globalThis.localStorage),
     },
   ),

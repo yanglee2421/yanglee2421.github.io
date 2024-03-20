@@ -2,39 +2,23 @@ import { createMongoAbility, AbilityBuilder } from "@casl/ability";
 import type { MongoAbility } from "@casl/ability";
 
 export function defineAbilityFor(role: string) {
-  const aclBuilder = new AbilityBuilder<AppAbility>(createMongoAbility);
+  const abilityBuilder = new AbilityBuilder<AppAbility>(createMongoAbility);
 
   switch (role) {
     case "owner":
-      ruleForOwner(aclBuilder);
+      abilityBuilder.can("manage", "all");
       break;
     case "admin":
-      ruleForAdmin(aclBuilder);
+      abilityBuilder.can("manage", "all");
       break;
     case "client":
-      ruleForClient(aclBuilder);
+      abilityBuilder.can("read", "all");
       break;
     default:
-      ruleForVisitor(aclBuilder);
+      abilityBuilder.can("read", "all");
   }
 
-  return aclBuilder.build();
+  return abilityBuilder.build();
 }
 
 export type AppAbility = MongoAbility<[string, string]>;
-
-function ruleForOwner(aclBuilder: AbilityBuilder<AppAbility>) {
-  aclBuilder.can("manage", "all");
-}
-
-function ruleForAdmin(aclBuilder: AbilityBuilder<AppAbility>) {
-  aclBuilder.can("manage", "all");
-}
-
-function ruleForClient(aclBuilder: AbilityBuilder<AppAbility>) {
-  aclBuilder.can("read", "all");
-}
-
-function ruleForVisitor(aclBuilder: AbilityBuilder<AppAbility>) {
-  aclBuilder.can("read", "all");
-}

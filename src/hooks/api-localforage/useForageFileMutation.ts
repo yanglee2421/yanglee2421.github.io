@@ -1,38 +1,55 @@
+import { useMutation } from "@tanstack/react-query";
 import localforage from "localforage";
 import { fileToFileKey } from "@/utils/fileToFileKey";
-import { fileQueryClient } from "./useFileQuery";
+import { useNonPersistQueryClient } from "../useNonPersistQueryClient";
 
 export function useForageFileMutation() {
-  return async (arg: File) => {
-    const data = await localforage.getItem("localforage_files");
+  const nonPersistQueryClient = useNonPersistQueryClient();
 
-    const files = [];
-    if (Array.isArray(data)) {
-      files.push(...data.filter((item): item is File => item instanceof File));
-    }
+  return useMutation({
+    async mutationFn(arg: File) {
+      const data = await localforage.getItem("localforage_files");
 
-    const idx = files.findIndex(
-      (item) => fileToFileKey(item) === fileToFileKey(arg),
-    );
+      const files = [];
+      if (Array.isArray(data)) {
+        files.push(
+          ...data.filter((item): item is File => item instanceof File),
+        );
+      }
 
-    switch (idx) {
-      case -1:
-        files.push(arg);
-        break;
-      default:
-        files[idx] = arg;
-    }
+      const idx = files.findIndex(
+        (item) => fileToFileKey(item) === fileToFileKey(arg),
+      );
 
-    const persistFiles = await localforage.setItem("localforage_files", files);
-    const persistFile = persistFiles.find(
-      (item) => fileToFileKey(item) === fileToFileKey(arg),
-    );
+      switch (idx) {
+        case -1:
+          files.push(arg);
+          break;
+        default:
+          files[idx] = arg;
+      }
 
-    if (persistFile instanceof File) {
-      fileQueryClient.invalidate(["localforage_files"]);
-      return persistFile;
-    }
+      const persistFiles = await localforage.setItem(
+        "localforage_files",
+        files,
+      );
+      const persistFile = persistFiles.find(
+        (item) => fileToFileKey(item) === fileToFileKey(arg),
+      );
 
-    throw new Error("system error");
-  };
+      if (persistFile instanceof File) {
+        return persistFile;
+      }
+
+      throw new Error("no such a file");
+    },
+    onError(error) {
+      console.error(error);
+    },
+    onSuccess() {
+      nonPersistQueryClient.invalidateQueries({
+        queryKey: ["localforage_files"],
+      });
+    },
+  });
 }

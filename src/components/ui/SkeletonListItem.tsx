@@ -12,13 +12,13 @@ export function SkeletonListItem(props: ListItemProps) {
     <ListItem {...props}>
       <ListItemAvatar>
         <Skeleton variant="circular">
-          <Avatar></Avatar>
+          <Avatar />
         </Skeleton>
       </ListItemAvatar>
       <ListItemText
-        primary={<Skeleton></Skeleton>}
-        secondary={<Skeleton width={"80%"}></Skeleton>}
-      ></ListItemText>
+        primary={<Skeleton />}
+        secondary={<Skeleton width={"80%"} />}
+      />
     </ListItem>
   );
 }
