@@ -7,12 +7,17 @@ import {
   TableCell,
   TableRow,
   Paper,
+  Link,
+  Typography,
+  Box,
+  TablePagination,
 } from "@mui/material";
 import {
   useReactTable,
   createColumnHelper,
   getCoreRowModel,
   flexRender,
+  getPaginationRowModel,
 } from "@tanstack/react-table";
 import React from "react";
 import { useImmer } from "use-immer";
@@ -20,10 +25,23 @@ import { data } from "./data";
 import type { DataType } from "./data";
 
 export function Table() {
+  const [pagination, onPaginationChange] = React.useState({
+    pageIndex: 0,
+    pageSize: 10,
+  });
+
   const table = useReactTable({
     columns,
     data,
     getCoreRowModel: getCoreRowModel(),
+
+    // ** Pagination
+    getPaginationRowModel: getPaginationRowModel(),
+    rowCount: data.length,
+    state: {
+      pagination,
+    },
+    onPaginationChange,
   });
 
   const [state, updateState] = useImmer({
@@ -151,6 +169,19 @@ export function Table() {
           </TableFooter>
         </MuiTable>
       </TableContainer>
+      <TablePagination
+        component={"div"}
+        count={table.getRowCount()}
+        page={table.getState().pagination.pageIndex}
+        rowsPerPage={table.getState().pagination.pageSize}
+        onPageChange={(evt, page) => {
+          void evt;
+          table.setPageIndex(page);
+        }}
+        onRowsPerPageChange={(evt) => {
+          table.setPageSize(Number.parseInt(evt.target.value) || 10);
+        }}
+      />
     </Paper>
   );
 }
@@ -158,13 +189,31 @@ export function Table() {
 const columnHelper = createColumnHelper<DataType>();
 
 const columns = [
+  columnHelper.display({
+    header: "index",
+    cell(props) {
+      return props.row.index;
+    },
+    footer(props) {
+      return props.header.id;
+    },
+  }),
   columnHelper.accessor("id", {
-    cell: (info) => info.getValue(),
     header: "ID",
+    cell(info) {
+      return (
+        <Box height={100}>
+          <Typography>{info.row.original.age}</Typography>
+          <Link>{info.getValue()}</Link>
+        </Box>
+      );
+    },
   }),
   columnHelper.accessor("fullName", {
-    cell: (info) => info.getValue(),
     header: "Name",
+    cell(info) {
+      return info.getValue();
+    },
     footer() {
       return "Name footer";
     },
