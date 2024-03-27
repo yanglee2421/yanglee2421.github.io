@@ -60,6 +60,7 @@ export function Table() {
     getPaginationRowModel: getPaginationRowModel(),
     rowCount: data.length,
     onPaginationChange,
+    manualPagination: false,
 
     // ** Section
     enableRowSelection: true,
@@ -68,6 +69,7 @@ export function Table() {
     // ** Sorting
     getSortedRowModel: getSortedRowModel(),
     onSortingChange,
+    manualSorting: false,
 
     // ** Filter
     getFilteredRowModel: getFilteredRowModel(),
@@ -75,6 +77,7 @@ export function Table() {
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onGlobalFilterChange,
     onColumnFiltersChange,
+    manualFiltering: false,
 
     state: {
       pagination,
