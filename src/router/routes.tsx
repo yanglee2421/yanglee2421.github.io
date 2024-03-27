@@ -66,13 +66,7 @@ export const routes: RouteObject[] = [
               return import("@/pages/home/Component");
             },
           },
-          {
-            id: "table",
-            path: "table",
-            lazy() {
-              return import("@/pages/table/Component");
-            },
-          },
+
           {
             id: "charts",
             path: "charts",
@@ -88,6 +82,13 @@ export const routes: RouteObject[] = [
         path: "newtab",
         lazy() {
           return import("@/pages/newtab/Component");
+        },
+      },
+      {
+        id: "table",
+        path: "table",
+        lazy() {
+          return import("@/pages/table/Component");
         },
       },
     ],
