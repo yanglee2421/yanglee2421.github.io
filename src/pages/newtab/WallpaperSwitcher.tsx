@@ -14,7 +14,7 @@ import {
   Radio,
   RadioGroup,
 } from "@mui/material";
-import ReactDOM from "react-dom";
+import { createPortal } from "react-dom";
 import { useImmer } from "use-immer";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useForageFileMutation } from "@/hooks/api-localforage/useForageFileMutation";
@@ -87,7 +87,7 @@ export function WallpaperSwitcher() {
           Change
         </Button>
       </CardActionArea>
-      {ReactDOM.createPortal(
+      {createPortal(
         <Dialog
           open={state.showDialog}
           onClose={handleClose}
@@ -140,7 +140,7 @@ export function WallpaperSwitcher() {
                       return;
                     }
 
-                    mutation(file);
+                    mutation.mutate(file);
                   }}
                 />
                 {(() => {

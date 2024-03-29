@@ -1,5 +1,5 @@
 import { Table } from "./Table";
 
 export function Component() {
-  return <Table></Table>;
+  return <Table />;
 }

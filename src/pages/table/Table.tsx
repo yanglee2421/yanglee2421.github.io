@@ -9,27 +9,27 @@ import {
   Paper,
   Box,
   TablePagination,
-  Checkbox,
   Divider,
   TableSortLabel,
   Toolbar,
   TextField,
+  Collapse,
 } from "@mui/material";
 import {
   useReactTable,
-  createColumnHelper,
-  getCoreRowModel,
   flexRender,
+  getCoreRowModel,
   getPaginationRowModel,
   getSortedRowModel,
   getFilteredRowModel,
   getFacetedRowModel,
   getFacetedUniqueValues,
+  getExpandedRowModel,
 } from "@tanstack/react-table";
 import React from "react";
 import { useImmer } from "use-immer";
+import { columns } from "./columns";
 import { data } from "./data";
-import type { DataType } from "./data";
 import type {
   RowSelectionState,
   SortingState,
@@ -79,6 +79,12 @@ export function Table() {
     onColumnFiltersChange,
     manualFiltering: false,
 
+    // ** Expland
+    getExpandedRowModel: getExpandedRowModel(),
+    getRowCanExpand() {
+      return true;
+    },
+
     state: {
       pagination,
       rowSelection,
@@ -105,7 +111,7 @@ export function Table() {
       React.startTransition(() => {
         updateState((draft) => {
           const [size] = contentBoxSize;
-          draft.width = Math.floor(size.inlineSize / 6);
+          draft.width = Math.floor(size.inlineSize / columns.length);
         });
       });
     });
@@ -133,12 +139,15 @@ export function Table() {
       <TableContainer sx={{ overflow: "visible" }}>
         <MuiTable stickyHeader>
           <colgroup ref={colgroupRef}>
-            <col width={state.width} />
-            <col width={state.width} />
-            <col width={state.width} />
-            <col width={state.width} />
-            <col width={state.width} />
-            <col width={state.width} />
+            {(() => {
+              const list = [];
+
+              for (let i = 0; i < columns.length; i++) {
+                list.push(<col key={i} width={state.width} />);
+              }
+
+              return list;
+            })()}
           </colgroup>
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => {
@@ -216,23 +225,41 @@ export function Table() {
           <TableBody>
             {table.getRowModel().rows.map((row) => {
               return (
-                <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <TableCell
-                        key={cell.id}
-                        padding={
-                          cell.column.id === "selection" ? "checkbox" : "normal"
-                        }
-                      >
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </TableCell>
-                    );
-                  })}
-                </TableRow>
+                <React.Fragment key={row.id}>
+                  <TableRow>
+                    {row.getVisibleCells().map((cell) => {
+                      return (
+                        <TableCell
+                          key={cell.id}
+                          padding={
+                            cell.column.id === "selection"
+                              ? "checkbox"
+                              : "normal"
+                          }
+                        >
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </TableCell>
+                      );
+                    })}
+                  </TableRow>
+                  <TableRow>
+                    <TableCell
+                      colSpan={columns.length}
+                      padding="none"
+                      sx={{
+                        borderWidth: 0,
+                      }}
+                    >
+                      <Collapse in={row.getIsExpanded()} enter unmountOnExit>
+                        <Box sx={{ p: 4 }}>{JSON.stringify(row.original)}</Box>
+                        <Divider sx={{ p: 0 }} />
+                      </Collapse>
+                    </TableCell>
+                  </TableRow>
+                </React.Fragment>
               );
             })}
           </TableBody>
@@ -277,7 +304,7 @@ export function Table() {
             },
           }}
         >
-          <Divider sx={{ p: 0 }}></Divider>
+          <Divider sx={{ p: 0 }} />
           <TablePagination
             component={"div"}
             count={table.getPrePaginationRowModel().rows.length}
@@ -297,88 +324,3 @@ export function Table() {
     </Paper>
   );
 }
-
-const columnHelper = createColumnHelper<DataType>();
-
-const columns = [
-  columnHelper.display({
-    id: "selection",
-    header(props) {
-      return (
-        <Checkbox
-          indeterminate={props.table.getIsSomeRowsSelected()}
-          checked={props.table.getIsAllRowsSelected()}
-          onChange={props.table.getToggleAllRowsSelectedHandler()}
-        />
-      );
-    },
-    cell(props) {
-      return (
-        <Checkbox
-          indeterminate={props.row.getIsSomeSelected()}
-          checked={props.row.getIsSelected()}
-          onChange={props.row.getToggleSelectedHandler()}
-          disabled={!props.row.getCanSelect()}
-        />
-      );
-    },
-    footer(props) {
-      return (
-        <Checkbox
-          indeterminate={props.table.getIsSomeRowsSelected()}
-          checked={props.table.getIsAllRowsSelected()}
-          onChange={props.table.getToggleAllRowsSelectedHandler()}
-        />
-      );
-    },
-  }),
-  columnHelper.display({
-    id: "index",
-    header() {
-      return "Index";
-    },
-    cell(props) {
-      return props.row.index;
-    },
-    footer(props) {
-      return props.header.id;
-    },
-  }),
-  columnHelper.accessor("id", {
-    header: "ID",
-    cell(info) {
-      return info.getValue();
-    },
-    footer() {
-      return "#ID";
-    },
-  }),
-  columnHelper.accessor("fullName", {
-    header: "Name",
-    cell(info) {
-      return info.getValue();
-    },
-    footer() {
-      return "Name footer";
-    },
-  }),
-  columnHelper.accessor("email", {
-    cell: (info) => info.getValue(),
-    header: "Email",
-    footer() {
-      return "email footer";
-    },
-  }),
-  columnHelper.accessor("start_date", {
-    cell: (info) => info.getValue(),
-    header: "Date",
-  }),
-  columnHelper.accessor("experience", {
-    cell: (info) => info.getValue(),
-    header: "Experience",
-  }),
-  columnHelper.accessor("age", {
-    cell: (info) => info.getValue(),
-    header: "Age",
-  }),
-];

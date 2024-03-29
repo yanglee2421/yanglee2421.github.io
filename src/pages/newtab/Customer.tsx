@@ -7,7 +7,7 @@ import {
   Divider,
   Stack,
 } from "@mui/material";
-import ReactDOM from "react-dom";
+import { createPortal } from "react-dom";
 import { useImmer } from "use-immer";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { ModeCard } from "./ModeCard";
@@ -41,7 +41,7 @@ export function Customer() {
       <IconButton onClick={handleDrawerOpen}>
         <SettingsOutlined />
       </IconButton>
-      {ReactDOM.createPortal(
+      {createPortal(
         <SwipeableDrawer
           open={setting.showDrawer}
           onOpen={handleDrawerOpen}

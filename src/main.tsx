@@ -5,14 +5,14 @@ import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
 import "@fontsource/roboto/900.css";
 import React from "react";
-import ReactDOM from "react-dom/client";
+import { createRoot } from "react-dom/client";
 import "@/locales/i18n";
 import { App } from "./App";
 
 const container = document.getElementById("root");
 
 if (container) {
-  ReactDOM.createRoot(container).render(
+  createRoot(container).render(
     <React.StrictMode>
       <App />
     </React.StrictMode>,
