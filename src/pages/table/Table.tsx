@@ -52,32 +52,37 @@ export function Table() {
     React.useState<ColumnFiltersState>([]);
 
   const table = useReactTable({
+    getCoreRowModel: getCoreRowModel(),
     columns,
     data,
-    getCoreRowModel: getCoreRowModel(),
 
     // ** Pagination
+    manualPagination: false,
     getPaginationRowModel: getPaginationRowModel(),
     rowCount: data.length,
     onPaginationChange,
-    manualPagination: false,
 
     // ** Section
     enableRowSelection: true,
+    enableMultiRowSelection: true,
     onRowSelectionChange,
 
     // ** Sorting
+    manualSorting: false,
+    enableSorting: true,
+    enableMultiSort: true,
     getSortedRowModel: getSortedRowModel(),
     onSortingChange,
-    manualSorting: false,
 
     // ** Filter
+    manualFiltering: false,
+    enableGlobalFilter: true,
+    enableFilters: true,
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
     onGlobalFilterChange,
     onColumnFiltersChange,
-    manualFiltering: false,
 
     // ** Expland
     getExpandedRowModel: getExpandedRowModel(),
