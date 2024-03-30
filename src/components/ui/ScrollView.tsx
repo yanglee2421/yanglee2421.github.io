@@ -38,20 +38,29 @@ export function ScrollView(props: Props) {
       return;
     }
 
+    const destroyPs = () => {
+      Reflect.deleteProperty(containerEl, "getBoundingClientRect");
+      psRef.current?.destroy();
+      psRef.current = null;
+    };
+
     const observer = new ResizeObserver(() => {
+      const containerClientWidth = containerEl.clientWidth;
+      const containerClientHeight = containerEl.clientHeight;
+
       if (
-        contentEl.clientHeight > containerEl.clientHeight ||
-        contentEl.clientWidth > containerEl.clientWidth
+        contentEl.clientHeight > containerClientHeight ||
+        contentEl.clientWidth > containerClientWidth
       ) {
         psRef.current
           ? psRef.current.update()
           : (() => {
-              Reflect.set(containerEl, "", () => {
+              Reflect.set(containerEl, "getBoundingClientRect", () => {
                 const originRect =
                   Element.prototype.getBoundingClientRect.call(containerEl);
 
-                originRect.width = containerEl.clientWidth;
-                originRect.height = containerEl.clientHeight;
+                originRect.width = containerClientWidth;
+                originRect.height = containerClientHeight;
 
                 return originRect;
               });
@@ -62,18 +71,14 @@ export function ScrollView(props: Props) {
         return;
       }
 
-      Reflect.deleteProperty(containerEl, "getBoundingClientRect");
-      psRef.current?.destroy();
-      psRef.current = null;
+      destroyPs();
     });
 
     observer.observe(containerEl);
     observer.observe(contentEl);
 
     return () => {
-      Reflect.deleteProperty(containerEl, "getBoundingClientRect");
-      psRef.current?.destroy();
-      psRef.current = null;
+      destroyPs();
       observer.disconnect();
     };
   }, [options]);
