@@ -2,7 +2,7 @@ import { FormControlLabel, Grid, Switch } from "@mui/material";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useImmer } from "use-immer";
 
-export function QueryLabs() {
+export function Query() {
   const [state, updateState] = useImmer({
     showLeft: true,
     showRight: true,

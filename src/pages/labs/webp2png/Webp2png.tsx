@@ -5,7 +5,7 @@ import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
 import { useImmer } from "use-immer";
 
-export function WebpToPng() {
+export function Webp2png() {
   const [state, updateState] = useImmer<{
     file: null | File;
   }>({
