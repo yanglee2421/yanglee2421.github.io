@@ -3,6 +3,7 @@ import React from "react";
 import ReactDatepicker from "react-datepicker";
 import "@/assets/scss/datepicker.scss";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { Datepicker } from "./Datepicker";
 
 export function Home() {
   const authValue = useAuthStore();
@@ -25,7 +26,9 @@ export function Home() {
       </Button>
       <Divider>Component</Divider>
       <Grid container>
-        <Grid item xs={12} sm={6}></Grid>
+        <Grid item xs={12} sm={6}>
+          <Datepicker />
+        </Grid>
         <Grid item xs={12} sm={6}>
           <DatepickerWrapper>
             <ReactDatepicker
