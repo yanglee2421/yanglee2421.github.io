@@ -40,6 +40,10 @@ export const columns = [
         />
       );
     },
+    enableResizing: false,
+    size: 80,
+    minSize: 80,
+    maxSize: 80,
   }),
 
   columnHelper.display({
@@ -53,6 +57,10 @@ export const columns = [
     footer(props) {
       return props.header.id;
     },
+    enableResizing: false,
+    size: 80,
+    minSize: 80,
+    maxSize: 80,
   }),
 
   columnHelper.display({
@@ -75,6 +83,10 @@ export const columns = [
 
       return <CircleOutlined />;
     },
+    enableResizing: false,
+    size: 80,
+    minSize: 80,
+    maxSize: 80,
   }),
 
   columnHelper.accessor("id", {

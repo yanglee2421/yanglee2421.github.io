@@ -14,6 +14,7 @@ import {
   Toolbar,
   TextField,
   Collapse,
+  alpha,
 } from "@mui/material";
 import {
   useReactTable,
@@ -27,7 +28,6 @@ import {
   getExpandedRowModel,
 } from "@tanstack/react-table";
 import React from "react";
-import { useImmer } from "use-immer";
 import { columns } from "./columns";
 import { data } from "./data";
 import type {
@@ -90,6 +90,10 @@ export function Table() {
       return true;
     },
 
+    // ** Resize
+    enableColumnResizing: true,
+    columnResizeMode: "onChange",
+
     state: {
       pagination,
       rowSelection,
@@ -98,35 +102,6 @@ export function Table() {
       columnFilters,
     },
   });
-
-  const [state, updateState] = useImmer({
-    width: 0,
-  });
-
-  const colgroupRef = React.useRef<HTMLTableColElement>(null);
-
-  React.useEffect(() => {
-    const colgroupEl = colgroupRef.current;
-
-    if (!(colgroupEl instanceof HTMLTableColElement)) {
-      return;
-    }
-
-    const observer = new ResizeObserver(([{ contentBoxSize }]) => {
-      React.startTransition(() => {
-        updateState((draft) => {
-          const [size] = contentBoxSize;
-          draft.width = Math.floor(size.inlineSize / columns.length);
-        });
-      });
-    });
-
-    observer.observe(colgroupEl);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [updateState]);
 
   return (
     <Paper sx={{ m: 6 }}>
@@ -143,69 +118,23 @@ export function Table() {
       </Toolbar>
       <TableContainer sx={{ overflow: "visible" }}>
         <MuiTable stickyHeader>
-          <colgroup ref={colgroupRef}>
-            {(() => {
-              const list = [];
-
-              for (let i = 0; i < columns.length; i++) {
-                list.push(<col key={i} width={state.width} />);
-              }
-
-              return list;
-            })()}
-          </colgroup>
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => {
               return (
                 <TableRow key={headerGroup.id}>
                   {headerGroup.headers.map((header) => {
-                    if (header.column.getCanSort()) {
-                      return (
-                        <TableCell
-                          key={header.id}
-                          colSpan={header.colSpan}
-                          padding={
-                            header.id === "selection" ? "checkbox" : "normal"
-                          }
-                        >
-                          <TableSortLabel
-                            active={!!header.column.getIsSorted()}
-                            onClick={header.column.getToggleSortingHandler()}
-                            disabled={!header.column.getCanSort()}
-                            direction={header.column.getIsSorted() || void 0}
-                          >
-                            {header.isPlaceholder ||
-                              flexRender(
-                                header.column.columnDef.header,
-                                header.getContext(),
-                              )}
-                          </TableSortLabel>
-                          <TextField
-                            value={header.column.getFilterValue()}
-                            onChange={(evt) => {
-                              header.column.setFilterValue(evt.target.value);
-                            }}
-                            placeholder={`Search... (${header.column.getFacetedUniqueValues().size})`}
-                            variant="standard"
-                            size="small"
-                            inputProps={{
-                              list: header.column.id,
-                            }}
-                          />
-                          <datalist id={header.column.id}>
-                            {Array.from(
-                              header.column.getFacetedUniqueValues().keys(),
-                            )
-                              .sort()
-                              .map((item) => {
-                                return (
-                                  <option key={item} value={item}></option>
-                                );
-                              })}
-                          </datalist>
-                        </TableCell>
+                    const canSort = header.column.getCanSort();
+                    const isSorted = header.column.getIsSorted();
+                    const isResizing = header.column.getIsResizing();
+                    const resizeHandler = header.getResizeHandler();
+                    const facetedUniqueValues =
+                      header.column.getFacetedUniqueValues();
+                    const cellNode =
+                      header.isPlaceholder ||
+                      flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
                       );
-                    }
 
                     return (
                       <TableCell
@@ -214,12 +143,71 @@ export function Table() {
                         padding={
                           header.id === "selection" ? "checkbox" : "normal"
                         }
+                        width={header.getSize()}
+                        sx={{ position: "relative" }}
                       >
-                        {header.isPlaceholder ||
-                          flexRender(
-                            header.column.columnDef.header,
-                            header.getContext(),
-                          )}
+                        {canSort ? (
+                          <TableSortLabel
+                            active={!!isSorted}
+                            onClick={header.column.getToggleSortingHandler()}
+                            disabled={!canSort}
+                            direction={isSorted || void 0}
+                          >
+                            {cellNode}
+                          </TableSortLabel>
+                        ) : (
+                          cellNode
+                        )}
+                        {header.column.getCanFilter() && (
+                          <>
+                            <TextField
+                              value={header.column.getFilterValue()}
+                              onChange={(evt) => {
+                                header.column.setFilterValue(evt.target.value);
+                              }}
+                              placeholder={`Search... (${facetedUniqueValues.size})`}
+                              variant="standard"
+                              size="small"
+                              inputProps={{
+                                list: header.column.id,
+                              }}
+                            />
+                            <datalist id={header.column.id}>
+                              {Array.from(facetedUniqueValues.keys())
+                                .sort()
+                                .map((item) => {
+                                  return (
+                                    <option key={item} value={item}></option>
+                                  );
+                                })}
+                            </datalist>
+                          </>
+                        )}
+
+                        {header.column.getCanResize() && (
+                          <Box
+                            component={"div"}
+                            onMouseDown={resizeHandler}
+                            onTouchStart={resizeHandler}
+                            sx={{
+                              position: "absolute",
+                              right: 0,
+                              top: 0,
+                              height: "100%",
+                              width: 3,
+                              background: isResizing
+                                ? "blue"
+                                : alpha("#000", 0.5),
+                              cursor: "col-resize",
+                              userSelect: "none",
+                              touchAction: "none",
+                              opacity: isResizing ? 1 : 0,
+                              transition(theme) {
+                                return theme.transitions.create("opacity");
+                              },
+                            }}
+                          ></Box>
+                        )}
                       </TableCell>
                     );
                   })}
@@ -231,7 +219,7 @@ export function Table() {
             {table.getRowModel().rows.map((row) => {
               return (
                 <React.Fragment key={row.id}>
-                  <TableRow>
+                  <TableRow selected={row.getIsSelected()} hover>
                     {row.getVisibleCells().map((cell) => {
                       return (
                         <TableCell
