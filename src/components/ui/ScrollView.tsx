@@ -163,7 +163,9 @@ export function ScrollView(props: Props) {
       height={"100%"}
       {...restProps}
     >
-      <Box ref={contentRef}>{children}</Box>
+      <Box ref={contentRef} sx={{ width: "fit-content" }}>
+        {children}
+      </Box>
     </Box>
   );
 }

@@ -1,5 +1,4 @@
 import { Box, Button } from "@mui/material";
-import bgImg from "@/assets/images/justHer.jpg";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { ChatStream } from "./ChatStream";
 import { QueryLabs } from "./QueryLabs";
@@ -22,13 +21,6 @@ export function Home() {
       <div className="markdown-body">
         <ChatStream />
       </div>
-      <Box
-        sx={{
-          backgroundImage: `url(${new URL(bgImg, import.meta.url).href})`,
-          backgroundAttachment: "fixed",
-          aspectRatio: "8/3",
-        }}
-      />
       <QueryLabs />
       <WebpToPng />
     </Box>

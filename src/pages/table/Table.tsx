@@ -1,5 +1,4 @@
 import {
-  TableContainer,
   Table as MuiTable,
   TableBody,
   TableHead,
@@ -28,6 +27,7 @@ import {
   getExpandedRowModel,
 } from "@tanstack/react-table";
 import React from "react";
+import { useImmer } from "use-immer";
 import { columns } from "./columns";
 import { data } from "./data";
 import type {
@@ -103,6 +103,34 @@ export function Table() {
     },
   });
 
+  const tableRef = React.useRef<HTMLTableElement>(null);
+  const tableContainerRef = React.useRef<HTMLDivElement>(null);
+  const scrollControllerRef = React.useRef();
+  const [state, updateState] = useImmer({
+    contentWidth: 0,
+  });
+
+  React.useEffect(() => {
+    const tableEl = tableRef.current;
+
+    if (!(tableEl instanceof HTMLElement)) {
+      return;
+    }
+
+    const observer = new ResizeObserver((entries) => {
+      updateState((draft) => {
+        draft.contentWidth =
+          entries.at(0)?.contentBoxSize.at(0)?.inlineSize || draft.contentWidth;
+      });
+    });
+
+    observer.observe(tableEl);
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [updateState]);
+
   return (
     <Paper sx={{ m: 6 }}>
       <Toolbar>
@@ -116,8 +144,13 @@ export function Table() {
           variant="filled"
         />
       </Toolbar>
-      <TableContainer sx={{ overflow: "visible" }}>
-        <MuiTable stickyHeader>
+      <Box
+        ref={tableContainerRef}
+        sx={{
+          overflow: "hidden",
+        }}
+      >
+        <MuiTable ref={tableRef}>
           <TableHead>
             {table.getHeaderGroups().map((headerGroup) => {
               return (
@@ -127,8 +160,6 @@ export function Table() {
                     const isSorted = header.column.getIsSorted();
                     const isResizing = header.column.getIsResizing();
                     const resizeHandler = header.getResizeHandler();
-                    const facetedUniqueValues =
-                      header.column.getFacetedUniqueValues();
                     const cellNode =
                       header.isPlaceholder ||
                       flexRender(
@@ -165,7 +196,7 @@ export function Table() {
                               onChange={(evt) => {
                                 header.column.setFilterValue(evt.target.value);
                               }}
-                              placeholder={`Search... (${facetedUniqueValues.size})`}
+                              placeholder={`Search... (${header.column.getFacetedUniqueValues().size})`}
                               variant="standard"
                               size="small"
                               inputProps={{
@@ -173,7 +204,9 @@ export function Table() {
                               }}
                             />
                             <datalist id={header.column.id}>
-                              {Array.from(facetedUniqueValues.keys())
+                              {Array.from(
+                                header.column.getFacetedUniqueValues().keys(),
+                              )
                                 .sort()
                                 .map((item) => {
                                   return (
@@ -270,7 +303,6 @@ export function Table() {
                             ? "checkbox"
                             : "normal"
                         }
-                        sx={{ border: 0 }}
                       >
                         {header.isPlaceholder ||
                           flexRender(
@@ -285,35 +317,56 @@ export function Table() {
             })}
           </TableFooter>
         </MuiTable>
+      </Box>
+
+      <Box
+        sx={{
+          position: "sticky",
+          bottom: 0,
+          bgcolor(theme) {
+            return theme.palette.background.paper;
+          },
+          borderBottomLeftRadius(theme) {
+            return theme.shape.borderRadius + "px";
+          },
+          borderBottomRightRadius(theme) {
+            return theme.shape.borderRadius + "px";
+          },
+        }}
+      >
         <Box
-          sx={{
-            position: "sticky",
-            bottom: 0,
-            bgcolor(theme) {
-              return theme.palette.background.paper;
-            },
-            borderRadius(theme) {
-              return theme.shape.borderRadius;
-            },
+          ref={scrollControllerRef}
+          component={"div"}
+          onScroll={(evt) => {
+            const tableContainerEl = tableContainerRef.current;
+
+            if (!(tableContainerEl instanceof HTMLElement)) {
+              return;
+            }
+
+            tableContainerEl.scrollLeft = evt.currentTarget.scrollLeft;
           }}
+          overflow={"auto"}
+          height={8}
+          padding={0}
         >
-          <Divider sx={{ p: 0 }} />
-          <TablePagination
-            component={"div"}
-            count={table.getPrePaginationRowModel().rows.length}
-            rowsPerPageOptions={[20, 50, 100]}
-            page={table.getState().pagination.pageIndex}
-            rowsPerPage={table.getState().pagination.pageSize}
-            onPageChange={(evt, page) => {
-              void evt;
-              table.setPageIndex(page);
-            }}
-            onRowsPerPageChange={(evt) => {
-              table.setPageSize(Number.parseInt(evt.target.value) || 20);
-            }}
-          />
+          <Box width={state.contentWidth} height={8}></Box>
         </Box>
-      </TableContainer>
+        <TablePagination
+          component={"div"}
+          count={table.getPrePaginationRowModel().rows.length}
+          rowsPerPageOptions={[20, 50, 100]}
+          page={table.getState().pagination.pageIndex}
+          rowsPerPage={table.getState().pagination.pageSize}
+          onPageChange={(evt, page) => {
+            void evt;
+            table.setPageIndex(page);
+          }}
+          onRowsPerPageChange={(evt) => {
+            table.setPageSize(Number.parseInt(evt.target.value) || 20);
+          }}
+        />
+      </Box>
     </Paper>
   );
 }
