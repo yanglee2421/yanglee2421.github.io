@@ -35,7 +35,7 @@ export function MobileLayout() {
       observer.unobserve(el);
       observer.disconnect();
     };
-  }, [setMarginTop]);
+  }, []);
 
   return (
     <>

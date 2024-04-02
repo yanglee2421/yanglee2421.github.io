@@ -48,30 +48,24 @@ export function ScrollView(props: Props) {
       const containerClientWidth = containerEl.clientWidth;
       const containerClientHeight = containerEl.clientHeight;
 
+      destroyPs();
+      Reflect.set(containerEl, "getBoundingClientRect", () => {
+        const originRect =
+          Element.prototype.getBoundingClientRect.call(containerEl);
+
+        originRect.width = containerClientWidth;
+        originRect.height = containerClientHeight;
+
+        return originRect;
+      });
+
       if (
         contentEl.clientHeight > containerClientHeight ||
         contentEl.clientWidth > containerClientWidth
       ) {
-        psRef.current
-          ? psRef.current.update()
-          : (() => {
-              Reflect.set(containerEl, "getBoundingClientRect", () => {
-                const originRect =
-                  Element.prototype.getBoundingClientRect.call(containerEl);
-
-                originRect.width = containerClientWidth;
-                originRect.height = containerClientHeight;
-
-                return originRect;
-              });
-
-              psRef.current = new PerfectScrollbar(containerEl, options);
-            })();
-
-        return;
+        psRef.current ||= new PerfectScrollbar(containerEl, options);
+        psRef.current.update();
       }
-
-      destroyPs();
     });
 
     observer.observe(containerEl);
@@ -162,8 +156,15 @@ export function ScrollView(props: Props) {
       position={"relative"}
       height={"100%"}
       {...restProps}
+      border={0}
     >
-      <Box ref={contentRef} sx={{ width: "fit-content" }}>
+      <Box
+        ref={contentRef}
+        sx={{
+          width: "fit-content",
+          minWidth: "100%",
+        }}
+      >
         {children}
       </Box>
     </Box>

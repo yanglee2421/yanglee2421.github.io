@@ -4,6 +4,8 @@ import ReactDatepicker from "react-datepicker";
 import "@/assets/scss/datepicker.scss";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { Datepicker } from "./Datepicker";
+import { ScrollArea } from "./ScrollArea";
+import { JsonBlock } from "./JsonBlock";
 
 export function Home() {
   const authValue = useAuthStore();
@@ -63,6 +65,28 @@ export function Home() {
               })()}
             />
           </DatepickerWrapper>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <Box sx={{ width: 300, height: 600, border: "1px red solid" }}>
+            <ScrollArea>
+              <Box width={1000} height={2000}>
+                Lorem ipsum dolor sit amet consectetur adipisicing elit. Aliquid
+                magni itaque velit rem esse at placeat provident sed! Eaque
+                dolor nisi tempore, voluptatum laudantium fuga velit eum
+                pariatur eos nam? Iste, optio sint. Officia maiores neque
+                distinctio fugit optio suscipit. Nulla, quisquam cumque porro
+                voluptates quae, ullam nostrum maiores dolor accusantium
+                recusandae autem, libero minima possimus omnis! Molestiae, eaque
+                animi! Maiores ab nesciunt nihil laboriosam magni corporis
+                tempore nulla suscipit, omnis officia id pariatur. A, eius
+                accusantium. Impedit similique soluta sequi dolores quas
+                suscipit natus, magnam dolorum voluptas autem quia.
+              </Box>
+            </ScrollArea>
+          </Box>
+        </Grid>
+        <Grid item xs={12} sm={6}>
+          <JsonBlock />
         </Grid>
       </Grid>
     </Box>
