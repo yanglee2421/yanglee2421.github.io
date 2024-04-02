@@ -4,8 +4,8 @@ import ReactDatepicker from "react-datepicker";
 import "@/assets/scss/datepicker.scss";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { Datepicker } from "./Datepicker";
-import { ScrollArea } from "./ScrollArea";
 import { JsonBlock } from "./JsonBlock";
+import { ScrollArea } from "./ScrollArea";
 
 export function Home() {
   const authValue = useAuthStore();

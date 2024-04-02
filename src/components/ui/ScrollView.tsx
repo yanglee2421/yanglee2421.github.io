@@ -38,7 +38,7 @@ export function ScrollView(props: Props) {
       return;
     }
 
-    const destroyPs = () => {
+    const clearScrollbar = () => {
       Reflect.deleteProperty(containerEl, "getBoundingClientRect");
       psRef.current?.destroy();
       psRef.current = null;
@@ -48,7 +48,6 @@ export function ScrollView(props: Props) {
       const containerClientWidth = containerEl.clientWidth;
       const containerClientHeight = containerEl.clientHeight;
 
-      destroyPs();
       Reflect.set(containerEl, "getBoundingClientRect", () => {
         const originRect =
           Element.prototype.getBoundingClientRect.call(containerEl);
@@ -59,20 +58,26 @@ export function ScrollView(props: Props) {
         return originRect;
       });
 
+      // Scrollbar Active
       if (
         contentEl.clientHeight > containerClientHeight ||
         contentEl.clientWidth > containerClientWidth
       ) {
         psRef.current ||= new PerfectScrollbar(containerEl, options);
         psRef.current.update();
+
+        return;
       }
+
+      // Scrollbar Unactive
+      clearScrollbar();
     });
 
     observer.observe(containerEl);
     observer.observe(contentEl);
 
     return () => {
-      destroyPs();
+      clearScrollbar();
       observer.disconnect();
     };
   }, [options]);

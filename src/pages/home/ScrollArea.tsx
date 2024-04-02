@@ -77,7 +77,6 @@ export function ScrollArea(props: React.PropsWithChildren) {
           minWidth: "100%",
           height: "fit-content",
           minHeight: "100%",
-          userSelect: "none",
         }}
       >
         {props.children}
@@ -154,6 +153,8 @@ export function ScrollArea(props: React.PropsWithChildren) {
             document.addEventListener(
               "mousemove",
               (evt) => {
+                evt.stopPropagation();
+
                 updateState((draft) => {
                   const nextY = draft.thumbTop + evt.pageY - yStart;
                   const maxY = draft.clientHeight - draft.thumbHeight;

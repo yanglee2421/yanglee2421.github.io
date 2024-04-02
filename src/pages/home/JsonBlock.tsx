@@ -1,8 +1,8 @@
 import Prism from "prismjs";
 import "prismjs/components/prism-json.js";
 import "prismjs/themes/prism.css";
-import jsonData from "@/data/jsonblock.json";
 import { ScrollView } from "@/components/ui/ScrollView";
+import jsonData from "@/data/jsonblock.json";
 
 export function JsonBlock() {
   return (
