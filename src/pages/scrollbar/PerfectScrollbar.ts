@@ -3,11 +3,47 @@ import * as DOM from "./dom";
 import { cls } from "./classNames";
 
 export class PerfectScrollbar {
-  isAlive = false;
   containerHeight = 0;
   containerWidth = 0;
   contentHeight = 0;
   contentWidth = 0;
+
+  isAlive = false;
+  isNegativeScroll = false;
+  isRtl = false;
+  isScrollbarXUsingBottom = false;
+  isScrollbarYUsingBottom = false;
+  lastScrollLeft = false;
+  lastScrollTop = false;
+  isScrollbarYUsingRight = false;
+
+  negativeScrollAdjustment = 0;
+  railBorderXWidth = 0;
+  railBorderYWidth = 0;
+  railXMarginWidth = 0;
+  railXRatio = 0;
+  railXWidth = 0;
+  railYHeight = 0;
+  railYMarginHeight = 0;
+  railYRatio = 0;
+
+  scrollbarX = new HTMLElement();
+  scrollbarXActive = false;
+  scrollbarXBottom = 0;
+  scrollbarXLeft = 0;
+  scrollbarXRail = new HTMLElement();
+  scrollbarXWidth = 0;
+  scrollbarXTop = 0;
+
+  scrollbarY = new HTMLElement();
+  scrollbarYActive = false;
+  scrollbarYHeight = 0;
+  scrollbarYOuterWidth = 0;
+  scrollbarYRail = new HTMLElement();
+  scrollbarYRight = 0;
+  scrollbarYTop = 0;
+  scrollbarYLeft = 0;
+
   reach: Reach = {
     x: null,
     y: null,
@@ -41,8 +77,8 @@ interface Options {
   maxScrollbarLength?: number;
   minScrollbarLength?: number;
   scrollingThreshold?: number;
-  scrollXMarginOffset?: number;
-  scrollYMarginOffset?: number;
+  scrollXMarginOffset: number;
+  scrollYMarginOffset: number;
   suppressScrollX?: boolean;
   suppressScrollY?: boolean;
   swipeEasing?: boolean;
