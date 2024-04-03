@@ -19,7 +19,7 @@ import { useShallow } from "zustand/react/shallow";
 import { InputText } from "@/components/form/InputText";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { stringToColor } from "@/utils/stringToColor";
-import { UploadAvator } from "./UploadAvator";
+// import { UploadAvator } from "./UploadAvator";
 import type { Auth } from "firebase/auth";
 
 export function Account() {
@@ -101,10 +101,10 @@ export function Account() {
                   : void 0,
               }}
             >
-              {authValue.auth.currentUser?.displayName?.at(0)?.toUpperCase()}
+              {/* {authValue.auth.currentUser?.displayName?.at(0)?.toUpperCase()} */}
             </Avatar>
           }
-          action={<UploadAvator />}
+          // action={<UploadAvator />}
         />
         <CardContent>
           <Grid container spacing={4}>
