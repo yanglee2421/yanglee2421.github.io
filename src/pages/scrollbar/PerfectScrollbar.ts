@@ -4,6 +4,15 @@ import { cls } from "./classNames";
 
 export class PerfectScrollbar {
   isAlive = false;
+  containerHeight = 0;
+  containerWidth = 0;
+  contentHeight = 0;
+  contentWidth = 0;
+  reach: Reach = {
+    x: null,
+    y: null,
+  };
+
   constructor(
     public element: HTMLElement,
     public settings: Options = defaultSettings(),
@@ -41,3 +50,5 @@ interface Options {
   wheelPropagation?: boolean;
   wheelSpeed?: number;
 }
+
+type Reach = { x: "start" | "end" | null; y: "start" | "end" | null };
