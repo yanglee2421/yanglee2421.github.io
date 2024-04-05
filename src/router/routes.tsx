@@ -91,6 +91,13 @@ export const routes: RouteObject[] = [
           return import("@/pages/table/Component");
         },
       },
+      {
+        id: "virtual",
+        path: "virtual",
+        lazy() {
+          return import("@/pages/virtual/Component");
+        },
+      },
     ],
   },
 ];

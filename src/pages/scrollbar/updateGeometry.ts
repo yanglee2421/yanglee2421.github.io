@@ -134,7 +134,6 @@ function updateCss(element: HTMLElement, i: PerfectScrollbar) {
   } else {
     xRailOffset.top = i.scrollbarXTop + roundedScrollTop + "px";
   }
-  CSS.set(i.scrollbarXRail, xRailOffset);
 
   const yRailOffset = {
     top: roundedScrollTop + "px",
@@ -169,12 +168,15 @@ function updateCss(element: HTMLElement, i: PerfectScrollbar) {
       yRailOffset.left = i.scrollbarYLeft + element.scrollLeft + "px";
     }
   }
+
+  CSS.set(i.scrollbarXRail, xRailOffset);
   CSS.set(i.scrollbarYRail, yRailOffset);
 
   CSS.set(i.scrollbarX, {
     left: i.scrollbarXLeft + "px",
     width: i.scrollbarXWidth - i.railBorderXWidth + "px",
   });
+
   CSS.set(i.scrollbarY, {
     top: i.scrollbarYTop + "px",
     height: i.scrollbarYHeight - i.railBorderYWidth + "px",

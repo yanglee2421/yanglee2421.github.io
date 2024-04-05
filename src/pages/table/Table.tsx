@@ -120,7 +120,7 @@ export function Table() {
     const observer = new ResizeObserver((entries) => {
       updateState((draft) => {
         draft.contentWidth =
-          entries.at(0)?.contentBoxSize.at(0)?.inlineSize || draft.contentWidth;
+          entries[0]?.contentBoxSize[0]?.inlineSize || draft.contentWidth;
       });
     });
 
