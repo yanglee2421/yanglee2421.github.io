@@ -1,16 +1,18 @@
+import { Box, alpha, Collapse, styled } from "@mui/material";
 import {
-  Row,
   flexRender,
   getCoreRowModel,
   getExpandedRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import { useWindowVirtualizer } from "@tanstack/react-virtual";
-import { DataType, data } from "./data";
-import { columns } from "./columns";
-import { Box, alpha, Collapse, styled } from "@mui/material";
-import { ScrollView } from "@/components/ui/ScrollView";
 import { JsonBlock } from "@/components/ui/JsonBlock";
+import { ScrollView } from "@/components/ui/ScrollView";
+import { columns } from "./columns";
+import { data } from "./data";
+import type { DataType} from "./data";
+import type {
+  Row} from "@tanstack/react-table";
 
 export function Virtual() {
   const table = useReactTable({

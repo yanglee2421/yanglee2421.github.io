@@ -1,6 +1,6 @@
+import { cls } from "./classNames";
 import * as CSS from "./css";
 import * as DOM from "./dom";
-import { cls } from "./classNames";
 
 export class PerfectScrollbar {
   containerHeight = 0;

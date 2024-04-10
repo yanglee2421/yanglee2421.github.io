@@ -13,7 +13,7 @@ export function JsonBlock(props: Props) {
         className="language-json"
         dangerouslySetInnerHTML={{
           __html: Prism.highlight(
-            JSON.stringify(props.jsonData, null, 2),
+            JSON.stringify(jsonData, null, 2),
             Prism.languages.json,
             "json",
           ),
