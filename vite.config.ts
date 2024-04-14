@@ -72,7 +72,7 @@ export default defineConfig((configEnv) => {
       hmr: {
         port: 3006,
       },
-      host: false,
+      host: true,
       proxy: {
         "/dev": {
           target: "http://localhost:3002",

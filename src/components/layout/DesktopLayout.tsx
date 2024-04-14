@@ -27,194 +27,196 @@ export function DesktopLayout(props: React.PropsWithChildren) {
 
   return (
     <Box
-      display={"flex"}
-      flexDirection={"column"}
-      flexBasis={"auto"}
-      flexGrow={1}
-      flexShrink={1}
+      sx={{
+        display: "flex",
+      }}
     >
-      <Box display={"flex"} flexBasis={"auto"} flexGrow={1} flexShrink={1}>
-        {/* Navigation Aside */}
+      {/* Navigation Aside */}
+      <Box
+        component={"aside"}
+        sx={{
+          position: "sticky",
+          zIndex(theme) {
+            return theme.zIndex.drawer + 1;
+          },
+          top: 0,
+          inlineSize: asideMenuCollapsed ? collapsedWidth : explandedWidth,
+          minInlineSize: asideMenuCollapsed ? collapsedWidth : explandedWidth,
+          blockSize: "100dvh",
+          transition(theme) {
+            return theme.transitions.create(["inline-size", "min-inline-size"]);
+          },
+        }}
+      >
+        {/* Navigation Aside Container */}
         <Box
-          component={"aside"}
-          position={"sticky"}
-          zIndex={(theme) => theme.zIndex.drawer + 1}
-          top={0}
+          component={"div"}
+          onMouseEnter={() => {
+            updateState((draft) => {
+              draft.isHovered = true;
+            });
+          }}
+          onMouseLeave={() => {
+            updateState((draft) => {
+              draft.isHovered = false;
+            });
+          }}
+          position={"relative"}
+          borderRight={(theme) => `1px solid ${theme.palette.divider}`}
           sx={{
-            inlineSize: asideMenuCollapsed ? collapsedWidth : explandedWidth,
-            minInlineSize: asideMenuCollapsed ? collapsedWidth : explandedWidth,
-            blockSize: "100dvh",
+            inlineSize: "100%",
+            minInlineSize: "100%",
+            blockSize: "100%",
             transition(theme) {
               return theme.transitions.create([
                 "inline-size",
                 "min-inline-size",
               ]);
             },
+            "&:hover": {
+              inlineSize: explandedWidth,
+              minInlineSize: explandedWidth,
+            },
           }}
         >
-          {/* Navigation Aside Container */}
+          {/* Navigation Aside Container Background */}
           <Box
-            component={"div"}
-            onMouseEnter={() => {
-              updateState((draft) => {
-                draft.isHovered = true;
-              });
-            }}
-            onMouseLeave={() => {
-              updateState((draft) => {
-                draft.isHovered = false;
-              });
-            }}
             position={"relative"}
-            borderRight={(theme) => `1px solid ${theme.palette.divider}`}
+            zIndex={3}
+            display={"flex"}
+            flexDirection={"column"}
             sx={{
-              inlineSize: "100%",
-              minInlineSize: "100%",
               blockSize: "100%",
-              transition(theme) {
-                return theme.transitions.create([
-                  "inline-size",
-                  "min-inline-size",
-                ]);
-              },
-              "&:hover": {
-                inlineSize: explandedWidth,
-                minInlineSize: explandedWidth,
+              overflowX: "hidden",
+              overflowY: "auto",
+              backgroundColor(theme) {
+                return theme.palette.background.default;
               },
             }}
           >
-            {/* Navigation Aside Container Background */}
+            {/* Navigation Aside Header */}
             <Box
-              position={"relative"}
-              zIndex={3}
               display={"flex"}
-              flexDirection={"column"}
-              sx={{
-                blockSize: "100%",
-                overflowX: "hidden",
-                overflowY: "auto",
-                backgroundColor(theme) {
-                  return theme.palette.background.default;
-                },
-              }}
+              justifyContent={"space-between"}
+              alignItems={"center"}
+              paddingInline={2}
+              paddingBlock={3}
             >
-              {/* Navigation Aside Header */}
-              <Box
-                display={"flex"}
-                justifyContent={"space-between"}
-                alignItems={"center"}
-                paddingInline={2}
-                paddingBlock={3}
-              >
-                <StyledLink to={{ pathname: "/" }}>
-                  <Materio width={28} height={22}></Materio>
-                  <Transition
-                    in={explandedContainer}
-                    nodeRef={logoTextRef}
-                    addEndListener={(done) => {
-                      logoTextRef.current?.addEventListener(
-                        "transitionend",
-                        done,
-                      );
-                    }}
-                    unmountOnExit
-                  >
-                    {(status) => {
-                      return (
-                        <Typography
-                          ref={logoTextRef}
-                          variant="h5"
-                          noWrap
-                          color="ActiveBorder"
-                          fontWeight={500}
-                          fontSize={20}
-                          sx={(theme) => {
-                            switch (status) {
-                              case "exited":
-                                return {
-                                  opacity: 0,
-                                  marginInlineStart: 0,
-                                };
-                              case "entering":
-                                return {
-                                  opacity: 1,
-                                  marginInlineStart: "10px",
-                                  transition: theme.transitions.create([
-                                    "opacity",
-                                    "margin-inline-start",
-                                  ]),
-                                };
+              <StyledLink to={{ pathname: "/" }}>
+                <Materio width={28} height={22}></Materio>
+                <Transition
+                  in={explandedContainer}
+                  nodeRef={logoTextRef}
+                  addEndListener={(done) => {
+                    logoTextRef.current?.addEventListener(
+                      "transitionend",
+                      done,
+                    );
+                  }}
+                  unmountOnExit
+                >
+                  {(status) => {
+                    return (
+                      <Typography
+                        ref={logoTextRef}
+                        variant="h5"
+                        noWrap
+                        color="ActiveBorder"
+                        fontWeight={500}
+                        fontSize={20}
+                        sx={(theme) => {
+                          switch (status) {
+                            case "exited":
+                              return {
+                                opacity: 0,
+                                marginInlineStart: 0,
+                              };
+                            case "entering":
+                              return {
+                                opacity: 1,
+                                marginInlineStart: "10px",
+                                transition: theme.transitions.create([
+                                  "opacity",
+                                  "margin-inline-start",
+                                ]),
+                              };
 
-                              case "entered":
-                                return {
-                                  opacity: 1,
-                                  marginInlineStart: "10px",
-                                };
-                              case "exiting":
-                                return {
-                                  opacity: 0,
-                                  marginInlineStart: 0,
-                                  transition: theme.transitions.create([
-                                    "opacity",
-                                    "margin-inline-start",
-                                  ]),
-                                };
+                            case "entered":
+                              return {
+                                opacity: 1,
+                                marginInlineStart: "10px",
+                              };
+                            case "exiting":
+                              return {
+                                opacity: 0,
+                                marginInlineStart: 0,
+                                transition: theme.transitions.create([
+                                  "opacity",
+                                  "margin-inline-start",
+                                ]),
+                              };
 
-                              case "unmounted":
-                              default:
-                                return {};
-                            }
-                          }}
-                        >
-                          MATERIO
-                        </Typography>
-                      );
-                    }}
-                  </Transition>
-                </StyledLink>
+                            case "unmounted":
+                            default:
+                              return {};
+                          }
+                        }}
+                      >
+                        MATERIO
+                      </Typography>
+                    );
+                  }}
+                </Transition>
+              </StyledLink>
 
-                {explandedContainer && (
-                  <IconButton
-                    onClick={() => {
-                      setAsideMenuCollapsed((prev) => !prev);
-                    }}
-                    size="small"
-                  >
-                    {asideMenuCollapsed ? (
-                      <RadioButtonUncheckedOutlined fontSize="small" />
-                    ) : (
-                      <RadioButtonCheckedOutlined fontSize="small" />
-                    )}
-                  </IconButton>
-                )}
-              </Box>
-
-              {/* Navigation Header Divider */}
-              <Divider sx={{ my: 0 }} />
-
-              {/* Navigation Aside Scroll */}
-              <ScrollView options={{ wheelPropagation: false }}>
-                <Box height={2000}>navigation</Box>
-              </ScrollView>
+              {explandedContainer && (
+                <IconButton
+                  onClick={() => {
+                    setAsideMenuCollapsed((prev) => !prev);
+                  }}
+                  size="small"
+                >
+                  {asideMenuCollapsed ? (
+                    <RadioButtonUncheckedOutlined fontSize="small" />
+                  ) : (
+                    <RadioButtonCheckedOutlined fontSize="small" />
+                  )}
+                </IconButton>
+              )}
             </Box>
+
+            {/* Navigation Header Divider */}
+            <Divider sx={{ my: 0 }} />
+
+            {/* Navigation Aside Scroll */}
+            <ScrollView options={{ wheelPropagation: false }}>
+              <Box height={2000}>navigation</Box>
+            </ScrollView>
           </Box>
         </Box>
+      </Box>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
+          inlineSize: "100%",
+          overflowX: "hidden",
+        }}
+      >
+        <Box component={"header"}>
+          <Typography>Header</Typography>
+        </Box>
         <Box
-          display={"flex"}
-          flexDirection={"column"}
-          sx={{ inlineSize: "100%" }}
+          component={"main"}
+          flexGrow={1}
+          flexShrink={1}
+          flexBasis={"auto"}
+          padding={3}
         >
-          <Box component={"header"}></Box>
-          <Box
-            component={"main"}
-            flexGrow={1}
-            flexShrink={1}
-            flexBasis={"auto"}
-            padding={3}
-          >
-            {props.children}
-          </Box>
-          <Box component={"footer"}></Box>
+          {props.children}
+        </Box>
+        <Box component={"footer"}>
+          <Typography>Footer</Typography>
         </Box>
       </Box>
     </Box>
