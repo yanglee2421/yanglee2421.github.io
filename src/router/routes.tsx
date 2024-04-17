@@ -98,6 +98,13 @@ export const routes: RouteObject[] = [
           return import("@/pages/virtual/Component");
         },
       },
+      {
+        id: "calendar",
+        path: "calendar",
+        lazy() {
+          return import("@/pages/calendar/Component");
+        },
+      },
     ],
   },
 ];

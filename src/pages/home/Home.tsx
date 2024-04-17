@@ -1,6 +1,5 @@
 import { Box, Button, Divider, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
-import "react-datepicker/dist/react-datepicker.css";
 import bgImg from "@/assets/images/justHer.jpg";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
