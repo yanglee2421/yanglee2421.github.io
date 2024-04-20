@@ -14,7 +14,7 @@ import { useImmer } from "use-immer";
 import snowVillage from "@/assets/images/justHer.jpg";
 import { useForageFile } from "@/hooks/api-localforage/useForageFile";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
-import { CollapsedCard } from "./CollapseCard";
+import { CollapsibleCard } from "./CollapsibleCard";
 import { WallpaperSwitcher } from "./WallpaperSwitcher";
 import type { Theme } from "@mui/material";
 
@@ -68,7 +68,7 @@ export function WallpaperCard() {
   const fallbackImage = new URL(snowVillage, import.meta.url).href;
 
   return (
-    <CollapsedCard title="wallpaper" subheader="Wallpaper setting">
+    <CollapsibleCard title="wallpaper" subheader="Wallpaper setting">
       {setting.wallpaperSource === "bing" ? (
         <Box></Box>
       ) : (
@@ -152,7 +152,7 @@ export function WallpaperCard() {
           valueLabelDisplay="auto"
         />
       </FormControl>
-    </CollapsedCard>
+    </CollapsibleCard>
   );
 }
 

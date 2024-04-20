@@ -1,10 +1,10 @@
 import { LoopOutlined } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { CollapsedCard } from "./CollapseCard";
+import { CollapsibleCard } from "./CollapsibleCard";
 
 export function RestoreCard() {
   return (
-    <CollapsedCard title="Restore" subheader="Restore default settings">
+    <CollapsibleCard title="Restore" subheader="Restore default settings">
       <Box textAlign={"center"}>
         <Button
           startIcon={<LoopOutlined />}
@@ -14,6 +14,6 @@ export function RestoreCard() {
           Restore
         </Button>
       </Box>
-    </CollapsedCard>
+    </CollapsibleCard>
   );
 }

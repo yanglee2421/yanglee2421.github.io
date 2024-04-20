@@ -13,14 +13,14 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useThemeStore } from "@/hooks/store/useThemeStore";
-import { CollapsedCard } from "./CollapseCard";
+import { CollapsibleCard } from "./CollapsibleCard";
 
 export function ModeCard() {
   const mode = useThemeStore((store) => store.mode);
   const setMode = useThemeStore((store) => store.setMode);
 
   return (
-    <CollapsedCard title="Mode" subheader="Light? Dark? System?">
+    <CollapsibleCard title="Mode" subheader="Light? Dark? System?">
       <RadioGroup
         value={mode}
         onChange={(evt, value) => {
@@ -61,7 +61,7 @@ export function ModeCard() {
           </Grid>
         </Grid>
       </RadioGroup>
-    </CollapsedCard>
+    </CollapsibleCard>
   );
 }
 

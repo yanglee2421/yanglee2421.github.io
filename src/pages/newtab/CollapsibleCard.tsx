@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import React from "react";
 
-export function CollapsedCard(props: Props) {
+export function CollapsibleCard(props: Props) {
   const [collapsed, setCollapsed] = React.useState(false);
 
   return (
