@@ -11,10 +11,10 @@ import { App } from "./App";
 
 const container = document.getElementById("root");
 
-if (container) {
-  createRoot(container).render(
-    <React.StrictMode>
-      <App />
-    </React.StrictMode>,
-  );
-}
+container
+  ? createRoot(container).render(
+      <React.StrictMode>
+        <App />
+      </React.StrictMode>,
+    )
+  : console.log("Container element not found");

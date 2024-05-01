@@ -354,7 +354,7 @@ export function Table() {
         </Box>
         <TablePagination
           component={"div"}
-          count={table.getPrePaginationRowModel().rows.length}
+          count={table.getRowCount()}
           rowsPerPageOptions={[20, 50, 100]}
           page={table.getState().pagination.pageIndex}
           rowsPerPage={table.getState().pagination.pageSize}
