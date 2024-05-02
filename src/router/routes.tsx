@@ -1,9 +1,9 @@
-import type { RouteObject } from "react-router-dom";
+import { createRoutesFromElements, Route } from "react-router-dom";
 
-export const routes: RouteObject[] = [
-  {
-    id: "root",
-    async lazy() {
+export const routes = createRoutesFromElements(
+  <Route
+    id="root"
+    lazy={async () => {
       const { ErrorBoundary } = await import("./ErrorBoundary");
       const { RootRoute } = await import("./RootRoute");
 
@@ -11,100 +11,69 @@ export const routes: RouteObject[] = [
         ErrorBoundary,
         Component: RootRoute,
       };
-    },
-    children: [
-      {
-        path: "*",
-        Component() {
-          return null;
-        },
-        loader() {
-          throw new Response("Error: No route matches URL", {
-            status: 404,
-            statusText: "Not Found",
-          });
-        },
-        shouldRevalidate() {
-          return false;
-        },
-      },
-      {
-        id: "login",
-        path: "login",
-        lazy() {
-          return import("@/pages/login/Component");
-        },
-      },
-      {
-        id: "signup",
-        path: "signup",
-        lazy() {
-          return import("@/pages/signup/Component");
-        },
-      },
-      {
-        id: "forgot-password",
-        path: "forgot-password",
-        lazy() {
-          return import("@/pages/forgot-password/Component");
-        },
-      },
-      {
-        id: "with-appbar",
-        async lazy() {
-          const { Layout } = await import("@/components/layout/Layout");
+    }}
+  >
+    <Route
+      path="*"
+      loader={() => {
+        throw new Response("Error: No route matches URL", {
+          status: 404,
+          statusText: "Not Found",
+        });
+      }}
+      shouldRevalidate={() => false}
+    />
+    <Route
+      id="login"
+      path="login"
+      lazy={() => import("@/pages/login/Component")}
+    />
+    <Route
+      id="signup"
+      path="signup"
+      lazy={() => import("@/pages/signup/Component")}
+    />
+    <Route
+      id="forgot-password"
+      path="forgot-password"
+      lazy={() => import("@/pages/forgot-password/Component")}
+    />
+    <Route
+      id="with-appbar"
+      lazy={async () => {
+        const { Layout } = await import("@/components/layout/Layout");
 
-          return {
-            Component: Layout,
-          };
-        },
-        children: [
-          {
-            id: "home",
-            index: true,
-            lazy() {
-              return import("@/pages/home/Component");
-            },
-          },
-
-          {
-            id: "charts",
-            path: "charts",
-            lazy() {
-              return import("@/pages/charts/Component");
-            },
-          },
-        ],
-      },
-
-      {
-        id: "newtab",
-        path: "newtab",
-        lazy() {
-          return import("@/pages/newtab/Component");
-        },
-      },
-      {
-        id: "table",
-        path: "table",
-        lazy() {
-          return import("@/pages/table/Component");
-        },
-      },
-      {
-        id: "virtual",
-        path: "virtual",
-        lazy() {
-          return import("@/pages/virtual/Component");
-        },
-      },
-      {
-        id: "calendar",
-        path: "calendar",
-        lazy() {
-          return import("@/pages/calendar/Component");
-        },
-      },
-    ],
-  },
-];
+        return {
+          Component: Layout,
+        };
+      }}
+    >
+      <Route id="home" index lazy={() => import("@/pages/home/Component")} />
+      <Route
+        id="charts"
+        path="charts"
+        lazy={() => import("@/pages/charts/Component")}
+      />
+    </Route>
+    <Route
+      id="newtab"
+      path="newtab"
+      lazy={() => import("@/pages/newtab/Component")}
+    />
+    <Route
+      id="table"
+      path="table"
+      lazy={() => import("@/pages/table/Component")}
+    />
+    <Route
+      id="virtual"
+      path="virtual"
+      lazy={() => import("@/pages/virtual/Component")}
+    />
+    <Route
+      id="calendar"
+      path="calendar"
+      lazy={() => import("@/pages/calendar/Component")}
+    />
+  </Route>,
+);

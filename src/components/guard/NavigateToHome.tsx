@@ -4,17 +4,16 @@ export function NavigateToHome() {
   const matches = useMatches();
   const [searchParams] = useSearchParams();
 
-  if (!matches[matches.length - 1]) {
+  if (!matches.length) {
     return null;
   }
 
-  const pathname = searchParams.get("returnURL") || "/";
   searchParams.delete("returnURL");
 
   return (
     <Navigate
       to={{
-        pathname,
+        pathname: searchParams.get("returnURL") || "/",
         search: searchParams.toString(),
       }}
     />

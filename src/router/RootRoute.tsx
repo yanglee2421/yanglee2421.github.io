@@ -1,7 +1,12 @@
 import NProgress from "nprogress";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { useOutlet, useSearchParams, useNavigation } from "react-router-dom";
+import {
+  useOutlet,
+  useSearchParams,
+  useNavigation,
+  ScrollRestoration,
+} from "react-router-dom";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { AclContext } from "@/hooks/useAcl";
 import { defineAbilityFor } from "@/libs/defineAbilityFor";
@@ -38,6 +43,7 @@ export function RootRoute() {
       value={defineAbilityFor(authValue.auth.currentUser ? "admin" : "guest")}
     >
       {outlet}
+      <ScrollRestoration />
     </AclContext.Provider>
   );
 }
