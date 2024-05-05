@@ -75,5 +75,10 @@ export const routes = createRoutesFromElements(
       path="calendar"
       lazy={() => import("@/pages/calendar/Component")}
     />
+    <Route
+      id="decimal"
+      path="decimal"
+      lazy={() => import("@/pages/decimal/route")}
+    />
   </Route>,
 );

@@ -28,6 +28,7 @@
     "apexcharts": "^3.49.0",
     "axios": "^1.6.8",
     "browser-image-compression": "^2.0.2",
+    "decimal.js": "^10.4.3",
     "fabric": "^5.3.0",
     "firebase": "^10.11.1",
     "i18next": "^23.11.3",
