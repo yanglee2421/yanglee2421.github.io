@@ -1,4 +1,4 @@
-// MUI Imports
+import { CodeOutlined } from "@mui/icons-material";
 import {
   Card,
   CardHeader,
@@ -7,13 +7,9 @@ import {
   Collapse,
   Divider,
 } from "@mui/material";
-import { CodeOutlined } from "@mui/icons-material";
-
-// React Imports
 import React from "react";
 
 export function CardSnippet(props: CardSnippetProps) {
-  // ** Props
   const { title, children, collapseContent, ...restProps } = props;
 
   const [collapsed, setCollapsed] = React.useState(true);
@@ -28,13 +24,13 @@ export function CardSnippet(props: CardSnippetProps) {
         title={title}
         action={
           <IconButton onClick={handleCollapseToggle}>
-            <CodeOutlined></CodeOutlined>
+            <CodeOutlined />
           </IconButton>
         }
       ></CardHeader>
       <CardContent>{children}</CardContent>
       <Collapse in={collapsed}>
-        <Divider sx={{ my: 0 }}></Divider>
+        <Divider sx={{ my: 0 }} />
         <CardContent>{collapseContent}</CardContent>
       </Collapse>
     </Card>

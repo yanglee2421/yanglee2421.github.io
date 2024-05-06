@@ -1,4 +1,4 @@
-// MUI Imports
+import { DeleteOutlined } from "@mui/icons-material";
 import {
   Paper,
   List,
@@ -7,13 +7,8 @@ import {
   IconButton,
   Collapse,
 } from "@mui/material";
-import { DeleteOutlined } from "@mui/icons-material";
-
-// Components Imports
-import { TransitionGroup } from "react-transition-group";
-
-// React Imports
 import React from "react";
+import { TransitionGroup } from "react-transition-group";
 
 export function FruitList() {
   const [fruitsInBasket, setFruitsInBasket] = React.useState(() => {
@@ -55,7 +50,7 @@ export function FruitList() {
                         });
                       }}
                     >
-                      <DeleteOutlined></DeleteOutlined>
+                      <DeleteOutlined />
                     </IconButton>
                   }
                 >

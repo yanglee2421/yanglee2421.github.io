@@ -1,41 +1,33 @@
-// Query Imports
-import { useMutation } from "@tanstack/react-query";
+// import { useMutation } from "@tanstack/react-query";
+// import { getAuth, updateProfile } from "firebase/auth";
+// import { ref, getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
+// import { app } from "@/api/firebase/app";
+// import { useAuthStore } from "@/hooks/store/useAuthStore";
+// import type { User } from "firebase/auth";
 
-// Firebase Imports
-import { ref, getStorage, uploadBytes, getDownloadURL } from "firebase/storage";
-import { getAuth, updateProfile, User } from "firebase/auth";
-import { app } from "@/api/firebase";
+// export function useUploadAvator() {
+//   const update = useAuthStore((store) => store.update);
 
-// Store Imports
-import { useAuthStore } from "@/hooks/store";
-import { useShallow } from "zustand/react/shallow";
+//   return useMutation<User, Error, Blob>({
+//     async mutationFn(blob) {
+//       const user = getAuth(app).currentUser;
 
-export function useUploadAvator() {
-  const update = useAuthStore(
-    useShallow((store) => {
-      return store.update;
-    })
-  );
-  return useMutation<User, Error, Blob>({
-    async mutationFn(blob) {
-      const user = getAuth(app).currentUser;
+//       if (!user) {
+//         throw new Error("Not authorization");
+//       }
 
-      if (!user) {
-        throw new Error("Not authorization");
-      }
+//       const fileRef = ref(getStorage(app), `user/avatar/${user.uid}`);
+//       await uploadBytes(fileRef, blob);
+//       const photoURL = await getDownloadURL(fileRef);
+//       await updateProfile(user, { photoURL });
 
-      const fileRef = ref(getStorage(app), `user/avatar/${user.uid}`);
-      await uploadBytes(fileRef, blob);
-      const photoURL = await getDownloadURL(fileRef);
-      await updateProfile(user, { photoURL });
-
-      return user;
-    },
-    onError(error) {
-      console.error(error);
-    },
-    onSuccess() {
-      update();
-    },
-  });
-}
+//       return user;
+//     },
+//     onError(error) {
+//       console.error(error);
+//     },
+//     onSuccess() {
+//       update();
+//     },
+//   });
+// }

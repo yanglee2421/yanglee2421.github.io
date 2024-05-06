@@ -1,4 +1,4 @@
-// MUI Imports
+import { CloseOutlined, UploadFileOutlined } from "@mui/icons-material";
 import {
   TextField,
   styled,
@@ -10,28 +10,12 @@ import {
   IconButton,
   Link,
 } from "@mui/material";
-import { CloseOutlined, UploadFileOutlined } from "@mui/icons-material";
-
-// Components Imports
-import { CardSnippet } from "./CardSnippet";
-
-// Dropzone Imports
-import { useDropzone } from "react-dropzone";
-
-// Assets Imports
-import uploadPng from "@/assets/images/upload.png";
-
-// React Imports
 import React from "react";
-
-// Utils Imports
-import { toUniqBy } from "@/utils";
-
-// Toast Imports
+import { useDropzone } from "react-dropzone";
 import { toast } from "react-toastify";
-
-// Image Compression Imports
-// import imageCompression from "browser-image-compression";
+import uploadPng from "@/assets/images/upload.png";
+import { uniqBy } from "@/utils/uniqBy";
+import { CardSnippet } from "./CardSnippet";
 
 export function UploadMultipleFiles() {
   const [files, setFiles] = React.useState<File[]>([]);
@@ -43,7 +27,7 @@ export function UploadMultipleFiles() {
     //   "image/*": [".png", ".jpg", ".jpeg", ".gif"],
     // },
     onDrop(acceptedFiles) {
-      setFiles(toUniqBy(acceptedFiles, { key: "name" }));
+      setFiles(uniqBy(acceptedFiles, { key: "name" }));
     },
     onDropRejected() {
       toast.error("You can only upload 3 files & maximum size of 20 MB.");
@@ -51,110 +35,106 @@ export function UploadMultipleFiles() {
   });
 
   return (
-    <>
-      <CardSnippet
-        title={"Upload Multiple Files"}
-        collapseContent={
-          <TextField fullWidth multiline label="Data URL" minRows={4} />
-        }
-      >
-        <StyledBox {...dropzone.getRootProps()}>
-          <input {...dropzone.getInputProps()} />
+    <CardSnippet
+      title={"Upload Multiple Files"}
+      collapseContent={
+        <TextField fullWidth multiline label="Data URL" minRows={4} />
+      }
+    >
+      <StyledBox {...dropzone.getRootProps()}>
+        <input {...dropzone.getInputProps()} />
+        <Box
+          sx={{
+            display: "flex",
+            flexDirection: ["column", "column", "row"],
+            alignItems: "center",
+          }}
+        >
+          <Img alt="Upload img" src={uploadPng} />
           <Box
             sx={{
               display: "flex",
-              flexDirection: ["column", "column", "row"],
-              alignItems: "center",
+              flexDirection: "column",
+              textAlign: ["center", "center", "inherit"],
             }}
           >
-            <Img alt="Upload img" src={uploadPng} />
-            <Box
+            <HeadingTypography variant="h5">
+              Drop files here or click to upload.
+            </HeadingTypography>
+            <Typography
+              color="textSecondary"
               sx={{
-                display: "flex",
-                flexDirection: "column",
-                textAlign: ["center", "center", "inherit"],
+                "& a": { color: "primary.main", textDecoration: "none" },
               }}
             >
-              <HeadingTypography variant="h5">
-                Drop files here or click to upload.
-              </HeadingTypography>
-              <Typography
-                color="textSecondary"
-                sx={{
-                  "& a": { color: "primary.main", textDecoration: "none" },
+              Drop files here or click{" "}
+              <Link href="/" onClick={(e) => e.preventDefault()}>
+                browse
+              </Link>{" "}
+              thorough your machine
+            </Typography>
+          </Box>
+        </Box>
+      </StyledBox>
+      {!!files.length && (
+        <>
+          <List
+            sx={{
+              mt: 4.5,
+              "& > .MuiListItem-root + .MuiListItem-root": {
+                marginTop: 3.5,
+              },
+            }}
+          >
+            {files.map((file) => (
+              <ListItem
+                key={file.name}
+                sx={(theme) => {
+                  return {
+                    display: "flex",
+                    justifyContent: "space-between",
+                    padding: theme.spacing(2.5, 2.4, 2.5, 6),
+                    borderWidth: 1,
+                    borderStyle: "solid",
+                    borderColor: theme.palette.divider,
+                    borderRadius: `${theme.shape.borderRadius}px`,
+                  };
                 }}
               >
-                Drop files here or click{" "}
-                <Link href="/" onClick={(e) => e.preventDefault()}>
-                  browse
-                </Link>{" "}
-                thorough your machine
-              </Typography>
-            </Box>
-          </Box>
-        </StyledBox>
-        {!!files.length && (
-          <>
-            <List
-              sx={{
-                mt: 4.5,
-                "& > .MuiListItem-root + .MuiListItem-root": {
-                  marginTop: 3.5,
-                },
-              }}
-            >
-              {files.map((file) => (
-                <ListItem
-                  key={file.name}
-                  sx={(theme) => {
-                    return {
-                      display: "flex",
-                      justifyContent: "space-between",
-                      padding: theme.spacing(2.5, 2.4, 2.5, 6),
-                      borderWidth: 1,
-                      borderStyle: "solid",
-                      borderColor: theme.palette.divider,
-                      borderRadius: `${theme.shape.borderRadius}px`,
-                    };
-                  }}
-                >
-                  <Box display={"flex"} alignItems={"center"}>
-                    <Box display={"flex"} mr={3.75} fontSize={"2rem"}>
-                      {renderFilePreview(file)}
-                    </Box>
-                    <Box>
-                      <Typography fontWeight={600}>{file.name}</Typography>
-                      <Typography variant="body2">
-                        {Math.round(file.size / 100) / 10 > 1000
-                          ? `${(Math.round(file.size / 100) / 10000).toFixed(
-                              1
-                            )} mb`
-                          : `${(Math.round(file.size / 100) / 10).toFixed(
-                              1
-                            )} kb`}
-                      </Typography>
-                    </Box>
+                <Box display={"flex"} alignItems={"center"}>
+                  <Box display={"flex"} mr={3.75} fontSize={"2rem"}>
+                    {renderFilePreview(file)}
                   </Box>
-                  <IconButton>
-                    <CloseOutlined></CloseOutlined>
-                  </IconButton>
-                </ListItem>
-              ))}
-            </List>
-            <Box display={"flex"} gap={4} justifyContent={"flex-end"} mt={2}>
-              <Button
-                onClick={() => setFiles([])}
-                color="error"
-                variant="outlined"
-              >
-                Remove All
-              </Button>
-              <Button variant="contained">Upload Files</Button>
-            </Box>
-          </>
-        )}
-      </CardSnippet>
-    </>
+                  <Box>
+                    <Typography fontWeight={600}>{file.name}</Typography>
+                    <Typography variant="body2">
+                      {Math.round(file.size / 100) / 10 > 1000
+                        ? `${(Math.round(file.size / 100) / 10000).toFixed(
+                            1,
+                          )} mb`
+                        : `${(Math.round(file.size / 100) / 10).toFixed(1)} kb`}
+                    </Typography>
+                  </Box>
+                </Box>
+                <IconButton>
+                  <CloseOutlined />
+                </IconButton>
+              </ListItem>
+            ))}
+          </List>
+          <Box display={"flex"} gap={4} justifyContent={"flex-end"} mt={2}>
+            <Button
+              onClick={() => setFiles([])}
+              color="error"
+              variant="outlined"
+            >
+              Remove All
+            </Button>
+            <Button variant="contained">Upload Files</Button>
+          </Box>
+        </>
+      )}
+    </CardSnippet>
   );
 }
 

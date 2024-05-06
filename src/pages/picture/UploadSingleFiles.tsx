@@ -1,23 +1,10 @@
-// Components Imports
-import { CardSnippet } from "./CardSnippet";
-
-// MUI Imports
 import { TextField, styled, Box, Typography } from "@mui/material";
-
-// React Imports
-import React from "react";
-
-// Dropzone Imports
-import { useDropzone } from "react-dropzone";
-
-// Assets Imports
-import uploadPng from "@/assets/images/upload.png";
-
-// Image Compression Imports
 import imageCompression from "browser-image-compression";
-
-// Utils Imports
-import { toUniqBy } from "@/utils";
+import React from "react";
+import { useDropzone } from "react-dropzone";
+import uploadPng from "@/assets/images/upload.png";
+import { uniqBy } from "@/utils/uniqBy";
+import { CardSnippet } from "./CardSnippet";
 
 export function UploadSingleFiles() {
   const [dataURL, setDataURL] = React.useState("");
@@ -29,8 +16,8 @@ export function UploadSingleFiles() {
       "image/*": [".png", ".jpg", ".jpeg", ".gif"],
     },
     async onDrop(acceptedFiles) {
-      setFiles(toUniqBy(acceptedFiles, { key: "name" }));
-      const file = acceptedFiles.at(0);
+      setFiles(uniqBy(acceptedFiles, { key: "name" }));
+      const file = acceptedFiles[0];
       if (!file) return;
 
       const dataURL = await imageCompression.getDataUrlFromFile(file);
@@ -64,7 +51,7 @@ export function UploadSingleFiles() {
           minRows={4}
           maxRows={16}
           InputProps={{ readOnly: true }}
-        ></TextField>
+        />
       }
     >
       <StyledBox {...dropzone.getRootProps()}>

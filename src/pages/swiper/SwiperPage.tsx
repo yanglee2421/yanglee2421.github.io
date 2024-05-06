@@ -1,9 +1,6 @@
-// Components Imports
+import { Stack } from "@mui/material";
 import { HorizontalSwiper } from "./HorizontalSwiper";
 import { VerticalSwiper } from "./VerticalSwiper";
-
-// MUI Imports
-import { Stack } from "@mui/material";
 
 export function SwiperPage() {
   return (

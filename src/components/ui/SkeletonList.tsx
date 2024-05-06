@@ -1,20 +1,13 @@
-// MUI Imports
-import { List, ListProps } from "@mui/material";
-
-// Components Imports
+import { List } from "@mui/material";
 import { SkeletonListItem } from "./SkeletonListItem";
+import type { ListProps } from "@mui/material";
 
-// React Imports
-import React from "react";
-
-export const SkeletonList = React.forwardRef<HTMLUListElement, ListProps>(
-  (props, ref) => {
-    return (
-      <List ref={ref} {...props}>
-        <SkeletonListItem></SkeletonListItem>
-        <SkeletonListItem></SkeletonListItem>
-        <SkeletonListItem></SkeletonListItem>
-      </List>
-    );
-  }
-);
+export function SkeletonList(props: ListProps) {
+  return (
+    <List {...props}>
+      <SkeletonListItem />
+      <SkeletonListItem />
+      <SkeletonListItem />
+    </List>
+  );
+}

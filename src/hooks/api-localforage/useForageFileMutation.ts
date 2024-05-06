@@ -1,30 +1,55 @@
-// Query Imports
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import localforage from "localforage";
+import { fileToFileKey } from "@/utils/fileToFileKey";
+import { useNonPersistQueryClient } from "../useNonPersistQueryClient";
 
 export function useForageFileMutation() {
-  const queryClient = useQueryClient();
+  const nonPersistQueryClient = useNonPersistQueryClient();
 
-  return useMutation<string, Error, Req>({
-    async mutationFn(req) {
-      await localforage.setItem(req.fileKey, req.file);
+  return useMutation({
+    async mutationFn(arg: File) {
+      const data = await localforage.getItem("localforage_files");
 
-      return req.fileKey;
+      const files = [];
+      if (Array.isArray(data)) {
+        files.push(
+          ...data.filter((item): item is File => item instanceof File),
+        );
+      }
+
+      const idx = files.findIndex(
+        (item) => fileToFileKey(item) === fileToFileKey(arg),
+      );
+
+      switch (idx) {
+        case -1:
+          files.push(arg);
+          break;
+        default:
+          files[idx] = arg;
+      }
+
+      const persistFiles = await localforage.setItem(
+        "localforage_files",
+        files,
+      );
+      const persistFile = persistFiles.find(
+        (item) => fileToFileKey(item) === fileToFileKey(arg),
+      );
+
+      if (persistFile instanceof File) {
+        return persistFile;
+      }
+
+      throw new Error("no such a file");
     },
     onError(error) {
       console.error(error);
     },
-    onSuccess(data, req) {
-      void data;
-
-      queryClient.invalidateQueries({
-        queryKey: ["localforage", "file", req.fileKey],
+    onSuccess() {
+      nonPersistQueryClient.invalidateQueries({
+        queryKey: ["localforage_files"],
       });
     },
   });
-}
-
-interface Req {
-  fileKey: string;
-  file: File;
 }

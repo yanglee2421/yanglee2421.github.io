@@ -1,0 +1,28 @@
+{
+  "name": "React Table",
+  "description": "React Table is a lightweight, fast and extendable datagrid built for React. It's designed to manage complex tabular data with ease. React Table provides hooks-based building blocks that allow you to easily build your own table components or enhance its existing functionality according to your project needs. It efficiently handles rendering of large datasets while providing extensive features like sorting, pagination, filtering, row selection, resizable columns, and more.",
+  "useCases": [
+    {
+      "case": "Data Visualization",
+      "description": "Used to display and handle large datasets allowing users to easily interpret or manipulate the data."
+    },
+    {
+      "case": "CRUD Operations Interface",
+      "description": "Facilitates creation, reading, update, and deletion operations on datasets through UI interactions."
+    },
+    {
+      "case": "Reporting Tools",
+      "description": "Ideal for constructing dynamic reports where data can be sorted, filtered or paginated."
+    }
+  ],
+  "keyFeatures": [
+    {
+      "feature": "Hooks-based architecture",
+      "description": "Employs React Hooks API making it highly customizable and easy to integrate with other UI components."
+    },
+    {
+      "feature": "Out-of-the-box functionalities",
+      "": ""
+    }
+  ]
+}

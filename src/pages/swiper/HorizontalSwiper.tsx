@@ -1,15 +1,15 @@
-// MUI Imports
-import { Box, IconButton, Paper, alpha } from "@mui/material";
 import {
   ArrowBackIosNewRounded,
   ArrowForwardIosRounded,
 } from "@mui/icons-material";
-
-// React Imports
+import { Box, IconButton, Paper, alpha } from "@mui/material";
 import React from "react";
-
-// Swiper Imports
-import { Swiper, SwiperSlide } from "swiper/react";
+import "swiper/css";
+import "swiper/css/a11y";
+import "swiper/css/autoplay";
+import "swiper/css/navigation";
+import "swiper/css/pagination";
+import "swiper/css/scrollbar";
 import {
   Navigation,
   Pagination,
@@ -17,14 +17,7 @@ import {
   A11y,
   Autoplay,
 } from "swiper/modules";
-import "swiper/css";
-import "swiper/css/navigation";
-import "swiper/css/pagination";
-import "swiper/css/scrollbar";
-import "swiper/css/a11y";
-import "swiper/css/autoplay";
-
-// Utils Imports
+import { Swiper, SwiperSlide } from "swiper/react";
 import { useImmer } from "use-immer";
 import type { Swiper as SwiperType } from "swiper/types";
 
@@ -93,7 +86,7 @@ export function HorizontalSwiper() {
                 >
                   {i}
                 </Box>
-              </SwiperSlide>
+              </SwiperSlide>,
             );
           }
 
@@ -113,8 +106,8 @@ export function HorizontalSwiper() {
           },
           userSelect: "none",
         }}
-      ></Box>
-      <Box id={paginationId} sx={{ userSelect: "none" }}></Box>
+      />
+      <Box id={paginationId} sx={{ userSelect: "none" }} />
       <Box>
         <IconButton id={prevElId} disabled={navigationState.isBeginning}>
           <ArrowBackIosNewRounded></ArrowBackIosNewRounded>

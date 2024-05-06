@@ -1,14 +1,9 @@
-// React Imports
+import { Paper, styled } from "@mui/material";
 import React from "react";
-
-// Swiper Import
-import { Swiper, SwiperSlide } from "swiper/react";
-import { Pagination } from "swiper/modules";
 import "swiper/css";
 import "swiper/css/pagination";
-
-// MUI Imports
-import { Paper, styled } from "@mui/material";
+import { Pagination } from "swiper/modules";
+import { Swiper, SwiperSlide } from "swiper/react";
 
 export function VerticalSwiper() {
   const slideCount = 12;
@@ -31,7 +26,7 @@ export function VerticalSwiper() {
           const nodeSet = new Set<React.ReactNode>();
           for (let i = 0; i < slideCount; i++) {
             nodeSet.add(
-              <StyledSwiperSlide key={i}>Slide {i}</StyledSwiperSlide>
+              <StyledSwiperSlide key={i}>Slide {i}</StyledSwiperSlide>,
             );
           }
 

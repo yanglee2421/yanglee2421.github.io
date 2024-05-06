@@ -1,14 +1,7 @@
-// Transition Imports
-import { SwitchTransition } from "react-transition-group";
-
-// React Imports
-import React from "react";
-
-// MUI Imports
 import { Card, CardHeader, CardContent, Switch, Button } from "@mui/material";
-
-// Components Imports
-import { FadeCssTransition } from "@/components/ui";
+import React from "react";
+import { SwitchTransition } from "react-transition-group";
+import { FadeCssTransition } from "@/components/ui/FadeCssTransition";
 
 export function FadeButton() {
   const [state, setState] = React.useState(false);
@@ -25,9 +18,9 @@ export function FadeButton() {
               void evt;
               setState(checked);
             }}
-          ></Switch>
+          />
         }
-      ></CardHeader>
+      />
       <CardContent>
         <SwitchTransition>
           <FadeCssTransition key={state ? 1 : 2}>

@@ -1,52 +1,36 @@
-// NProgress Imports
 import NProgress from "nprogress";
-
-// Router Imports
+import React from "react";
+import { useTranslation } from "react-i18next";
 import {
-  useMatches,
-  Navigate,
   useOutlet,
   useSearchParams,
+  useNavigation,
+  ScrollRestoration,
 } from "react-router-dom";
-
-// React Imports
-import React from "react";
-
-// Store Imports
-import { useAuthStore } from "@/hooks/store";
-import { useShallow } from "zustand/react/shallow";
-
-// Acl Imports
-import { defineAbilityFor, AclContext } from "@/configs/acl";
-
-// Firebase Imports
-import { getAuth, onAuthStateChanged } from "firebase/auth";
-import { app } from "@/api/firebase";
-
-// Components Imports
-import { HomeRoute } from "./HomeRoute";
-import { LoginRoute } from "./LoginRoute";
-import { useTranslation } from "react-i18next";
+import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { AclContext } from "@/hooks/useAcl";
+import { defineAbilityFor } from "@/libs/defineAbilityFor";
 
 export function RootRoute() {
-  const matches = useMatches();
   const outlet = useOutlet();
-  const { authValue, updateAuth } = useAuthStore(
-    useShallow((store) => {
-      return {
-        authValue: store.value,
-        updateAuth: store.update,
-      };
-    })
-  );
-
-  const acl = defineAbilityFor(authValue.auth.currentUser ? "admin" : "");
-
+  const navigation = useNavigation();
   const { i18n } = useTranslation();
-  const [searchParams] = useSearchParams({
-    lang: "en",
-  });
+  const [searchParams] = useSearchParams({ lang: "en" });
+  const authValue = useAuthStore((store) => store.value);
+
   const lang = searchParams.get("lang");
+
+  React.useEffect(() => {
+    switch (navigation.state) {
+      case "submitting":
+      case "loading":
+        NProgress.start();
+        break;
+      case "idle":
+      default:
+        NProgress.done();
+    }
+  }, [navigation.state]);
 
   React.useEffect(() => {
     if (typeof lang === "string") {
@@ -54,81 +38,12 @@ export function RootRoute() {
     }
   }, [lang, i18n]);
 
-  React.useEffect(() => {
-    return onAuthStateChanged(getAuth(app), () => {
-      updateAuth();
-    });
-  }, [updateAuth]);
-
-  React.useEffect(() => {
-    NProgress.done();
-
-    const destructor = () => {
-      NProgress.start();
-    };
-
-    const currentRoute = matches[matches.length - 1];
-
-    if (!currentRoute) {
-      return destructor;
-    }
-
-    const title = Reflect.get(Object(currentRoute.handle), "title");
-
-    if (!title) {
-      return destructor;
-    }
-
-    if (typeof title === "string") {
-      document.title = title;
-    }
-
-    return destructor;
-  }, [matches]);
-
   return (
-    <AclContext.Provider value={acl}>
-      {(() => {
-        const currentRoute = matches[matches.length - 1];
-
-        if (!currentRoute) {
-          return null;
-        }
-
-        const handle = currentRoute.handle || {};
-
-        switch (Reflect.get(handle, "auth")) {
-          case "none":
-            return outlet;
-
-          case "guest":
-            if (authValue.auth.currentUser) {
-              return <HomeRoute></HomeRoute>;
-            }
-
-            return outlet;
-
-          case "auth":
-          default:
-            // Not logged in
-            if (!authValue.auth.currentUser) {
-              return <LoginRoute></LoginRoute>;
-            }
-
-            // Authorized pass
-            if (
-              acl.can(
-                String(Reflect.get(handle, "aclAction") || "read"),
-                String(Reflect.get(handle, "aclSubject") || "fallback")
-              )
-            ) {
-              return outlet;
-            }
-
-            // Not authorized
-            return <Navigate to="/403"></Navigate>;
-        }
-      })()}
+    <AclContext.Provider
+      value={defineAbilityFor(authValue.auth.currentUser ? "admin" : "guest")}
+    >
+      {outlet}
+      <ScrollRestoration />
     </AclContext.Provider>
   );
 }

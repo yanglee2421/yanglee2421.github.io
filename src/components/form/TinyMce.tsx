@@ -1,11 +1,8 @@
-// TinyMCE Imports
-import { Editor, IAllProps } from "@tinymce/tinymce-react";
-
-// React Imports
+import { Editor } from "@tinymce/tinymce-react";
 import React from "react";
+import type { IAllProps } from "@tinymce/tinymce-react";
 
 export function TinyMce(props: IAllProps) {
-  // Props
   const { ...restProps } = props;
 
   const editorRef = React.useRef<Editor["editor"]>();
