@@ -49,7 +49,7 @@ export function UserDropdown() {
               : void 0,
           }}
         >
-          {authValue.auth.currentUser?.displayName?.at(0)?.toUpperCase()}
+          {authValue.auth.currentUser?.displayName?.[0]?.toUpperCase()}
         </Avatar>
       </StyledBadge>
       <Menu

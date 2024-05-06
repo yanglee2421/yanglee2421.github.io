@@ -14,7 +14,7 @@ export function Webp2png() {
 
   const dropzone = useDropzone({
     onDrop(acceptedFiles) {
-      const file = acceptedFiles.at(0);
+      const file = acceptedFiles[0];
 
       if (file instanceof File) {
         updateState((state) => {

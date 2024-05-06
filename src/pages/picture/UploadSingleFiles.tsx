@@ -17,7 +17,7 @@ export function UploadSingleFiles() {
     },
     async onDrop(acceptedFiles) {
       setFiles(uniqBy(acceptedFiles, { key: "name" }));
-      const file = acceptedFiles.at(0);
+      const file = acceptedFiles[0];
       if (!file) return;
 
       const dataURL = await imageCompression.getDataUrlFromFile(file);

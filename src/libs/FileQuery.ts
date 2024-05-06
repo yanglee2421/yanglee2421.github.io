@@ -22,7 +22,7 @@ export class FileQuery<TData = unknown> {
   }
 
   async fetch(queryFn?: QueryFn<TData>) {
-    const lastSubscribe = Array.from(this.subscribeStack.values()).at(0);
+    const lastSubscribe = Array.from(this.subscribeStack.values())[0];
 
     if (!lastSubscribe) {
       return;
