@@ -15,6 +15,7 @@ import {
   Collapse,
   alpha,
   TableContainer,
+  Button,
 } from "@mui/material";
 import {
   useReactTable,
@@ -116,6 +117,24 @@ export function Table() {
           size="small"
           variant="filled"
         />
+        <Button
+          LinkComponent={"a"}
+          href={encodeURI(
+            "data:text/csv;charset=utf-8," +
+              table
+                .getVisibleFlatColumns()
+                .map((column) => column.id)
+                .join(",") +
+              "\n" +
+              table
+                .getSelectedRowModel()
+                .rows.map((row) => Object.values(row.original).join(","))
+                .join("\n"),
+          )}
+          download={Date.now() + ".csv"}
+        >
+          export
+        </Button>
       </Toolbar>
       <TableContainer>
         <ScrollView>
