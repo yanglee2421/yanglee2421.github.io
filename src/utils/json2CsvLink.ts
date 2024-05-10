@@ -1,4 +1,6 @@
-export function json2CsvLink(rows: Array<{}>) {
+export function json2CsvLink<TRow extends NonNullable<unknown>>(
+  rows: Array<TRow>,
+) {
   return encodeURI(
     "data:text/csv;charset=utf-8," +
       [

@@ -29,6 +29,7 @@ import {
   getExpandedRowModel,
 } from "@tanstack/react-table";
 import React from "react";
+import { ScrollView } from "@/components/ui/ScrollView";
 import { columns } from "./columns";
 import { data } from "./data";
 import type {
@@ -36,7 +37,6 @@ import type {
   SortingState,
   ColumnFiltersState,
 } from "@tanstack/react-table";
-import { ScrollView } from "@/components/ui/ScrollView";
 
 export function Table() {
   const [pagination, onPaginationChange] = React.useState({
