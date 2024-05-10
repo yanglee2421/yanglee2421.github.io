@@ -118,18 +118,26 @@ export function Table() {
           variant="filled"
         />
         <Button
+          disabled={
+            !(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected())
+          }
           LinkComponent={"a"}
           href={encodeURI(
             "data:text/csv;charset=utf-8," +
-              table
-                .getVisibleFlatColumns()
-                .map((column) => column.id)
-                .join(",") +
-              "\n" +
-              table
-                .getSelectedRowModel()
-                .rows.map((row) => Object.values(row.original).join(","))
-                .join("\n"),
+              [
+                table
+                  .getVisibleFlatColumns()
+                  .filter((column) => column.accessorFn)
+                  .map((column) => column.id)
+                  .join(","),
+                ...table.getSelectedRowModel().rows.map((row) =>
+                  table
+                    .getVisibleFlatColumns()
+                    .filter((column) => column.accessorFn)
+                    .map((column) => row.getValue(column.id))
+                    .join(","),
+                ),
+              ].join("\n"),
           )}
           download={Date.now() + ".csv"}
         >
