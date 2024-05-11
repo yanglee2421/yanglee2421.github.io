@@ -1,12 +1,16 @@
 import { Box, Button, Divider, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
+import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { InputNumber } from "./InputNumber";
 import { JsonBlock } from "./JsonBlock";
 
 export function Home() {
   const authValue = useAuthStore();
+
+  const [number, setNumber] = React.useState(Number.NaN);
 
   return (
     <Box>
@@ -19,7 +23,15 @@ export function Home() {
       >
         sign out
       </Button>
-      <Box sx={{ height: 420 }}></Box>
+      <Box sx={{ height: 420 }}>
+        <InputNumber
+          value={number}
+          onChange={setNumber}
+          step={1}
+          min={1}
+          max={100}
+        />
+      </Box>
       <Divider>Component</Divider>
 
       <Box
