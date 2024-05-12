@@ -1,4 +1,4 @@
-import { zodResolver } from "@hookform/resolvers/zod";
+import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import {
   Box,
   Divider,
@@ -7,26 +7,45 @@ import {
   Button,
   Paper,
   Stack,
+  TextField,
+  InputAdornment,
+  IconButton,
 } from "@mui/material";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "@tanstack/react-form";
+import { zodValidator } from "@tanstack/zod-form-adapter";
+import React from "react";
 import { Link as RouterLink } from "react-router-dom";
+import { toast } from "react-toastify";
 import { z } from "zod";
-import { InputPassword } from "@/components/form/InputPassword";
-import { InputText } from "@/components/form/InputText";
 import { SignInButtonGroup } from "@/components/shared/SignInButtonGroup";
 import { useSignIn } from "@/hooks/api-firebase/useSignIn";
 
 export function Login() {
-  const formCtx = useForm<FormValues>({
+  const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
 
-    resolver: zodResolver(schema),
+    async onSubmit(props) {
+      await mutation.mutateAsync(
+        {
+          email: props.value.email,
+          password: props.value.password,
+        },
+        {
+          onError(error) {
+            toast.error(error.message);
+          },
+        },
+      );
+    },
+
+    validatorAdapter: zodValidator,
   });
 
   const mutation = useSignIn();
+  const [showPassword, setShowPassword] = React.useState(false);
 
   return (
     <Box
@@ -55,44 +74,104 @@ export function Login() {
         </Typography>
         <Stack
           component={"form"}
-          onSubmit={formCtx.handleSubmit(
-            (data) => {
-              mutation.mutate(data, {
-                onError() {},
-                onSuccess() {},
-              });
-            },
-            (error) => {
-              console.warn(error);
-            },
-          )}
+          onSubmit={(evt) => {
+            evt.preventDefault();
+            form.handleSubmit().catch((error) => {
+              console.error(error);
+            });
+          }}
+          onReset={() => {
+            form.reset();
+          }}
           noValidate
           autoComplete="off"
           mt={3}
           spacing={3}
         >
-          <FormProvider {...formCtx}>
-            <InputText field="email" label="Email" />
-            <InputPassword field="password" label="Password" />
-            <Box>
-              <Link
-                component={RouterLink}
-                to={"/forgot-password"}
-                underline="hover"
-              >
-                Forgot Password?
-              </Link>
-            </Box>
-            <Button
-              disabled={mutation.isPending}
-              type="submit"
-              variant="contained"
-              fullWidth
-              size="large"
+          <form.Field
+            name="email"
+            validators={{ onChange: z.string().email() }}
+            defaultValue=""
+            children={(field) => {
+              return (
+                <TextField
+                  value={field.state.value}
+                  onChange={(evt) => {
+                    field.handleChange(evt.target.value);
+                  }}
+                  onBlur={field.handleBlur}
+                  label="Email"
+                  error={!!field.state.meta.errors.length}
+                  helperText={field.state.meta.errors.join(", ")}
+                />
+              );
+            }}
+          />
+          <form.Field
+            name="password"
+            validators={{
+              onChange: z.string().min(8).max(16),
+            }}
+            defaultValue=""
+            children={(field) => {
+              return (
+                <TextField
+                  value={field.state.value}
+                  onChange={(evt) => {
+                    field.handleChange(evt.target.value);
+                    field.validate("submit");
+                  }}
+                  onBlur={field.handleBlur}
+                  label="Password"
+                  error={!!field.state.meta.errors.length}
+                  helperText={field.state.meta.errors.join(", ")}
+                  type={showPassword ? "text" : "password"}
+                  InputProps={{
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        <IconButton
+                          onClick={() => {
+                            setShowPassword((prev) => !prev);
+                          }}
+                        >
+                          {showPassword ? (
+                            <VisibilityOffOutlined />
+                          ) : (
+                            <VisibilityOutlined />
+                          )}
+                        </IconButton>
+                      </InputAdornment>
+                    ),
+                  }}
+                />
+              );
+            }}
+          />
+          <Box>
+            <Link
+              component={RouterLink}
+              to={"/forgot-password"}
+              underline="hover"
             >
-              sign in
-            </Button>
-          </FormProvider>
+              Forgot Password?
+            </Link>
+          </Box>
+          <form.Subscribe
+            selector={(state) => [state.canSubmit, state.isSubmitting]}
+            children={([canSubmit, isSubmitting]) => {
+              return (
+                <Button
+                  disabled={!canSubmit || isSubmitting}
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                >
+                  sign in
+                </Button>
+              );
+            }}
+          />
         </Stack>
         <Box
           display={"flex"}
@@ -121,10 +200,3 @@ export function Login() {
     </Box>
   );
 }
-
-const schema = z.object({
-  email: z.string().email().max(128),
-  password: z.string().min(8).max(16),
-});
-
-type FormValues = z.infer<typeof schema>;
