@@ -19,6 +19,7 @@ import { toast } from "react-toastify";
 import { z } from "zod";
 import { SignInButtonGroup } from "@/components/shared/SignInButtonGroup";
 import { useSignIn } from "@/hooks/api-firebase/useSignIn";
+import { timeout } from "@/utils/timeout";
 
 export function Login() {
   const form = useForm({
@@ -28,6 +29,7 @@ export function Login() {
     },
 
     async onSubmit(props) {
+      await timeout(1000 * 1);
       await mutation.mutateAsync(
         {
           email: props.value.email,
@@ -76,9 +78,18 @@ export function Login() {
           component={"form"}
           onSubmit={(evt) => {
             evt.preventDefault();
-            form.handleSubmit().catch((error) => {
-              console.error(error);
-            });
+            form.handleSubmit();
+
+            import.meta.env.DEV &&
+              console.error(
+                Object.fromEntries(
+                  Object.entries(form.state.fieldMeta)
+                    .map(([key, value]) => {
+                      return [key, value.errors.join()];
+                    })
+                    .filter(([, error]) => error),
+                ),
+              );
           }}
           onReset={() => {
             form.reset();
@@ -157,11 +168,11 @@ export function Login() {
             </Link>
           </Box>
           <form.Subscribe
-            selector={(state) => [state.canSubmit, state.isSubmitting]}
-            children={([canSubmit, isSubmitting]) => {
+            selector={(state) => state.canSubmit}
+            children={(canSubmit) => {
               return (
                 <Button
-                  disabled={!canSubmit || isSubmitting}
+                  disabled={!canSubmit}
                   type="submit"
                   variant="contained"
                   fullWidth
