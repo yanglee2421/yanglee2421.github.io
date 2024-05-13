@@ -80,16 +80,21 @@ export function Login() {
             evt.preventDefault();
             form.handleSubmit();
 
-            import.meta.env.DEV &&
-              console.error(
-                Object.fromEntries(
-                  Object.entries(form.state.fieldMeta)
-                    .map(([key, value]) => {
-                      return [key, value.errors.join()];
-                    })
-                    .filter(([, error]) => error),
-                ),
-              );
+            if (!import.meta.env.DEV) {
+              return;
+            }
+
+            const errorEntries = Object.entries(form.state.fieldMeta)
+              .map(([key, value]) => {
+                return [key, value.errors];
+              })
+              .filter(([, error]) => error.length);
+
+            if (!errorEntries.length) {
+              return;
+            }
+
+            console.error(Object.fromEntries(errorEntries));
           }}
           onReset={() => {
             form.reset();
@@ -113,7 +118,7 @@ export function Login() {
                   onBlur={field.handleBlur}
                   label="Email"
                   error={!!field.state.meta.errors.length}
-                  helperText={field.state.meta.errors.join(", ")}
+                  helperText={field.state.meta.errors[0]}
                 />
               );
             }}
@@ -121,7 +126,12 @@ export function Login() {
           <form.Field
             name="password"
             validators={{
-              onChange: z.string().min(8).max(16),
+              onChangeListenTo: ["email"],
+              onChange(ctx) {
+                const res = z.string().min(8).max(16).safeParse(ctx.value);
+
+                return res.success ? null : res.error.message;
+              },
             }}
             defaultValue=""
             children={(field) => {
@@ -135,7 +145,7 @@ export function Login() {
                   onBlur={field.handleBlur}
                   label="Password"
                   error={!!field.state.meta.errors.length}
-                  helperText={field.state.meta.errors.join(", ")}
+                  helperText={field.state.meta.errors[0]}
                   type={showPassword ? "text" : "password"}
                   InputProps={{
                     endAdornment: (
