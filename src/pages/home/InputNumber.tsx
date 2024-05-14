@@ -10,6 +10,26 @@ export function InputNumber(props: Props) {
     return number2String(value);
   });
 
+  const handleMinus = () => {
+    setOptimisticValue("");
+    onChange(
+      minmax(string2Number(value) - string2Number(step || 1), {
+        min,
+        max,
+      }),
+    );
+  };
+
+  const handlePlus = () => {
+    setOptimisticValue("");
+    onChange(
+      minmax(string2Number(value) + string2Number(step || 1), {
+        min,
+        max,
+      }),
+    );
+  };
+
   return (
     <TextField
       value={optimisticValue || number2String(value)}
@@ -22,37 +42,34 @@ export function InputNumber(props: Props) {
           minmax(string2Number(evt.target.value, Number.NaN), { min, max }),
         );
       }}
+      onKeyDown={(evt) => {
+        if (!["ArrowUp", "ArrowDown"].includes(evt.key)) {
+          return;
+        }
+
+        evt.preventDefault();
+
+        switch (evt.key) {
+          case "ArrowUp":
+            handlePlus();
+            break;
+          case "ArrowDown":
+            handleMinus();
+            break;
+          default:
+        }
+      }}
       InputProps={{
         startAdornment: (
           <InputAdornment position="start">
-            <IconButton
-              onClick={() => {
-                setOptimisticValue("");
-                onChange(
-                  minmax(string2Number(value) - string2Number(step || 1), {
-                    min,
-                    max,
-                  }),
-                );
-              }}
-            >
+            <IconButton onClick={handleMinus}>
               <RemoveOutlined />
             </IconButton>
           </InputAdornment>
         ),
         endAdornment: (
           <InputAdornment position="end">
-            <IconButton
-              onClick={() => {
-                setOptimisticValue("");
-                onChange(
-                  minmax(string2Number(value) + string2Number(step || 1), {
-                    min,
-                    max,
-                  }),
-                );
-              }}
-            >
+            <IconButton onClick={handlePlus}>
               <AddOutlined />
             </IconButton>
           </InputAdornment>
