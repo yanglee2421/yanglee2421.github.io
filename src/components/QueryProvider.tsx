@@ -5,7 +5,7 @@ import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client
 export function QueryProvider(props: React.PropsWithChildren) {
   return (
     <PersistQueryClientProvider
-      client={getQueryClient()}
+      client={queryClient}
       persistOptions={{ persister }}
     >
       {props.children}
@@ -18,36 +18,20 @@ const persister = createAsyncStoragePersister({
   key: "YotuLeeQueryCache",
 });
 
-let browserQueryClient: QueryClient | null = null;
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60,
+      gcTime: 1000 * 60 * 2,
 
-function getQueryClient() {
-  // Server: always generate a new object
-  if (typeof window === "undefined") {
-    return makeQueryClient();
-  }
+      refetchOnMount: true,
+      refetchOnReconnect: true,
+      refetchOnWindowFocus: true,
 
-  // Client: only generate object once
-  browserQueryClient ||= makeQueryClient();
-
-  return browserQueryClient;
-}
-
-function makeQueryClient() {
-  return new QueryClient({
-    defaultOptions: {
-      queries: {
-        staleTime: 1000 * 60,
-        gcTime: 1000 * 60 * 2,
-
-        refetchOnMount: true,
-        refetchOnReconnect: true,
-        refetchOnWindowFocus: true,
-
-        retry: 1,
-        retryDelay(attemptIndex) {
-          return Math.min(1000 * 2 ** attemptIndex, 1000 * 8);
-        },
+      retry: 1,
+      retryDelay(attemptIndex) {
+        return Math.min(1000 * 2 ** attemptIndex, 1000 * 8);
       },
     },
-  });
-}
+  },
+});

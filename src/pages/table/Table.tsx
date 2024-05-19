@@ -36,6 +36,7 @@ import type {
   RowSelectionState,
   SortingState,
   ColumnFiltersState,
+  ExpandedState,
 } from "@tanstack/react-table";
 
 export function Table() {
@@ -44,10 +45,10 @@ export function Table() {
     pageSize: 20,
   });
 
+  const [expanded, onExpandedChange] = React.useState<ExpandedState>({});
+  const [sorting, onSortingChange] = React.useState<SortingState>([]);
   const [rowSelection, onRowSelectionChange] =
     React.useState<RowSelectionState>({});
-
-  const [sorting, onSortingChange] = React.useState<SortingState>([]);
 
   const [globalFilter, onGlobalFilterChange] = React.useState("");
   const [columnFilters, onColumnFiltersChange] =
@@ -91,6 +92,7 @@ export function Table() {
     getRowCanExpand() {
       return true;
     },
+    onExpandedChange,
 
     // ** Resize
     enableColumnResizing: true,
@@ -102,6 +104,7 @@ export function Table() {
       sorting,
       globalFilter,
       columnFilters,
+      expanded,
     },
   });
 

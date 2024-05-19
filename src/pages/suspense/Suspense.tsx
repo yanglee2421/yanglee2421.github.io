@@ -16,11 +16,14 @@ export function Suspense() {
             }}
             fallbackRender={(fallbackProps) => {
               return (
-                <button
-                  onClick={() => {
-                    fallbackProps.resetErrorBoundary();
-                  }}
-                ></button>
+                <>
+                  <p>{fallbackProps.error.message}</p>
+                  <button
+                    onClick={() => {
+                      fallbackProps.resetErrorBoundary();
+                    }}
+                  ></button>
+                </>
               );
             }}
           >
