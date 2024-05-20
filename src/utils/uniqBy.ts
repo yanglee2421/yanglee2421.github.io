@@ -1,40 +1,26 @@
-export function uniqBy(items: unknown[], ops: Partial<Ops> = {}) {
+export function uniqBy<TItem extends NonNullable<unknown>>(
+  items: TItem[],
+  ops: Partial<Ops> = {},
+) {
   const { overwrite = false, key = "id" } = ops;
 
-  const map = new Map();
-
-  items.forEach((item) => {
-    // Item must be an object
-    if (typeof item !== "object") {
-      console.error("Excepted an object");
-      return;
-    }
-
-    if (!item) {
-      console.error("Excepted an object, got a null!");
-      return;
-    }
-
-    // Get Key
+  const map = items.reduce((map, item) => {
     const mapKey = Reflect.get(item, key);
-    if (!mapKey) {
-      console.error("Excepted a truth, got a falsy!");
-      return;
-    }
 
-    // Whether to allow overwriting
     if (overwrite) {
       map.set(mapKey, item);
-      return;
+      return map;
     }
 
     map.get(mapKey) ?? map.set(mapKey, item);
-  });
+
+    return map;
+  }, new Map<unknown, TItem>());
 
   return [...map.values()];
 }
 
-interface Ops {
+type Ops = {
   key: string | symbol;
   overwrite: boolean;
-}
+};
