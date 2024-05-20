@@ -1,19 +1,27 @@
-export function list2Tree(
-  list: Array<{
+export function list2Tree<
+  TRow extends {
     id: number;
     parentId: number;
-  }>,
-) {
+  },
+>(list: TRow[]) {
   const allIds = list.map((item) => item.id);
+  const clonedList = structuredClone(list);
 
-  return list
-    .map((item, idx, arr) => {
-      void idx;
+  clonedList.forEach((item, idx, arr) => {
+    void idx;
 
-      return {
-        ...item,
-        children: arr.filter((el) => Object.is(el.parentId, item.id)),
-      };
-    })
-    .filter((item) => !allIds.includes(item.parentId));
+    Reflect.set(
+      item,
+      "children",
+      arr.filter((el) => Object.is(el.parentId, item.id)),
+    );
+  });
+
+  return clonedList.filter(
+    (item): item is TreeRow<TRow> => !allIds.includes(item.parentId),
+  );
 }
+
+type TreeRow<TRow> = TRow & {
+  children: Array<TreeRow<TRow>>;
+};
