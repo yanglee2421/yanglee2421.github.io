@@ -16,6 +16,7 @@ import {
   alpha,
   TableContainer,
   Button,
+  Typography,
 } from "@mui/material";
 import {
   useReactTable,
@@ -111,15 +112,9 @@ export function Table() {
   return (
     <Paper sx={{ m: 6 }}>
       <Toolbar>
-        <TextField
-          label="Golbal Filter"
-          value={globalFilter}
-          onChange={(evt) => {
-            onGlobalFilterChange(evt.target.value);
-          }}
-          size="small"
-          variant="filled"
-        />
+        <Typography variant="h5" textTransform={"capitalize"}>
+          table lab
+        </Typography>
         <Button
           disabled={
             !(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected())
@@ -146,6 +141,16 @@ export function Table() {
         >
           export
         </Button>
+        <TextField
+          label="Golbal Filter"
+          value={globalFilter}
+          onChange={(evt) => {
+            onGlobalFilterChange(evt.target.value);
+          }}
+          size="small"
+          variant="standard"
+          sx={{ marginLeft: "auto" }}
+        />
       </Toolbar>
       <TableContainer>
         <ScrollView>
@@ -349,9 +354,13 @@ export function Table() {
           borderBottomRightRadius(theme) {
             return theme.shape.borderRadius + "px";
           },
+          borderTopWidth: 1,
+          borderTopStyle: "solid",
+          borderTopColor(theme) {
+            return theme.palette.divider;
+          },
         }}
       >
-        <Divider sx={{ margin: 0 }} />
         <TablePagination
           component={"div"}
           count={table.getRowCount()}
