@@ -17,6 +17,7 @@ import {
   TableContainer,
   Button,
   Typography,
+  Stack,
 } from "@mui/material";
 import {
   useReactTable,
@@ -30,6 +31,7 @@ import {
   getExpandedRowModel,
 } from "@tanstack/react-table";
 import React from "react";
+import { JsonBlock } from "@/components/shared/JsonBlock";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { columns } from "./columns";
 import { data } from "./data";
@@ -110,37 +112,8 @@ export function Table() {
   });
 
   return (
-    <Paper sx={{ m: 6 }}>
-      <Toolbar>
-        <Typography variant="h5" textTransform={"capitalize"}>
-          table lab
-        </Typography>
-        <Button
-          disabled={
-            !(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected())
-          }
-          LinkComponent={"a"}
-          href={encodeURI(
-            "data:text/csv;charset=utf-8," +
-              [
-                table
-                  .getVisibleFlatColumns()
-                  .filter((column) => column.accessorFn)
-                  .map((column) => column.id)
-                  .join(","),
-                ...table.getSelectedRowModel().rows.map((row) =>
-                  table
-                    .getVisibleFlatColumns()
-                    .filter((column) => column.accessorFn)
-                    .map((column) => row.getValue(column.id))
-                    .join(","),
-                ),
-              ].join("\n"),
-          )}
-          download={Date.now() + ".csv"}
-        >
-          export
-        </Button>
+    <Stack spacing={6} padding={6}>
+      <Paper sx={{ padding: 3 }}>
         <TextField
           label="Golbal Filter"
           value={globalFilter}
@@ -148,234 +121,273 @@ export function Table() {
             onGlobalFilterChange(evt.target.value);
           }}
           size="small"
-          variant="standard"
-          sx={{ marginLeft: "auto" }}
         />
-      </Toolbar>
-      <TableContainer>
-        <ScrollView>
-          <MuiTable
+      </Paper>
+      <Paper>
+        <Toolbar>
+          <Typography variant="h5" textTransform={"capitalize"}>
+            table lab
+          </Typography>
+          <Button
+            disabled={
+              !(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected())
+            }
+            LinkComponent={"a"}
+            href={encodeURI(
+              "data:text/csv;charset=utf-8," +
+                [
+                  table
+                    .getVisibleFlatColumns()
+                    .filter((column) => column.accessorFn)
+                    .map((column) => column.id)
+                    .join(","),
+                  ...table.getSelectedRowModel().rows.map((row) =>
+                    table
+                      .getVisibleFlatColumns()
+                      .filter((column) => column.accessorFn)
+                      .map((column) => row.getValue(column.id))
+                      .join(","),
+                  ),
+                ].join("\n"),
+            )}
+            download={Date.now() + ".csv"}
             sx={{
-              minWidth(theme) {
-                return theme.breakpoints.values.lg;
-              },
+              marginLeft: "auto",
             }}
           >
-            <TableHead>
-              {table.getHeaderGroups().map((headerGroup) => {
-                return (
-                  <TableRow key={headerGroup.id}>
-                    {headerGroup.headers.map((header) => {
-                      const canSort = header.column.getCanSort();
-                      const isSorted = header.column.getIsSorted();
-                      const isResizing = header.column.getIsResizing();
-                      const resizeHandler = header.getResizeHandler();
-                      const cellNode =
-                        header.isPlaceholder ||
-                        flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        );
+            export
+          </Button>
+        </Toolbar>
+        <TableContainer>
+          <ScrollView>
+            <MuiTable
+              sx={{
+                minWidth(theme) {
+                  return theme.breakpoints.values.lg;
+                },
+              }}
+            >
+              <TableHead>
+                {table.getHeaderGroups().map((headerGroup) => {
+                  return (
+                    <TableRow key={headerGroup.id}>
+                      {headerGroup.headers.map((header) => {
+                        const canSort = header.column.getCanSort();
+                        const isSorted = header.column.getIsSorted();
+                        const isResizing = header.column.getIsResizing();
+                        const resizeHandler = header.getResizeHandler();
+                        const cellNode =
+                          header.isPlaceholder ||
+                          flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          );
 
-                      return (
-                        <TableCell
-                          key={header.id}
-                          colSpan={header.colSpan}
-                          padding={
-                            header.id === "selection" ? "checkbox" : "normal"
-                          }
-                          width={header.getSize()}
-                          sx={{ position: "relative" }}
-                        >
-                          {canSort ? (
-                            <TableSortLabel
-                              active={!!isSorted}
-                              onClick={header.column.getToggleSortingHandler()}
-                              disabled={!canSort}
-                              direction={isSorted || void 0}
-                            >
-                              {cellNode}
-                            </TableSortLabel>
-                          ) : (
-                            cellNode
-                          )}
-                          {header.column.getCanFilter() && (
-                            <>
-                              <TextField
-                                value={header.column.getFilterValue()}
-                                onChange={(evt) => {
-                                  header.column.setFilterValue(
-                                    evt.target.value,
-                                  );
-                                }}
-                                placeholder={`Search... (${header.column.getFacetedUniqueValues().size})`}
-                                variant="standard"
-                                size="small"
-                                inputProps={{
-                                  list: header.column.id,
-                                }}
-                              />
-                              <datalist id={header.column.id}>
-                                {Array.from(
-                                  header.column.getFacetedUniqueValues().keys(),
-                                )
-                                  .sort()
-                                  .map((item) => {
-                                    return (
-                                      <option key={item} value={item}></option>
-                                    );
-                                  })}
-                              </datalist>
-                            </>
-                          )}
-
-                          {header.column.getCanResize() && (
-                            <Box
-                              component={"div"}
-                              onMouseDown={resizeHandler}
-                              onTouchStart={resizeHandler}
-                              sx={{
-                                position: "absolute",
-                                right: 0,
-                                top: 0,
-                                height: "100%",
-                                width: 3,
-                                background: isResizing
-                                  ? "blue"
-                                  : alpha("#000", 0.5),
-                                cursor: "col-resize",
-                                userSelect: "none",
-                                touchAction: "none",
-                                opacity: isResizing ? 1 : 0,
-                                transition(theme) {
-                                  return theme.transitions.create("opacity");
-                                },
-                              }}
-                            ></Box>
-                          )}
-                        </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-            </TableHead>
-            <TableBody>
-              {table.getRowModel().rows.map((row) => {
-                return (
-                  <React.Fragment key={row.id}>
-                    <TableRow selected={row.getIsSelected()} hover>
-                      {row.getVisibleCells().map((cell) => {
                         return (
                           <TableCell
-                            key={cell.id}
+                            key={header.id}
+                            colSpan={header.colSpan}
                             padding={
-                              cell.column.id === "selection"
-                                ? "checkbox"
-                                : "normal"
+                              header.id === "selection" ? "checkbox" : "normal"
                             }
+                            width={header.getSize()}
+                            sx={{ position: "relative" }}
                           >
-                            {flexRender(
-                              cell.column.columnDef.cell,
-                              cell.getContext(),
+                            {canSort ? (
+                              <TableSortLabel
+                                active={!!isSorted}
+                                onClick={header.column.getToggleSortingHandler()}
+                                disabled={!canSort}
+                                direction={isSorted || void 0}
+                              >
+                                {cellNode}
+                              </TableSortLabel>
+                            ) : (
+                              cellNode
+                            )}
+                            {header.column.getCanFilter() && (
+                              <>
+                                <TextField
+                                  value={header.column.getFilterValue()}
+                                  onChange={(evt) => {
+                                    header.column.setFilterValue(
+                                      evt.target.value,
+                                    );
+                                  }}
+                                  placeholder={`Search... (${header.column.getFacetedUniqueValues().size})`}
+                                  variant="standard"
+                                  size="small"
+                                  inputProps={{
+                                    list: header.column.id,
+                                  }}
+                                />
+                                <datalist id={header.column.id}>
+                                  {Array.from(
+                                    header.column
+                                      .getFacetedUniqueValues()
+                                      .keys(),
+                                  )
+                                    .sort()
+                                    .map((item) => {
+                                      return (
+                                        <option
+                                          key={item}
+                                          value={item}
+                                        ></option>
+                                      );
+                                    })}
+                                </datalist>
+                              </>
+                            )}
+
+                            {header.column.getCanResize() && (
+                              <Box
+                                component={"div"}
+                                onMouseDown={resizeHandler}
+                                onTouchStart={resizeHandler}
+                                sx={{
+                                  position: "absolute",
+                                  right: 0,
+                                  top: 0,
+                                  height: "100%",
+                                  width: 3,
+                                  background: isResizing
+                                    ? "blue"
+                                    : alpha("#000", 0.5),
+                                  cursor: "col-resize",
+                                  userSelect: "none",
+                                  touchAction: "none",
+                                  opacity: isResizing ? 1 : 0,
+                                  transition(theme) {
+                                    return theme.transitions.create("opacity");
+                                  },
+                                }}
+                              ></Box>
                             )}
                           </TableCell>
                         );
                       })}
                     </TableRow>
-                    <TableRow>
-                      <TableCell
-                        colSpan={columns.length}
-                        padding="none"
-                        sx={{
-                          borderWidth: 0,
-                        }}
-                      >
-                        <Collapse in={row.getIsExpanded()} enter unmountOnExit>
-                          <Box sx={{ p: 4 }}>
-                            {JSON.stringify(row.original)}
-                          </Box>
-                          <Divider sx={{ p: 0 }} />
-                        </Collapse>
-                      </TableCell>
-                    </TableRow>
-                  </React.Fragment>
-                );
-              })}
-            </TableBody>
-            <TableFooter>
-              {table.getFooterGroups().map((footerGroup) => {
-                return (
-                  <TableRow
-                    key={footerGroup.id}
-                    sx={{
-                      "&:last-of-type > td": {
-                        border: 0,
-                      },
-                    }}
-                  >
-                    {footerGroup.headers.map((header) => {
-                      return (
+                  );
+                })}
+              </TableHead>
+              <TableBody>
+                {table.getRowModel().rows.map((row) => {
+                  return (
+                    <React.Fragment key={row.id}>
+                      <TableRow selected={row.getIsSelected()} hover>
+                        {row.getVisibleCells().map((cell) => {
+                          return (
+                            <TableCell
+                              key={cell.id}
+                              padding={
+                                cell.column.id === "selection"
+                                  ? "checkbox"
+                                  : "normal"
+                              }
+                            >
+                              {flexRender(
+                                cell.column.columnDef.cell,
+                                cell.getContext(),
+                              )}
+                            </TableCell>
+                          );
+                        })}
+                      </TableRow>
+                      <TableRow>
                         <TableCell
-                          key={header.id}
-                          colSpan={header.colSpan}
-                          padding={
-                            header.column.id === "selection"
-                              ? "checkbox"
-                              : "normal"
-                          }
+                          colSpan={columns.length}
+                          padding="none"
+                          sx={{
+                            borderWidth: 0,
+                          }}
                         >
-                          {header.isPlaceholder ||
-                            flexRender(
-                              header.column.columnDef.footer,
-                              header.getContext(),
-                            )}
+                          <Collapse in={row.getIsExpanded()} unmountOnExit>
+                            <Box sx={{ p: 4 }}>
+                              <JsonBlock jsonData={row.original} />
+                            </Box>
+                            <Divider sx={{ p: 0 }} />
+                          </Collapse>
                         </TableCell>
-                      );
-                    })}
-                  </TableRow>
-                );
-              })}
-            </TableFooter>
-          </MuiTable>
-        </ScrollView>
-      </TableContainer>
+                      </TableRow>
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
+              <TableFooter>
+                {table.getFooterGroups().map((footerGroup) => {
+                  return (
+                    <TableRow
+                      key={footerGroup.id}
+                      sx={{
+                        "&:last-of-type > td": {
+                          border: 0,
+                        },
+                      }}
+                    >
+                      {footerGroup.headers.map((header) => {
+                        return (
+                          <TableCell
+                            key={header.id}
+                            colSpan={header.colSpan}
+                            padding={
+                              header.column.id === "selection"
+                                ? "checkbox"
+                                : "normal"
+                            }
+                          >
+                            {header.isPlaceholder ||
+                              flexRender(
+                                header.column.columnDef.footer,
+                                header.getContext(),
+                              )}
+                          </TableCell>
+                        );
+                      })}
+                    </TableRow>
+                  );
+                })}
+              </TableFooter>
+            </MuiTable>
+          </ScrollView>
+        </TableContainer>
 
-      <Box
-        sx={{
-          position: "sticky",
-          bottom: 0,
-          bgcolor(theme) {
-            return theme.palette.background.paper;
-          },
-          borderBottomLeftRadius(theme) {
-            return theme.shape.borderRadius + "px";
-          },
-          borderBottomRightRadius(theme) {
-            return theme.shape.borderRadius + "px";
-          },
-          borderTopWidth: 1,
-          borderTopStyle: "solid",
-          borderTopColor(theme) {
-            return theme.palette.divider;
-          },
-        }}
-      >
-        <TablePagination
-          component={"div"}
-          count={table.getRowCount()}
-          rowsPerPageOptions={[20, 50, 100]}
-          page={table.getState().pagination.pageIndex}
-          rowsPerPage={table.getState().pagination.pageSize}
-          onPageChange={(evt, page) => {
-            void evt;
-            table.setPageIndex(page);
+        <Box
+          sx={{
+            position: "sticky",
+            bottom: 0,
+            bgcolor(theme) {
+              return theme.palette.background.paper;
+            },
+            borderBottomLeftRadius(theme) {
+              return theme.shape.borderRadius + "px";
+            },
+            borderBottomRightRadius(theme) {
+              return theme.shape.borderRadius + "px";
+            },
+            borderTopWidth: 1,
+            borderTopStyle: "solid",
+            borderTopColor(theme) {
+              return theme.palette.divider;
+            },
           }}
-          onRowsPerPageChange={(evt) => {
-            table.setPageSize(Number.parseInt(evt.target.value) || 20);
-          }}
-        />
-      </Box>
-    </Paper>
+        >
+          <TablePagination
+            component={"div"}
+            count={table.getRowCount()}
+            rowsPerPageOptions={[20, 50, 100]}
+            page={table.getState().pagination.pageIndex}
+            rowsPerPage={table.getState().pagination.pageSize}
+            onPageChange={(evt, page) => {
+              void evt;
+              table.setPageIndex(page);
+            }}
+            onRowsPerPageChange={(evt) => {
+              table.setPageSize(Number.parseInt(evt.target.value) || 20);
+            }}
+          />
+        </Box>
+      </Paper>
+    </Stack>
   );
 }
