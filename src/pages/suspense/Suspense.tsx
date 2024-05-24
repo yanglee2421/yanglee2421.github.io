@@ -45,5 +45,5 @@ function Page() {
     },
   });
 
-  return <>{query.data}</>;
+  return <>{query.data.name}</>;
 }

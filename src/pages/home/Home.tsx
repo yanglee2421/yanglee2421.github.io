@@ -2,10 +2,8 @@ import { Box, Button, Divider, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
-import { ScrollView } from "@/components/ui/ScrollView";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { InputNumber } from "./InputNumber";
-import { JsonBlock } from "./JsonBlock";
 
 export function Home() {
   const authValue = useAuthStore();
@@ -23,15 +21,13 @@ export function Home() {
       >
         sign out
       </Button>
-      <Box sx={{ height: 420 }}>
-        <InputNumber
-          value={number}
-          onChange={setNumber}
-          step={1}
-          min={1}
-          max={100}
-        />
-      </Box>
+      <InputNumber
+        value={number}
+        onChange={setNumber}
+        step={1}
+        min={1}
+        max={100}
+      />
       <Divider>Component</Divider>
 
       <Box
@@ -75,12 +71,6 @@ export function Home() {
         >
           <img src={bgImgHref} width={192} height={108} />
         </Box>
-      </Box>
-
-      <Box sx={{ width: "100%" }}>
-        <ScrollView>
-          <JsonBlock />
-        </ScrollView>
       </Box>
     </Box>
   );

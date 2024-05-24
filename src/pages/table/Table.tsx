@@ -8,7 +8,6 @@ import {
   Paper,
   Box,
   TablePagination,
-  Divider,
   TableSortLabel,
   Toolbar,
   TextField,
@@ -17,7 +16,6 @@ import {
   TableContainer,
   Button,
   Typography,
-  Stack,
 } from "@mui/material";
 import {
   useReactTable,
@@ -112,7 +110,7 @@ export function Table() {
   });
 
   return (
-    <Stack spacing={6} padding={6}>
+    <>
       <Paper sx={{ padding: 3 }}>
         <TextField
           label="Golbal Filter"
@@ -306,7 +304,6 @@ export function Table() {
                             <Box sx={{ p: 4 }}>
                               <JsonBlock jsonData={row.original} />
                             </Box>
-                            <Divider sx={{ p: 0 }} />
                           </Collapse>
                         </TableCell>
                       </TableRow>
@@ -354,7 +351,7 @@ export function Table() {
 
         <Box
           sx={{
-            position: "sticky",
+            position: { sm: "sticky" },
             bottom: 0,
             bgcolor(theme) {
               return theme.palette.background.paper;
@@ -388,6 +385,6 @@ export function Table() {
           />
         </Box>
       </Paper>
-    </Stack>
+    </>
   );
 }

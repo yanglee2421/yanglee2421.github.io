@@ -42,8 +42,6 @@ export function Login() {
         },
       );
     },
-
-    validatorAdapter: zodValidator,
   });
 
   const mutation = useSignIn();
@@ -51,23 +49,22 @@ export function Login() {
 
   return (
     <Box
-      position={"fixed"}
-      display={"flex"}
-      height={"100%"}
       sx={{
+        position: "fixed",
         inset: 0,
+        display: "flex",
       }}
     >
-      <Box flex={1} overflow={"hidden"} />
+      <div></div>
       <Paper
         sx={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          width: "100%",
-          maxWidth: 450,
+          width: { xs: "100%", md: 450 },
           p: [6, 12],
           borderRadius: 0,
+          marginLeft: "auto",
         }}
       >
         <Typography variant="h5">Welcome to Materio!👋🏻</Typography>
@@ -106,6 +103,7 @@ export function Login() {
         >
           <form.Field
             name="email"
+            validatorAdapter={zodValidator}
             validators={{ onChange: z.string().email() }}
             defaultValue=""
             children={(field) => {
@@ -125,13 +123,9 @@ export function Login() {
           />
           <form.Field
             name="password"
+            validatorAdapter={zodValidator}
             validators={{
-              onChangeListenTo: ["email"],
-              onChange(ctx) {
-                const res = z.string().min(8).max(16).safeParse(ctx.value);
-
-                return res.success ? null : res.error.message;
-              },
+              onChange: z.string().min(8).max(16),
             }}
             defaultValue=""
             children={(field) => {
