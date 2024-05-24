@@ -29,13 +29,13 @@ export function SignInButtonGroup() {
 
   return (
     <>
-      <ButtonGroup ref={buttonGroupRef} color="secondary">
+      <ButtonGroup ref={buttonGroupRef} color="secondary" size="large">
         {(() => {
           switch (platform) {
             case "github":
               return <SignInWithGithub />;
-            default:
             case "google":
+            default:
               return <SignInWithGoogle />;
           }
         })()}
@@ -55,9 +55,9 @@ export function SignInButtonGroup() {
         </Button>
       </ButtonGroup>
       <Popper open={!!anchorEl} anchorEl={anchorEl} transition>
-        {(ctx) => {
+        {(props) => {
           return (
-            <Grow {...ctx.TransitionProps}>
+            <Grow {...props.TransitionProps}>
               <Paper>
                 <ClickAwayListener
                   onClickAway={() => {
