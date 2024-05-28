@@ -1,4 +1,13 @@
-import { Box, Button, Divider, alpha } from "@mui/material";
+import { SendOutlined } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Divider,
+  TextField,
+  alpha,
+  InputAdornment,
+  IconButton,
+} from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
@@ -21,12 +30,27 @@ export function Home() {
       >
         sign out
       </Button>
+      <Divider>Component</Divider>
       <InputNumber
         value={number}
         onChange={setNumber}
         step={1}
         min={1}
         max={100}
+      />
+      <br />
+      <TextField
+        multiline
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton>
+                <SendOutlined />
+              </IconButton>
+            </InputAdornment>
+          ),
+        }}
+        fullWidth
       />
       <Divider>Component</Divider>
 

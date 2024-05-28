@@ -4,7 +4,7 @@ import React from "react";
 import { minmax } from "@/utils/minmax";
 
 export function InputNumber(props: Props) {
-  const { value, onChange, step, min, max } = props;
+  const { value, onChange, step = 1, min, max } = props;
 
   const [optimisticValue, setOptimisticValue] = React.useState(() => {
     return number2String(value);
@@ -13,7 +13,7 @@ export function InputNumber(props: Props) {
   const handleMinus = () => {
     setOptimisticValue("");
     onChange(
-      minmax(string2Number(value) - string2Number(step || 1), {
+      minmax(string2Number(value) - string2Number(step), {
         min,
         max,
       }),
@@ -23,7 +23,7 @@ export function InputNumber(props: Props) {
   const handlePlus = () => {
     setOptimisticValue("");
     onChange(
-      minmax(string2Number(value) + string2Number(step || 1), {
+      minmax(string2Number(value) + string2Number(step), {
         min,
         max,
       }),
