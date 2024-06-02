@@ -1,4 +1,3 @@
-import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
 import {
   Box,
   Divider,
@@ -8,20 +7,19 @@ import {
   Paper,
   Stack,
   TextField,
-  InputAdornment,
-  IconButton,
 } from "@mui/material";
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import React from "react";
 import { Link as RouterLink } from "react-router-dom";
 import { toast } from "react-toastify";
 import { z } from "zod";
+import { InputPassword } from "@/components/form/InputPassword";
 import { SignInButtonGroup } from "@/components/shared/SignInButtonGroup";
 import { useSignIn } from "@/hooks/api-firebase/useSignIn";
-import { timeout } from "@/utils/timeout";
 
 export function Login() {
+  const mutation = useSignIn();
+
   const form = useForm({
     defaultValues: {
       email: "",
@@ -29,7 +27,6 @@ export function Login() {
     },
 
     async onSubmit(props) {
-      await timeout(1000 * 1);
       await mutation.mutateAsync(
         {
           email: props.value.email,
@@ -44,9 +41,6 @@ export function Login() {
     },
   });
 
-  const mutation = useSignIn();
-  const [showPassword, setShowPassword] = React.useState(false);
-
   return (
     <Box
       sx={{
@@ -55,7 +49,13 @@ export function Login() {
         display: "flex",
       }}
     >
-      <div></div>
+      <Box
+        sx={{
+          display: { xs: "none", md: "block" },
+          flexGrow: 1,
+          overflow: "hidden",
+        }}
+      ></Box>
       <Paper
         sx={{
           display: "flex",
@@ -64,7 +64,6 @@ export function Login() {
           width: { xs: "100%", md: 450 },
           p: [6, 12],
           borderRadius: 0,
-          marginLeft: "auto",
         }}
       >
         <Typography variant="h5">Welcome to Materio!👋🏻</Typography>
@@ -73,9 +72,9 @@ export function Login() {
         </Typography>
         <Stack
           component={"form"}
-          onSubmit={(evt) => {
+          onSubmit={async (evt) => {
             evt.preventDefault();
-            form.handleSubmit();
+            await form.handleSubmit();
 
             if (!import.meta.env.DEV) {
               return;
@@ -91,7 +90,15 @@ export function Login() {
               return;
             }
 
-            console.error(Object.fromEntries(errorEntries));
+            console.error(
+              "Error Message:",
+              "\n",
+              Object.fromEntries(errorEntries),
+              "\n",
+              "Form Values:",
+              "\n",
+              form.state.values,
+            );
           }}
           onReset={() => {
             form.reset();
@@ -106,7 +113,8 @@ export function Login() {
             validatorAdapter={zodValidator}
             validators={{ onChange: z.string().email() }}
             defaultValue=""
-            children={(field) => {
+          >
+            {(field) => {
               return (
                 <TextField
                   value={field.state.value}
@@ -114,54 +122,36 @@ export function Login() {
                     field.handleChange(evt.target.value);
                   }}
                   onBlur={field.handleBlur}
-                  label="Email"
                   error={!!field.state.meta.errors.length}
                   helperText={field.state.meta.errors[0]}
+                  label="Email"
                 />
               );
             }}
-          />
+          </form.Field>
           <form.Field
             name="password"
             validatorAdapter={zodValidator}
             validators={{
               onChange: z.string().min(8).max(16),
             }}
-            defaultValue=""
-            children={(field) => {
+          >
+            {(field) => {
               return (
-                <TextField
+                <InputPassword
                   value={field.state.value}
                   onChange={(evt) => {
                     field.handleChange(evt.target.value);
-                    field.validate("submit");
                   }}
                   onBlur={field.handleBlur}
-                  label="Password"
                   error={!!field.state.meta.errors.length}
                   helperText={field.state.meta.errors[0]}
-                  type={showPassword ? "text" : "password"}
-                  InputProps={{
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        <IconButton
-                          onClick={() => {
-                            setShowPassword((prev) => !prev);
-                          }}
-                        >
-                          {showPassword ? (
-                            <VisibilityOffOutlined />
-                          ) : (
-                            <VisibilityOutlined />
-                          )}
-                        </IconButton>
-                      </InputAdornment>
-                    ),
-                  }}
+                  label="Password"
+                  fullWidth
                 />
               );
             }}
-          />
+          </form.Field>
           <Box>
             <Link
               component={RouterLink}
@@ -171,9 +161,8 @@ export function Login() {
               Forgot Password?
             </Link>
           </Box>
-          <form.Subscribe
-            selector={(state) => state.canSubmit}
-            children={(canSubmit) => {
+          <form.Subscribe selector={(state) => state.canSubmit}>
+            {(canSubmit) => {
               return (
                 <Button
                   disabled={!canSubmit}
@@ -186,7 +175,7 @@ export function Login() {
                 </Button>
               );
             }}
-          />
+          </form.Subscribe>
         </Stack>
         <Box
           display={"flex"}
