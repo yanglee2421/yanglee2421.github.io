@@ -226,6 +226,7 @@ export function SignUp() {
                       </Link>
                     </Box>
                   }
+                  sx={{ py: 1 }}
                 />
               );
             }}
@@ -249,10 +250,13 @@ export function SignUp() {
           </form.Subscribe>
         </Stack>
         <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          pt={2}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 6,
+            mt: 6,
+          }}
         >
           <Typography color="secondary">Already have an account?</Typography>
           <Link component={RouterLink} to={"/login"} underline="hover">
@@ -264,11 +268,18 @@ export function SignUp() {
             color(theme) {
               return theme.palette.text.secondary;
             },
+            mt: 4,
           }}
         >
-          Or
+          or
         </Divider>
-        <Box textAlign={"center"} mt={3}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 5,
+          }}
+        >
           <SignInButtonGroup />
         </Box>
       </Paper>

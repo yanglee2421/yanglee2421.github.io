@@ -33,9 +33,11 @@ export function RootRoute() {
   }, [navigation.state]);
 
   React.useEffect(() => {
-    if (typeof lang === "string") {
-      i18n.changeLanguage(lang);
+    if (!lang) {
+      return;
     }
+
+    i18n.changeLanguage(lang);
   }, [lang, i18n]);
 
   return (

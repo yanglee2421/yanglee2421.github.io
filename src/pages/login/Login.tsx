@@ -152,7 +152,7 @@ export function Login() {
               );
             }}
           </form.Field>
-          <Box>
+          <Box sx={{ py: 1 }}>
             <Link
               component={RouterLink}
               to={"/forgot-password"}
@@ -178,10 +178,13 @@ export function Login() {
           </form.Subscribe>
         </Stack>
         <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          pt={2}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 6,
+            mt: 6,
+          }}
         >
           <Typography color="secondary">New on our platform?</Typography>
           <Link component={RouterLink} to={"/signup"} underline="hover">
@@ -193,11 +196,18 @@ export function Login() {
             color(theme) {
               return theme.palette.text.secondary;
             },
+            mt: 4,
           }}
         >
-          Or
+          or
         </Divider>
-        <Box textAlign={"center"} mt={2}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 5,
+          }}
+        >
           <SignInButtonGroup />
         </Box>
       </Paper>
