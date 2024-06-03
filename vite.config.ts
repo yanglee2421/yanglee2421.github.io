@@ -39,12 +39,12 @@ export default defineConfig((configEnv) => {
         },
         output: {
           manualChunks(id) {
-            if (id.includes("node_modules/cropperjs")) {
-              return "cropperjs";
+            if (id.includes("node_modules/apexcharts")) {
+              return "apexcharts";
             }
 
-            if (id.includes("node_modules/fabric")) {
-              return "fabric";
+            if (id.includes("node_modules/recharts")) {
+              return "recharts";
             }
           },
           entryFileNames: "assets/[name]-[hash].js",
