@@ -91,7 +91,7 @@ export function NotFound() {
         }}
       >
         <StyledImg
-          src={new URL(bgImg, import.meta.url).href}
+          src={bgImgHref}
           alt="just her"
           width={bgSize.width}
           height={bgSize.height}
@@ -119,3 +119,5 @@ const StyledImg = styled("img")({
   zIndex: 2,
   objectFit: "cover",
 });
+
+const bgImgHref = new URL(bgImg, import.meta.url).href;

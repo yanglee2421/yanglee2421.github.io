@@ -95,7 +95,13 @@ export function PageLayout(props: React.PropsWithChildren) {
             },
           }}
         >
-          <Stack direction={"row"} spacing={3} alignItems={"center"}>
+          <Stack
+            direction={"row"}
+            spacing={3}
+            sx={{
+              alignItems: "center",
+            }}
+          >
             <IconButton sx={{ display: { md: "none" } }}>
               <MenuOutlined />
             </IconButton>
@@ -119,7 +125,10 @@ export function PageLayout(props: React.PropsWithChildren) {
           <Stack
             direction={"row"}
             spacing={3}
-            sx={{ ml: "auto", alignItems: "center" }}
+            sx={{
+              ml: "auto",
+              alignItems: "center",
+            }}
           >
             <IconButton>
               <TranslateOutlined />
