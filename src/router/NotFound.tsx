@@ -1,4 +1,4 @@
-import { Box, Button, Typography, styled } from "@mui/material";
+import { Box, Button, Typography, alpha, styled } from "@mui/material";
 import React from "react";
 import { NavLink } from "react-router-dom";
 import bgImg from "@/assets/images/justHer.jpg";
@@ -39,10 +39,10 @@ export function NotFound() {
 
   return (
     <Box
-      ref={containerRef}
       color="common.white"
       sx={{
         position: "relative",
+        overflow: "hidden",
         minHeight: "100dvh",
         "&::before,&::after": {
           content: '""',
@@ -50,7 +50,7 @@ export function NotFound() {
         },
       }}
     >
-      <Box sx={{ position: "relative", zIndex: 1 }}>
+      <Box sx={{ position: "relative", zIndex: 2 }}>
         <Typography variant="h1" align="center" sx={{ mt: 36 }}>
           404
         </Typography>
@@ -62,26 +62,60 @@ export function NotFound() {
         </Typography>
       </Box>
 
-      <Box sx={{ display: "flex", justifyContent: "center", mt: 6 }}>
+      <Box
+        sx={{
+          position: "relative",
+          zIndex: 2,
+          display: "flex",
+          justifyContent: "center",
+          mt: 6,
+        }}
+      >
         <NavLink to={{ pathname: "/" }}>
-          <Button variant="contained">Take me home</Button>
+          <Button variant="contained" size="large">
+            Take me home
+          </Button>
         </NavLink>
       </Box>
 
-      <StyledImg
-        src={new URL(bgImg, import.meta.url).href}
-        alt="just her"
-        width={bgSize.width}
-        height={bgSize.height}
-      />
+      <Box
+        ref={containerRef}
+        sx={{
+          position: "absolute",
+          zIndex: 1,
+          inset: `calc(${20 * (15 / 100)}px * -2)`,
+          transition(theme) {
+            return theme.transitions.create(["filter", "inset"]);
+          },
+          filter: `blur(${20 * (15 / 100)}px)`,
+        }}
+      >
+        <StyledImg
+          src={new URL(bgImg, import.meta.url).href}
+          alt="just her"
+          width={bgSize.width}
+          height={bgSize.height}
+        />
+
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 3,
+            bgcolor: alpha("#000", 15 / 100),
+            transition(theme) {
+              return theme.transitions.create("background-color");
+            },
+          }}
+        ></Box>
+      </Box>
     </Box>
   );
 }
 
 const StyledImg = styled("img")({
   position: "absolute",
-  top: 0,
-  left: 0,
-  zIndex: 0,
+  inset: 0,
+  zIndex: 2,
   objectFit: "cover",
 });
