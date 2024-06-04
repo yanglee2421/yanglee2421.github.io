@@ -73,8 +73,8 @@ export function configToPalette(params: PaletteConfig): PaletteOptions {
     },
     divider: alpha(mainColor, 0.12),
     background: {
-      paper: mode === "dark" ? "black" : "white",
-      default: mode === "dark" ? "black" : "white",
+      paper: mode === "dark" ? blackColor : whiteColor,
+      default: mode === "dark" ? blackColor : whiteColor,
     },
     action: {
       active: alpha(mainColor, 0.54),

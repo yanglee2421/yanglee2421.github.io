@@ -1,13 +1,4 @@
-import { SendOutlined } from "@mui/icons-material";
-import {
-  Box,
-  Button,
-  Divider,
-  TextField,
-  alpha,
-  InputAdornment,
-  IconButton,
-} from "@mui/material";
+import { Box, Button, Divider, Paper, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
@@ -21,43 +12,13 @@ export function Home() {
 
   return (
     <Box>
-      <Button
-        onClick={() => {
-          authValue.value.auth.signOut();
-        }}
-        color="error"
-        variant="contained"
-      >
-        sign out
-      </Button>
-      <Divider>Component</Divider>
-      <InputNumber
-        value={number}
-        onChange={setNumber}
-        step={1}
-        min={1}
-        max={100}
-      />
-      <br />
-      <TextField
-        multiline
-        InputProps={{
-          endAdornment: (
-            <InputAdornment position="end">
-              <IconButton>
-                <SendOutlined />
-              </IconButton>
-            </InputAdornment>
-          ),
-        }}
-        fullWidth
-      />
-      <Divider>Component</Divider>
-
       <Box
         sx={{
           position: "relative",
           overflow: "hidden",
+          borderRadius(theme) {
+            return theme.shape.borderRadius + "px";
+          },
         }}
       >
         <Box
@@ -96,6 +57,26 @@ export function Home() {
           <img src={bgImgHref} width={192} height={108} />
         </Box>
       </Box>
+      <Divider>start</Divider>
+      <Button
+        onClick={() => {
+          authValue.value.auth.signOut();
+        }}
+        color="error"
+        variant="contained"
+      >
+        sign out
+      </Button>
+      <br />
+      <InputNumber
+        value={number}
+        onChange={setNumber}
+        step={1}
+        min={1}
+        max={100}
+      />
+      <br />
+      <Paper sx={{ height: 500, my: 6 }}></Paper>
     </Box>
   );
 }

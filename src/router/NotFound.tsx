@@ -35,7 +35,7 @@ export function NotFound() {
     return () => {
       observer.disconnect();
     };
-  }, [setBgSize]);
+  }, []);
 
   return (
     <Box
