@@ -1,31 +1,24 @@
-import { Box, Button, Divider, alpha } from "@mui/material";
+import { Box, Button, Divider, Paper, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
+import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
-import { ScrollView } from "@/components/ui/ScrollView";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
-import { JsonBlock } from "./JsonBlock";
+import { InputNumber } from "./InputNumber";
 
 export function Home() {
   const authValue = useAuthStore();
 
+  const [number, setNumber] = React.useState(Number.NaN);
+
   return (
     <Box>
-      <Button
-        onClick={() => {
-          authValue.value.auth.signOut();
-        }}
-        color="error"
-        variant="contained"
-      >
-        sign out
-      </Button>
-      <Box sx={{ height: 420 }}></Box>
-      <Divider>Component</Divider>
-
       <Box
         sx={{
           position: "relative",
           overflow: "hidden",
+          borderRadius(theme) {
+            return theme.shape.borderRadius + "px";
+          },
         }}
       >
         <Box
@@ -64,12 +57,26 @@ export function Home() {
           <img src={bgImgHref} width={192} height={108} />
         </Box>
       </Box>
-
-      <Box sx={{ width: "100%" }}>
-        <ScrollView>
-          <JsonBlock />
-        </ScrollView>
-      </Box>
+      <Divider>start</Divider>
+      <Button
+        onClick={() => {
+          authValue.value.auth.signOut();
+        }}
+        color="error"
+        variant="contained"
+      >
+        sign out
+      </Button>
+      <br />
+      <InputNumber
+        value={number}
+        onChange={setNumber}
+        step={1}
+        min={1}
+        max={100}
+      />
+      <br />
+      <Paper sx={{ height: 500, my: 6 }}></Paper>
     </Box>
   );
 }

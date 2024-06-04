@@ -1,47 +1,51 @@
-import { VisibilityOutlined, VisibilityOffOutlined } from "@mui/icons-material";
-import { IconButton, InputAdornment, TextField } from "@mui/material";
+import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
+import {
+  IconButton,
+  InputAdornment,
+  TextField
+} from "@mui/material";
 import React from "react";
-import { useFormContext, useController } from "react-hook-form";
-import type { TextFieldProps } from "@mui/material";
+import type {
+  IconButtonProps,
+  InputAdornmentProps,
+  TextFieldProps} from "@mui/material";
 
 export function InputPassword(props: Props) {
-  const { field, disabled, ...restProps } = props;
+  const {
+    iconButtonProps = {},
+    inputAdornmentProps = {},
+    visibilityIcon = <VisibilityOutlined />,
+    visibilityOffIcon = <VisibilityOffOutlined />,
+    ...restProps
+  } = props;
 
-  const formCtx = useFormContext();
-
-  const controller = useController({
-    name: field,
-    control: formCtx.control,
-    defaultValue: "",
-    disabled,
-  });
-
-  const [showPasswd, setIsShowPasswd] = React.useState(false);
+  const [showPassword, setShowPassword] = React.useState(false);
 
   return (
     <TextField
-      {...controller.field}
-      error={!!controller.fieldState.error}
-      helperText={controller.fieldState.error?.message}
-      type={showPasswd ? "text" : "password"}
+      type={showPassword ? "text" : "password"}
       InputProps={{
         endAdornment: (
-          <InputAdornment position="end">
+          <InputAdornment position="end" {...inputAdornmentProps}>
             <IconButton
               onClick={() => {
-                setIsShowPasswd((p) => !p);
+                setShowPassword((p) => !p);
               }}
+              {...iconButtonProps}
             >
-              {showPasswd ? <VisibilityOutlined /> : <VisibilityOffOutlined />}
+              {showPassword ? visibilityOffIcon : visibilityIcon}
             </IconButton>
           </InputAdornment>
         ),
       }}
-      inputProps={{ inputMode: "text" }}
-      fullWidth
       {...restProps}
     />
   );
 }
 
-type Props = TextFieldProps & { field: string };
+type Props = TextFieldProps & {
+  iconButtonProps?: IconButtonProps;
+  inputAdornmentProps?: Omit<InputAdornmentProps, "position">;
+  visibilityOffIcon?: React.ReactNode;
+  visibilityIcon?: React.ReactNode;
+};

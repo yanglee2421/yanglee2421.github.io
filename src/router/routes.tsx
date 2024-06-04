@@ -14,14 +14,15 @@ export const routes = createRoutesFromElements(
     }}
   >
     <Route
+      id="404"
       path="*"
-      loader={() => {
-        throw new Response("Error: No route matches URL", {
-          status: 404,
-          statusText: "Not Found",
-        });
+      lazy={async () => {
+        const { NotFound } = await import("./NotFound");
+
+        return {
+          Component: NotFound,
+        };
       }}
-      shouldRevalidate={() => false}
     />
     <Route
       id="login"
@@ -38,23 +39,12 @@ export const routes = createRoutesFromElements(
       path="forgot-password"
       lazy={() => import("@/pages/forgot-password/Component")}
     />
+    <Route id="home" index lazy={() => import("@/pages/home/Component")} />
     <Route
-      id="with-appbar"
-      lazy={async () => {
-        const { Layout } = await import("@/components/layout/Layout");
-
-        return {
-          Component: Layout,
-        };
-      }}
-    >
-      <Route id="home" index lazy={() => import("@/pages/home/Component")} />
-      <Route
-        id="charts"
-        path="charts"
-        lazy={() => import("@/pages/charts/Component")}
-      />
-    </Route>
+      id="charts"
+      path="charts"
+      lazy={() => import("@/pages/charts/Component")}
+    />
     <Route
       id="newtab"
       path="newtab"
@@ -74,11 +64,6 @@ export const routes = createRoutesFromElements(
       id="calendar"
       path="calendar"
       lazy={() => import("@/pages/calendar/Component")}
-    />
-    <Route
-      id="decimal"
-      path="decimal"
-      lazy={() => import("@/pages/decimal/route")}
     />
   </Route>,
 );

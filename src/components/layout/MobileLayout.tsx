@@ -7,7 +7,6 @@ import { AuthGuard } from "@/components/guard/AuthGuard";
 import { LanguageToggler } from "@/components/shared/LanguageToggler";
 import { MobileMenu } from "@/components/shared/MobileMenu";
 import { ModeToggler } from "@/components/shared/ModeToggler";
-import { Searcher } from "@/components/shared/Searcher";
 import { UserDropdown } from "@/components/shared/UserDropdown";
 
 export function MobileLayout() {
@@ -41,18 +40,17 @@ export function MobileLayout() {
     <>
       <AppBar ref={appbarRef}>
         <Toolbar>
-          <MobileMenu color="inherit"></MobileMenu>
-          <Searcher color="inherit" sx={{ mr: "auto" }}></Searcher>
-          <LanguageToggler color="inherit"></LanguageToggler>
-          <ModeToggler color="inherit"></ModeToggler>
+          <MobileMenu color="inherit" />
+          <LanguageToggler color="inherit" sx={{ ml: "auto" }} />
+          <ModeToggler color="inherit" />
           <IconButton
             href="https://github.com/yanglee2421/react-mui"
             target="_blank"
             color="inherit"
           >
-            <GitHub></GitHub>
+            <GitHub />
           </IconButton>
-          <UserDropdown></UserDropdown>
+          <UserDropdown />
         </Toolbar>
       </AppBar>
 

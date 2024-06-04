@@ -13,6 +13,11 @@ export function QueryProvider(props: React.PropsWithChildren) {
   );
 }
 
+const persister = createAsyncStoragePersister({
+  storage: globalThis.sessionStorage,
+  key: "YotuLeeQueryCache",
+});
+
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
@@ -29,9 +34,4 @@ const queryClient = new QueryClient({
       },
     },
   },
-});
-
-const persister = createAsyncStoragePersister({
-  storage: globalThis.sessionStorage,
-  key: "QueryProvider",
 });

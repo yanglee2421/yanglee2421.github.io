@@ -1,4 +1,3 @@
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
   Box,
   Divider,
@@ -7,44 +6,62 @@ import {
   Button,
   Paper,
   Stack,
+  TextField,
 } from "@mui/material";
-import { FormProvider, useForm } from "react-hook-form";
+import { useForm } from "@tanstack/react-form";
+import { zodValidator } from "@tanstack/zod-form-adapter";
 import { Link as RouterLink } from "react-router-dom";
+import { toast } from "react-toastify";
 import { z } from "zod";
 import { InputPassword } from "@/components/form/InputPassword";
-import { InputText } from "@/components/form/InputText";
 import { SignInButtonGroup } from "@/components/shared/SignInButtonGroup";
 import { useSignIn } from "@/hooks/api-firebase/useSignIn";
 
 export function Login() {
-  const formCtx = useForm<FormValues>({
+  const mutation = useSignIn();
+
+  const form = useForm({
     defaultValues: {
       email: "",
       password: "",
     },
 
-    resolver: zodResolver(schema),
+    async onSubmit(props) {
+      await mutation.mutateAsync(
+        {
+          email: props.value.email,
+          password: props.value.password,
+        },
+        {
+          onError(error) {
+            toast.error(error.message);
+          },
+        },
+      );
+    },
   });
-
-  const mutation = useSignIn();
 
   return (
     <Box
-      position={"fixed"}
-      display={"flex"}
-      height={"100%"}
       sx={{
+        position: "fixed",
         inset: 0,
+        display: "flex",
       }}
     >
-      <Box flex={1} overflow={"hidden"} />
+      <Box
+        sx={{
+          display: { xs: "none", md: "block" },
+          flexGrow: 1,
+          overflow: "hidden",
+        }}
+      ></Box>
       <Paper
         sx={{
           display: "flex",
           flexDirection: "column",
           justifyContent: "center",
-          width: "100%",
-          maxWidth: 450,
+          width: { xs: "100%", md: 450 },
           p: [6, 12],
           borderRadius: 0,
         }}
@@ -55,50 +72,119 @@ export function Login() {
         </Typography>
         <Stack
           component={"form"}
-          onSubmit={formCtx.handleSubmit(
-            (data) => {
-              mutation.mutate(data, {
-                onError() {},
-                onSuccess() {},
-              });
-            },
-            (error) => {
-              console.warn(error);
-            },
-          )}
+          onSubmit={async (evt) => {
+            evt.preventDefault();
+            await form.handleSubmit();
+
+            if (!import.meta.env.DEV) {
+              return;
+            }
+
+            const errorEntries = Object.entries(form.state.fieldMeta)
+              .map(([key, value]) => {
+                return [key, value.errors];
+              })
+              .filter(([, error]) => error.length);
+
+            if (!errorEntries.length) {
+              return;
+            }
+
+            console.error(
+              "Error Message:",
+              "\n",
+              Object.fromEntries(errorEntries),
+              "\n",
+              "Form Values:",
+              "\n",
+              form.state.values,
+            );
+          }}
+          onReset={() => {
+            form.reset();
+          }}
           noValidate
           autoComplete="off"
           mt={3}
           spacing={3}
         >
-          <FormProvider {...formCtx}>
-            <InputText field="email" label="Email" />
-            <InputPassword field="password" label="Password" />
-            <Box>
-              <Link
-                component={RouterLink}
-                to={"/forgot-password"}
-                underline="hover"
-              >
-                Forgot Password?
-              </Link>
-            </Box>
-            <Button
-              disabled={mutation.isPending}
-              type="submit"
-              variant="contained"
-              fullWidth
-              size="large"
+          <form.Field
+            name="email"
+            validatorAdapter={zodValidator}
+            validators={{ onChange: z.string().email() }}
+            defaultValue=""
+          >
+            {(field) => {
+              return (
+                <TextField
+                  value={field.state.value}
+                  onChange={(evt) => {
+                    field.handleChange(evt.target.value);
+                  }}
+                  onBlur={field.handleBlur}
+                  error={!!field.state.meta.errors.length}
+                  helperText={field.state.meta.errors[0]}
+                  label="Email"
+                />
+              );
+            }}
+          </form.Field>
+          <form.Field
+            name="password"
+            validatorAdapter={zodValidator}
+            validators={{
+              onChange: z.string().min(8).max(16),
+            }}
+          >
+            {(field) => {
+              return (
+                <InputPassword
+                  value={field.state.value}
+                  onChange={(evt) => {
+                    field.handleChange(evt.target.value);
+                  }}
+                  onBlur={field.handleBlur}
+                  error={!!field.state.meta.errors.length}
+                  helperText={field.state.meta.errors[0]}
+                  label="Password"
+                  fullWidth
+                />
+              );
+            }}
+          </form.Field>
+          <Box sx={{ py: 1 }}>
+            <Link
+              component={RouterLink}
+              to={"/forgot-password"}
+              underline="hover"
             >
-              sign in
-            </Button>
-          </FormProvider>
+              Forgot Password?
+            </Link>
+          </Box>
+          <form.Subscribe selector={(state) => state.canSubmit}>
+            {(canSubmit) => {
+              return (
+                <Button
+                  disabled={!canSubmit}
+                  type="submit"
+                  variant="contained"
+                  fullWidth
+                  size="large"
+                >
+                  sign in
+                </Button>
+              );
+            }}
+          </form.Subscribe>
         </Stack>
         <Box
-          display={"flex"}
-          justifyContent={"space-between"}
-          alignItems={"center"}
-          pt={2}
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "center",
+            gap: 6,
+            mt: 6,
+          }}
         >
           <Typography color="secondary">New on our platform?</Typography>
           <Link component={RouterLink} to={"/signup"} underline="hover">
@@ -110,21 +196,21 @@ export function Login() {
             color(theme) {
               return theme.palette.text.secondary;
             },
+            mt: 4,
           }}
         >
-          Or
+          or
         </Divider>
-        <Box textAlign={"center"} mt={2}>
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            mt: 5,
+          }}
+        >
           <SignInButtonGroup />
         </Box>
       </Paper>
     </Box>
   );
 }
-
-const schema = z.object({
-  email: z.string().email().max(128),
-  password: z.string().min(8).max(16),
-});
-
-type FormValues = z.infer<typeof schema>;
