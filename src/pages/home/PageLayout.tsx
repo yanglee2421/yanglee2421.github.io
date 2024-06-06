@@ -1,7 +1,6 @@
 import {
   DesktopWindowsOutlined,
   MenuOutlined,
-  NotStartedOutlined,
   NotificationsOutlined,
   TranslateOutlined,
   FavoriteBorderOutlined,
@@ -12,11 +11,7 @@ import {
   Avatar,
   alpha,
   Link,
-  List,
-  ListItemButton,
-  ListItemText,
   styled,
-  ListItemIcon,
   IconButton,
   Badge,
   Stack,
@@ -50,18 +45,16 @@ export function PageLayout(props: React.PropsWithChildren) {
           boxShadow(theme) {
             return theme.shadows[1];
           },
+          "& > * + *": {
+            borderTop(theme) {
+              return "1px solid " + theme.palette.divider;
+            },
+            mt: 3,
+          },
         }}
       >
-        <List disablePadding>
-          <StyledNavLink to={{ pathname: "/" }}>
-            <ListItemButton>
-              <ListItemIcon>
-                <NotStartedOutlined />
-              </ListItemIcon>
-              <ListItemText primary={"primary"} />
-            </ListItemButton>
-          </StyledNavLink>
-        </List>
+        <StyledNavLink to={{ pathname: "/" }}>home</StyledNavLink>
+        <StyledNavLink to={{ pathname: "/404" }}>404</StyledNavLink>
       </Box>
       <Box sx={{ width: "100%" }}>
         <Box
@@ -190,7 +183,21 @@ export function PageLayout(props: React.PropsWithChildren) {
   );
 }
 
-const StyledNavLink = styled(NavLink)({
-  color: "inherit",
-  textDecoration: "none",
+const StyledNavLink = styled(NavLink)(({ theme }) => {
+  return {
+    display: "flex",
+    paddingInline: theme.spacing(3),
+
+    color: "inherit",
+    fontSize: theme.typography.h6.fontSize,
+    textTransform: "uppercase",
+    textDecoration: "none",
+
+    "&.active": {
+      color: theme.palette.primary.main,
+    },
+    "&:hover": {
+      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+    },
+  };
 });
