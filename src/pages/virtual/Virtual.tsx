@@ -10,9 +10,8 @@ import { JsonBlock } from "@/components/ui/JsonBlock";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { columns } from "./columns";
 import { data } from "./data";
-import type { DataType} from "./data";
-import type {
-  Row} from "@tanstack/react-table";
+import type { DataType } from "./data";
+import type { Row } from "@tanstack/react-table";
 
 export function Virtual() {
   const table = useReactTable({

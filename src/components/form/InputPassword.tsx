@@ -1,14 +1,11 @@
 import { VisibilityOffOutlined, VisibilityOutlined } from "@mui/icons-material";
-import {
-  IconButton,
-  InputAdornment,
-  TextField
-} from "@mui/material";
+import { IconButton, InputAdornment, TextField } from "@mui/material";
 import React from "react";
 import type {
   IconButtonProps,
   InputAdornmentProps,
-  TextFieldProps} from "@mui/material";
+  TextFieldProps,
+} from "@mui/material";
 
 export function InputPassword(props: Props) {
   const {
