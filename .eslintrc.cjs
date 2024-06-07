@@ -38,7 +38,7 @@ module.exports = {
     "import/no-named-as-default": "off",
     "import/no-named-as-default-member": "off",
   },
-  ignorePatterns: ["dist", "docs", ".eslintrc.cjs"],
+  ignorePatterns: ["dist", "docs", ".eslintrc.cjs", "public"],
   settings: {
     "import/resolver": {
       typescript: {

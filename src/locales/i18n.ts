@@ -1,5 +1,7 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
+import { zh } from "./zh";
+import { en } from "./en";
 
 i18next.use(initReactI18next).init({
   interpolation: { escapeValue: false },
@@ -9,17 +11,7 @@ i18next.use(initReactI18next).init({
   // lng: "en-US",
   fallbackLng: "en",
   resources: {
-    en: {
-      button: {},
-      common: {},
-      label: {},
-      translation: {},
-    },
-    zh: {
-      button: {},
-      common: {},
-      label: {},
-      translation: {},
-    },
+    en,
+    zh,
   },
 });

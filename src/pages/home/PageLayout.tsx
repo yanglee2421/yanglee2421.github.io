@@ -1,8 +1,6 @@
 import {
-  DesktopWindowsOutlined,
   MenuOutlined,
   NotificationsOutlined,
-  TranslateOutlined,
   FavoriteBorderOutlined,
   SearchOutlined,
 } from "@mui/icons-material";
@@ -22,6 +20,8 @@ import { NavLink } from "react-router-dom";
 import { useIsScrolled } from "@/hooks/dom/useIsScrolled";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { stringToColor } from "@/utils/stringToColor";
+import { LangToggler } from "./LangToggler";
+import { ModeToggler } from "./ModeToggler";
 
 export function PageLayout(props: React.PropsWithChildren) {
   const currentUser = useAuthStore((state) => state.value.auth.currentUser);
@@ -123,12 +123,8 @@ export function PageLayout(props: React.PropsWithChildren) {
               alignItems: "center",
             }}
           >
-            <IconButton>
-              <TranslateOutlined />
-            </IconButton>
-            <IconButton>
-              <DesktopWindowsOutlined />
-            </IconButton>
+            <LangToggler />
+            <ModeToggler />
             <IconButton>
               <FavoriteBorderOutlined />
             </IconButton>
