@@ -1,7 +1,7 @@
 import i18next from "i18next";
 import { initReactI18next } from "react-i18next";
-import { zh } from "./zh";
 import { en } from "./en";
+import { zh } from "./zh";
 
 i18next.use(initReactI18next).init({
   interpolation: { escapeValue: false },

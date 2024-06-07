@@ -11,8 +11,8 @@ import {
   MenuItem,
 } from "@mui/material";
 import React from "react";
-import { useThemeStore } from "@/hooks/store/useThemeStore";
 import { useTranslation } from "react-i18next";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 
 export function ModeToggler() {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);

@@ -1,5 +1,4 @@
 import {
-  MenuOutlined,
   NotificationsOutlined,
   FavoriteBorderOutlined,
   SearchOutlined,
@@ -17,44 +16,86 @@ import {
 } from "@mui/material";
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { Materio } from "@/components/svg/Materio";
+import { ScrollView } from "@/components/ui/ScrollView";
 import { useIsScrolled } from "@/hooks/dom/useIsScrolled";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { stringToColor } from "@/utils/stringToColor";
 import { LangToggler } from "./LangToggler";
 import { ModeToggler } from "./ModeToggler";
+import { NavMenuButton } from "./NavMenuButton";
 
 export function PageLayout(props: React.PropsWithChildren) {
   const currentUser = useAuthStore((state) => state.value.auth.currentUser);
 
   const isScrolled = useIsScrolled();
 
+  const [showMenu, setShowMenu] = React.useState(false);
+
   if (!currentUser) {
     return null;
   }
 
   return (
-    <Box sx={{ display: "flex" }}>
+    <Box
+      sx={{
+        display: "grid",
+        gridTemplateColumns: { xs: "1fr", md: "16rem 1fr" },
+      }}
+    >
       <Box
         component={"aside"}
         sx={{
-          width: { xs: 0, md: 196 },
-          display: { xs: "none", md: "block" },
+          position: "sticky",
+          insetBlock: 0,
+          blockSize: "100dvh",
+
+          display: { xs: "none", md: "flex" },
+          flexDirection: "column",
+
           borderRight(theme) {
             return "1px solid " + theme.palette.divider;
           },
-          boxShadow(theme) {
-            return theme.shadows[1];
-          },
-          "& > * + *": {
-            borderTop(theme) {
-              return "1px solid " + theme.palette.divider;
-            },
-            mt: 3,
-          },
         }}
       >
-        <StyledNavLink to={{ pathname: "/" }}>home</StyledNavLink>
-        <StyledNavLink to={{ pathname: "/404" }}>404</StyledNavLink>
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            gap: 3,
+
+            padding: 3,
+
+            color(theme) {
+              return theme.palette.primary.main;
+            },
+            fontSize: 22,
+
+            borderBottom(theme) {
+              return "1px solid " + theme.palette.divider;
+            },
+          }}
+        >
+          <Materio width={"1.2658em"} height={"1em"} />
+          <Typography
+            variant="h6"
+            color="WindowText"
+            sx={{
+              textTransform: "uppercase",
+            }}
+          >
+            materio
+          </Typography>
+        </Box>
+
+        <Box sx={{ flex: 1, overflow: "hidden" }}>
+          <ScrollView options={{ wheelPropagation: false }}>
+            <Box height={2000}>
+              <StyledNavLink to={{ pathname: "/" }}>home</StyledNavLink>
+              <StyledNavLink to={{ pathname: "/404" }}>404</StyledNavLink>
+            </Box>
+          </ScrollView>
+        </Box>
       </Box>
       <Box sx={{ width: "100%" }}>
         <Box
@@ -95,9 +136,12 @@ export function PageLayout(props: React.PropsWithChildren) {
               alignItems: "center",
             }}
           >
-            <IconButton sx={{ display: { md: "none" } }}>
-              <MenuOutlined />
-            </IconButton>
+            <NavMenuButton
+              open={showMenu}
+              onChange={() => {
+                setShowMenu((p) => !p);
+              }}
+            />
             <IconButton>
               <SearchOutlined />
             </IconButton>
@@ -157,7 +201,7 @@ export function PageLayout(props: React.PropsWithChildren) {
           </Stack>
         </Box>
         <Box component={"main"} sx={{ px: 3 }}>
-          {props.children}
+          {showMenu ? <Box height={1000}>menu list</Box> : props.children}
         </Box>
         <Box
           component={"footer"}
@@ -182,6 +226,7 @@ export function PageLayout(props: React.PropsWithChildren) {
 const StyledNavLink = styled(NavLink)(({ theme }) => {
   return {
     display: "flex",
+    paddingBlock: theme.spacing(2),
     paddingInline: theme.spacing(3),
 
     color: "inherit",
