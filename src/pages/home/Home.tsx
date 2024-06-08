@@ -1,13 +1,10 @@
-import { Box, Button, Divider, Paper, alpha } from "@mui/material";
+import { Box, Divider, Paper, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
-import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { InputNumber } from "./InputNumber";
 
 export function Home() {
-  const authValue = useAuthStore();
-
   const [number, setNumber] = React.useState(Number.NaN);
 
   return (
@@ -58,15 +55,6 @@ export function Home() {
         </Box>
       </Box>
       <Divider>start</Divider>
-      <Button
-        onClick={() => {
-          authValue.value.auth.signOut();
-        }}
-        color="error"
-        variant="contained"
-      >
-        sign out
-      </Button>
       <br />
       <InputNumber
         value={number}
