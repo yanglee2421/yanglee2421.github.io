@@ -5,12 +5,10 @@ import {
 } from "@mui/icons-material";
 import {
   Box,
-  Avatar,
   alpha,
   Link,
   styled,
   IconButton,
-  Badge,
   Stack,
   Typography,
 } from "@mui/material";
@@ -20,10 +18,10 @@ import { Materio } from "@/components/svg/Materio";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useIsScrolled } from "@/hooks/dom/useIsScrolled";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
-import { stringToColor } from "@/utils/stringToColor";
 import { LangToggler } from "./LangToggler";
 import { ModeToggler } from "./ModeToggler";
 import { NavMenuButton } from "./NavMenuButton";
+import { UserDropdown } from "./UserDropdown";
 
 export function PageLayout(props: React.PropsWithChildren) {
   const currentUser = useAuthStore((state) => state.value.auth.currentUser);
@@ -175,29 +173,7 @@ export function PageLayout(props: React.PropsWithChildren) {
             <IconButton>
               <NotificationsOutlined />
             </IconButton>
-            <Badge
-              variant="dot"
-              color="success"
-              overlap="circular"
-              anchorOrigin={{
-                vertical: "bottom",
-                horizontal: "right",
-              }}
-            >
-              <Avatar
-                src={currentUser.photoURL || void 0}
-                sx={() => {
-                  const color = stringToColor(currentUser.displayName || "");
-
-                  return {
-                    color,
-                    bgcolor: alpha(color, 0.12),
-                  };
-                }}
-              >
-                {currentUser.displayName?.substring(0, 1)}
-              </Avatar>
-            </Badge>
+            <UserDropdown />
           </Stack>
         </Box>
         <Box component={"main"} sx={{ px: 3 }}>
