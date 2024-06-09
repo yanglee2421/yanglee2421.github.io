@@ -14,7 +14,9 @@ export function LanguageToggler(props: Props) {
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
   const handleClose = () => {
-    setAnchorEl(null);
+    React.startTransition(() => {
+      setAnchorEl(null);
+    });
   };
 
   const handleLangChange = (lng: string) => {
@@ -33,11 +35,13 @@ export function LanguageToggler(props: Props) {
     <>
       <IconButton
         onClick={(evt) => {
-          setAnchorEl(evt.currentTarget);
+          React.startTransition(() => {
+            setAnchorEl(evt.currentTarget);
+          });
         }}
         {...restProps}
       >
-        <TranslateOutlined></TranslateOutlined>
+        <TranslateOutlined />
       </IconButton>
       <Menu open={!!anchorEl} anchorEl={anchorEl} onClose={handleClose}>
         <MenuItem

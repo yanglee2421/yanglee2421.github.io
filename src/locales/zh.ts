@@ -10,5 +10,6 @@ export const zh = {
     dark: "深色模式",
     light: "浅色模式",
     "my profile": "账号资料",
+    settings: "设置",
   },
 };
