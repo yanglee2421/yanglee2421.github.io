@@ -2,8 +2,8 @@ import { Box, Paper, Stack, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
-import { InputNumber } from "./InputNumber";
 import { Clock } from "./Clock";
+import { InputNumber } from "./InputNumber";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);

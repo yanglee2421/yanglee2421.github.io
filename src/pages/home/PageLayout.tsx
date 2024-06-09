@@ -12,6 +12,7 @@ import {
   Stack,
   Typography,
   Fade,
+  useMediaQuery,
 } from "@mui/material";
 import React from "react";
 import { NavLink } from "react-router-dom";
@@ -24,6 +25,7 @@ import { ScrollView } from "@/components/ui/ScrollView";
 import { useIsScrolled } from "@/hooks/dom/useIsScrolled";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { NavMenuButton } from "./NavMenuButton";
+import type { Theme } from "@mui/material";
 
 export function PageLayout(props: React.PropsWithChildren) {
   const currentUser = useAuthStore((state) => state.value.auth.currentUser);
@@ -31,6 +33,14 @@ export function PageLayout(props: React.PropsWithChildren) {
   const isScrolled = useIsScrolled();
 
   const [showMenu, setShowMenu] = React.useState(false);
+
+  const mediumScreen = useMediaQuery<Theme>((theme) => {
+    return theme.breakpoints.up("md");
+  });
+
+  if (mediumScreen && showMenu) {
+    setShowMenu(false);
+  }
 
   if (!currentUser) {
     return null;
@@ -64,7 +74,8 @@ export function PageLayout(props: React.PropsWithChildren) {
             alignItems: "center",
             gap: 3,
 
-            padding: 3,
+            paddingInline: 4,
+            paddingBlock: 2,
 
             color(theme) {
               return theme.palette.primary.main;
@@ -108,7 +119,7 @@ export function PageLayout(props: React.PropsWithChildren) {
             },
             display: "flex",
             py: 3,
-            px: isScrolled ? 6 : 3,
+            px: isScrolled ? 4 : 2,
 
             boxShadow(theme) {
               return isScrolled ? theme.shadows[1] : void 0;
@@ -132,6 +143,7 @@ export function PageLayout(props: React.PropsWithChildren) {
           <Stack
             direction={"row"}
             spacing={3}
+            useFlexGap
             sx={{
               alignItems: "center",
             }}
@@ -162,6 +174,7 @@ export function PageLayout(props: React.PropsWithChildren) {
           <Stack
             direction={"row"}
             spacing={3}
+            useFlexGap
             sx={{
               ml: "auto",
               alignItems: "center",
@@ -179,16 +192,21 @@ export function PageLayout(props: React.PropsWithChildren) {
           </Stack>
         </Box>
         <SwitchTransition>
-          <Fade key={showMenu ? 1 : 2} unmountOnExit>
-            <Box component={"main"} sx={{ px: 3 }}>
-              {showMenu ? <Box height={1000}>menu list</Box> : props.children}
+          <Fade key={1} unmountOnExit>
+            <Box
+              component={"main"}
+              sx={{ display: showMenu ? "none" : "block", px: 2 }}
+            >
+              {props.children}
             </Box>
           </Fade>
         </SwitchTransition>
+        {showMenu && <Box sx={{ height: 1000 }}>menu list</Box>}
         <Box
           component={"footer"}
           sx={{
-            p: 3,
+            paddingInline: 2,
+            paddingBlock: 4,
           }}
         >
           &copy; 2024, Made with ❤️ by{" "}
@@ -209,7 +227,7 @@ const StyledNavLink = styled(NavLink)(({ theme }) => {
   return {
     display: "flex",
     paddingBlock: theme.spacing(2),
-    paddingInline: theme.spacing(3),
+    paddingInline: theme.spacing(4),
 
     color: "inherit",
     fontSize: theme.typography.h6.fontSize,

@@ -1,8 +1,8 @@
 import { AddOutlined, RemoveOutlined } from "@mui/icons-material";
 import { TextField, IconButton, InputAdornment } from "@mui/material";
 import React from "react";
-import { minmax } from "@/utils/minmax";
 import { Translation } from "react-i18next";
+import { minmax } from "@/utils/minmax";
 
 export function InputNumber(props: Props) {
   const { value, onChange, step = 1, min, max } = props;

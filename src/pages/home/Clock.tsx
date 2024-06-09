@@ -10,7 +10,9 @@ export function Clock() {
     const play = () => {
       animate = requestAnimationFrame(play);
 
-      setDate(new Date());
+      React.startTransition(() => {
+        setDate(new Date());
+      });
     };
 
     play();
