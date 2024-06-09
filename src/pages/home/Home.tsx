@@ -1,14 +1,15 @@
-import { Box, Divider, Paper, alpha } from "@mui/material";
+import { Box, Paper, Stack, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
 import { InputNumber } from "./InputNumber";
+import { Clock } from "./Clock";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
 
   return (
-    <Box>
+    <Stack spacing={6}>
       <Box
         sx={{
           position: "relative",
@@ -30,7 +31,7 @@ export function Home() {
 
             filter: "blur(15px)",
           }}
-        ></Box>
+        />
         <Box
           sx={{
             position: "absolute",
@@ -39,7 +40,7 @@ export function Home() {
 
             backgroundColor: alpha(grey[700], 0.4),
           }}
-        ></Box>
+        />
         <Box
           sx={{
             position: "relative",
@@ -49,23 +50,27 @@ export function Home() {
             alignItems: "center",
 
             height: 320,
+
+            padding: 4,
           }}
         >
           <img src={bgImgHref} width={192} height={108} />
+          <Clock />
         </Box>
       </Box>
-      <Divider>start</Divider>
-      <br />
-      <InputNumber
-        value={number}
-        onChange={setNumber}
-        step={1}
-        min={1}
-        max={100}
-      />
-      <br />
-      <Paper sx={{ height: 500, my: 6 }}></Paper>
-    </Box>
+
+      <Paper sx={{ padding: 3 }}>
+        <InputNumber
+          value={number}
+          onChange={setNumber}
+          step={1}
+          min={1}
+          max={100}
+        />
+      </Paper>
+
+      <Paper sx={{ height: 500, p: 3 }}></Paper>
+    </Stack>
   );
 }
 

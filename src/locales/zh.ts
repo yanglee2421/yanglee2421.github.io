@@ -5,6 +5,9 @@ export const zh = {
   common: {},
   label: {},
   translation: {},
+  InputLabel: {
+    "number input": "数值输入",
+  },
   MenuItemPrimary: {
     system: "跟随系统",
     dark: "深色模式",
