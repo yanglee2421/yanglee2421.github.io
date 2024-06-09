@@ -11,17 +11,19 @@ import {
   IconButton,
   Stack,
   Typography,
+  Fade,
 } from "@mui/material";
 import React from "react";
 import { NavLink } from "react-router-dom";
+import { SwitchTransition } from "react-transition-group";
+import { LanguageToggler } from "@/components/shared/LanguageToggler";
+import { ModeToggler } from "@/components/shared/ModeToggler";
+import { UserDropdown } from "@/components/shared/UserDropdown";
 import { Materio } from "@/components/svg/Materio";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useIsScrolled } from "@/hooks/dom/useIsScrolled";
 import { useAuthStore } from "@/hooks/store/useAuthStore";
-import { LangToggler } from "./LangToggler";
-import { ModeToggler } from "./ModeToggler";
 import { NavMenuButton } from "./NavMenuButton";
-import { UserDropdown } from "./UserDropdown";
 
 export function PageLayout(props: React.PropsWithChildren) {
   const currentUser = useAuthStore((state) => state.value.auth.currentUser);
@@ -165,7 +167,7 @@ export function PageLayout(props: React.PropsWithChildren) {
               alignItems: "center",
             }}
           >
-            <LangToggler />
+            <LanguageToggler />
             <ModeToggler />
             <IconButton>
               <FavoriteBorderOutlined />
@@ -176,9 +178,13 @@ export function PageLayout(props: React.PropsWithChildren) {
             <UserDropdown />
           </Stack>
         </Box>
-        <Box component={"main"} sx={{ px: 3 }}>
-          {showMenu ? <Box height={1000}>menu list</Box> : props.children}
-        </Box>
+        <SwitchTransition>
+          <Fade key={showMenu ? 1 : 2} unmountOnExit>
+            <Box component={"main"} sx={{ px: 3 }}>
+              {showMenu ? <Box height={1000}>menu list</Box> : props.children}
+            </Box>
+          </Fade>
+        </SwitchTransition>
         <Box
           component={"footer"}
           sx={{
