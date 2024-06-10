@@ -55,11 +55,11 @@ export function Home() {
           }}
         >
           <img src={bgImgHref} width={192} height={108} />
-          <Clock />
         </Box>
       </Box>
 
       <Paper sx={{ padding: 3 }}>
+        <Clock />
         <InputNumber
           value={number}
           onChange={setNumber}
