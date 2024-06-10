@@ -77,9 +77,6 @@ export function PageLayout(props: React.PropsWithChildren) {
             paddingInline: 4,
             paddingBlock: 2,
 
-            color(theme) {
-              return theme.palette.primary.main;
-            },
             fontSize: 22,
 
             borderBottom(theme) {
@@ -90,7 +87,6 @@ export function PageLayout(props: React.PropsWithChildren) {
           <Materio width={"1.2658em"} height={"1em"} />
           <Typography
             variant="h6"
-            color="WindowText"
             sx={{
               textTransform: "uppercase",
             }}

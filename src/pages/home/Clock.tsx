@@ -1,9 +1,14 @@
 import { Box, Typography } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 
 export function Clock() {
+  const { i18n } = useTranslation();
   const [date, setDate] = React.useState(() => new Date().toDateString());
   const [time, setTime] = React.useState(() => new Date().toLocaleTimeString());
+  const [weekday, setWeekday] = React.useState(() => {
+    return new Date().toLocaleString(i18n.language, { weekday: "long" });
+  });
 
   React.useEffect(() => {
     let animate = 0;
@@ -15,6 +20,7 @@ export function Clock() {
         const now = new Date();
         setDate(now.toLocaleDateString());
         setTime(now.toLocaleTimeString());
+        setWeekday(now.toLocaleString(i18n.language, { weekday: "long" }));
       });
     };
 
@@ -23,17 +29,15 @@ export function Clock() {
     return () => {
       cancelAnimationFrame(animate);
     };
-  }, []);
+  }, [i18n.language]);
 
   return (
     <Box
       sx={{
         padding: 3,
-
-        textAlign: "end",
       }}
     >
-      <Typography component={"time"} variant="h3">
+      <Typography component={"time"} variant="h4">
         {time}
       </Typography>
       <br />
@@ -45,7 +49,7 @@ export function Clock() {
         variant="body1"
         sx={{ marginInlineStart: 3 }}
       >
-        {new Date().toLocaleString(navigator.language, { weekday: "long" })}
+        {weekday}
       </Typography>
     </Box>
   );

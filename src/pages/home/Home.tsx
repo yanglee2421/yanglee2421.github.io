@@ -2,7 +2,7 @@ import { Box, Grid, Paper, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
-import { Clock } from "./Clock";
+import { Calendar } from "./Calendar";
 import { InputNumber } from "./InputNumber";
 
 export function Home() {
@@ -60,10 +60,8 @@ export function Home() {
         </Box>
       </Grid>
 
-      <Grid item xs={12} sm={6} md={5} lg={4} xl={3}>
-        <Paper sx={{ padding: 3 }}>
-          <Clock />
-        </Paper>
+      <Grid item xs={12}>
+        <Calendar />
       </Grid>
 
       <Grid item xs={12} sm={6} md={7} lg={8} xl={9}>
