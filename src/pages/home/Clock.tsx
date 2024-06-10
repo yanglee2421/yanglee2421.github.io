@@ -29,7 +29,6 @@ export function Clock() {
     <Box
       sx={{
         padding: 3,
-        marginInlineStart: "auto",
 
         textAlign: "end",
       }}
@@ -38,7 +37,16 @@ export function Clock() {
         {time}
       </Typography>
       <br />
-      <Typography variant="body2">{date}</Typography>
+      <Typography component={"time"} variant="body2">
+        {date}
+      </Typography>
+      <Typography
+        component={"time"}
+        variant="body1"
+        sx={{ marginInlineStart: 3 }}
+      >
+        {new Date().toLocaleString(navigator.language, { weekday: "long" })}
+      </Typography>
     </Box>
   );
 }

@@ -195,7 +195,10 @@ export function PageLayout(props: React.PropsWithChildren) {
           <Fade key={1} unmountOnExit>
             <Box
               component={"main"}
-              sx={{ display: showMenu ? "none" : "block", px: 2 }}
+              sx={{
+                display: showMenu ? "none" : "block",
+                px: { xs: 2, md: 3 },
+              }}
             >
               {props.children}
             </Box>
