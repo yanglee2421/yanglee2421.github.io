@@ -44,7 +44,7 @@ export function Calendar() {
       >
         {data.slice(0, 7).map((time) => {
           const weekday = new Date(time).toLocaleString(i18n.language, {
-            weekday: "narrow",
+            weekday: "short",
           });
 
           return (
