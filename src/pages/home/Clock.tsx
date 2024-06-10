@@ -2,7 +2,8 @@ import { Box, Typography } from "@mui/material";
 import React from "react";
 
 export function Clock() {
-  const [date, setDate] = React.useState(() => new Date());
+  const [date, setDate] = React.useState(() => new Date().toDateString());
+  const [time, setTime] = React.useState(() => new Date().toLocaleTimeString());
 
   React.useEffect(() => {
     let animate = 0;
@@ -11,7 +12,9 @@ export function Clock() {
       animate = requestAnimationFrame(play);
 
       React.startTransition(() => {
-        setDate(new Date());
+        const now = new Date();
+        setDate(now.toLocaleDateString());
+        setTime(now.toLocaleTimeString());
       });
     };
 
@@ -32,10 +35,10 @@ export function Clock() {
       }}
     >
       <Typography component={"time"} variant="h3">
-        {date.toLocaleTimeString()}
+        {time}
       </Typography>
       <br />
-      <Typography variant="body2">{date.toLocaleDateString()}</Typography>
+      <Typography variant="body2">{date}</Typography>
     </Box>
   );
 }
