@@ -32,11 +32,7 @@ export function Clock() {
   }, [i18n.language]);
 
   return (
-    <Box
-      sx={{
-        padding: 3,
-      }}
-    >
+    <Box sx={{ paddingBlock: 2, paddingInlineStart: 3 }}>
       <Typography component={"time"} variant="h4">
         {time}
       </Typography>
