@@ -32,7 +32,7 @@ export function ThemeProvider(props: React.PropsWithChildren) {
   })();
 
   const theme = createTheme({
-    breakpoints: breakpoints(),
+    breakpoints,
     spacing(factor: number) {
       return `${0.25 * factor}rem`;
     },
@@ -45,8 +45,8 @@ export function ThemeProvider(props: React.PropsWithChildren) {
     palette: configToPalette({
       mode,
     }),
-    typography: {},
-    components: cmponents(),
+
+    components,
   });
 
   return (
@@ -78,31 +78,27 @@ function themeToGlobalStyles(theme: Theme): GlobalStylesProps["styles"] {
   };
 }
 
-function breakpoints(): BreakpointsOptions {
-  return {
-    keys: ["xs", "sm", "md", "lg", "xl"],
-    values: {
-      xs: 0,
-      sm: 600,
-      md: 900,
-      lg: 1200,
-      xl: 1536,
-    },
-    unit: "px",
-  };
-}
+const breakpoints: BreakpointsOptions = {
+  keys: ["xs", "sm", "md", "lg", "xl"],
+  values: {
+    xs: 0,
+    sm: 600,
+    md: 900,
+    lg: 1200,
+    xl: 1536,
+  },
+  unit: "px",
+};
 
-function cmponents(): Components<Omit<Theme, "components">> {
-  return {
-    MuiTypography: {
-      variants: [
-        {
-          props: { variant: "body2" },
-          style({ theme }) {
-            return { color: theme.palette.text.secondary };
-          },
+const components: Components<Omit<Theme, "components">> = {
+  MuiTypography: {
+    variants: [
+      {
+        props: { variant: "body2" },
+        style({ theme }) {
+          return { color: theme.palette.text.secondary };
         },
-      ],
-    },
-  };
-}
+      },
+    ],
+  },
+};
