@@ -4,52 +4,52 @@ import type { PaletteOptions } from "@mui/material";
 export function configToPalette(params: PaletteConfig): PaletteOptions {
   const { mode } = params;
 
-  const blackColor = "#000";
-  const whiteColor = "#fff";
-  const mainColor = mode === "light" ? blackColor : whiteColor;
+  const mainColor = mode === "light" ? "#3b3541" : "#e7e3fc";
 
   return {
     mode,
     common: {
-      white: "#fff",
-      black: "#000",
+      white: whiteColor,
+      black: blackColor,
     },
     primary: {
-      light: "#8592f2",
+      light: "#979df3",
       main: "#6777ef",
-      dark: "#4853a7",
+      dark: "#3c58eb",
       contrastText: whiteColor,
     },
     secondary: {
-      light: "#a6a8ad",
       main: "#909399",
-      dark: "#64666b",
+      light: "#b0b3b9",
+      dark: "#686b71",
+      contrastText: whiteColor,
+    },
+
+    success: {
+      main: "#52c41a",
+      light: "#74cf47",
+      dark: "#398912",
       contrastText: whiteColor,
     },
     error: {
-      light: "#ff7072",
       main: "#ff4d4f",
+      light: "#ff7072",
       dark: "#b23537",
       contrastText: whiteColor,
     },
     warning: {
-      light: "#ffc473",
       main: "#ffc107",
+      light: "#ffc473",
       dark: "#ffa426",
       contrastText: whiteColor,
     },
     info: {
-      light: "#4492ff",
       main: "#1677ff",
+      light: "#4492ff",
       dark: "#0f53b2",
       contrastText: whiteColor,
     },
-    success: {
-      light: "#74cf47",
-      main: "#52c41a",
-      dark: "#398912",
-      contrastText: whiteColor,
-    },
+
     grey: {
       50: "#FAFAFA",
       100: "#F5F5F5",
@@ -66,31 +66,32 @@ export function configToPalette(params: PaletteConfig): PaletteOptions {
       A400: "#BDBDBD",
       A700: "#616161",
     },
+
+    divider: alpha(mainColor, 0.12),
     text: {
       primary: alpha(mainColor, 0.87),
       secondary: alpha(mainColor, 0.6),
       disabled: alpha(mainColor, 0.38),
     },
-    divider: alpha(mainColor, 0.12),
-    background: {
-      paper: mode === "dark" ? blackColor : whiteColor,
-      default: mode === "dark" ? blackColor : whiteColor,
-    },
+
     action: {
-      active: alpha(mainColor, 0.54),
-      disabled: alpha(mainColor, 0.26),
-      disabledBackground: alpha(mainColor, 0.12),
-      focus: alpha(mainColor, 0.12),
       hover: alpha(mainColor, 0.04),
-      selected: alpha(mainColor, 0.08),
-      activatedOpacity: 0.54,
-      disabledOpacity: 0.26,
-      focusOpacity: 0.12,
       hoverOpacity: 0.04,
+      selected: alpha(mainColor, 0.08),
       selectedOpacity: 0.08,
+      focus: alpha(mainColor, 0.12),
+      focusOpacity: 0.12,
+      active: alpha(mainColor, 0.54),
+      activatedOpacity: 0.54,
+      disabled: alpha(mainColor, 0.26),
+      disabledOpacity: 0.26,
+      disabledBackground: alpha(mainColor, 0.12),
     },
   };
 }
+
+const blackColor = "#000";
+const whiteColor = "#fff";
 
 interface PaletteConfig {
   mode: "dark" | "light";

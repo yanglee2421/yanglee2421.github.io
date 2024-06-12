@@ -10,7 +10,7 @@ import {
   Paper,
   Toolbar,
   Stack,
-  Slide,
+  Fade,
 } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -46,7 +46,7 @@ export function Calendar() {
       </Toolbar>
       <Box sx={{ overflow: "hidden" }}>
         <SwitchTransition>
-          <Slide key={selectedTime} direction="up" unmountOnExit>
+          <Fade key={selectedTime} unmountOnExit>
             <Box
               sx={{
                 display: "grid",
@@ -118,7 +118,7 @@ export function Calendar() {
                 ]}
               />
             </Box>
-          </Slide>
+          </Fade>
         </SwitchTransition>
       </Box>
 
