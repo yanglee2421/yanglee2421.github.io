@@ -10,11 +10,9 @@ import {
   Paper,
   Toolbar,
   Stack,
-  Fade,
 } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { SwitchTransition } from "react-transition-group";
 import { HeadlessCalendar } from "@/components/headless/HeadlessCalendar";
 import { Clock } from "./Clock";
 
@@ -45,81 +43,77 @@ export function Calendar() {
         </Stack>
       </Toolbar>
       <Box sx={{ overflow: "hidden" }}>
-        <SwitchTransition>
-          <Fade key={selectedTime} unmountOnExit>
-            <Box
-              sx={{
-                display: "grid",
-                gridTemplateColumns: "repeat(7,minmax(0,1fr))",
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(7,minmax(0,1fr))",
 
-                borderStyle: "solid",
-                borderColor(theme) {
-                  return theme.palette.divider;
-                },
-                borderWidth: "1px 0 0 1px",
-              }}
-            >
-              <HeadlessCalendar
-                selectedTime={selectedTime}
-                render={(props) => [
-                  props.data.slice(0, 7).map((date) => {
-                    const weekday = date.toLocaleString(i18n.language, {
-                      weekday: "short",
-                    });
+            borderStyle: "solid",
+            borderColor(theme) {
+              return theme.palette.divider;
+            },
+            borderWidth: "1px 0 0 1px",
+          }}
+        >
+          <HeadlessCalendar
+            selectedTime={selectedTime}
+            render={(props) => [
+              props.data.slice(0, 7).map((date) => {
+                const weekday = date.toLocaleString(i18n.language, {
+                  weekday: "short",
+                });
 
-                    return (
-                      <Box
-                        key={weekday}
-                        sx={{
-                          borderStyle: "solid",
-                          borderColor(theme) {
-                            return theme.palette.divider;
-                          },
-                          borderWidth: "0 1px 1px 0",
-                          padding: 3,
+                return (
+                  <Box
+                    key={weekday}
+                    sx={{
+                      borderStyle: "solid",
+                      borderColor(theme) {
+                        return theme.palette.divider;
+                      },
+                      borderWidth: "0 1px 1px 0",
+                      padding: 3,
 
-                          textAlign: "center",
-                        }}
-                      >
-                        {weekday}
-                      </Box>
-                    );
-                  }),
-                  props.data.map((date) => {
-                    return (
-                      <Box
-                        key={date.getTime()}
-                        sx={{
-                          borderStyle: "solid",
-                          borderColor(theme) {
-                            return theme.palette.divider;
-                          },
-                          borderWidth: "0 1px 1px 0",
-                          padding: 3,
+                      textAlign: "center",
+                    }}
+                  >
+                    {weekday}
+                  </Box>
+                );
+              }),
+              props.data.map((date) => {
+                return (
+                  <Box
+                    key={date.getTime()}
+                    sx={{
+                      borderStyle: "solid",
+                      borderColor(theme) {
+                        return theme.palette.divider;
+                      },
+                      borderWidth: "0 1px 1px 0",
+                      padding: 3,
 
-                          textAlign: "center",
+                      textAlign: "center",
 
-                          color(theme) {
-                            if (
-                              Object.is(
-                                date.toLocaleDateString(),
-                                new Date().toLocaleDateString(),
-                              )
-                            ) {
-                              return theme.palette.primary.main;
-                            }
-                          },
-                        }}
-                      >
-                        {date.getDate()}
-                      </Box>
-                    );
-                  }),
-                ]}
-              />
-            </Box>
-          </Fade>
-        </SwitchTransition>
+                      color(theme) {
+                        if (
+                          Object.is(
+                            date.toLocaleDateString(),
+                            new Date().toLocaleDateString(),
+                          )
+                        ) {
+                          return theme.palette.primary.main;
+                        }
+                      },
+                    }}
+                  >
+                    {date.getDate()}
+                  </Box>
+                );
+              }),
+            ]}
+          />
+        </Box>
       </Box>
 
       <Box
