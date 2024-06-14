@@ -4,6 +4,7 @@ import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
 import { Calendar } from "./Calendar";
 import { InputNumber } from "./InputNumber";
+import { RollCard } from "./RollCard";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
@@ -64,6 +65,9 @@ export function Home() {
         <Calendar />
       </Grid>
 
+      <Grid item xs={12} sm={6} md={5} lg={4} xl={3}>
+        <RollCard />
+      </Grid>
       <Grid item xs={12} sm={6} md={7} lg={8} xl={9}>
         <Paper sx={{ height: 500, p: 3 }}>
           <InputNumber
