@@ -3,6 +3,7 @@ import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
 import { Calendar } from "./Calendar";
+import { Countdown } from "./Countdown";
 import { InputNumber } from "./InputNumber";
 import { RollCard } from "./RollCard";
 
@@ -65,11 +66,14 @@ export function Home() {
         <Calendar />
       </Grid>
 
-      <Grid item xs={12} sm={6} md={5} lg={4} xl={3}>
+      <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
         <RollCard />
       </Grid>
-      <Grid item xs={12} sm={6} md={7} lg={8} xl={9}>
-        <Paper sx={{ height: 500, p: 3 }}>
+      <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+        <Countdown />
+      </Grid>
+      <Grid item xs={12} sm={6} md={4} lg={3} xl={2}>
+        <Paper sx={{ p: 3 }}>
           <InputNumber
             value={number}
             onChange={setNumber}
