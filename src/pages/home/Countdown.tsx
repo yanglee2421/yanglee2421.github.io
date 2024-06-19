@@ -9,7 +9,7 @@ import {
 import React from "react";
 
 export function Countdown() {
-  const [second, setSecond] = React.useState(10);
+  const [second, setSecond] = React.useState(100);
 
   return (
     <Paper sx={{ padding: 3 }}>
@@ -33,9 +33,11 @@ export function Countdown() {
       </Box>
       <Stack direction={"row"} spacing={3}>
         <Button
-          onClick={async () => {
+          onClick={() => {
             let prevTime = performance.now();
             let animateId = 0;
+            const startTime = prevTime;
+            const startSecond = second;
 
             const play = () => {
               animateId = requestAnimationFrame(play);
@@ -47,16 +49,17 @@ export function Countdown() {
               }
 
               prevTime = currentTime;
+              const nextSecond = Math.max(
+                0,
+                startSecond - Math.round((currentTime - startTime) / 1000),
+              );
+
+              if (!nextSecond) {
+                cancelAnimationFrame(animateId);
+              }
 
               React.startTransition(() => {
-                setSecond((prev) => {
-                  if (prev > 0) {
-                    return prev - 1;
-                  }
-
-                  cancelAnimationFrame(animateId);
-                  return prev;
-                });
+                setSecond(nextSecond);
               });
             };
 
