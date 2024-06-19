@@ -1,10 +1,10 @@
-import { timeout } from "@/utils/timeout";
 import { TextField } from "@mui/material";
 import localforage from "localforage";
 import React from "react";
 import { Translation } from "react-i18next";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { timeout } from "@/utils/timeout";
 
 export function AsyncStore() {
   const value = useAsyncStore((store) => store.value);

@@ -2,11 +2,11 @@ import { Box, Grid, Paper, Stack, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
+import { AsyncStore } from "./AyncStore";
 import { Calendar } from "./Calendar";
 import { Countdown } from "./Countdown";
 import { InputNumber } from "./InputNumber";
 import { RollCard } from "./RollCard";
-import { AsyncStore } from "./AyncStore";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
