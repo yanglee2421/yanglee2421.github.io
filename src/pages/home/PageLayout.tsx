@@ -2,6 +2,8 @@ import {
   NotificationsOutlined,
   FavoriteBorderOutlined,
   SearchOutlined,
+  HomeOutlined,
+  Grid3x3Outlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -75,7 +77,7 @@ export function PageLayout(props: React.PropsWithChildren) {
             gap: 3,
 
             paddingInline: 4,
-            paddingBlock: 2,
+            paddingBlock: 6,
 
             fontSize: 22,
 
@@ -97,8 +99,61 @@ export function PageLayout(props: React.PropsWithChildren) {
 
         <Box sx={{ flex: 1, overflow: "hidden" }}>
           <ScrollView options={{ wheelPropagation: false }}>
-            <Box height={2000}>
-              <StyledNavLink to={{ pathname: "/" }}>home</StyledNavLink>
+            <Box
+              height={2000}
+              sx={{
+                "& > * + *": {
+                  marginBlockStart: 2,
+                },
+              }}
+            >
+              <StyledNavLink to={{ pathname: "/" }}>
+                <HomeOutlined sx={{ marginInlineEnd: 2 }} />
+                <span>home</span>
+              </StyledNavLink>
+              <StyledNavLink to={{ pathname: "/table" }}>
+                <Grid3x3Outlined sx={{ marginInlineEnd: 2 }} />
+                <span>table</span>
+              </StyledNavLink>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2.5,
+                  alignItems: "center",
+                  paddingBlock: 1.5,
+
+                  "&::before": {
+                    content: '""',
+                    blockSize: 1,
+                    inlineSize(theme) {
+                      return theme.typography.body1.fontSize;
+                    },
+                    backgroundColor(theme) {
+                      return theme.palette.divider;
+                    },
+                  },
+
+                  "&::after": {
+                    content: '""',
+                    blockSize: 1,
+                    flexGrow: 1,
+                    backgroundColor(theme) {
+                      return theme.palette.divider;
+                    },
+                  },
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color(theme) {
+                      return theme.palette.text.disabled;
+                    },
+                  }}
+                >
+                  Page Group
+                </Typography>
+              </Box>
               <StyledNavLink to={{ pathname: "/404" }}>404</StyledNavLink>
             </Box>
           </ScrollView>
@@ -225,19 +280,29 @@ export function PageLayout(props: React.PropsWithChildren) {
 const StyledNavLink = styled(NavLink)(({ theme }) => {
   return {
     display: "flex",
+    alignItems: "center",
     paddingBlock: theme.spacing(2),
     paddingInline: theme.spacing(4),
 
+    borderStartEndRadius: 9999,
+    borderEndEndRadius: 9999,
+
     color: "inherit",
-    fontSize: theme.typography.h6.fontSize,
+    fontSize: theme.typography.body1.fontSize,
     textTransform: "uppercase",
     textDecoration: "none",
 
-    "&.active": {
-      color: theme.palette.primary.main,
-    },
     "&:hover": {
-      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+      backgroundColor: theme.palette.action.disabledBackground,
+      color: theme.palette.common.white,
+    },
+
+    "&.active": {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+    },
+    "&.active:hover": {
+      backgroundColor: theme.palette.primary.light,
     },
   };
 });
