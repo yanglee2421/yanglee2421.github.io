@@ -287,22 +287,18 @@ const StyledNavLink = styled(NavLink)(({ theme }) => {
     borderStartEndRadius: 9999,
     borderEndEndRadius: 9999,
 
-    color: "inherit",
+    color: theme.palette.text.primary,
     fontSize: theme.typography.body1.fontSize,
     textTransform: "uppercase",
     textDecoration: "none",
 
     "&:hover": {
       backgroundColor: theme.palette.action.disabledBackground,
-      color: theme.palette.common.white,
     },
 
     "&.active": {
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.primary.contrastText,
-    },
-    "&.active:hover": {
-      backgroundColor: theme.palette.primary.light,
     },
   };
 });
