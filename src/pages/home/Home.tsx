@@ -7,9 +7,16 @@ import { Calendar } from "./Calendar";
 import { Countdown } from "./Countdown";
 import { InputNumber } from "./InputNumber";
 import { RollCard } from "./RollCard";
+import { ScrollView } from "@/components/ui/ScrollView";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
+
+  const ref = React.useRef<HTMLElement>(null);
+
+  React.useEffect(() => {
+    console.dir(ref.current);
+  });
 
   return (
     <Grid container spacing={{ xs: 3, md: 4 }}>
@@ -97,6 +104,39 @@ export function Home() {
             return reg.exec(headerText)?.groups?.filename;
           })()}
         </Paper>
+      </Grid>
+      <Grid item xs={12}>
+        <Box
+          ref={ref}
+          sx={{
+            overflow: "auto",
+            width: "25dvw",
+            height: 100,
+            border: "1px red solid",
+          }}
+        >
+          <Box
+            sx={{
+              width: 150,
+            }}
+          ></Box>
+        </Box>
+        <hr />
+        <Box
+          sx={{
+            width: "25dvw",
+            height: 100,
+            border: "1px red solid",
+          }}
+        >
+          <ScrollView>
+            <Box
+              sx={{
+                width: 150,
+              }}
+            ></Box>
+          </ScrollView>
+        </Box>
       </Grid>
     </Grid>
   );

@@ -45,23 +45,19 @@ export function ScrollView(props: Props) {
     };
 
     const observer = new ResizeObserver(() => {
-      const containerClientWidth = containerEl.clientWidth;
-      const containerClientHeight = containerEl.clientHeight;
-
       Reflect.set(containerEl, "getBoundingClientRect", () => {
         const originRect =
           Element.prototype.getBoundingClientRect.call(containerEl);
 
-        originRect.width = containerClientWidth;
-        originRect.height = containerClientHeight;
+        originRect.width = Math.floor(originRect.width);
+        originRect.height = Math.floor(originRect.height);
 
         return originRect;
       });
 
-      // Scrollbar Active
       if (
-        contentEl.clientHeight > containerClientHeight ||
-        contentEl.clientWidth > containerClientWidth
+        containerEl.scrollHeight > containerEl.clientHeight ||
+        containerEl.scrollWidth > containerEl.clientWidth
       ) {
         psRef.current ||= new PerfectScrollbar(containerEl, options);
         psRef.current.update();
@@ -69,7 +65,6 @@ export function ScrollView(props: Props) {
         return;
       }
 
-      // Scrollbar Unactive
       clearScrollbar();
     });
 
