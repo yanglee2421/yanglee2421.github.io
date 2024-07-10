@@ -4,7 +4,7 @@ import {
   FloatingMenu,
   BubbleMenu,
 } from "@tiptap/react";
-import StarterKit from "@tiptap/starter-kit";
+import { StarterKit } from "@tiptap/starter-kit";
 import React from "react";
 
 export function TipTap(props: Props) {
