@@ -1,5 +1,5 @@
-import { ScrollView } from "@/components/ui/ScrollView";
 import { Box, Button } from "@mui/material";
+import { ScrollView } from "@/components/ui/ScrollView";
 
 export function Chat() {
   return (

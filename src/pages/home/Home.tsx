@@ -1,22 +1,21 @@
-import { Box, Grid, Paper, Stack, alpha } from "@mui/material";
+import { Box, Divider, Grid, Paper, Stack, alpha } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
+import { ScrollView } from "@/components/ui/ScrollView";
 import { AsyncStore } from "./AyncStore";
 import { Calendar } from "./Calendar";
 import { Countdown } from "./Countdown";
 import { InputNumber } from "./InputNumber";
 import { RollCard } from "./RollCard";
-import { ScrollView } from "@/components/ui/ScrollView";
+import { TipTap } from "./TipTap";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
 
   const ref = React.useRef<HTMLElement>(null);
 
-  React.useEffect(() => {
-    console.dir(ref.current);
-  });
+  const [html, setHtml] = React.useState("<p>hello world</p>");
 
   return (
     <Grid container spacing={{ xs: 3, md: 4 }}>
@@ -137,6 +136,11 @@ export function Home() {
             ></Box>
           </ScrollView>
         </Box>
+      </Grid>
+      <Grid item xs={12}>
+        <TipTap value={html} onChange={() => {}} />
+        <Divider />
+        <TipTap value={html} onChange={setHtml} />
       </Grid>
     </Grid>
   );
