@@ -4,7 +4,7 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
-export default defineConfig((configEnv) => {
+export default defineConfig(() => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
 
   return {
@@ -29,7 +29,7 @@ export default defineConfig((configEnv) => {
       },
     },
 
-    base: configEnv.mode === "production" ? "./" : "/react-mui",
+    base: "./",
     envDir: resolve(__dirname, "./"),
     assetsInclude: [],
 
