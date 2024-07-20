@@ -78,9 +78,10 @@ export function PageLayout(props: React.PropsWithChildren) {
           },
           blockSize: "100dvh",
 
-          borderWidth: { xs: 0 },
-          borderRight(theme) {
-            return "1px solid " + theme.palette.divider;
+          borderInlineEndWidth: { xs: 0, sm: 1 },
+          borderInlineEndStyle: "solid",
+          borderInlineEndColor(theme) {
+            return theme.palette.divider;
           },
 
           backgroundColor(theme) {
@@ -105,6 +106,10 @@ export function PageLayout(props: React.PropsWithChildren) {
 
             borderBottom(theme) {
               return "1px solid " + theme.palette.divider;
+            },
+
+            boxShadow(theme) {
+              return theme.shadows[1];
             },
           }}
         >
