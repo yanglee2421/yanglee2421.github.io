@@ -51,22 +51,44 @@ export function PageLayout(props: React.PropsWithChildren) {
   return (
     <Box
       sx={{
-        display: "grid",
-        gridTemplateColumns: { xs: "1fr", md: "16rem 1fr" },
+        display: "flex",
       }}
     >
+      {/* Aside */}
       <Box
         component={"aside"}
         sx={{
-          position: "sticky",
+          position: { xs: "absolute", sm: "sticky" },
+          insetInlineStart: { xs: showMenu ? 0 : "-100%" },
           insetBlock: 0,
-          blockSize: "100dvh",
+          zIndex(theme) {
+            return theme.zIndex.drawer;
+          },
 
-          display: { xs: "none", md: "flex" },
+          flexGrow: 0,
+          flexShrink: 0,
+          display: "flex",
           flexDirection: "column",
 
+          inlineSize(theme) {
+            return {
+              xs: "100%",
+              sm: theme.spacing(72),
+            };
+          },
+          blockSize: "100dvh",
+
+          borderWidth: { xs: 0 },
           borderRight(theme) {
             return "1px solid " + theme.palette.divider;
+          },
+
+          backgroundColor(theme) {
+            return theme.palette.background.default;
+          },
+
+          transition(theme) {
+            return theme.transitions.create("inset-inline-start");
           },
         }}
       >
@@ -76,8 +98,8 @@ export function PageLayout(props: React.PropsWithChildren) {
             alignItems: "center",
             gap: 3,
 
-            paddingInline: 4,
-            paddingBlock: 6,
+            paddingInline: 5,
+            paddingBlock: 2,
 
             fontSize: 22,
 
@@ -98,7 +120,9 @@ export function PageLayout(props: React.PropsWithChildren) {
         </Box>
 
         <Box sx={{ flex: 1, overflow: "hidden" }}>
-          <ScrollView options={{ wheelPropagation: false }}>
+          <ScrollView
+            options={{ wheelPropagation: false, suppressScrollX: true }}
+          >
             <Box
               height={2000}
               sx={{
@@ -159,7 +183,9 @@ export function PageLayout(props: React.PropsWithChildren) {
           </ScrollView>
         </Box>
       </Box>
-      <Box sx={{ width: "100%" }}>
+
+      {/* Main Wapper */}
+      <Box sx={{ inlineSize: "100%" }}>
         <Box
           component={"header"}
           sx={{
