@@ -55,44 +55,7 @@ export function PageLayout(props: React.PropsWithChildren) {
       }}
     >
       {/* Aside */}
-      <Box
-        component={"aside"}
-        sx={{
-          position: { xs: "absolute", sm: "sticky" },
-          insetInlineStart: { xs: showMenu ? 0 : "-100%" },
-          insetBlock: 0,
-          zIndex(theme) {
-            return theme.zIndex.drawer;
-          },
-
-          flexGrow: 0,
-          flexShrink: 0,
-          display: "flex",
-          flexDirection: "column",
-
-          inlineSize(theme) {
-            return {
-              xs: "100%",
-              sm: theme.spacing(72),
-            };
-          },
-          blockSize: "100dvh",
-
-          borderInlineEndWidth: { xs: 0, sm: 1 },
-          borderInlineEndStyle: "solid",
-          borderInlineEndColor(theme) {
-            return theme.palette.divider;
-          },
-
-          backgroundColor(theme) {
-            return theme.palette.background.default;
-          },
-
-          transition(theme) {
-            return theme.transitions.create("inset-inline-start");
-          },
-        }}
-      >
+      <StyledAside sx={{ insetInlineStart: { xs: showMenu ? 0 : "-100%" } }}>
         <Box
           sx={{
             display: "flex",
@@ -187,7 +150,7 @@ export function PageLayout(props: React.PropsWithChildren) {
             </Box>
           </ScrollView>
         </Box>
-      </Box>
+      </StyledAside>
 
       {/* Main Wapper */}
       <Box sx={{ inlineSize: "100%" }}>
@@ -275,34 +238,26 @@ export function PageLayout(props: React.PropsWithChildren) {
         </Box>
         <SwitchTransition>
           <Fade key={1} unmountOnExit>
-            <Box
-              component={"main"}
-              sx={{
-                display: showMenu ? "none" : "block",
-                px: { xs: 2, md: 3 },
-              }}
-            >
-              {props.children}
-            </Box>
+            <main>{props.children}</main>
           </Fade>
         </SwitchTransition>
-        {showMenu && <Box sx={{ height: 1000 }}>menu list</Box>}
-        <Box
-          component={"footer"}
-          sx={{
-            paddingInline: 2,
-            paddingBlock: 4,
-          }}
-        >
-          &copy; 2024, Made with ❤️ by{" "}
-          <Link
-            href="https://github.com/yanglee2421"
-            target="https://github.com/yanglee2421"
-            underline="hover"
+        <footer>
+          <Box
+            sx={{
+              paddingInline: 5,
+              paddingBlock: 2,
+            }}
           >
-            YangLee2421
-          </Link>
-        </Box>
+            &copy; 2024, Made with ❤️ by{" "}
+            <Link
+              href="https://github.com/yanglee2421"
+              target="https://github.com/yanglee2421"
+              underline="hover"
+            >
+              YangLee2421
+            </Link>
+          </Box>
+        </footer>
       </Box>
     </Box>
   );
@@ -331,5 +286,28 @@ const StyledNavLink = styled(NavLink)(({ theme }) => {
       backgroundColor: theme.palette.primary.main,
       color: theme.palette.primary.contrastText,
     },
+  };
+});
+
+const StyledAside = styled("aside")(({ theme }) => {
+  return {
+    position: ["absolute", "sticky"],
+    insetBlock: 0,
+    zIndex: theme.zIndex.drawer,
+    transition: theme.transitions.create("inset-inline-start"),
+
+    flexGrow: 0,
+    flexShrink: 0,
+    display: "flex",
+    flexDirection: "column",
+
+    inlineSize: ["100%", theme.spacing(72)],
+    blockSize: "100dvh",
+
+    borderInlineEndWidth: [0, 1],
+    borderInlineEndStyle: "solid",
+    borderInlineEndColor: theme.palette.divider,
+
+    backgroundColor: theme.palette.background.default,
   };
 });
