@@ -1,4 +1,18 @@
-import { Box, Divider, Grid, Paper, Stack, alpha } from "@mui/material";
+import {
+  AddOutlined,
+  AddReactionOutlined,
+  SendOutlined,
+} from "@mui/icons-material";
+import {
+  Box,
+  Divider,
+  Grid,
+  InputBase,
+  Paper,
+  Stack,
+  alpha,
+  IconButton,
+} from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
@@ -16,6 +30,7 @@ export function Home() {
   const ref = React.useRef<HTMLElement>(null);
 
   const [html, setHtml] = React.useState("<p>hello world</p>");
+  const [chatInput, setChatInput] = React.useState("");
 
   return (
     <Grid container spacing={{ xs: 3, md: 4 }}>
@@ -141,6 +156,64 @@ export function Home() {
         <TipTap value={html} onChange={() => {}} />
         <Divider />
         <TipTap value={html} onChange={setHtml} />
+      </Grid>
+      <Grid item xs={12}>
+        <Box sx={{ padding: 3 }}>
+          <Box
+            sx={{
+              border(theme) {
+                return "1px solid " + theme.palette.divider;
+              },
+              paddingInline: 3.5,
+              paddingBlock: 2,
+              borderRadius(theme) {
+                return theme.shape.borderRadius + "px";
+              },
+            }}
+          >
+            <InputBase
+              value={chatInput}
+              onChange={(evt) => {
+                setChatInput(evt.target.value);
+              }}
+              multiline
+              placeholder="chat message here..."
+            />
+            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap(theme) {
+                    return theme.spacing(1);
+                  },
+                }}
+              >
+                <IconButton
+                  sx={{
+                    bgcolor(theme) {
+                      return theme.palette.action.selected;
+                    },
+                  }}
+                >
+                  <AddOutlined />
+                </IconButton>
+                <IconButton>
+                  <AddReactionOutlined />
+                </IconButton>
+              </Box>
+              <IconButton
+                sx={{
+                  marginInlineStart: "auto",
+                  color(theme) {
+                    return theme.palette.primary.main;
+                  },
+                }}
+              >
+                <SendOutlined color="inherit" />
+              </IconButton>
+            </Box>
+          </Box>
+        </Box>
       </Grid>
     </Grid>
   );
