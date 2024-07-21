@@ -4,6 +4,7 @@ import {
   SearchOutlined,
   HomeOutlined,
   Grid3x3Outlined,
+  QuestionAnswerOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -25,13 +26,10 @@ import { UserDropdown } from "@/components/shared/UserDropdown";
 import { Materio } from "@/components/svg/Materio";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useIsScrolled } from "@/hooks/dom/useIsScrolled";
-import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { NavMenuButton } from "./NavMenuButton";
 import type { Theme } from "@mui/material";
 
 export function PageLayout(props: React.PropsWithChildren) {
-  const currentUser = useAuthStore((state) => state.value.auth.currentUser);
-
   const isScrolled = useIsScrolled();
 
   const [showMenu, setShowMenu] = React.useState(false);
@@ -42,10 +40,6 @@ export function PageLayout(props: React.PropsWithChildren) {
 
   if (mediumScreen && showMenu) {
     setShowMenu(false);
-  }
-
-  if (!currentUser) {
-    return null;
   }
 
   return (
@@ -106,6 +100,10 @@ export function PageLayout(props: React.PropsWithChildren) {
               <StyledNavLink to={{ pathname: "/table" }}>
                 <Grid3x3Outlined sx={{ marginInlineEnd: 2 }} />
                 <span>table</span>
+              </StyledNavLink>
+              <StyledNavLink to={{ pathname: "/chat" }}>
+                <QuestionAnswerOutlined sx={{ marginInlineEnd: 2 }} />
+                <span>chat</span>
               </StyledNavLink>
               <Box
                 sx={{
@@ -238,7 +236,9 @@ export function PageLayout(props: React.PropsWithChildren) {
         </Box>
         <SwitchTransition>
           <Fade key={1} unmountOnExit>
-            <main>{props.children}</main>
+            <main>
+              <Box sx={{ padding: 4 }}>{props.children}</Box>
+            </main>
           </Fade>
         </SwitchTransition>
         <footer>
