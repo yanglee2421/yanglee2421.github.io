@@ -97,7 +97,7 @@ export function ForgotPassword() {
         >
           <form.Field
             name="email"
-            validatorAdapter={zodValidator}
+            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().email(),
             }}
