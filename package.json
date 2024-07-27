@@ -1,5 +1,6 @@
 {
-  "name": "react-mui",
+  "name": "mui-template",
+  "description": "React template with mui",
   "private": true,
   "version": "0.0.0",
   "type": "module",
