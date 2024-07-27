@@ -13,8 +13,13 @@ import {
   Typography,
   Paper,
 } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { codeToHtml } from "shiki";
 import { PageLayout } from "@/components/layout/PageLayout";
+// eslint-disable-next-line import/no-duplicates
 import { ScrollView } from "@/components/ui/ScrollView";
+// eslint-disable-next-line import/no-duplicates
+import ScrollViewCode from "@/components/ui/ScrollView?raw";
 
 export function Chat() {
   return (
@@ -104,7 +109,9 @@ export function Chat() {
                   </Box>
                   <Avatar></Avatar>
                 </Box>
-                <Paper>paper</Paper>
+                <Paper>
+                  <Code code={ScrollViewCode} />
+                </Paper>
               </Box>
             </ScrollView>
           </Box>
@@ -159,3 +166,31 @@ const StyledForm = styled("form")(({ theme }) => {
     paddingBlock: theme.spacing(2),
   };
 });
+
+function Code(props: { code: string }) {
+  const query = useQuery({
+    queryKey: ["shiki", props.code],
+    queryFn() {
+      return codeToHtml(props.code, {
+        lang: "tsx",
+        theme: "dark-plus",
+      });
+    },
+  });
+
+  if (query.isPending) {
+    return <Typography>pending...</Typography>;
+  }
+
+  if (query.isError) {
+    return (
+      <Typography sx={{ color: "error" }}>{query.error.message}</Typography>
+    );
+  }
+
+  return (
+    <ScrollView>
+      <div dangerouslySetInnerHTML={{ __html: query.data }}></div>
+    </ScrollView>
+  );
+}

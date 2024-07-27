@@ -66,10 +66,5 @@ export const routes = createRoutesFromElements(
       path="table"
       lazy={() => import("@/pages/table/Component")}
     />
-    <Route
-      id="virtual"
-      path="virtual"
-      lazy={() => import("@/pages/virtual/Component")}
-    />
   </Route>,
 );

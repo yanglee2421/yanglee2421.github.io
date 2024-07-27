@@ -23,6 +23,7 @@ import {
   IconButton,
   Divider,
 } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
 import {
   useReactTable,
   flexRender,
@@ -39,7 +40,7 @@ import {
   type ExpandedState,
 } from "@tanstack/react-table";
 import React from "react";
-import { JsonBlock } from "@/components/shared/JsonBlock";
+import { codeToHtml } from "shiki";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { columns } from "./columns";
 import { data } from "./data";
@@ -332,7 +333,9 @@ export function Table() {
                         >
                           <Collapse in={row.getIsExpanded()} unmountOnExit>
                             <Box sx={{ p: 4 }}>
-                              <JsonBlock jsonData={row.original} />
+                              <Code
+                                code={JSON.stringify(row.original, null, 2)}
+                              />
                             </Box>
                           </Collapse>
                         </TableCell>
@@ -395,5 +398,33 @@ export function Table() {
         />
       </Card>
     </>
+  );
+}
+
+function Code(props: { code: string }) {
+  const query = useQuery({
+    queryKey: ["shiki", props.code],
+    queryFn() {
+      return codeToHtml(props.code, {
+        lang: "json",
+        theme: "dark-plus",
+      });
+    },
+  });
+
+  if (query.isPending) {
+    return <Typography>pending...</Typography>;
+  }
+
+  if (query.isError) {
+    return (
+      <Typography sx={{ color: "error" }}>{query.error.message}</Typography>
+    );
+  }
+
+  return (
+    <ScrollView>
+      <div dangerouslySetInnerHTML={{ __html: query.data }}></div>
+    </ScrollView>
   );
 }
