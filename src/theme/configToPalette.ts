@@ -87,6 +87,11 @@ export function configToPalette(params: PaletteConfig): PaletteOptions {
       disabledOpacity: 0.26,
       disabledBackground: alpha(mainColor, 0.12),
     },
+
+    background: {
+      default: "#F4F5FA",
+      paper: whiteColor,
+    },
   };
 }
 

@@ -43,11 +43,7 @@ export function PageLayout(props: React.PropsWithChildren) {
   }
 
   return (
-    <Box
-      sx={{
-        display: "flex",
-      }}
-    >
+    <StyledAppWrapper>
       {/* Aside */}
       <StyledAside sx={{ insetInlineStart: { xs: showMenu ? 0 : "-100%" } }}>
         <Box
@@ -63,10 +59,6 @@ export function PageLayout(props: React.PropsWithChildren) {
 
             borderBottom(theme) {
               return "1px solid " + theme.palette.divider;
-            },
-
-            boxShadow(theme) {
-              return theme.shadows[1];
             },
           }}
         >
@@ -150,19 +142,11 @@ export function PageLayout(props: React.PropsWithChildren) {
         </Box>
       </StyledAside>
 
-      {/* Main Wapper */}
-      <Box sx={{ inlineSize: "100%" }}>
-        <Box
-          component={"header"}
+      {/* Main Wrapper */}
+      <StyledMainWrapper>
+        <StyledHeader
           sx={{
-            position: "sticky",
-            insetBlockStart: 0,
-            zIndex(theme) {
-              return theme.zIndex.appBar;
-            },
-            display: "flex",
-            py: 3,
-            px: isScrolled ? 4 : 2,
+            px: isScrolled ? 7 : 5,
 
             boxShadow(theme) {
               return isScrolled ? theme.shadows[1] : void 0;
@@ -172,14 +156,6 @@ export function PageLayout(props: React.PropsWithChildren) {
               return isScrolled
                 ? alpha(theme.palette.background.paper, 0.85)
                 : theme.palette.background.default;
-            },
-
-            transition(theme) {
-              return theme.transitions.create([
-                "padding",
-                "background-color",
-                "box-shadow",
-              ]);
             },
           }}
         >
@@ -233,33 +209,24 @@ export function PageLayout(props: React.PropsWithChildren) {
             </IconButton>
             <UserDropdown />
           </Stack>
-        </Box>
+        </StyledHeader>
         <SwitchTransition>
           <Fade key={1} unmountOnExit>
-            <main>
-              <Box sx={{ padding: 4 }}>{props.children}</Box>
-            </main>
+            <StyledMain>{props.children}</StyledMain>
           </Fade>
         </SwitchTransition>
-        <footer>
-          <Box
-            sx={{
-              paddingInline: 5,
-              paddingBlock: 2,
-            }}
+        <StyledFooter>
+          &copy; 2024, Made with ❤️ by{" "}
+          <Link
+            href="https://github.com/yanglee2421"
+            target="https://github.com/yanglee2421"
+            underline="hover"
           >
-            &copy; 2024, Made with ❤️ by{" "}
-            <Link
-              href="https://github.com/yanglee2421"
-              target="https://github.com/yanglee2421"
-              underline="hover"
-            >
-              YangLee2421
-            </Link>
-          </Box>
-        </footer>
-      </Box>
-    </Box>
+            YangLee2421
+          </Link>
+        </StyledFooter>
+      </StyledMainWrapper>
+    </StyledAppWrapper>
   );
 }
 
@@ -289,6 +256,13 @@ const StyledNavLink = styled(NavLink)(({ theme }) => {
   };
 });
 
+const StyledAppWrapper = styled("div")(({ theme }) => {
+  return {
+    display: "flex",
+    backgroundColor: theme.palette.background.default,
+  };
+});
+
 const StyledAside = styled("aside")(({ theme }) => {
   return {
     position: ["absolute", "sticky"],
@@ -309,5 +283,40 @@ const StyledAside = styled("aside")(({ theme }) => {
     borderInlineEndColor: theme.palette.divider,
 
     backgroundColor: theme.palette.background.default,
+  };
+});
+
+const StyledMainWrapper = styled("div")({
+  flexBasis: "100%",
+  minWidth: 0,
+});
+
+const StyledHeader = styled("header")(({ theme }) => {
+  return {
+    position: "sticky",
+    insetBlockStart: 0,
+    zIndex: theme.zIndex.appBar,
+
+    display: "flex",
+    paddingBlock: theme.spacing(2),
+
+    borderBottom: "1px solid " + theme.palette.divider,
+
+    transition: theme.transitions.create([
+      "padding",
+      "background-color",
+      "box-shadow",
+    ]),
+  };
+});
+
+const StyledMain = styled("main")(({ theme }) => {
+  return { padding: theme.spacing(5) };
+});
+
+const StyledFooter = styled("footer")(({ theme }) => {
+  return {
+    paddingInline: theme.spacing(5),
+    paddingBlock: theme.spacing(2),
   };
 });

@@ -1,3 +1,4 @@
+import { RefreshOutlined } from "@mui/icons-material";
 import {
   Table as MuiTable,
   TableBody,
@@ -5,17 +6,22 @@ import {
   TableFooter,
   TableCell,
   TableRow,
-  Paper,
   Box,
   TablePagination,
   TableSortLabel,
-  Toolbar,
+  Typography,
+  Link,
   TextField,
   Collapse,
   alpha,
   TableContainer,
   Button,
-  Typography,
+  Card,
+  CardHeader,
+  CardContent,
+  Grid,
+  IconButton,
+  Divider,
 } from "@mui/material";
 import {
   useReactTable,
@@ -111,21 +117,40 @@ export function Table() {
 
   return (
     <>
-      <Paper sx={{ padding: 3 }}>
-        <TextField
-          label="Golbal Filter"
-          value={globalFilter}
-          onChange={(evt) => {
-            onGlobalFilterChange(evt.target.value);
-          }}
-          size="small"
+      <Typography variant="h4">ApexCharts</Typography>
+      <Typography>
+        <code>react-apexcharts</code> is a third-party library. Please refer to
+        its{" "}
+        <Link href="https://apexcharts.com" target="_blank">
+          official documentation
+        </Link>{" "}
+        for more details.
+      </Typography>
+      <Card sx={{ mt: 6 }}>
+        <CardHeader
+          title="Table"
+          action={
+            <IconButton>
+              <RefreshOutlined />
+            </IconButton>
+          }
         />
-      </Paper>
-      <Paper>
-        <Toolbar>
-          <Typography variant="h5" textTransform={"capitalize"}>
-            table lab
-          </Typography>
+        <CardContent>
+          <Grid container spacing={6}>
+            <Grid item xs={12} sm={6} md={4}>
+              <TextField
+                label="Golbal Filter"
+                value={globalFilter}
+                onChange={(evt) => {
+                  onGlobalFilterChange(evt.target.value);
+                }}
+                fullWidth
+              />
+            </Grid>
+          </Grid>
+        </CardContent>
+        <Divider />
+        <Box sx={{ padding: 5 }}>
           <Button
             disabled={
               !(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected())
@@ -152,10 +177,11 @@ export function Table() {
             sx={{
               marginLeft: "auto",
             }}
+            variant="contained"
           >
             export
           </Button>
-        </Toolbar>
+        </Box>
         <TableContainer>
           <ScrollView>
             <MuiTable
@@ -189,7 +215,10 @@ export function Table() {
                               header.id === "selection" ? "checkbox" : "normal"
                             }
                             width={header.getSize()}
-                            sx={{ position: "relative" }}
+                            sx={{
+                              position: "relative",
+                              bgcolor: "#f6f7fb",
+                            }}
                           >
                             {canSort ? (
                               <TableSortLabel
@@ -349,42 +378,21 @@ export function Table() {
           </ScrollView>
         </TableContainer>
 
-        <Box
-          sx={{
-            position: { sm: "sticky" },
-            bottom: 0,
-            bgcolor(theme) {
-              return theme.palette.background.paper;
-            },
-            borderBottomLeftRadius(theme) {
-              return theme.shape.borderRadius + "px";
-            },
-            borderBottomRightRadius(theme) {
-              return theme.shape.borderRadius + "px";
-            },
-            borderTopWidth: 1,
-            borderTopStyle: "solid",
-            borderTopColor(theme) {
-              return theme.palette.divider;
-            },
+        <TablePagination
+          component={"div"}
+          count={table.getRowCount()}
+          rowsPerPageOptions={[20, 50, 100]}
+          page={table.getState().pagination.pageIndex}
+          rowsPerPage={table.getState().pagination.pageSize}
+          onPageChange={(evt, page) => {
+            void evt;
+            table.setPageIndex(page);
           }}
-        >
-          <TablePagination
-            component={"div"}
-            count={table.getRowCount()}
-            rowsPerPageOptions={[20, 50, 100]}
-            page={table.getState().pagination.pageIndex}
-            rowsPerPage={table.getState().pagination.pageSize}
-            onPageChange={(evt, page) => {
-              void evt;
-              table.setPageIndex(page);
-            }}
-            onRowsPerPageChange={(evt) => {
-              table.setPageSize(Number.parseInt(evt.target.value) || 20);
-            }}
-          />
-        </Box>
-      </Paper>
+          onRowsPerPageChange={(evt) => {
+            table.setPageSize(Number.parseInt(evt.target.value) || 20);
+          }}
+        />
+      </Card>
     </>
   );
 }
