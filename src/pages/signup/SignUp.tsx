@@ -117,7 +117,7 @@ export function SignUp() {
         >
           <form.Field
             name="email"
-            validatorAdapter={zodValidator}
+            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().email(),
             }}
@@ -141,7 +141,7 @@ export function SignUp() {
           </form.Field>
           <form.Field
             name="password"
-            validatorAdapter={zodValidator}
+            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().min(8).max(16),
             }}
@@ -194,7 +194,7 @@ export function SignUp() {
           </form.Field>
           <form.Field
             name="checked"
-            validatorAdapter={zodValidator}
+            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.literal(true),
             }}
