@@ -12,14 +12,11 @@ import {
   Typography,
   Link,
   TextField,
-  Collapse,
   alpha,
   TableContainer,
   Button,
   Card,
   CardHeader,
-  CardContent,
-  Grid,
   IconButton,
   Divider,
 } from "@mui/material";
@@ -34,10 +31,6 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getExpandedRowModel,
-  type RowSelectionState,
-  type SortingState,
-  type ColumnFiltersState,
-  type ExpandedState,
 } from "@tanstack/react-table";
 import React from "react";
 import { codeToHtml } from "shiki";
@@ -46,20 +39,6 @@ import { columns } from "./columns";
 import { data } from "./data";
 
 export function Table() {
-  const [pagination, onPaginationChange] = React.useState({
-    pageIndex: 0,
-    pageSize: 20,
-  });
-
-  const [expanded, onExpandedChange] = React.useState<ExpandedState>({});
-  const [sorting, onSortingChange] = React.useState<SortingState>([]);
-  const [rowSelection, onRowSelectionChange] =
-    React.useState<RowSelectionState>({});
-
-  const [globalFilter, onGlobalFilterChange] = React.useState("");
-  const [columnFilters, onColumnFiltersChange] =
-    React.useState<ColumnFiltersState>([]);
-
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
     getRowId(originalRow) {
@@ -72,19 +51,22 @@ export function Table() {
     manualPagination: false,
     getPaginationRowModel: getPaginationRowModel(),
     rowCount: data.length,
-    onPaginationChange,
+    initialState: {
+      pagination: {
+        pageIndex: 0,
+        pageSize: 20,
+      },
+    },
 
     // ** Section
     enableRowSelection: true,
     enableMultiRowSelection: true,
-    onRowSelectionChange,
 
     // ** Sorting
     manualSorting: false,
     enableSorting: true,
     enableMultiSort: true,
     getSortedRowModel: getSortedRowModel(),
-    onSortingChange,
 
     // ** Filter
     manualFiltering: false,
@@ -93,28 +75,16 @@ export function Table() {
     getFilteredRowModel: getFilteredRowModel(),
     getFacetedRowModel: getFacetedRowModel(),
     getFacetedUniqueValues: getFacetedUniqueValues(),
-    onGlobalFilterChange,
-    onColumnFiltersChange,
 
     // ** Expland
     getExpandedRowModel: getExpandedRowModel(),
     getRowCanExpand() {
       return true;
     },
-    onExpandedChange,
 
     // ** Resize
     enableColumnResizing: true,
     columnResizeMode: "onChange",
-
-    state: {
-      pagination,
-      rowSelection,
-      sorting,
-      globalFilter,
-      columnFilters,
-      expanded,
-    },
   });
 
   return (
@@ -137,22 +107,23 @@ export function Table() {
             </IconButton>
           }
         />
-        <CardContent>
-          <Grid container spacing={6}>
-            <Grid item xs={12} sm={6} md={4}>
-              <TextField
-                label="Golbal Filter"
-                value={globalFilter}
-                onChange={(evt) => {
-                  onGlobalFilterChange(evt.target.value);
-                }}
-                fullWidth
-              />
-            </Grid>
-          </Grid>
-        </CardContent>
         <Divider />
-        <Box sx={{ padding: 5 }}>
+        <Box
+          sx={{
+            padding: 5,
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+          }}
+        >
+          <TextField
+            label="Golbal Filter"
+            value={table.getState().globalFilter}
+            onChange={(evt) => {
+              table.setGlobalFilter(evt.target.value);
+            }}
+            size="small"
+          />
           <Button
             disabled={
               !(table.getIsSomeRowsSelected() || table.getIsAllRowsSelected())
@@ -323,23 +294,15 @@ export function Table() {
                           );
                         })}
                       </TableRow>
-                      <TableRow>
-                        <TableCell
-                          colSpan={columns.length}
-                          padding="none"
-                          sx={{
-                            borderWidth: 0,
-                          }}
-                        >
-                          <Collapse in={row.getIsExpanded()} unmountOnExit>
-                            <Box sx={{ p: 4 }}>
-                              <Code
-                                code={JSON.stringify(row.original, null, 2)}
-                              />
-                            </Box>
-                          </Collapse>
-                        </TableCell>
-                      </TableRow>
+                      {row.getIsExpanded() && (
+                        <TableRow>
+                          <TableCell colSpan={columns.length}>
+                            <Code
+                              code={JSON.stringify(row.original, null, 2)}
+                            />
+                          </TableCell>
+                        </TableRow>
+                      )}
                     </React.Fragment>
                   );
                 })}
