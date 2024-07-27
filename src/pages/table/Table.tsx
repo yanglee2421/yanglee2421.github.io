@@ -33,18 +33,16 @@ import {
   getFacetedRowModel,
   getFacetedUniqueValues,
   getExpandedRowModel,
+  type RowSelectionState,
+  type SortingState,
+  type ColumnFiltersState,
+  type ExpandedState,
 } from "@tanstack/react-table";
 import React from "react";
 import { JsonBlock } from "@/components/shared/JsonBlock";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { columns } from "./columns";
 import { data } from "./data";
-import type {
-  RowSelectionState,
-  SortingState,
-  ColumnFiltersState,
-  ExpandedState,
-} from "@tanstack/react-table";
 
 export function Table() {
   const [pagination, onPaginationChange] = React.useState({
@@ -63,6 +61,9 @@ export function Table() {
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
+    getRowId(originalRow) {
+      return originalRow.id.toString();
+    },
     columns,
     data,
 

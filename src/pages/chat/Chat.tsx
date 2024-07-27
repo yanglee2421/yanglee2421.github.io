@@ -11,6 +11,7 @@ import {
   Avatar,
   Divider,
   Typography,
+  Paper,
 } from "@mui/material";
 import { PageLayout } from "@/components/layout/PageLayout";
 import { ScrollView } from "@/components/ui/ScrollView";
@@ -103,6 +104,7 @@ export function Chat() {
                   </Box>
                   <Avatar></Avatar>
                 </Box>
+                <Paper>paper</Paper>
               </Box>
             </ScrollView>
           </Box>
