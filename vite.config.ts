@@ -1,14 +1,18 @@
 import { dirname, resolve } from "node:path";
 import { fileURLToPath, URL } from "node:url";
-import react from "@vitejs/plugin-react-swc";
+import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 // https://vitejs.dev/config/
-export default defineConfig((configEnv) => {
+export default defineConfig(() => {
   const __dirname = dirname(fileURLToPath(import.meta.url));
 
   return {
-    plugins: [react()],
+    plugins: [
+      react({
+        include: [".scss"],
+      }),
+    ],
     resolve: {
       alias: {
         "@": fileURLToPath(new URL("./src", import.meta.url)),
@@ -25,7 +29,7 @@ export default defineConfig((configEnv) => {
       },
     },
 
-    base: configEnv.mode === "production" ? "./" : "/react-mui",
+    base: "./",
     envDir: resolve(__dirname, "./"),
     assetsInclude: [],
 

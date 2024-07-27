@@ -45,23 +45,19 @@ export function ScrollView(props: Props) {
     };
 
     const observer = new ResizeObserver(() => {
-      const containerClientWidth = containerEl.clientWidth;
-      const containerClientHeight = containerEl.clientHeight;
-
       Reflect.set(containerEl, "getBoundingClientRect", () => {
         const originRect =
           Element.prototype.getBoundingClientRect.call(containerEl);
 
-        originRect.width = containerClientWidth;
-        originRect.height = containerClientHeight;
+        originRect.width = Math.floor(originRect.width);
+        originRect.height = Math.floor(originRect.height);
 
         return originRect;
       });
 
-      // Scrollbar Active
       if (
-        contentEl.clientHeight > containerClientHeight ||
-        contentEl.clientWidth > containerClientWidth
+        containerEl.scrollHeight > containerEl.clientHeight ||
+        containerEl.scrollWidth > containerEl.clientWidth
       ) {
         psRef.current ||= new PerfectScrollbar(containerEl, options);
         psRef.current.update();
@@ -69,7 +65,6 @@ export function ScrollView(props: Props) {
         return;
       }
 
-      // Scrollbar Unactive
       clearScrollbar();
     });
 
@@ -89,51 +84,26 @@ export function ScrollView(props: Props) {
       return;
     }
 
-    const map = new Map<string, (evt: Event) => void>();
+    const map = new Map<string, undefined | ((evt: Event) => void)>();
 
-    if (typeof onPsScrollX === "function") {
-      map.set("ps-scroll-x", onPsScrollX);
-    }
-
-    if (typeof onPsScrollY === "function") {
-      map.set("ps-scroll-y", onPsScrollY);
-    }
-
-    if (typeof onPsScrollUp === "function") {
-      map.set("ps-scroll-up", onPsScrollUp);
-    }
-
-    if (typeof onPsScrollDown === "function") {
-      map.set("ps-scroll-down", onPsScrollDown);
-    }
-
-    if (typeof onPsScrollLeft === "function") {
-      map.set("ps-scroll-left", onPsScrollLeft);
-    }
-
-    if (typeof onPsScrollRight === "function") {
-      map.set("ps-scroll-right", onPsScrollRight);
-    }
-
-    if (typeof onPsXReachStart === "function") {
-      map.set("ps-x-reach-start", onPsXReachStart);
-    }
-
-    if (typeof onPsXReachEnd === "function") {
-      map.set("ps-x-reach-end", onPsXReachEnd);
-    }
-
-    if (typeof onPsYReachStart === "function") {
-      map.set("ps-y-reach-start", onPsYReachStart);
-    }
-
-    if (typeof onPsYReachEnd === "function") {
-      map.set("ps-y-reach-end", onPsYReachEnd);
-    }
+    map.set("ps-scroll-x", onPsScrollX);
+    map.set("ps-scroll-y", onPsScrollY);
+    map.set("ps-scroll-up", onPsScrollUp);
+    map.set("ps-scroll-down", onPsScrollDown);
+    map.set("ps-scroll-left", onPsScrollLeft);
+    map.set("ps-scroll-right", onPsScrollRight);
+    map.set("ps-x-reach-start", onPsXReachStart);
+    map.set("ps-x-reach-end", onPsXReachEnd);
+    map.set("ps-y-reach-start", onPsYReachStart);
+    map.set("ps-y-reach-end", onPsYReachEnd);
 
     const controller = new AbortController();
 
     map.forEach((handler, name) => {
+      if (typeof handler !== "function") {
+        return;
+      }
+
       containerEl.addEventListener(name, handler, {
         signal: controller.signal,
       });
@@ -160,14 +130,20 @@ export function ScrollView(props: Props) {
       ref={containerRef}
       position={"relative"}
       height={"100%"}
+      sx={{
+        "&.ps--active-x > *": {
+          width: "fit-content",
+        },
+        "&.ps--active-y > *": {
+          height: "fit-content",
+        },
+      }}
       {...restProps}
     >
       <Box
         ref={contentRef}
         sx={{
-          width: "fit-content",
           minWidth: "100%",
-          height: "fit-content",
           minHeight: "100%",
         }}
       >

@@ -1,4 +1,5 @@
-import { TextField } from "@mui/material";
+import { RefreshOutlined } from "@mui/icons-material";
+import { TextField, InputAdornment, IconButton } from "@mui/material";
 import localforage from "localforage";
 import React from "react";
 import { Translation } from "react-i18next";
@@ -10,8 +11,14 @@ export function AsyncStore() {
   const value = useAsyncStore((store) => store.value);
   const setValue = useAsyncStore((store) => store.setValue);
 
+  const isPending = React.useSyncExternalStore(
+    (onStoreChange) => useAsyncStore.persist.onFinishHydration(onStoreChange),
+    () => !useAsyncStore.persist.hasHydrated(),
+  );
+
   return (
     <TextField
+      disabled={isPending}
       value={value}
       onChange={(evt) => {
         setValue(evt.target.value);
@@ -21,6 +28,25 @@ export function AsyncStore() {
         <Translation ns="InputLabel">{(t) => t("async storage")}</Translation>
       }
       InputLabelProps={{ sx: { textTransform: "capitalize" } }}
+      helperText={
+        <Translation ns="FormHelperText">
+          {(t) => t(isPending ? "pending..." : "finish hydration")}
+        </Translation>
+      }
+      InputProps={{
+        endAdornment: (
+          <InputAdornment position="end">
+            <IconButton
+              disabled={isPending}
+              onClick={() => {
+                useAsyncStore.persist.rehydrate();
+              }}
+            >
+              <RefreshOutlined />
+            </IconButton>
+          </InputAdornment>
+        ),
+      }}
     />
   );
 }

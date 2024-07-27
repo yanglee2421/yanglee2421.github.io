@@ -72,18 +72,17 @@ export function Login() {
         </Typography>
         <Stack
           component={"form"}
-          onSubmit={async (evt) => {
+          onSubmit={(evt) => {
             evt.preventDefault();
-            await form.handleSubmit();
+            evt.stopPropagation();
+            form.handleSubmit();
 
             if (!import.meta.env.DEV) {
               return;
             }
 
             const errorEntries = Object.entries(form.state.fieldMeta)
-              .map(([key, value]) => {
-                return [key, value.errors];
-              })
+              .map(([key, value]) => [key, value.errors])
               .filter(([, error]) => error.length);
 
             if (!errorEntries.length) {
@@ -110,7 +109,7 @@ export function Login() {
         >
           <form.Field
             name="email"
-            validatorAdapter={zodValidator}
+            validatorAdapter={zodValidator()}
             validators={{ onChange: z.string().email() }}
             defaultValue=""
           >
@@ -131,7 +130,7 @@ export function Login() {
           </form.Field>
           <form.Field
             name="password"
-            validatorAdapter={zodValidator}
+            validatorAdapter={zodValidator()}
             validators={{
               onChange: z.string().min(8).max(16),
             }}

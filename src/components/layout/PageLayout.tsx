@@ -2,6 +2,9 @@ import {
   NotificationsOutlined,
   FavoriteBorderOutlined,
   SearchOutlined,
+  HomeOutlined,
+  Grid3x3Outlined,
+  QuestionAnswerOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -23,13 +26,10 @@ import { UserDropdown } from "@/components/shared/UserDropdown";
 import { Materio } from "@/components/svg/Materio";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useIsScrolled } from "@/hooks/dom/useIsScrolled";
-import { useAuthStore } from "@/hooks/store/useAuthStore";
 import { NavMenuButton } from "./NavMenuButton";
 import type { Theme } from "@mui/material";
 
 export function PageLayout(props: React.PropsWithChildren) {
-  const currentUser = useAuthStore((state) => state.value.auth.currentUser);
-
   const isScrolled = useIsScrolled();
 
   const [showMenu, setShowMenu] = React.useState(false);
@@ -42,45 +42,31 @@ export function PageLayout(props: React.PropsWithChildren) {
     setShowMenu(false);
   }
 
-  if (!currentUser) {
-    return null;
-  }
-
   return (
     <Box
       sx={{
-        display: "grid",
-        gridTemplateColumns: { xs: "1fr", md: "16rem 1fr" },
+        display: "flex",
       }}
     >
-      <Box
-        component={"aside"}
-        sx={{
-          position: "sticky",
-          insetBlock: 0,
-          blockSize: "100dvh",
-
-          display: { xs: "none", md: "flex" },
-          flexDirection: "column",
-
-          borderRight(theme) {
-            return "1px solid " + theme.palette.divider;
-          },
-        }}
-      >
+      {/* Aside */}
+      <StyledAside sx={{ insetInlineStart: { xs: showMenu ? 0 : "-100%" } }}>
         <Box
           sx={{
             display: "flex",
             alignItems: "center",
             gap: 3,
 
-            paddingInline: 4,
+            paddingInline: 5,
             paddingBlock: 2,
 
             fontSize: 22,
 
             borderBottom(theme) {
               return "1px solid " + theme.palette.divider;
+            },
+
+            boxShadow(theme) {
+              return theme.shadows[1];
             },
           }}
         >
@@ -96,15 +82,76 @@ export function PageLayout(props: React.PropsWithChildren) {
         </Box>
 
         <Box sx={{ flex: 1, overflow: "hidden" }}>
-          <ScrollView options={{ wheelPropagation: false }}>
-            <Box height={2000}>
-              <StyledNavLink to={{ pathname: "/" }}>home</StyledNavLink>
+          <ScrollView
+            options={{ wheelPropagation: false, suppressScrollX: true }}
+          >
+            <Box
+              height={2000}
+              sx={{
+                "& > * + *": {
+                  marginBlockStart: 2,
+                },
+              }}
+            >
+              <StyledNavLink to={{ pathname: "/" }}>
+                <HomeOutlined sx={{ marginInlineEnd: 2 }} />
+                <span>home</span>
+              </StyledNavLink>
+              <StyledNavLink to={{ pathname: "/table" }}>
+                <Grid3x3Outlined sx={{ marginInlineEnd: 2 }} />
+                <span>table</span>
+              </StyledNavLink>
+              <StyledNavLink to={{ pathname: "/chat" }}>
+                <QuestionAnswerOutlined sx={{ marginInlineEnd: 2 }} />
+                <span>chat</span>
+              </StyledNavLink>
+              <Box
+                sx={{
+                  display: "flex",
+                  gap: 2.5,
+                  alignItems: "center",
+                  paddingBlock: 1.5,
+
+                  "&::before": {
+                    content: '""',
+                    blockSize: 1,
+                    inlineSize(theme) {
+                      return theme.typography.body1.fontSize;
+                    },
+                    backgroundColor(theme) {
+                      return theme.palette.divider;
+                    },
+                  },
+
+                  "&::after": {
+                    content: '""',
+                    blockSize: 1,
+                    flexGrow: 1,
+                    backgroundColor(theme) {
+                      return theme.palette.divider;
+                    },
+                  },
+                }}
+              >
+                <Typography
+                  variant="body2"
+                  sx={{
+                    color(theme) {
+                      return theme.palette.text.disabled;
+                    },
+                  }}
+                >
+                  Page Group
+                </Typography>
+              </Box>
               <StyledNavLink to={{ pathname: "/404" }}>404</StyledNavLink>
             </Box>
           </ScrollView>
         </Box>
-      </Box>
-      <Box sx={{ width: "100%" }}>
+      </StyledAside>
+
+      {/* Main Wapper */}
+      <Box sx={{ inlineSize: "100%" }}>
         <Box
           component={"header"}
           sx={{
@@ -189,34 +236,28 @@ export function PageLayout(props: React.PropsWithChildren) {
         </Box>
         <SwitchTransition>
           <Fade key={1} unmountOnExit>
-            <Box
-              component={"main"}
-              sx={{
-                display: showMenu ? "none" : "block",
-                px: { xs: 2, md: 3 },
-              }}
-            >
-              {props.children}
-            </Box>
+            <main>
+              <Box sx={{ padding: 4 }}>{props.children}</Box>
+            </main>
           </Fade>
         </SwitchTransition>
-        {showMenu && <Box sx={{ height: 1000 }}>menu list</Box>}
-        <Box
-          component={"footer"}
-          sx={{
-            paddingInline: 2,
-            paddingBlock: 4,
-          }}
-        >
-          &copy; 2024, Made with ❤️ by{" "}
-          <Link
-            href="https://github.com/yanglee2421"
-            target="https://github.com/yanglee2421"
-            underline="hover"
+        <footer>
+          <Box
+            sx={{
+              paddingInline: 5,
+              paddingBlock: 2,
+            }}
           >
-            YangLee2421
-          </Link>
-        </Box>
+            &copy; 2024, Made with ❤️ by{" "}
+            <Link
+              href="https://github.com/yanglee2421"
+              target="https://github.com/yanglee2421"
+              underline="hover"
+            >
+              YangLee2421
+            </Link>
+          </Box>
+        </footer>
       </Box>
     </Box>
   );
@@ -225,19 +266,48 @@ export function PageLayout(props: React.PropsWithChildren) {
 const StyledNavLink = styled(NavLink)(({ theme }) => {
   return {
     display: "flex",
+    alignItems: "center",
     paddingBlock: theme.spacing(2),
     paddingInline: theme.spacing(4),
 
-    color: "inherit",
-    fontSize: theme.typography.h6.fontSize,
+    borderStartEndRadius: 9999,
+    borderEndEndRadius: 9999,
+
+    color: theme.palette.text.primary,
+    fontSize: theme.typography.body1.fontSize,
     textTransform: "uppercase",
     textDecoration: "none",
 
-    "&.active": {
-      color: theme.palette.primary.main,
-    },
     "&:hover": {
-      backgroundColor: alpha(theme.palette.primary.main, 0.15),
+      backgroundColor: theme.palette.action.disabledBackground,
     },
+
+    "&.active": {
+      backgroundColor: theme.palette.primary.main,
+      color: theme.palette.primary.contrastText,
+    },
+  };
+});
+
+const StyledAside = styled("aside")(({ theme }) => {
+  return {
+    position: ["absolute", "sticky"],
+    insetBlock: 0,
+    zIndex: theme.zIndex.drawer,
+    transition: theme.transitions.create("inset-inline-start"),
+
+    flexGrow: 0,
+    flexShrink: 0,
+    display: "flex",
+    flexDirection: "column",
+
+    inlineSize: ["100%", theme.spacing(72)],
+    blockSize: "100dvh",
+
+    borderInlineEndWidth: [0, 1],
+    borderInlineEndStyle: "solid",
+    borderInlineEndColor: theme.palette.divider,
+
+    backgroundColor: theme.palette.background.default,
   };
 });
