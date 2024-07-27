@@ -7,7 +7,7 @@ export function Component() {
 
   return (
     <GuestGuard>
-      <SignUp></SignUp>
+      <SignUp />
     </GuestGuard>
   );
 }
