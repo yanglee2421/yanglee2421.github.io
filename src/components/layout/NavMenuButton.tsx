@@ -13,7 +13,7 @@ export function NavMenuButton(props: Props) {
             onChange();
           });
         }}
-        sx={{ display: { md: "none" } }}
+        sx={{ display: { sm: "none" } }}
       >
         {open ? <CloseOutlined /> : <MenuOutlined />}
       </IconButton>

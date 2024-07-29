@@ -5,6 +5,7 @@ import {
   HomeOutlined,
   Grid3x3Outlined,
   QuestionAnswerOutlined,
+  CloseOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -71,6 +72,14 @@ export function PageLayout(props: React.PropsWithChildren) {
           >
             materio
           </Typography>
+          <IconButton
+            onClick={() => {
+              setShowMenu(false);
+            }}
+            sx={{ display: { sm: "none" }, marginInlineStart: "auto" }}
+          >
+            <CloseOutlined />
+          </IconButton>
         </Box>
 
         <Box sx={{ flex: 1, overflow: "hidden" }}>
@@ -265,7 +274,7 @@ const StyledAppWrapper = styled("div")(({ theme }) => {
 
 const StyledAside = styled("aside")(({ theme }) => {
   return {
-    position: ["absolute", "sticky"],
+    position: "absolute",
     insetBlock: 0,
     zIndex: theme.zIndex.drawer,
     transition: theme.transitions.create("inset-inline-start"),
@@ -275,14 +284,20 @@ const StyledAside = styled("aside")(({ theme }) => {
     display: "flex",
     flexDirection: "column",
 
-    inlineSize: ["100%", theme.spacing(72)],
+    inlineSize: "100%",
     blockSize: "100dvh",
 
-    borderInlineEndWidth: [0, 1],
+    borderInlineEndWidth: 0,
     borderInlineEndStyle: "solid",
     borderInlineEndColor: theme.palette.divider,
 
     backgroundColor: theme.palette.background.default,
+
+    [theme.breakpoints.up("sm")]: {
+      position: "sticky",
+      inlineSize: theme.spacing(72),
+      borderInlineEndWidth: 1,
+    },
   };
 });
 
@@ -298,9 +313,10 @@ const StyledHeader = styled("header")(({ theme }) => {
     zIndex: theme.zIndex.appBar,
 
     display: "flex",
-    paddingBlock: theme.spacing(2),
 
     borderBottom: "1px solid " + theme.palette.divider,
+
+    paddingBlock: theme.spacing(2),
 
     transition: theme.transitions.create([
       "padding",
@@ -311,7 +327,9 @@ const StyledHeader = styled("header")(({ theme }) => {
 });
 
 const StyledMain = styled("main")(({ theme }) => {
-  return { padding: theme.spacing(5) };
+  return {
+    padding: theme.spacing(5),
+  };
 });
 
 const StyledFooter = styled("footer")(({ theme }) => {

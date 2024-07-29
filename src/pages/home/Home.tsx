@@ -12,6 +12,7 @@ import {
   Stack,
   alpha,
   IconButton,
+  styled,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
@@ -158,65 +159,73 @@ export function Home() {
         <TipTap value={html} onChange={setHtml} />
       </Grid>
       <Grid item xs={12}>
-        <Box sx={{ padding: 3 }}>
-          <Box
-            sx={{
-              border(theme) {
-                return "1px solid " + theme.palette.divider;
-              },
-              paddingInline: 3.5,
-              paddingBlock: 2,
-              borderRadius(theme) {
-                return theme.shape.borderRadius + "px";
-              },
+        <StyledForm>
+          <InputBase
+            value={chatInput}
+            onChange={(evt) => {
+              setChatInput(evt.target.value);
             }}
-          >
-            <InputBase
-              value={chatInput}
-              onChange={(evt) => {
-                setChatInput(evt.target.value);
+            onKeyDown={(evt) => {
+              if (evt.key !== "Enter") {
+                return;
+              }
+
+              if (evt.ctrlKey || evt.altKey || evt.shiftKey) {
+                setChatInput((prev) => prev.concat("\n"));
+                return;
+              }
+
+              evt.preventDefault();
+              chatInput.trim() && window.alert(chatInput.trim());
+            }}
+            fullWidth
+            multiline
+            maxRows={6}
+            placeholder="chat message here..."
+          />
+          <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+            <Box
+              sx={{
+                display: "flex",
+                gap(theme) {
+                  return theme.spacing(1);
+                },
               }}
-              multiline
-              placeholder="chat message here..."
-            />
-            <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-              <Box
-                sx={{
-                  display: "flex",
-                  gap(theme) {
-                    return theme.spacing(1);
-                  },
-                }}
-              >
-                <IconButton
-                  sx={{
-                    bgcolor(theme) {
-                      return theme.palette.action.selected;
-                    },
-                  }}
-                >
-                  <AddOutlined />
-                </IconButton>
-                <IconButton>
-                  <AddReactionOutlined />
-                </IconButton>
-              </Box>
+            >
               <IconButton
                 sx={{
-                  marginInlineStart: "auto",
-                  color(theme) {
-                    return theme.palette.primary.main;
+                  bgcolor(theme) {
+                    return theme.palette.action.selected;
                   },
                 }}
               >
-                <SendOutlined color="inherit" />
+                <AddOutlined />
+              </IconButton>
+              <IconButton>
+                <AddReactionOutlined />
               </IconButton>
             </Box>
+            <IconButton
+              sx={{
+                marginInlineStart: "auto",
+              }}
+            >
+              <SendOutlined color="primary" />
+            </IconButton>
           </Box>
-        </Box>
+        </StyledForm>
       </Grid>
     </Grid>
   );
 }
 
 const bgImgHref = new URL(bgImg, import.meta.url).href;
+
+const StyledForm = styled("form")(({ theme }) => {
+  return {
+    border: "1px solid " + theme.palette.divider,
+    paddingInline: theme.spacing(3.5),
+    paddingBlock: theme.spacing(2),
+    borderRadius: theme.shape.borderRadius,
+  };
+});
