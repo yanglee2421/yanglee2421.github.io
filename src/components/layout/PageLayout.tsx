@@ -6,6 +6,7 @@ import {
   Grid3x3Outlined,
   QuestionAnswerOutlined,
   CloseOutlined,
+  ScienceOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -96,15 +97,19 @@ export function PageLayout(props: React.PropsWithChildren) {
             >
               <StyledNavLink to={{ pathname: "/" }}>
                 <HomeOutlined sx={{ marginInlineEnd: 2 }} />
-                <span>home</span>
+                <span>Home</span>
               </StyledNavLink>
               <StyledNavLink to={{ pathname: "/table" }}>
                 <Grid3x3Outlined sx={{ marginInlineEnd: 2 }} />
-                <span>table</span>
+                <span>Table</span>
               </StyledNavLink>
               <StyledNavLink to={{ pathname: "/chat" }}>
                 <QuestionAnswerOutlined sx={{ marginInlineEnd: 2 }} />
-                <span>chat</span>
+                <span>Chat</span>
+              </StyledNavLink>
+              <StyledNavLink to={{ pathname: "/lab" }}>
+                <ScienceOutlined sx={{ marginInlineEnd: 2 }} />
+                <span>Lab</span>
               </StyledNavLink>
               <Box
                 sx={{
