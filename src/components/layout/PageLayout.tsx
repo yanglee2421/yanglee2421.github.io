@@ -88,14 +88,7 @@ export function PageLayout(props: React.PropsWithChildren) {
           <ScrollView
             options={{ wheelPropagation: false, suppressScrollX: true }}
           >
-            <Box
-              height={2000}
-              sx={{
-                "& > * + *": {
-                  marginBlockStart: 2,
-                },
-              }}
-            >
+            <Box>
               <StyledNavLink to={{ pathname: "/" }}>
                 <HomeOutlined sx={{ marginInlineEnd: 2 }} />
                 <span>Home</span>
@@ -252,8 +245,10 @@ const StyledNavLink = styled(NavLink)(({ theme }) => {
   return {
     display: "flex",
     alignItems: "center",
+
     paddingBlock: theme.spacing(2),
     paddingInline: theme.spacing(4),
+    marginBlockStart: theme.spacing(2),
 
     borderStartEndRadius: 9999,
     borderEndEndRadius: 9999,
