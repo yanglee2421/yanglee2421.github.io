@@ -7,6 +7,7 @@ import {
   QuestionAnswerOutlined,
   CloseOutlined,
   ScienceOutlined,
+  NotListedLocationOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -150,7 +151,10 @@ export function PageLayout(props: React.PropsWithChildren) {
                   Page Group
                 </Typography>
               </Box>
-              <StyledNavLink to={{ pathname: "/404" }}>404</StyledNavLink>
+              <StyledNavLink to={{ pathname: "/404" }}>
+                <NotListedLocationOutlined sx={{ marginInlineEnd: 2 }} />
+                <span>404</span>
+              </StyledNavLink>
             </Box>
           </ScrollView>
         </Box>
