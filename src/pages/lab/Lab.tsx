@@ -1,5 +1,13 @@
 import { CloseOutlined, VisibilityOutlined } from "@mui/icons-material";
-import { alpha, Backdrop, Box, IconButton, styled } from "@mui/material";
+import {
+  alpha,
+  Backdrop,
+  Box,
+  IconButton,
+  styled,
+  Typography,
+  Link,
+} from "@mui/material";
 import React from "react";
 import justHer from "@/assets/images/justHer.jpg";
 import { PageLayout } from "@/components/layout/PageLayout";
@@ -13,6 +21,17 @@ export function Lab() {
 
   return (
     <PageLayout>
+      <div>
+        <Typography variant="h4">ApexCharts</Typography>
+        <Typography>
+          <code>react-apexcharts</code> is a third-party library. Please refer
+          to its{" "}
+          <Link href="https://apexcharts.com" target="_blank">
+            official documentation
+          </Link>{" "}
+          for more details.
+        </Typography>
+      </div>
       <Box
         sx={{
           position: "relative",

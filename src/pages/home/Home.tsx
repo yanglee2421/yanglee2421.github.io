@@ -13,6 +13,8 @@ import {
   alpha,
   IconButton,
   styled,
+  Typography,
+  Link,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
@@ -35,6 +37,17 @@ export function Home() {
 
   return (
     <Grid container spacing={{ xs: 3, md: 4 }}>
+      <Grid item xs={12}>
+        <Typography variant="h4">ApexCharts</Typography>
+        <Typography>
+          <code>react-apexcharts</code> is a third-party library. Please refer
+          to its{" "}
+          <Link href="https://apexcharts.com" target="_blank">
+            official documentation
+          </Link>{" "}
+          for more details.
+        </Typography>
+      </Grid>
       <Grid item xs={12}>
         <Box
           sx={{

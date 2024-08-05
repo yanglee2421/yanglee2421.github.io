@@ -12,6 +12,7 @@ import {
   Divider,
   Typography,
   Paper,
+  Link,
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
 import { codeToHtml } from "shiki";
@@ -25,7 +26,17 @@ export function Chat() {
   return (
     <PageLayout>
       <Box>
-        <div></div>
+        <div>
+          <Typography variant="h4">ApexCharts</Typography>
+          <Typography>
+            <code>react-apexcharts</code> is a third-party library. Please refer
+            to its{" "}
+            <Link href="https://apexcharts.com" target="_blank">
+              official documentation
+            </Link>{" "}
+            for more details.
+          </Typography>
+        </div>
         <div>
           <div>
             <Avatar></Avatar>
