@@ -308,7 +308,12 @@ const StyledAside = styled("aside")(({ theme }) => {
 
 const StyledMainWrapper = styled("div")({
   flexBasis: "100%",
+
+  display: "flex",
+  flexDirection: "column",
+
   minWidth: 0,
+  minHeight: "100dvh",
 });
 
 const StyledHeader = styled("header")(({ theme }) => {
@@ -334,6 +339,7 @@ const StyledHeader = styled("header")(({ theme }) => {
 const StyledMain = styled("main")(({ theme }) => {
   return {
     padding: theme.spacing(5),
+    flexGrow: 1,
   };
 });
 
@@ -341,5 +347,7 @@ const StyledFooter = styled("footer")(({ theme }) => {
   return {
     paddingInline: theme.spacing(5),
     paddingBlock: theme.spacing(2),
+
+    borderTop: "1px solid " + theme.palette.divider,
   };
 });
