@@ -21,14 +21,15 @@ import {
   Divider,
   styled,
 } from "@mui/material";
+import { signOut, getAuth } from "firebase/auth";
 import React from "react";
 import { Translation } from "react-i18next";
-import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { app } from "@/api/firebase/app";
+import { useCurrentUser } from "@/hooks/store/useCurrentUser";
 import { stringToColor } from "@/utils/stringToColor";
 
 export function UserDropdown() {
-  const currentUser = useAuthStore((state) => state.value.auth.currentUser);
-  const auth = useAuthStore((state) => state.value.auth);
+  const currentUser = useCurrentUser();
 
   const [anchorEl, setAnchorEl] = React.useState<HTMLElement | null>(null);
 
@@ -174,7 +175,7 @@ export function UserDropdown() {
                     >
                       <Button
                         onClick={() => {
-                          auth.signOut();
+                          signOut(getAuth(app));
                         }}
                         fullWidth
                         color="error"

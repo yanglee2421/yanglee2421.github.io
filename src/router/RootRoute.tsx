@@ -7,7 +7,7 @@ import {
   useNavigation,
   ScrollRestoration,
 } from "react-router-dom";
-import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { useCurrentUser } from "@/hooks/store/useCurrentUser";
 import { AclContext } from "@/hooks/useAcl";
 import { defineAbilityFor } from "@/libs/defineAbilityFor";
 
@@ -16,7 +16,8 @@ export function RootRoute() {
   const navigation = useNavigation();
   const { i18n } = useTranslation();
   const [searchParams] = useSearchParams({ lang: "en" });
-  const authValue = useAuthStore((store) => store.value);
+
+  const currentUser = useCurrentUser();
 
   const lang = searchParams.get("lang");
 
@@ -42,7 +43,7 @@ export function RootRoute() {
 
   return (
     <AclContext.Provider
-      value={defineAbilityFor(authValue.auth.currentUser ? "admin" : "guest")}
+      value={defineAbilityFor(currentUser ? "admin" : "guest")}
     >
       {outlet}
       <ScrollRestoration />

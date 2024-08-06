@@ -89,8 +89,8 @@ export function configToPalette(params: PaletteConfig): PaletteOptions {
     },
 
     background: {
-      default: "#F4F5FA",
-      paper: whiteColor,
+      // default: "#F4F5FA",
+      // paper: whiteColor,
     },
   };
 }
