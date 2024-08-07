@@ -70,10 +70,7 @@ function themeToGlobalStyles(theme: Theme): GlobalStylesProps["styles"] {
       inlineSize: "100%",
       blockSize: 3,
 
-      backgroundColor:
-        theme.palette.mode === "dark"
-          ? theme.palette.primary.dark
-          : theme.palette.primary.light,
+      backgroundColor: theme.palette.primary.main,
     },
   };
 }

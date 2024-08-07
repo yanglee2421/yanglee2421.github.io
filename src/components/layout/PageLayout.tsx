@@ -18,7 +18,6 @@ import {
   Stack,
   Typography,
   Fade,
-  useMediaQuery,
 } from "@mui/material";
 import React from "react";
 import { NavLink } from "react-router-dom";
@@ -30,20 +29,11 @@ import { Materio } from "@/components/svg/Materio";
 import { ScrollView } from "@/components/ui/ScrollView";
 import { useIsScrolled } from "@/hooks/dom/useIsScrolled";
 import { NavMenuButton } from "./NavMenuButton";
-import type { Theme } from "@mui/material";
 
 export function PageLayout(props: React.PropsWithChildren) {
   const isScrolled = useIsScrolled();
 
   const [showMenu, setShowMenu] = React.useState(false);
-
-  const mediumScreen = useMediaQuery<Theme>((theme) => {
-    return theme.breakpoints.up("md");
-  });
-
-  if (mediumScreen && showMenu) {
-    setShowMenu(false);
-  }
 
   return (
     <StyledAppWrapper>
@@ -62,6 +52,12 @@ export function PageLayout(props: React.PropsWithChildren) {
 
             borderBottom(theme) {
               return "1px solid " + theme.palette.divider;
+            },
+
+            "& svg": {
+              color(theme) {
+                return theme.palette.primary.main;
+              },
             },
           }}
         >
@@ -280,7 +276,7 @@ const StyledAside = styled("aside")(({ theme }) => {
   return {
     position: "absolute",
     insetBlock: 0,
-    zIndex: theme.zIndex.drawer,
+    zIndex: theme.zIndex.mobileStepper,
     transition: theme.transitions.create("inset-inline-start"),
 
     flexGrow: 0,

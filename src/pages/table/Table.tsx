@@ -188,10 +188,6 @@ export function Table() {
                               header.id === "selection" ? "checkbox" : "normal"
                             }
                             width={header.getSize()}
-                            sx={{
-                              position: "relative",
-                              bgcolor: "#f6f7fb",
-                            }}
                           >
                             {canSort ? (
                               <TableSortLabel
