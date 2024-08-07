@@ -3,6 +3,7 @@ import { getAuth } from "firebase/auth";
 import React from "react";
 import { app } from "@/api/firebase/app";
 import { useCurrentUser } from "@/hooks/store/useCurrentUser";
+import { Loading } from "./Loading";
 import { NavigateToHome } from "./NavigateToHome";
 
 export function GuestGuard(props: React.PropsWithChildren) {
@@ -18,11 +19,11 @@ export function GuestGuard(props: React.PropsWithChildren) {
   });
 
   if (query.isPending) {
-    return <div>loading...</div>;
+    return <Loading />;
   }
 
   if (query.isError) {
-    return <div>{query.error.message}</div>;
+    return props.children;
   }
 
   if (currentUser) {
