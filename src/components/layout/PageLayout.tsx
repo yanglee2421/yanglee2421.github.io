@@ -8,6 +8,7 @@ import {
   CloseOutlined,
   ScienceOutlined,
   NotListedLocationOutlined,
+  SwipeOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -100,6 +101,10 @@ export function PageLayout(props: React.PropsWithChildren) {
               <StyledNavLink to={{ pathname: "/lab" }}>
                 <ScienceOutlined sx={{ marginInlineEnd: 2 }} />
                 <span>Lab</span>
+              </StyledNavLink>
+              <StyledNavLink to={{ pathname: "/swiper" }}>
+                <SwipeOutlined sx={{ marginInlineEnd: 2 }} />
+                <span>swiper</span>
               </StyledNavLink>
               <Box
                 sx={{
@@ -309,6 +314,10 @@ const StyledMainWrapper = styled("div")({
 
   minWidth: 0,
   minHeight: "100dvh",
+
+  "&:has(.contentFixed)": {
+    height: "100dvh",
+  },
 });
 
 const StyledHeader = styled("header")(({ theme }) => {
@@ -335,6 +344,10 @@ const StyledMain = styled("main")(({ theme }) => {
   return {
     padding: theme.spacing(5),
     flexGrow: 1,
+
+    "&:has(.contentFixed)": {
+      minHeight: 0,
+    },
   };
 });
 

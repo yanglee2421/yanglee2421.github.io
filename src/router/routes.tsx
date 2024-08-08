@@ -24,6 +24,7 @@ export const routes = createRoutesFromElements(
         };
       }}
     />
+    {/* Guest Pages */}
     <Route
       id="login"
       path="login"
@@ -39,6 +40,8 @@ export const routes = createRoutesFromElements(
       path="forgot-password"
       lazy={() => import("@/pages/forgot-password/Component")}
     />
+
+    {/* Auth Pages */}
     <Route id="home" index lazy={() => import("@/pages/home/Component")} />
     <Route
       id="charts"
@@ -74,6 +77,11 @@ export const routes = createRoutesFromElements(
 
         return { Component: Lab };
       }}
+    />
+    <Route
+      id="swiper"
+      path="swiper"
+      lazy={() => import("@/pages/swiper/Component")}
     />
   </Route>,
 );
