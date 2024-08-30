@@ -1,8 +1,6 @@
-import { Button } from "@mui/material";
 import { useMutation } from "@tanstack/react-query";
 import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
 import { app } from "@/api/firebase/app";
-import { Github } from "@/components/svg/Github";
 
 export function SignInWithGithub() {
   const mutation = useMutation({
@@ -12,20 +10,13 @@ export function SignInWithGithub() {
   });
 
   return (
-    <Button
+    <button
       onClick={() => {
         mutation.mutate();
       }}
       disabled={mutation.isPending}
-      startIcon={<Github width={26} height={26} />}
-      sx={{
-        fontWeight: 400,
-        "& .MuiButton-startIcon": {
-          marginInlineEnd: 3,
-        },
-      }}
     >
       Sign in with Github
-    </Button>
+    </button>
   );
 }

@@ -1,4 +1,3 @@
-import { Paper, Typography, Button } from "@mui/material";
 import React from "react";
 import { AnimateController } from "@/libs/AnimateController";
 import { timeout } from "@/utils/timeout";

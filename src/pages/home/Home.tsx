@@ -1,16 +1,3 @@
-import {
-  Box,
-  Grid2 as Grid,
-  Paper,
-  Stack,
-  alpha,
-  Typography,
-  Link,
-  Card,
-  CardContent,
-  CardHeader,
-} from "@mui/material";
-import { grey } from "@mui/material/colors";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
 import { AsyncStore } from "./AyncStore";
