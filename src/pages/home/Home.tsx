@@ -1,6 +1,6 @@
 import {
   Box,
-  Grid,
+  Grid2 as Grid,
   Paper,
   Stack,
   alpha,
@@ -27,7 +27,7 @@ export function Home() {
 
   return (
     <Grid container spacing={{ xs: 3, md: 4 }}>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Typography variant="h4">ApexCharts</Typography>
         <Typography>
           <code>react-apexcharts</code> is a third-party library. Please refer
@@ -38,7 +38,7 @@ export function Home() {
           for more details.
         </Typography>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Box
           sx={{
             position: "relative",
@@ -88,17 +88,17 @@ export function Home() {
         </Box>
       </Grid>
 
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Calendar />
       </Grid>
 
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid size={{ xs: 12, sm: 6, md: 3 }}>
         <RollCard />
       </Grid>
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid size={{ xs: 12, sm: 6, md: 4 }}>
         <Countdown />
       </Grid>
-      <Grid item xs={12} sm={6} md={4}>
+      <Grid size={{ xs: 12, sm: 6, md: 5 }}>
         <Paper sx={{ p: 3 }}>
           <Stack spacing={3}>
             <InputNumber
@@ -112,7 +112,7 @@ export function Home() {
           </Stack>
         </Paper>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Card>
           <CardHeader title="read only" />
           <CardContent>
@@ -120,7 +120,7 @@ export function Home() {
           </CardContent>
         </Card>
       </Grid>
-      <Grid item xs={12}>
+      <Grid size={12}>
         <Card>
           <CardHeader title="editable" />
           <CardContent>
@@ -133,3 +133,16 @@ export function Home() {
 }
 
 const bgImgHref = new URL(bgImg, import.meta.url).href;
+
+const columns = 12;
+const gutter = 20;
+const width = 1200;
+const perColumnsWidth = (width - (columns - 1) * gutter) / columns;
+const c = 4;
+const blockWidth = c * perColumnsWidth + (c - 1) * gutter;
+
+function getWidthOfUnknowColumns(c: number) {
+  return (width * c) / columns - (columns - c) * (gutter / columns);
+}
+
+console.log(blockWidth, Object.is(blockWidth, getWidthOfUnknowColumns(4)));
