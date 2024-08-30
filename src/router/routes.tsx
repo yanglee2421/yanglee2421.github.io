@@ -49,11 +49,6 @@ export const routes = createRoutesFromElements(
       lazy={() => import("@/pages/charts/Component")}
     />
     <Route
-      id="newtab"
-      path="newtab"
-      lazy={() => import("@/pages/newtab/Component")}
-    />
-    <Route
       id="table"
       path="table"
       lazy={() => import("@/pages/table/Component")}
