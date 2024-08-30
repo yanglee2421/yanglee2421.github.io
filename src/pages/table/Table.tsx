@@ -12,7 +12,6 @@ import {
 } from "@tanstack/react-table";
 import React from "react";
 import { codeToHtml } from "shiki";
-import { ScrollView } from "@/components/ui/ScrollView";
 import { columns } from "./columns";
 import { data } from "./data";
 
@@ -108,102 +107,100 @@ export function Table() {
         export
       </a>
 
-      <ScrollView>
-        <table>
-          <thead>
-            {table.getHeaderGroups().map((headerGroup) => {
-              return (
-                <tr key={headerGroup.id}>
-                  {headerGroup.headers.map((header) => {
-                    const cellNode =
-                      header.isPlaceholder ||
-                      flexRender(
-                        header.column.columnDef.header,
-                        header.getContext(),
-                      );
+      <table>
+        <thead>
+          {table.getHeaderGroups().map((headerGroup) => {
+            return (
+              <tr key={headerGroup.id}>
+                {headerGroup.headers.map((header) => {
+                  const cellNode =
+                    header.isPlaceholder ||
+                    flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    );
 
+                  return (
+                    <th key={header.id} colSpan={header.colSpan}>
+                      {cellNode}
+                      {header.column.getCanFilter() && (
+                        <>
+                          <input
+                            value={header.column.getFilterValue() + ""}
+                            onChange={(evt) => {
+                              header.column.setFilterValue(evt.target.value);
+                            }}
+                            placeholder={`Search... (${header.column.getFacetedUniqueValues().size})`}
+                          />
+                          <datalist id={header.column.id}>
+                            {Array.from(
+                              header.column.getFacetedUniqueValues().keys(),
+                            )
+                              .sort()
+                              .map((item) => {
+                                return (
+                                  <option key={item} value={item}></option>
+                                );
+                              })}
+                          </datalist>
+                        </>
+                      )}
+                    </th>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </thead>
+        <tbody>
+          {table.getRowModel().rows.map((row) => {
+            return (
+              <React.Fragment key={row.id}>
+                <tr>
+                  {row.getVisibleCells().map((cell) => {
                     return (
-                      <th key={header.id} colSpan={header.colSpan}>
-                        {cellNode}
-                        {header.column.getCanFilter() && (
-                          <>
-                            <input
-                              value={header.column.getFilterValue() + ""}
-                              onChange={(evt) => {
-                                header.column.setFilterValue(evt.target.value);
-                              }}
-                              placeholder={`Search... (${header.column.getFacetedUniqueValues().size})`}
-                            />
-                            <datalist id={header.column.id}>
-                              {Array.from(
-                                header.column.getFacetedUniqueValues().keys(),
-                              )
-                                .sort()
-                                .map((item) => {
-                                  return (
-                                    <option key={item} value={item}></option>
-                                  );
-                                })}
-                            </datalist>
-                          </>
+                      <td key={cell.id}>
+                        {flexRender(
+                          cell.column.columnDef.cell,
+                          cell.getContext(),
                         )}
-                      </th>
+                      </td>
                     );
                   })}
                 </tr>
-              );
-            })}
-          </thead>
-          <tbody>
-            {table.getRowModel().rows.map((row) => {
-              return (
-                <React.Fragment key={row.id}>
+                {row.getIsExpanded() && (
                   <tr>
-                    {row.getVisibleCells().map((cell) => {
-                      return (
-                        <td key={cell.id}>
-                          {flexRender(
-                            cell.column.columnDef.cell,
-                            cell.getContext(),
-                          )}
-                        </td>
-                      );
-                    })}
+                    <td colSpan={columns.length}>
+                      <React.Suspense>
+                        <Code code={JSON.stringify(row.original, null, 2)} />
+                      </React.Suspense>
+                    </td>
                   </tr>
-                  {row.getIsExpanded() && (
-                    <tr>
-                      <td colSpan={columns.length}>
-                        <React.Suspense>
-                          <Code code={JSON.stringify(row.original, null, 2)} />
-                        </React.Suspense>
-                      </td>
-                    </tr>
-                  )}
-                </React.Fragment>
-              );
-            })}
-          </tbody>
-          <tfoot>
-            {table.getFooterGroups().map((footerGroup) => {
-              return (
-                <tr key={footerGroup.id}>
-                  {footerGroup.headers.map((header) => {
-                    return (
-                      <td key={header.id} colSpan={header.colSpan}>
-                        {header.isPlaceholder ||
-                          flexRender(
-                            header.column.columnDef.footer,
-                            header.getContext(),
-                          )}
-                      </td>
-                    );
-                  })}
-                </tr>
-              );
-            })}
-          </tfoot>
-        </table>
-      </ScrollView>
+                )}
+              </React.Fragment>
+            );
+          })}
+        </tbody>
+        <tfoot>
+          {table.getFooterGroups().map((footerGroup) => {
+            return (
+              <tr key={footerGroup.id}>
+                {footerGroup.headers.map((header) => {
+                  return (
+                    <td key={header.id} colSpan={header.colSpan}>
+                      {header.isPlaceholder ||
+                        flexRender(
+                          header.column.columnDef.footer,
+                          header.getContext(),
+                        )}
+                    </td>
+                  );
+                })}
+              </tr>
+            );
+          })}
+        </tfoot>
+      </table>
     </>
   );
 }
@@ -219,9 +216,5 @@ function Code(props: { code: string }) {
     },
   });
 
-  return (
-    <ScrollView>
-      <div dangerouslySetInnerHTML={{ __html: query.data }}></div>
-    </ScrollView>
-  );
+  return <div dangerouslySetInnerHTML={{ __html: query.data }}></div>;
 }

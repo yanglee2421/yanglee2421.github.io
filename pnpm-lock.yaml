@@ -53,9 +53,6 @@ importers:
       nprogress:
         specifier: ^0.2.0
         version: 0.2.0
-      perfect-scrollbar:
-        specifier: ^1.5.5
-        version: 1.5.5
       react:
         specifier: 19.0.0-rc-e56f4ae3-20240830
         version: 19.0.0-rc-e56f4ae3-20240830
@@ -2202,9 +2199,6 @@ packages:
   path-type@4.0.0:
     resolution: {integrity: sha512-gDKb8aZMDeD/tZWs9P6+q0J9Mwkdl6xMV8TjnGP3qJVJ06bdMgkbBlLU8IdfOsIsFz2BW1rNVT3XuNEl8zPAvw==}
     engines: {node: '>=8'}
-
-  perfect-scrollbar@1.5.5:
-    resolution: {integrity: sha512-dzalfutyP3e/FOpdlhVryN4AJ5XDVauVWxybSkLZmakFE2sS3y3pc4JnSprw8tGmHvkaG5Edr5T7LBTZ+WWU2g==}
 
   picocolors@1.0.1:
     resolution: {integrity: sha512-anP1Z8qwhkbmu7MFP5iTt+wQKXgwzf7zTyGlcdzabySa9vd0Xt392U0rVmz9poOaBj0uHJKyyo9/upk0HrEQew==}
@@ -5170,8 +5164,6 @@ snapshots:
   path-parse@1.0.7: {}
 
   path-type@4.0.0: {}
-
-  perfect-scrollbar@1.5.5: {}
 
   picocolors@1.0.1: {}
 
