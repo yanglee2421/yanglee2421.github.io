@@ -1,14 +1,10 @@
 import { useForm } from "@tanstack/react-form";
 import { zodValidator } from "@tanstack/zod-form-adapter";
-import {
-  getAuth,
-  GithubAuthProvider,
-  signInWithPopup,
-  signInWithEmailAndPassword,
-  GoogleAuthProvider,
-} from "firebase/auth";
+import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { z } from "zod";
+import { SignInWithGithub } from "@/components/shared/SignInWithGithub";
+import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
 
 export function Login() {
   const form = useForm({
@@ -117,20 +113,8 @@ export function Login() {
       <Link to={"/forgot-password"}>Forgot Password?</Link>
       <Link to={"/signup"}>Sign Up?</Link>
       <hr />
-      <button
-        onClick={() => {
-          signInWithPopup(getAuth(), new GithubAuthProvider());
-        }}
-      >
-        sign in with github
-      </button>
-      <button
-        onClick={() => {
-          signInWithPopup(getAuth(), new GoogleAuthProvider());
-        }}
-      >
-        sign in with google
-      </button>
+      <SignInWithGithub />
+      <SignInWithGoogle />
     </>
   );
 }

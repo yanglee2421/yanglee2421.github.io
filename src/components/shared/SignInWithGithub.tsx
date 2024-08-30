@@ -1,21 +1,14 @@
-import { useMutation } from "@tanstack/react-query";
 import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
+import React from "react";
 import { app } from "@/api/firebase/app";
 
 export function SignInWithGithub() {
-  const mutation = useMutation({
-    mutationFn() {
-      return signInWithPopup(getAuth(app), new GithubAuthProvider());
-    },
-  });
+  const [, action, isPending] = React.useActionState(() => {
+    return signInWithPopup(getAuth(app), new GithubAuthProvider());
+  }, null);
 
   return (
-    <button
-      onClick={() => {
-        mutation.mutate();
-      }}
-      disabled={mutation.isPending}
-    >
+    <button onClick={action} disabled={isPending}>
       Sign in with Github
     </button>
   );

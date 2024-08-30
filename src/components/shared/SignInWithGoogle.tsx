@@ -1,22 +1,25 @@
-import { useMutation } from "@tanstack/react-query";
 import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import React from "react";
 import { app } from "@/api/firebase/app";
 
 export function SignInWithGoogle() {
-  const mutation = useMutation({
-    mutationFn() {
-      return signInWithPopup(getAuth(app), new GoogleAuthProvider());
-    },
-  });
+  const [, action, isPending] = React.useActionState(() => {
+    return signInWithPopup(getAuth(app), new GoogleAuthProvider());
+  }, null);
 
   return (
-    <button
-      onClick={() => {
-        mutation.mutate();
-      }}
-      disabled={mutation.isPending}
-    >
-      Sign in with Google
-    </button>
+    <>
+      <button onClick={action} disabled={isPending}>
+        Sign in with Google
+      </button>
+      <button
+        onClick={() => {
+          signInWithPopup(getAuth(app), new GoogleAuthProvider());
+        }}
+        disabled={isPending}
+      >
+        Sign in with Google
+      </button>
+    </>
   );
 }

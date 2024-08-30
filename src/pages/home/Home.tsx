@@ -1,5 +1,6 @@
-import { getAuth, signOut } from "firebase/auth";
+import { signOut } from "firebase/auth";
 import React from "react";
+import { auth } from "@/api/firebase/auth";
 import bgImg from "@/assets/images/justHer.jpg";
 import { AsyncStore } from "./AyncStore";
 import { Calendar } from "./Calendar";
@@ -11,10 +12,16 @@ import { TipTap } from "./TipTap";
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
   const [html, setHtml] = React.useState("<p>hello world</p>");
+  const [, startTransition, isPending] = React.useActionState(
+    () => signOut(auth),
+    null,
+  );
 
   return (
     <>
-      <button onClick={() => signOut(getAuth())}>signout</button>
+      <button onClick={startTransition} disabled={isPending}>
+        signout
+      </button>
       <img src={bgImgHref} width={192} height={108} />
       <AsyncStore />
       <Calendar />
