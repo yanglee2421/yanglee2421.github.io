@@ -1,26 +1,29 @@
 import React from "react";
-import { useAuth } from "@/hooks/api-firebase/useAuth";
+import { authReady, auth } from "@/api/firebase/auth";
 import { Loading } from "./Loading";
 import { NavigateToLogin } from "./NavigateToLogin";
 
-export function AuthGuard(props: Props) {
-  const query = useAuth();
+export function AuthGuard(props: React.PropsWithChildren) {
+  return (
+    <React.Suspense fallback={<Loading />}>
+      <Content>{props.children}</Content>
+    </React.Suspense>
+  );
+}
 
-  if (query.isPending) {
-    return <Loading />;
-  }
+function Content(props: React.PropsWithChildren) {
+  React.use(authReady);
+  const currentUser = React.useSyncExternalStore(
+    (onStateChange) => {
+      return auth.onAuthStateChanged(onStateChange);
+    },
+    () => auth.currentUser,
+    () => null,
+  );
 
-  if (query.isError) {
+  if (!currentUser) {
     return <NavigateToLogin />;
   }
 
-  if (query.data.currentUser) {
-    return props.children;
-  }
-
-  return <NavigateToLogin />;
+  return props.children;
 }
-
-type Props = React.PropsWithChildren & {
-  fallback?: React.ReactNode;
-};

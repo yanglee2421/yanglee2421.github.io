@@ -1,3 +1,4 @@
+import { getAuth, signOut } from "firebase/auth";
 import React from "react";
 import bgImg from "@/assets/images/justHer.jpg";
 import { AsyncStore } from "./AyncStore";
@@ -9,11 +10,11 @@ import { TipTap } from "./TipTap";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
-
   const [html, setHtml] = React.useState("<p>hello world</p>");
 
   return (
     <>
+      <button onClick={() => signOut(getAuth())}>signout</button>
       <img src={bgImgHref} width={192} height={108} />
       <AsyncStore />
       <Calendar />

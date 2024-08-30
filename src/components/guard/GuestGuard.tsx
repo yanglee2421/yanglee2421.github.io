@@ -1,22 +1,29 @@
 import React from "react";
-import { useAuth } from "@/hooks/api-firebase/useAuth";
+import { authReady, auth } from "@/api/firebase/auth";
 import { Loading } from "./Loading";
 import { NavigateToHome } from "./NavigateToHome";
 
 export function GuestGuard(props: React.PropsWithChildren) {
-  const query = useAuth();
+  return (
+    <React.Suspense fallback={<Loading />}>
+      <Content>{props.children}</Content>
+    </React.Suspense>
+  );
+}
 
-  if (query.isPending) {
-    return <Loading />;
-  }
+function Content(props: React.PropsWithChildren) {
+  React.use(authReady);
+  const currentUser = React.useSyncExternalStore(
+    (onStateChange) => {
+      return auth.onAuthStateChanged(onStateChange);
+    },
+    () => auth.currentUser,
+    () => null,
+  );
 
-  if (query.isError) {
+  if (!currentUser) {
     return props.children;
   }
 
-  if (query.data.currentUser) {
-    return <NavigateToHome />;
-  }
-
-  return props.children;
+  return <NavigateToHome />;
 }
