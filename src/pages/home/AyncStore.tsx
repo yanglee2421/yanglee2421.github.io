@@ -1,8 +1,5 @@
-import { RefreshOutlined } from "@mui/icons-material";
-import { TextField, InputAdornment, IconButton } from "@mui/material";
 import localforage from "localforage";
 import React from "react";
-import { Translation } from "react-i18next";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { timeout } from "@/utils/timeout";
@@ -14,38 +11,15 @@ export function AsyncStore() {
   const isPending = React.useSyncExternalStore(
     (onStoreChange) => useAsyncStore.persist.onFinishHydration(onStoreChange),
     () => !useAsyncStore.persist.hasHydrated(),
+    () => false,
   );
 
   return (
-    <TextField
+    <input
       disabled={isPending}
       value={value}
       onChange={(evt) => {
         setValue(evt.target.value);
-      }}
-      fullWidth
-      label={
-        <Translation ns="InputLabel">{(t) => t("async storage")}</Translation>
-      }
-      InputLabelProps={{ sx: { textTransform: "capitalize" } }}
-      helperText={
-        <Translation ns="FormHelperText">
-          {(t) => t(isPending ? "pending..." : "finish hydration")}
-        </Translation>
-      }
-      InputProps={{
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton
-              disabled={isPending}
-              onClick={() => {
-                useAsyncStore.persist.rehydrate();
-              }}
-            >
-              <RefreshOutlined />
-            </IconButton>
-          </InputAdornment>
-        ),
       }}
     />
   );

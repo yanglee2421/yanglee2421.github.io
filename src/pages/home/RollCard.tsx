@@ -7,9 +7,9 @@ export function RollCard() {
   const [rolling, setRolling] = React.useState(false);
 
   return (
-    <Paper sx={{ padding: 3 }}>
-      <Typography variant="h1">{number}</Typography>
-      <Button
+    <div>
+      <p>{number}</p>
+      <button
         onClick={async () => {
           const controller = new AnimateController(() => {
             React.startTransition(() => {
@@ -24,10 +24,9 @@ export function RollCard() {
           setRolling(false);
         }}
         disabled={rolling}
-        variant="contained"
       >
         roll
-      </Button>
-    </Paper>
+      </button>
+    </div>
   );
 }

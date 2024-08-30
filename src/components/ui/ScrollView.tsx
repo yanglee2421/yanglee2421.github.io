@@ -1,8 +1,6 @@
-import { Box } from "@mui/material";
 import PerfectScrollbar from "perfect-scrollbar";
 import "perfect-scrollbar/css/perfect-scrollbar.css";
 import React from "react";
-import type { BoxProps } from "@mui/material";
 
 export function ScrollView(props: Props) {
   const {
@@ -126,34 +124,13 @@ export function ScrollView(props: Props) {
   ]);
 
   return (
-    <Box
-      ref={containerRef}
-      position={"relative"}
-      height={"100%"}
-      sx={{
-        "&.ps--active-x > *": {
-          width: "fit-content",
-        },
-        "&.ps--active-y > *": {
-          height: "fit-content",
-        },
-      }}
-      {...restProps}
-    >
-      <Box
-        ref={contentRef}
-        sx={{
-          minWidth: "100%",
-          minHeight: "100%",
-        }}
-      >
-        {children}
-      </Box>
-    </Box>
+    <div ref={containerRef} {...restProps}>
+      <div ref={contentRef}>{children}</div>
+    </div>
   );
 }
 
-type Props = BoxProps &
+type Props = React.PropsWithChildren &
   Partial<{
     options: PerfectScrollbar.Options;
     onPsScrollX(evt: Event): void;

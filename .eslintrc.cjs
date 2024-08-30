@@ -13,7 +13,7 @@ module.exports = {
 
   parser: "@typescript-eslint/parser",
 
-  plugins: ["react-refresh"],
+  plugins: ["react-refresh", "eslint-plugin-react-compiler"],
   rules: {
     "@typescript-eslint/consistent-type-imports": "error",
     "import/order": [
@@ -41,6 +41,7 @@ module.exports = {
     "import/default": "off",
     "import/no-named-as-default": "off",
     "import/no-named-as-default-member": "off",
+    "react-compiler/react-compiler": "error",
   },
 
   settings: {

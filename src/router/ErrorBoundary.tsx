@@ -1,4 +1,3 @@
-import { Button } from "@mui/material";
 import { isRouteErrorResponse, useRouteError, Link } from "react-router-dom";
 import { InternalServerError } from "./InternalServerError";
 import { NotFound } from "./NotFound";
@@ -20,9 +19,5 @@ export function ErrorBoundary() {
     return <InternalServerError />;
   }
 
-  return (
-    <Button variant="contained" component={Link} to={"/"}>
-      take me home
-    </Button>
-  );
+  return <Link to={"/"}>take me home</Link>;
 }

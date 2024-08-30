@@ -1,12 +1,4 @@
 import {
-  Card,
-  CardHeader,
-  CardContent,
-  Box,
-  alpha,
-  Typography,
-} from "@mui/material";
-import {
   ResponsiveContainer,
   BarChart,
   Bar,
@@ -19,76 +11,18 @@ import {
 
 export function Recharts() {
   return (
-    <Card>
-      <CardHeader title="Recharts" />
-      <CardContent>
-        <Box height={400}>
-          <ResponsiveContainer>
-            <BarChart data={data}>
-              <Bar
-                dataKey="uv"
-                strokeWidth={2}
-                stroke="#8884d8"
-                fill={alpha("#8884d8", 0.3)}
-              />
-              <Bar
-                dataKey="pv"
-                strokeWidth={2}
-                stroke="#82ca9d"
-                fill={alpha("#82ca9d", 0.3)}
-              />
-              <Bar
-                dataKey="amt"
-                strokeWidth={2}
-                stroke="#0088FE"
-                fill={alpha("#0088FE", 0.3)}
-              />
-              <CartesianGrid strokeDasharray="3 3" />
-              <XAxis dataKey={"name"} />
-              <YAxis />
-              <Legend />
-              <Tooltip
-                cursor={{
-                  fill: alpha("#ccc", 0.3),
-                }}
-                content={(props) => {
-                  return (
-                    <Box
-                      sx={{
-                        bgcolor: "common.white",
-                        padding: 3,
-                        borderWidth: 1,
-                        borderStyle: "solid",
-                        borderColor(theme) {
-                          return theme.palette.divider;
-                        },
-                      }}
-                    >
-                      <Typography>{props.label}</Typography>
-                      {props.payload?.map((item) => {
-                        console.log(item);
-
-                        return (
-                          <Typography
-                            variant="body2"
-                            sx={{
-                              color: item.stroke,
-                              marginTop: 1,
-                            }}
-                          >
-                            {item.dataKey}: {item.value}
-                          </Typography>
-                        );
-                      })}
-                    </Box>
-                  );
-                }}
-              />
-            </BarChart>
-          </ResponsiveContainer>
-        </Box>
-      </CardContent>
-    </Card>
+    <ResponsiveContainer>
+      <BarChart data={data}>
+        <Bar dataKey="uv" strokeWidth={2} stroke="#8884d8" />
+        <Bar dataKey="pv" strokeWidth={2} stroke="#82ca9d" />
+        <Bar dataKey="amt" strokeWidth={2} stroke="#0088FE" />
+        <CartesianGrid strokeDasharray="3 3" />
+        <XAxis dataKey={"name"} />
+        <YAxis />
+        <Legend />
+        <Tooltip />
+      </BarChart>
+    </ResponsiveContainer>
   );
 }
 

@@ -78,10 +78,5 @@ export const routes = createRoutesFromElements(
         return { Component: Lab };
       }}
     />
-    <Route
-      id="swiper"
-      path="swiper"
-      lazy={() => import("@/pages/swiper/Component")}
-    />
   </Route>,
 );

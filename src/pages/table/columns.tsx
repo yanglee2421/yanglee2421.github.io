@@ -1,9 +1,3 @@
-import {
-  CircleOutlined,
-  UnfoldLessOutlined,
-  UnfoldMoreOutlined,
-} from "@mui/icons-material";
-import { Checkbox, IconButton } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
 import type { DataType } from "./data";
 
@@ -14,8 +8,7 @@ export const columns = [
     id: "selection",
     header(props) {
       return (
-        <Checkbox
-          indeterminate={props.table.getIsSomeRowsSelected()}
+        <input
           checked={props.table.getIsAllRowsSelected()}
           onChange={props.table.getToggleAllRowsSelectedHandler()}
         />
@@ -23,22 +16,15 @@ export const columns = [
     },
     cell(props) {
       return (
-        <Checkbox
-          indeterminate={props.row.getIsSomeSelected()}
+        <input
           checked={props.row.getIsSelected()}
           onChange={props.row.getToggleSelectedHandler()}
           disabled={!props.row.getCanSelect()}
         />
       );
     },
-    footer(props) {
-      return (
-        <Checkbox
-          indeterminate={props.table.getIsSomeRowsSelected()}
-          checked={props.table.getIsAllRowsSelected()}
-          onChange={props.table.getToggleAllRowsSelectedHandler()}
-        />
-      );
+    footer() {
+      return <></>;
     },
     enableResizing: false,
     size: 80,
@@ -70,18 +56,8 @@ export const columns = [
     },
     cell(props) {
       if (props.row.getCanExpand()) {
-        return (
-          <IconButton onClick={props.row.getToggleExpandedHandler()}>
-            {props.row.getIsExpanded() ? (
-              <UnfoldLessOutlined />
-            ) : (
-              <UnfoldMoreOutlined />
-            )}
-          </IconButton>
-        );
+        return <></>;
       }
-
-      return <CircleOutlined />;
     },
     enableResizing: false,
     size: 80,
