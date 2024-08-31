@@ -22,8 +22,11 @@ export function Home() {
       <button onClick={startTransition} disabled={isPending}>
         signout
       </button>
+      <hr />
       <img src={bgImgHref} width={192} height={108} />
+      <hr />
       <AsyncStore />
+      <hr />
       <Calendar />
       <Countdown />
       <TipTap value={html} onChange={setHtml} />

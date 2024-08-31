@@ -8,7 +8,12 @@ export function SignInWithGithub() {
   }, null);
 
   return (
-    <button onClick={action} disabled={isPending}>
+    <button
+      onClick={() => {
+        React.startTransition(action);
+      }}
+      disabled={isPending}
+    >
       Sign in with Github
     </button>
   );

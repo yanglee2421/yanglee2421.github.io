@@ -9,12 +9,9 @@ export function SignInWithGoogle() {
 
   return (
     <>
-      <button onClick={action} disabled={isPending}>
-        Sign in with Google
-      </button>
       <button
         onClick={() => {
-          signInWithPopup(getAuth(app), new GoogleAuthProvider());
+          React.startTransition(action);
         }}
         disabled={isPending}
       >
