@@ -9,7 +9,7 @@ import {
   ScrollRestoration,
 } from "react-router-dom";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { AclContext } from "@/hooks/useAcl";
+import { AclProvider } from "@/hooks/useAcl";
 import { defineAbilityFor } from "@/libs/defineAbilityFor";
 
 export function RootRoute() {
@@ -42,11 +42,9 @@ export function RootRoute() {
   }, [lang, i18n]);
 
   return (
-    <AclContext.Provider
-      value={defineAbilityFor(currentUser ? "admin" : "guest")}
-    >
+    <AclProvider value={defineAbilityFor(currentUser ? "admin" : "guest")}>
       {outlet}
       <ScrollRestoration />
-    </AclContext.Provider>
+    </AclProvider>
   );
 }
