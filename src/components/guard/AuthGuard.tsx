@@ -1,20 +1,24 @@
-import { getAuth, onAuthStateChanged } from "firebase/auth";
 import React from "react";
-import { app } from "@/api/firebase/app";
-import { useAuthStore } from "@/hooks/store/useAuthStore";
+import { authReady } from "@/api/firebase/app";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import { Loading } from "./Loading";
 import { NavigateToLogin } from "./NavigateToLogin";
 
 export function AuthGuard(props: React.PropsWithChildren) {
-  const authValue = useAuthStore((s) => s.value);
-  const updateAuth = useAuthStore((store) => store.update);
+  return (
+    <React.Suspense fallback={<Loading />}>
+      <Content>{props.children}</Content>
+    </React.Suspense>
+  );
+}
 
-  React.useEffect(() => {
-    return onAuthStateChanged(getAuth(app), updateAuth);
-  }, [updateAuth]);
+function Content(props: React.PropsWithChildren) {
+  React.use(authReady);
+  const currentUser = useCurrentUser();
 
-  if (authValue.auth.currentUser) {
-    return props.children;
+  if (!currentUser) {
+    return <NavigateToLogin />;
   }
 
-  return <NavigateToLogin />;
+  return props.children;
 }

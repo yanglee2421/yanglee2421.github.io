@@ -1,28 +1,20 @@
-import { Button } from "@mui/material";
-import { isRouteErrorResponse, useRouteError, Link } from "react-router-dom";
-import { InternalServerError } from "./InternalServerError";
-import { NotFound } from "./NotFound";
+import { useRouteError, Link } from "react-router-dom";
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  console.error(error);
 
-  if (isRouteErrorResponse(error)) {
-    switch (error.status) {
-      case 404:
-        return <NotFound />;
-      default:
-        return <InternalServerError />;
+  const errMsg = (() => {
+    if (error instanceof Error) {
+      return error.message;
     }
-  }
 
-  if (error instanceof Error) {
-    return <InternalServerError />;
-  }
+    return "Oh, something wrong";
+  })();
 
   return (
-    <Button variant="contained" component={Link} to={"/"}>
-      take me home
-    </Button>
+    <div>
+      <p>{errMsg}</p>
+      <Link to={"/"}>take me home</Link>
+    </div>
   );
 }

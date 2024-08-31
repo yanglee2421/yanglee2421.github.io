@@ -1,129 +1,39 @@
-import {
-  CircleOutlined,
-  UnfoldLessOutlined,
-  UnfoldMoreOutlined,
-} from "@mui/icons-material";
-import { Checkbox, IconButton } from "@mui/material";
 import { createColumnHelper } from "@tanstack/react-table";
-import type { DataType } from "./data";
+import {
+  type DocumentData,
+  type QueryDocumentSnapshot,
+} from "firebase/firestore";
+import { DeleteButton } from "./DeleteCell";
 
-const columnHelper = createColumnHelper<DataType>();
+const columnHelper =
+  createColumnHelper<QueryDocumentSnapshot<DocumentData, DocumentData>>();
 
 export const columns = [
   columnHelper.display({
-    id: "selection",
+    id: "title",
     header(props) {
-      return (
-        <Checkbox
-          indeterminate={props.table.getIsSomeRowsSelected()}
-          checked={props.table.getIsAllRowsSelected()}
-          onChange={props.table.getToggleAllRowsSelectedHandler()}
-        />
-      );
+      return props.column.id;
     },
     cell(props) {
-      return (
-        <Checkbox
-          indeterminate={props.row.getIsSomeSelected()}
-          checked={props.row.getIsSelected()}
-          onChange={props.row.getToggleSelectedHandler()}
-          disabled={!props.row.getCanSelect()}
-        />
-      );
+      return props.row.original.data().title;
     },
-    footer(props) {
-      return (
-        <Checkbox
-          indeterminate={props.table.getIsSomeRowsSelected()}
-          checked={props.table.getIsAllRowsSelected()}
-          onChange={props.table.getToggleAllRowsSelectedHandler()}
-        />
-      );
-    },
-    enableResizing: false,
-    size: 80,
-    minSize: 80,
-    maxSize: 80,
   }),
-
   columnHelper.display({
-    id: "index",
-    header() {
-      return "Index";
+    id: "content",
+    header(props) {
+      return props.column.id;
     },
     cell(props) {
-      return props.row.index;
+      return props.row.original.data().context;
     },
-    footer(props) {
-      return props.header.id;
-    },
-    enableResizing: false,
-    size: 80,
-    minSize: 80,
-    maxSize: 80,
   }),
-
   columnHelper.display({
-    id: "expander",
-    header() {
-      return null;
+    id: "delete",
+    header(props) {
+      return props.column.id;
     },
     cell(props) {
-      if (props.row.getCanExpand()) {
-        return (
-          <IconButton onClick={props.row.getToggleExpandedHandler()}>
-            {props.row.getIsExpanded() ? (
-              <UnfoldLessOutlined />
-            ) : (
-              <UnfoldMoreOutlined />
-            )}
-          </IconButton>
-        );
-      }
-
-      return <CircleOutlined />;
+      return <DeleteButton id={props.row.original.id} />;
     },
-    enableResizing: false,
-    size: 80,
-    minSize: 80,
-    maxSize: 80,
-  }),
-
-  columnHelper.accessor("id", {
-    header: "ID",
-    cell(info) {
-      return info.getValue();
-    },
-    footer() {
-      return "#ID";
-    },
-  }),
-  columnHelper.accessor("fullName", {
-    header: "Name",
-    cell(info) {
-      return info.getValue();
-    },
-    footer() {
-      return "Name footer";
-    },
-  }),
-  columnHelper.accessor("email", {
-    cell: (info) => info.getValue(),
-    header: "Email",
-    footer() {
-      return "email footer";
-    },
-  }),
-  columnHelper.accessor("start_date", {
-    cell: (info) => info.getValue(),
-    header: "Date",
-  }),
-  columnHelper.accessor("experience", {
-    cell: (info) => info.getValue(),
-    header: "Experience",
-  }),
-  columnHelper.accessor("age", {
-    cell: (info) => info.getValue(),
-    header: "Age",
   }),
 ];

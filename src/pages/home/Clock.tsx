@@ -1,4 +1,3 @@
-import { Box, Typography } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -32,21 +31,11 @@ export function Clock() {
   }, [i18n.language]);
 
   return (
-    <Box sx={{ paddingBlock: 2, paddingInlineStart: 3 }}>
-      <Typography component={"time"} variant="h4">
-        {time}
-      </Typography>
+    <div>
+      <time>{time}</time>
       <br />
-      <Typography component={"time"} variant="body2">
-        {date}
-      </Typography>
-      <Typography
-        component={"time"}
-        variant="body1"
-        sx={{ marginInlineStart: 3 }}
-      >
-        {weekday}
-      </Typography>
-    </Box>
+      <time>{date}</time>
+      <time>{weekday}</time>
+    </div>
   );
 }

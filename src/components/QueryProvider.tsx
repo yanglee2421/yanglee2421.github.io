@@ -1,22 +1,14 @@
-import { createAsyncStoragePersister } from "@tanstack/query-async-storage-persister";
-import { QueryClient } from "@tanstack/react-query";
-import { PersistQueryClientProvider } from "@tanstack/react-query-persist-client";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export function QueryProvider(props: React.PropsWithChildren) {
   return (
-    <PersistQueryClientProvider
-      client={queryClient}
-      persistOptions={{ persister }}
-    >
+    <QueryClientProvider client={queryClient}>
       {props.children}
-    </PersistQueryClientProvider>
+      <ReactQueryDevtools />
+    </QueryClientProvider>
   );
 }
-
-const persister = createAsyncStoragePersister({
-  storage: globalThis.sessionStorage,
-  key: "YotuLeeQueryCache",
-});
 
 const queryClient = new QueryClient({
   defaultOptions: {

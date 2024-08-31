@@ -1,7 +1,4 @@
-import { AddOutlined, RemoveOutlined } from "@mui/icons-material";
-import { TextField, IconButton, InputAdornment } from "@mui/material";
 import React from "react";
-import { Translation } from "react-i18next";
 import { minmax } from "@/utils/minmax";
 
 export function InputNumber(props: Props) {
@@ -32,7 +29,7 @@ export function InputNumber(props: Props) {
   };
 
   return (
-    <TextField
+    <input
       value={optimisticValue || number2String(value)}
       onChange={(evt) => {
         setOptimisticValue(evt.target.value);
@@ -59,31 +56,6 @@ export function InputNumber(props: Props) {
             break;
           default:
         }
-      }}
-      InputProps={{
-        startAdornment: (
-          <InputAdornment position="start">
-            <IconButton onClick={handleMinus}>
-              <RemoveOutlined />
-            </IconButton>
-          </InputAdornment>
-        ),
-        endAdornment: (
-          <InputAdornment position="end">
-            <IconButton onClick={handlePlus}>
-              <AddOutlined />
-            </IconButton>
-          </InputAdornment>
-        ),
-      }}
-      fullWidth
-      label={
-        <Translation ns="InputLabel">{(t) => t("number input")}</Translation>
-      }
-      InputLabelProps={{
-        sx: {
-          textTransform: "capitalize",
-        },
       }}
     />
   );

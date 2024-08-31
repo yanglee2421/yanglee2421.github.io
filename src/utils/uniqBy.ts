@@ -12,7 +12,9 @@ export function uniqBy<TItem extends NonNullable<unknown>>(
       return map;
     }
 
-    map.get(mapKey) ?? map.set(mapKey, item);
+    if (!map.get(mapKey)) {
+      map.set(mapKey, item);
+    }
 
     return map;
   }, new Map<unknown, TItem>());

@@ -1,31 +1,20 @@
-import { Button } from "@mui/material";
-import { useMutation } from "@tanstack/react-query";
-import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
-import { app } from "@/api/firebase/app";
-import { Github } from "@/components/svg/Github";
+import { getAuth, signInWithPopup } from "firebase/auth";
+import React from "react";
+import { app, githubAuthProvider } from "@/api/firebase/app";
 
 export function SignInWithGithub() {
-  const mutation = useMutation({
-    mutationFn() {
-      return signInWithPopup(getAuth(app), new GithubAuthProvider());
-    },
-  });
+  const [isPending, startTransition] = React.useTransition();
 
   return (
-    <Button
+    <button
       onClick={() => {
-        mutation.mutate();
+        startTransition(async () => {
+          await signInWithPopup(getAuth(app), githubAuthProvider);
+        });
       }}
-      disabled={mutation.isPending}
-      startIcon={<Github width={26} height={26} />}
-      sx={{
-        fontWeight: 400,
-        "& .MuiButton-startIcon": {
-          marginInlineEnd: 3,
-        },
-      }}
+      disabled={isPending}
     >
       Sign in with Github
-    </Button>
+    </button>
   );
 }

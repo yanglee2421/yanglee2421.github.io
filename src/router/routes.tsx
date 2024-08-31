@@ -24,6 +24,7 @@ export const routes = createRoutesFromElements(
         };
       }}
     />
+    {/* Guest Pages */}
     <Route
       id="login"
       path="login"
@@ -39,37 +40,24 @@ export const routes = createRoutesFromElements(
       path="forgot-password"
       lazy={() => import("@/pages/forgot-password/Component")}
     />
+
+    {/* Auth Pages */}
     <Route id="home" index lazy={() => import("@/pages/home/Component")} />
+    <Route
+      id="account"
+      path="account"
+      lazy={() => import("@/pages/account/Account")}
+    />
     <Route
       id="charts"
       path="charts"
       lazy={() => import("@/pages/charts/Component")}
     />
     <Route
-      id="chat"
-      path="chat"
-      lazy={async () => {
-        const { Chat } = await import("@/pages/chat/Chat");
-
-        return {
-          Component: Chat,
-        };
-      }}
-    />
-    <Route
-      id="newtab"
-      path="newtab"
-      lazy={() => import("@/pages/newtab/Component")}
-    />
-    <Route
       id="table"
       path="table"
       lazy={() => import("@/pages/table/Component")}
     />
-    <Route
-      id="virtual"
-      path="virtual"
-      lazy={() => import("@/pages/virtual/Component")}
-    />
+    <Route id="lab" path="lab" lazy={() => import("@/pages/lab/Lab")} />
   </Route>,
 );

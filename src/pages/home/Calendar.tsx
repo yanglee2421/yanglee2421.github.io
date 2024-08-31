@@ -1,16 +1,3 @@
-import {
-  NavigateBeforeOutlined,
-  NavigateNextOutlined,
-  TodayOutlined,
-} from "@mui/icons-material";
-import {
-  Box,
-  Typography,
-  IconButton,
-  Paper,
-  Toolbar,
-  Stack,
-} from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { HeadlessCalendar } from "@/components/headless/HeadlessCalendar";
@@ -18,143 +5,71 @@ import { Clock } from "./Clock";
 
 export function Calendar() {
   const [selectedTime, setSelectedTime] = React.useState(() => Date.now());
-
   const { i18n } = useTranslation();
 
-  const selectedDate = new Date(selectedTime);
-
   return (
-    <Paper>
-      <Toolbar>
-        <Clock />
-        <Stack
-          direction={"row"}
-          spacing={3}
-          useFlexGap
-          sx={{ marginInlineStart: "auto", marginInlineEnd: 1 }}
-        >
-          <IconButton
-            onClick={() => {
-              setSelectedTime(Date.now());
-            }}
-          >
-            <TodayOutlined />
-          </IconButton>
-        </Stack>
-      </Toolbar>
-      <Box sx={{ overflow: "hidden" }}>
-        <Box
-          sx={{
-            display: "grid",
-            gridTemplateColumns: "repeat(7,minmax(0,1fr))",
-
-            borderStyle: "solid",
-            borderColor(theme) {
-              return theme.palette.divider;
-            },
-            borderWidth: "1px 0 0 1px",
-          }}
-        >
-          <HeadlessCalendar
-            selectedTime={selectedTime}
-            render={(props) => [
-              props.data.slice(0, 7).map((date) => {
-                const weekday = date.toLocaleString(i18n.language, {
-                  weekday: "short",
-                });
-
-                return (
-                  <Box
-                    key={weekday}
-                    sx={{
-                      borderStyle: "solid",
-                      borderColor(theme) {
-                        return theme.palette.divider;
-                      },
-                      borderWidth: "0 1px 1px 0",
-                      padding: 3,
-
-                      textAlign: "center",
-                    }}
-                  >
-                    {weekday}
-                  </Box>
-                );
-              }),
-              props.data.map((date) => {
-                return (
-                  <Box
-                    key={date.getTime()}
-                    sx={{
-                      borderStyle: "solid",
-                      borderColor(theme) {
-                        return theme.palette.divider;
-                      },
-                      borderWidth: "0 1px 1px 0",
-                      padding: 3,
-
-                      textAlign: "center",
-
-                      color(theme) {
-                        if (
-                          Object.is(
-                            date.toLocaleDateString(),
-                            new Date().toLocaleDateString(),
-                          )
-                        ) {
-                          return theme.palette.primary.main;
-                        }
-                      },
-                    }}
-                  >
-                    {date.getDate()}
-                  </Box>
-                );
-              }),
-            ]}
-          />
-        </Box>
-      </Box>
-
-      <Box
-        sx={{
-          paddingBlock: 2,
-          paddingInline: 4,
-          display: "flex",
-          gap: 2,
-          alignItems: "center",
+    <>
+      <Clock />
+      <input
+        type="month"
+        value={new Date(selectedTime).toJSON().split("-").slice(0, 2).join("-")}
+        onChange={(evt) => {
+          setSelectedTime(evt.target.valueAsDate?.getTime() || Date.now());
         }}
-      >
-        <Typography variant="body2">
-          {selectedDate.toLocaleString(i18n.language, {
-            year: "numeric",
-            month: "long",
-          })}
-        </Typography>
-        <IconButton
-          onClick={() => {
-            React.startTransition(() => {
-              setSelectedTime(
-                selectedDate.setMonth(selectedDate.getMonth() - 1),
-              );
-            });
-          }}
-          sx={{ marginInlineStart: "auto" }}
-        >
-          <NavigateBeforeOutlined />
-        </IconButton>
-        <IconButton
-          onClick={() => {
-            React.startTransition(() => {
-              setSelectedTime(
-                selectedDate.setMonth(selectedDate.getMonth() + 1),
-              );
-            });
-          }}
-        >
-          <NavigateNextOutlined />
-        </IconButton>
-      </Box>
-    </Paper>
+      />
+      <HeadlessCalendar
+        selectedTime={selectedTime}
+        render={(props) => {
+          return (
+            <table>
+              <thead>
+                <tr>
+                  {props.data.slice(0, 7).map((date) => {
+                    const weekday = date.toLocaleString(i18n.language, {
+                      weekday: "short",
+                    });
+
+                    return <th key={weekday}>{weekday}</th>;
+                  })}
+                </tr>
+              </thead>
+              <tbody>
+                {props.data
+                  .reduce<Array<Date[]>>((rows, item) => {
+                    const lastRow = rows[rows.length - 1];
+
+                    if (!lastRow) {
+                      rows.push([item]);
+                      return rows;
+                    }
+
+                    if (lastRow.length < 7) {
+                      lastRow.push(item);
+                      return rows;
+                    }
+
+                    rows.push([item]);
+
+                    return rows;
+                  }, [])
+                  .map((row, idx) => {
+                    return (
+                      <tr key={idx}>
+                        {row.map((cell) => {
+                          return (
+                            <td key={cell.toLocaleDateString()}>
+                              {cell.getDate()}
+                            </td>
+                          );
+                        })}
+                      </tr>
+                    );
+                  })}
+              </tbody>
+            </table>
+          );
+        }}
+      />
+    </>
   );
 }

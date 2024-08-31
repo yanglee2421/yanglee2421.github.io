@@ -1,4 +1,5 @@
 import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -7,8 +8,8 @@ import {
   useNavigation,
   ScrollRestoration,
 } from "react-router-dom";
-import { useAuthStore } from "@/hooks/store/useAuthStore";
-import { AclContext } from "@/hooks/useAcl";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import { AclProvider } from "@/hooks/useAcl";
 import { defineAbilityFor } from "@/libs/defineAbilityFor";
 
 export function RootRoute() {
@@ -16,9 +17,7 @@ export function RootRoute() {
   const navigation = useNavigation();
   const { i18n } = useTranslation();
   const [searchParams] = useSearchParams({ lang: "en" });
-  const authValue = useAuthStore((store) => store.value);
-
-  const lang = searchParams.get("lang");
+  const currentUser = useCurrentUser();
 
   React.useEffect(() => {
     switch (navigation.state) {
@@ -32,6 +31,8 @@ export function RootRoute() {
     }
   }, [navigation.state]);
 
+  const lang = searchParams.get("lang");
+
   React.useEffect(() => {
     if (!lang) {
       return;
@@ -41,11 +42,9 @@ export function RootRoute() {
   }, [lang, i18n]);
 
   return (
-    <AclContext.Provider
-      value={defineAbilityFor(authValue.auth.currentUser ? "admin" : "guest")}
-    >
+    <AclProvider value={defineAbilityFor(currentUser ? "admin" : "guest")}>
       {outlet}
       <ScrollRestoration />
-    </AclContext.Provider>
+    </AclProvider>
   );
 }
