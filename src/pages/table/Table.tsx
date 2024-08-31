@@ -7,11 +7,12 @@ import {
   flexRender,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import { collection, getDocs } from "firebase/firestore";
+import { addDoc, collection, getDocs } from "firebase/firestore";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
 import { firestore } from "@/api/firebase/app";
 import { columns } from "./columns";
+import { useFormStatus } from "react-dom";
 
 export function Table() {
   return (
@@ -46,12 +47,18 @@ export function Table() {
 }
 
 function TableContent() {
+  const collectionRef = collection(firestore, "joke");
+
   const query = useSuspenseQuery({
     queryKey: ["firebase", "joke"],
     queryFn() {
-      return getDocs(collection(firestore, "joke"));
+      return getDocs(collectionRef);
     },
   });
+
+  const data = React.useMemo(() => {
+    return query.data.docs;
+  }, [query.data]);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
@@ -59,11 +66,71 @@ function TableContent() {
       return originalRow.id;
     },
     columns,
-    data: query.data.docs,
+    data,
   });
+
+  const [showDialog, setShowDialog] = React.useState(false);
 
   return (
     <>
+      <dialog open={showDialog}>
+        <form
+          action={async (formData) => {
+            const title = (() => {
+              const titleField = formData.get("title");
+
+              // Not a string or the string is empty
+              if (!titleField) {
+                return "";
+              }
+
+              if (typeof titleField !== "string") {
+                return "";
+              }
+
+              // Validation passed
+              return titleField;
+            })();
+
+            const context = (() => {
+              const contextField = formData.get("context");
+
+              // Not a string or the string is empty
+              if (!contextField) {
+                return "";
+              }
+
+              if (typeof contextField !== "string") {
+                return "";
+              }
+
+              // Validation passed
+              return contextField;
+            })();
+
+            await addDoc(collectionRef, { title, context });
+            await query.refetch();
+            setShowDialog(false);
+          }}
+        >
+          <label>title</label>
+          <fieldset>
+            <input type="text" name="title" />
+          </fieldset>
+          <label>context</label>
+          <fieldset>
+            <textarea name="context"></textarea>
+          </fieldset>
+          <SubmitButton />
+          <button
+            onClick={() => {
+              setShowDialog(false);
+            }}
+          >
+            close
+          </button>
+        </form>
+      </dialog>
       <div>
         <a
           href={encodeURI(
@@ -87,7 +154,13 @@ function TableContent() {
         >
           export
         </a>
-        <button>add</button>
+        <button
+          onClick={() => {
+            setShowDialog(true);
+          }}
+        >
+          add
+        </button>
       </div>
 
       <table>
@@ -150,5 +223,15 @@ function TableContent() {
         </tfoot>
       </table>
     </>
+  );
+}
+
+function SubmitButton() {
+  const formStatus = useFormStatus();
+
+  return (
+    <button type="submit" disabled={formStatus.pending}>
+      submit
+    </button>
   );
 }
