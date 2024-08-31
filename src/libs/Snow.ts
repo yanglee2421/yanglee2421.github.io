@@ -39,7 +39,10 @@ class Snowflake {
     return isX && isY;
   }
   update() {
-    this.#isShow || this.reset();
+    if (!this.#isShow) {
+      this.reset();
+    }
+
     this.x += this.xv;
     this.y += this.yv;
     this.draw();
@@ -61,8 +64,10 @@ export class Snow {
     const { width, height } = this.canvas;
     ctx.clearRect(0, 0, width, height);
 
-    this.#snowflake.length < this.number &&
+    if (this.#snowflake.length < this.number) {
       this.#snowflake.push(new Snowflake(this.canvas));
+    }
+
     this.#snowflake.forEach((item) => item.update());
   }
   abortAnimate() {
