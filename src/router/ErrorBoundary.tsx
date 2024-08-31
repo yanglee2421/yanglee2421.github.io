@@ -2,7 +2,6 @@ import { useRouteError, Link } from "react-router-dom";
 
 export function ErrorBoundary() {
   const error = useRouteError();
-  console.error(error);
 
   const errMsg = (() => {
     if (error instanceof Error) {
