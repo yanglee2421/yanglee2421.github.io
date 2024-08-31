@@ -4,13 +4,19 @@ import { HeadlessCalendar } from "@/components/headless/HeadlessCalendar";
 import { Clock } from "./Clock";
 
 export function Calendar() {
-  const [selectedTime] = React.useState(() => Date.now());
-
+  const [selectedTime, setSelectedTime] = React.useState(() => Date.now());
   const { i18n } = useTranslation();
 
   return (
     <>
       <Clock />
+      <input
+        type="month"
+        value={new Date(selectedTime).toJSON().split("-").slice(0, 2).join("-")}
+        onChange={(evt) => {
+          setSelectedTime(evt.target.valueAsDate?.getTime() || Date.now());
+        }}
+      />
       <HeadlessCalendar
         selectedTime={selectedTime}
         render={(props) => {
@@ -28,7 +34,6 @@ export function Calendar() {
                 </tr>
               </thead>
               <tbody>
-                <tr></tr>
                 {props.data
                   .reduce<Array<Date[]>>((rows, item) => {
                     const lastRow = rows[rows.length - 1];
