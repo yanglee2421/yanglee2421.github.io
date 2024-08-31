@@ -13,6 +13,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { firestore } from "@/api/firebase/app";
 import { columns } from "./columns";
 import { useFormStatus } from "react-dom";
+import { NavLink } from "react-router-dom";
 
 export function Table() {
   return (
@@ -70,67 +71,18 @@ function TableContent() {
   });
 
   const [showDialog, setShowDialog] = React.useState(false);
+  const dialogRef = React.useRef<HTMLDialogElement>(null);
+  React.useEffect(() => {
+    if (showDialog) {
+      dialogRef.current?.showModal();
+      return;
+    }
+
+    dialogRef.current?.close();
+  }, [showDialog]);
 
   return (
     <>
-      <dialog open={showDialog}>
-        <form
-          action={async (formData) => {
-            const title = (() => {
-              const titleField = formData.get("title");
-
-              // Not a string or the string is empty
-              if (!titleField) {
-                return "";
-              }
-
-              if (typeof titleField !== "string") {
-                return "";
-              }
-
-              // Validation passed
-              return titleField;
-            })();
-
-            const context = (() => {
-              const contextField = formData.get("context");
-
-              // Not a string or the string is empty
-              if (!contextField) {
-                return "";
-              }
-
-              if (typeof contextField !== "string") {
-                return "";
-              }
-
-              // Validation passed
-              return contextField;
-            })();
-
-            await addDoc(collectionRef, { title, context });
-            await query.refetch();
-            setShowDialog(false);
-          }}
-        >
-          <label>title</label>
-          <fieldset>
-            <input type="text" name="title" />
-          </fieldset>
-          <label>context</label>
-          <fieldset>
-            <textarea name="context"></textarea>
-          </fieldset>
-          <SubmitButton />
-          <button
-            onClick={() => {
-              setShowDialog(false);
-            }}
-          >
-            close
-          </button>
-        </form>
-      </dialog>
       <div>
         <a
           href={encodeURI(
@@ -161,6 +113,66 @@ function TableContent() {
         >
           add
         </button>
+        <dialog ref={dialogRef}>
+          <form
+            action={async (formData) => {
+              const title = (() => {
+                const titleField = formData.get("title");
+
+                // Not a string or the string is empty
+                if (!titleField) {
+                  return "";
+                }
+
+                if (typeof titleField !== "string") {
+                  return "";
+                }
+
+                // Validation passed
+                return titleField;
+              })();
+
+              const context = (() => {
+                const contextField = formData.get("context");
+
+                // Not a string or the string is empty
+                if (!contextField) {
+                  return "";
+                }
+
+                if (typeof contextField !== "string") {
+                  return "";
+                }
+
+                // Validation passed
+                return contextField;
+              })();
+
+              await addDoc(collectionRef, { title, context });
+              await query.refetch();
+              setShowDialog(false);
+            }}
+          >
+            <label>title</label>
+            <fieldset>
+              <input autoFocus type="text" name="title" />
+            </fieldset>
+            <label>context</label>
+            <fieldset>
+              <textarea name="context"></textarea>
+            </fieldset>
+            <SubmitButton />
+            <button
+              onClick={() => {
+                setShowDialog(false);
+              }}
+              type="button"
+            >
+              close
+            </button>
+          </form>
+        </dialog>
+        <NavLink to="/">home</NavLink>
       </div>
 
       <table>
