@@ -1,8 +1,10 @@
 import React from "react";
+import { NavLink } from "react-router-dom";
 
 export function Component() {
   return (
     <React.Suspense fallback={<span>suspenseing</span>}>
+      <NavLink to="/">home</NavLink>
       <Lab p={1} />
       <Lab p={2} />
     </React.Suspense>
