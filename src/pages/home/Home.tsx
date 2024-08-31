@@ -48,6 +48,9 @@ export function Home() {
             <li>
               <NavLink to={{ pathname: "/table" }}>table</NavLink>
             </li>
+            <li>
+              <NavLink to={{ pathname: "/lab" }}>lab</NavLink>
+            </li>
           </ul>
         </nav>
       </aside>
