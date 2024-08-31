@@ -1,5 +1,6 @@
 import React from "react";
-import { authReady, auth } from "@/api/firebase/auth";
+import { authReady } from "@/api/firebase/app";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { Loading } from "./Loading";
 import { NavigateToHome } from "./NavigateToHome";
 
@@ -13,13 +14,7 @@ export function GuestGuard(props: React.PropsWithChildren) {
 
 function Content(props: React.PropsWithChildren) {
   React.use(authReady);
-  const currentUser = React.useSyncExternalStore(
-    (onStateChange) => {
-      return auth.onAuthStateChanged(onStateChange);
-    },
-    () => auth.currentUser,
-    () => null,
-  );
+  const currentUser = useCurrentUser();
 
   if (!currentUser) {
     return props.children;

@@ -1,16 +1,16 @@
-import { getAuth, signInWithPopup, GithubAuthProvider } from "firebase/auth";
+import { getAuth, signInWithPopup } from "firebase/auth";
 import React from "react";
-import { app } from "@/api/firebase/app";
+import { app, githubAuthProvider } from "@/api/firebase/app";
 
 export function SignInWithGithub() {
-  const [, action, isPending] = React.useActionState(() => {
-    return signInWithPopup(getAuth(app), new GithubAuthProvider());
-  }, null);
+  const [isPending, startTransition] = React.useTransition();
 
   return (
     <button
       onClick={() => {
-        React.startTransition(action);
+        startTransition(async () => {
+          await signInWithPopup(getAuth(app), githubAuthProvider);
+        });
       }}
       disabled={isPending}
     >

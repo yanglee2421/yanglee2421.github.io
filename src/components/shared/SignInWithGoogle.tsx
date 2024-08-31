@@ -1,17 +1,17 @@
-import { getAuth, signInWithPopup, GoogleAuthProvider } from "firebase/auth";
+import { signInWithPopup } from "firebase/auth";
 import React from "react";
-import { app } from "@/api/firebase/app";
+import { auth, googleAuthProvider } from "@/api/firebase/app";
 
 export function SignInWithGoogle() {
-  const [, action, isPending] = React.useActionState(() => {
-    return signInWithPopup(getAuth(app), new GoogleAuthProvider());
-  }, null);
+  const [isPending, startTransition] = React.useTransition();
 
   return (
     <>
       <button
         onClick={() => {
-          React.startTransition(action);
+          startTransition(async () => {
+            await signInWithPopup(auth, googleAuthProvider);
+          });
         }}
         disabled={isPending}
       >

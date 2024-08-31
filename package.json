@@ -1,6 +1,6 @@
 {
-  "name": "react-spa",
-  "description": "React single page application template",
+  "name": "react-firebase",
+  "description": "React single page application template with firebase",
   "private": true,
   "version": "0.0.0",
   "type": "module",

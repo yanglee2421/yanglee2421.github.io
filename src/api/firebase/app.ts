@@ -1,5 +1,7 @@
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
+import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
+import { getStorage } from "firebase/storage";
 
 export const app = initializeApp({
   apiKey: "AIzaSyAuKaDly2ursfwyGmehlXuLiC8jDsHLkwQ",
@@ -12,3 +14,8 @@ export const app = initializeApp({
 });
 
 export const analytics = getAnalytics(app);
+export const auth = getAuth(app);
+export const authReady = auth.authStateReady();
+export const githubAuthProvider = new GithubAuthProvider();
+export const googleAuthProvider = new GoogleAuthProvider();
+export const storage = getStorage(app);

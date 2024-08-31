@@ -3,7 +3,7 @@ import { zodValidator } from "@tanstack/zod-form-adapter";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { z } from "zod";
-import { auth } from "@/api/firebase/auth";
+import { auth } from "@/api/firebase/app";
 
 export function ForgotPassword() {
   const form = useForm({

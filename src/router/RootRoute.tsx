@@ -1,4 +1,5 @@
 import NProgress from "nprogress";
+import "nprogress/nprogress.css";
 import React from "react";
 import { useTranslation } from "react-i18next";
 import {
@@ -7,7 +8,7 @@ import {
   useNavigation,
   ScrollRestoration,
 } from "react-router-dom";
-import { useCurrentUser } from "@/hooks/store/useCurrentUser";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { AclContext } from "@/hooks/useAcl";
 import { defineAbilityFor } from "@/libs/defineAbilityFor";
 
@@ -16,10 +17,7 @@ export function RootRoute() {
   const navigation = useNavigation();
   const { i18n } = useTranslation();
   const [searchParams] = useSearchParams({ lang: "en" });
-
   const currentUser = useCurrentUser();
-
-  const lang = searchParams.get("lang");
 
   React.useEffect(() => {
     switch (navigation.state) {
@@ -32,6 +30,8 @@ export function RootRoute() {
         NProgress.done();
     }
   }, [navigation.state]);
+
+  const lang = searchParams.get("lang");
 
   React.useEffect(() => {
     if (!lang) {
