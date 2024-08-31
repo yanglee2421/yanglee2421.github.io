@@ -5,7 +5,15 @@ import { NavLink } from "react-router-dom";
 import { auth, storage } from "@/api/firebase/app";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 
-export function Account() {
+export function Component() {
+  return (
+    <>
+      <title>Account</title>
+      <Account />
+    </>
+  );
+}
+function Account() {
   const user = useCurrentUser();
 
   if (!user) {

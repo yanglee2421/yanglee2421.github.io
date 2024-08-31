@@ -4,6 +4,7 @@ import { Table } from "./Table";
 export function Component() {
   return (
     <AuthGuard>
+      <title>Table</title>
       <Table />
     </AuthGuard>
   );
