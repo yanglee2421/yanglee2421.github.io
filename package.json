@@ -1,6 +1,6 @@
 {
-  "name": "react-firebase",
-  "description": "React single page application template with firebase",
+  "name": "firebase-react",
+  "description": "A Google Firebase GUI based on React",
   "private": true,
   "version": "0.0.0",
   "type": "module",
