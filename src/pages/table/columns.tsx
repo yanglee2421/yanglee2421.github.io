@@ -1,105 +1,30 @@
 import { createColumnHelper } from "@tanstack/react-table";
-import type { DataType } from "./data";
+import {
+  type DocumentData,
+  type QueryDocumentSnapshot,
+} from "firebase/firestore";
 
-const columnHelper = createColumnHelper<DataType>();
+const columnHelper =
+  createColumnHelper<QueryDocumentSnapshot<DocumentData, DocumentData>>();
 
 export const columns = [
+  columnHelper.accessor("id", {}),
   columnHelper.display({
-    id: "selection",
+    id: "title",
     header(props) {
-      return (
-        <input
-          checked={props.table.getIsAllRowsSelected()}
-          onChange={props.table.getToggleAllRowsSelectedHandler()}
-        />
-      );
+      return props.column.id;
     },
     cell(props) {
-      return (
-        <input
-          checked={props.row.getIsSelected()}
-          onChange={props.row.getToggleSelectedHandler()}
-          disabled={!props.row.getCanSelect()}
-        />
-      );
+      return props.row.original.data().title;
     },
-    footer() {
-      return <></>;
-    },
-    enableResizing: false,
-    size: 80,
-    minSize: 80,
-    maxSize: 80,
   }),
-
   columnHelper.display({
-    id: "index",
-    header() {
-      return "Index";
+    id: "content",
+    header(props) {
+      return props.column.id;
     },
     cell(props) {
-      return props.row.index;
+      return props.row.original.data().context;
     },
-    footer(props) {
-      return props.header.id;
-    },
-    enableResizing: false,
-    size: 80,
-    minSize: 80,
-    maxSize: 80,
-  }),
-
-  columnHelper.display({
-    id: "expander",
-    header() {
-      return null;
-    },
-    cell(props) {
-      if (props.row.getCanExpand()) {
-        return <></>;
-      }
-    },
-    enableResizing: false,
-    size: 80,
-    minSize: 80,
-    maxSize: 80,
-  }),
-
-  columnHelper.accessor("id", {
-    header: "ID",
-    cell(info) {
-      return info.getValue();
-    },
-    footer() {
-      return "#ID";
-    },
-  }),
-  columnHelper.accessor("fullName", {
-    header: "Name",
-    cell(info) {
-      return info.getValue();
-    },
-    footer() {
-      return "Name footer";
-    },
-  }),
-  columnHelper.accessor("email", {
-    cell: (info) => info.getValue(),
-    header: "Email",
-    footer() {
-      return "email footer";
-    },
-  }),
-  columnHelper.accessor("start_date", {
-    cell: (info) => info.getValue(),
-    header: "Date",
-  }),
-  columnHelper.accessor("experience", {
-    cell: (info) => info.getValue(),
-    header: "Experience",
-  }),
-  columnHelper.accessor("age", {
-    cell: (info) => info.getValue(),
-    header: "Age",
   }),
 ];

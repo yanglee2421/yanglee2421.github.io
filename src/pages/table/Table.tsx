@@ -1,150 +1,109 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useSuspenseQuery,
+  QueryErrorResetBoundary,
+} from "@tanstack/react-query";
 import {
   useReactTable,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
-  getFilteredRowModel,
-  getFacetedRowModel,
-  getFacetedUniqueValues,
-  getExpandedRowModel,
 } from "@tanstack/react-table";
+import { collection, getDocs } from "firebase/firestore";
 import React from "react";
-import { codeToHtml } from "shiki";
+import { ErrorBoundary } from "react-error-boundary";
+import { firestore } from "@/api/firebase/app";
 import { columns } from "./columns";
-import { data } from "./data";
 
 export function Table() {
+  return (
+    <QueryErrorResetBoundary>
+      {({ reset }) => {
+        return (
+          <ErrorBoundary
+            onReset={reset}
+            fallbackRender={({ error, resetErrorBoundary }) => {
+              return (
+                <div>
+                  <p>{error.message}</p>
+                  <button onClick={resetErrorBoundary}>reset</button>
+                </div>
+              );
+            }}
+          >
+            <React.Suspense
+              fallback={
+                <div>
+                  <p>fetching data</p>
+                </div>
+              }
+            >
+              <TableContent />
+            </React.Suspense>
+          </ErrorBoundary>
+        );
+      }}
+    </QueryErrorResetBoundary>
+  );
+}
+
+function TableContent() {
+  const query = useSuspenseQuery({
+    queryKey: ["firebase", "joke"],
+    queryFn() {
+      return getDocs(collection(firestore, "joke"));
+    },
+  });
+
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
     getRowId(originalRow) {
-      return originalRow.id.toString();
+      return originalRow.id;
     },
     columns,
-    data,
-
-    // ** Pagination
-    manualPagination: false,
-    getPaginationRowModel: getPaginationRowModel(),
-    rowCount: data.length,
-    initialState: {
-      pagination: {
-        pageIndex: 0,
-        pageSize: 20,
-      },
-    },
-
-    // ** Section
-    enableRowSelection: true,
-    enableMultiRowSelection: true,
-
-    // ** Sorting
-    manualSorting: false,
-    enableSorting: true,
-    enableMultiSort: true,
-    getSortedRowModel: getSortedRowModel(),
-
-    // ** Filter
-    manualFiltering: false,
-    enableGlobalFilter: true,
-    enableFilters: true,
-    getFilteredRowModel: getFilteredRowModel(),
-    getFacetedRowModel: getFacetedRowModel(),
-    getFacetedUniqueValues: getFacetedUniqueValues(),
-
-    // ** Expland
-    getExpandedRowModel: getExpandedRowModel(),
-    getRowCanExpand() {
-      return true;
-    },
-
-    // ** Resize
-    enableColumnResizing: true,
-    columnResizeMode: "onChange",
+    data: query.data.docs,
   });
 
   return (
     <>
-      <h4>ApexCharts</h4>
-      <p>
-        <code>react-apexcharts</code> is a third-party library. Please refer to
-        its{" "}
-        <a href="https://apexcharts.com" target="_blank">
-          official documentation
-        </a>{" "}
-        for more details.
-      </p>
-
-      <hr />
-
-      <input
-        value={table.getState().globalFilter}
-        onChange={(evt) => {
-          table.setGlobalFilter(evt.target.value);
-        }}
-      />
-      <a
-        href={encodeURI(
-          "data:text/csv;charset=utf-8," +
-            [
-              table
-                .getVisibleFlatColumns()
-                .filter((column) => column.accessorFn)
-                .map((column) => column.id)
-                .join(","),
-              ...table.getSelectedRowModel().rows.map((row) =>
+      <div>
+        <a
+          href={encodeURI(
+            "data:text/csv;charset=utf-8," +
+              [
                 table
                   .getVisibleFlatColumns()
                   .filter((column) => column.accessorFn)
-                  .map((column) => row.getValue(column.id))
+                  .map((column) => column.id)
                   .join(","),
-              ),
-            ].join("\n"),
-        )}
-        download={Date.now() + ".csv"}
-      >
-        export
-      </a>
+                ...table.getSelectedRowModel().rows.map((row) =>
+                  table
+                    .getVisibleFlatColumns()
+                    .filter((column) => column.accessorFn)
+                    .map((column) => row.getValue(column.id))
+                    .join(","),
+                ),
+              ].join("\n"),
+          )}
+          download={Date.now() + ".csv"}
+        >
+          export
+        </a>
+        <button>add</button>
+      </div>
 
       <table>
+        <caption>joke</caption>
         <thead>
           {table.getHeaderGroups().map((headerGroup) => {
             return (
               <tr key={headerGroup.id}>
                 {headerGroup.headers.map((header) => {
-                  const cellNode =
-                    header.isPlaceholder ||
-                    flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    );
-
                   return (
                     <th key={header.id} colSpan={header.colSpan}>
-                      {cellNode}
-                      {header.column.getCanFilter() && (
-                        <>
-                          <input
-                            value={header.column.getFilterValue() + ""}
-                            onChange={(evt) => {
-                              header.column.setFilterValue(evt.target.value);
-                            }}
-                            placeholder={`Search... (${header.column.getFacetedUniqueValues().size})`}
-                          />
-                          <datalist id={header.column.id}>
-                            {Array.from(
-                              header.column.getFacetedUniqueValues().keys(),
-                            )
-                              .sort()
-                              .map((item) => {
-                                return (
-                                  <option key={item} value={item}></option>
-                                );
-                              })}
-                          </datalist>
-                        </>
-                      )}
+                      {header.isPlaceholder ||
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
                     </th>
                   );
                 })}
@@ -155,29 +114,18 @@ export function Table() {
         <tbody>
           {table.getRowModel().rows.map((row) => {
             return (
-              <React.Fragment key={row.id}>
-                <tr>
-                  {row.getVisibleCells().map((cell) => {
-                    return (
-                      <td key={cell.id}>
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </td>
-                    );
-                  })}
-                </tr>
-                {row.getIsExpanded() && (
-                  <tr>
-                    <td colSpan={columns.length}>
-                      <React.Suspense>
-                        <Code code={JSON.stringify(row.original, null, 2)} />
-                      </React.Suspense>
+              <tr key={row.id}>
+                {row.getVisibleCells().map((cell) => {
+                  return (
+                    <td key={cell.id}>
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
                     </td>
-                  </tr>
-                )}
-              </React.Fragment>
+                  );
+                })}
+              </tr>
             );
           })}
         </tbody>
@@ -203,18 +151,4 @@ export function Table() {
       </table>
     </>
   );
-}
-
-function Code(props: { code: string }) {
-  const query = useSuspenseQuery({
-    queryKey: ["shiki", props.code],
-    queryFn() {
-      return codeToHtml(props.code, {
-        lang: "json",
-        theme: "dark-plus",
-      });
-    },
-  });
-
-  return <div dangerouslySetInnerHTML={{ __html: query.data }}></div>;
 }
