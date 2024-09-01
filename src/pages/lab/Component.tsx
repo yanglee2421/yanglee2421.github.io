@@ -1,13 +1,14 @@
-import { AuthGuard } from "@/components/guard/AuthGuard";
-import { Table } from "./Table";
+import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { QueryErrorResetBoundary } from "@tanstack/react-query";
+import { Lab } from "./Lab";
+import { NavMenus } from "@/components/shared/NavMenus";
 
 export function Component() {
   return (
-    <AuthGuard>
-      <title>Table</title>
+    <>
+      <title>Charts</title>
+
       <QueryErrorResetBoundary>
         {({ reset }) => {
           return (
@@ -22,13 +23,15 @@ export function Component() {
                 );
               }}
             >
-              <React.Suspense>
-                <Table />
+              <React.Suspense fallback={<div>loading</div>}>
+                <NavMenus />
+                <Lab p={1} />
+                <Lab p={2} />
               </React.Suspense>
             </ErrorBoundary>
           );
         }}
       </QueryErrorResetBoundary>
-    </AuthGuard>
+    </>
   );
 }

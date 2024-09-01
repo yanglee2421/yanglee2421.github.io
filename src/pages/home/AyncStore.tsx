@@ -8,15 +8,15 @@ export function AsyncStore() {
   const value = useAsyncStore((store) => store.value);
   const setValue = useAsyncStore((store) => store.setValue);
 
-  const isPending = React.useSyncExternalStore(
+  const hasHydrated = React.useSyncExternalStore(
     (onStoreChange) => useAsyncStore.persist.onFinishHydration(onStoreChange),
-    () => !useAsyncStore.persist.hasHydrated(),
+    () => useAsyncStore.persist.hasHydrated(),
     () => false,
   );
 
   return (
     <input
-      disabled={isPending}
+      disabled={!hasHydrated}
       value={value}
       onChange={(evt) => {
         setValue(evt.target.value);
@@ -51,7 +51,6 @@ const useAsyncStore = create(
             return localforage.setItem(name, value);
           },
           async removeItem(name) {
-            await timeout(1000 * 2);
             return localforage.removeItem(name);
           },
         };

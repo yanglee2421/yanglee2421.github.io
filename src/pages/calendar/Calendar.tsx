@@ -1,6 +1,7 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { HeadlessCalendar } from "@/components/headless/HeadlessCalendar";
+import { NavMenus } from "@/components/shared/NavMenus";
 import { Clock } from "./Clock";
 
 export function Calendar() {
@@ -9,6 +10,9 @@ export function Calendar() {
 
   return (
     <>
+      <aside>
+        <NavMenus />
+      </aside>
       <Clock />
       <input
         type="month"

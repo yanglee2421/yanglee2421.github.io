@@ -1,19 +1,15 @@
 import { signOut } from "firebase/auth";
 import React from "react";
-import { NavLink } from "react-router-dom";
 import { auth } from "@/api/firebase/app";
-import bgImg from "@/assets/images/justHer.jpg";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { AsyncStore } from "./AyncStore";
-import { Calendar } from "./Calendar";
 import { Countdown } from "./Countdown";
 import { InputNumber } from "./InputNumber";
 import { RollCard } from "./RollCard";
-import { TipTap } from "./TipTap";
+import { NavMenus } from "@/components/shared/NavMenus";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
-  const [html, setHtml] = React.useState("<p>hello world</p>");
   const [isPending, startTransition] = React.useTransition();
   const user = useCurrentUser();
 
@@ -40,25 +36,9 @@ export function Home() {
         </button>
       </header>
       <aside>
-        <nav>
-          <ul>
-            <li>
-              <NavLink to={{ pathname: "/account" }}>account</NavLink>
-            </li>
-            <li>
-              <NavLink to={{ pathname: "/table" }}>table</NavLink>
-            </li>
-            <li>
-              <NavLink to={{ pathname: "/lab" }}>lab</NavLink>
-            </li>
-          </ul>
-        </nav>
+        <NavMenus />
       </aside>
       <main>
-        <img src={bgImgHref} width={192} height={108} />
-        <Calendar />
-        <TipTap value={html} onChange={setHtml} />
-        <hr />
         <AsyncStore />
         <Countdown />
         <RollCard />
@@ -70,8 +50,6 @@ export function Home() {
     </>
   );
 }
-
-const bgImgHref = new URL(bgImg, import.meta.url).href;
 
 const columns = 12;
 const gutter = 20;
