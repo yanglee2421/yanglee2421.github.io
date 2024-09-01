@@ -16,13 +16,7 @@ export const routes = createRoutesFromElements(
     <Route
       id="404"
       path="*"
-      lazy={async () => {
-        const { NotFound } = await import("./NotFound");
-
-        return {
-          Component: NotFound,
-        };
-      }}
+      lazy={() => import("@/pages/not-fount/Component")}
     />
     {/* Guest Pages */}
     <Route
@@ -46,7 +40,12 @@ export const routes = createRoutesFromElements(
     <Route
       id="account"
       path="account"
-      lazy={() => import("@/pages/account/Account")}
+      lazy={() => import("@/pages/account/Component")}
+    />
+    <Route
+      id="calendar"
+      path="calendar"
+      lazy={() => import("@/pages/calendar/Component")}
     />
     <Route
       id="charts"
@@ -58,6 +57,6 @@ export const routes = createRoutesFromElements(
       path="table"
       lazy={() => import("@/pages/table/Component")}
     />
-    <Route id="lab" path="lab" lazy={() => import("@/pages/lab/Lab")} />
+    <Route id="lab" path="lab" lazy={() => import("@/pages/lab/Component")} />
   </Route>,
 );

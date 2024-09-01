@@ -1,19 +1,11 @@
 import { updateCurrentUser, updateProfile } from "firebase/auth";
 import { getDownloadURL, ref, uploadBytes } from "firebase/storage";
 import { useFormStatus } from "react-dom";
-import { NavLink } from "react-router-dom";
 import { auth, storage } from "@/api/firebase/app";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import { NavMenus } from "@/components/shared/NavMenus";
 
-export function Component() {
-  return (
-    <>
-      <title>Account</title>
-      <Account />
-    </>
-  );
-}
-function Account() {
+export function Account() {
   const user = useCurrentUser();
 
   if (!user) {
@@ -31,11 +23,7 @@ function Account() {
         )}
       </header>
       <aside>
-        <ul>
-          <li>
-            <NavLink to="/">home</NavLink>
-          </li>
-        </ul>
+        <NavMenus />
       </aside>
       <main>
         <form

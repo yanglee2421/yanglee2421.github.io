@@ -1,7 +1,4 @@
-import {
-  useSuspenseQuery,
-  QueryErrorResetBoundary,
-} from "@tanstack/react-query";
+import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   useReactTable,
   flexRender,
@@ -9,45 +6,12 @@ import {
 } from "@tanstack/react-table";
 import { addDoc, collection, getDocs } from "firebase/firestore";
 import React from "react";
-import { ErrorBoundary } from "react-error-boundary";
 import { firestore } from "@/api/firebase/app";
 import { columns } from "./columns";
 import { useFormStatus } from "react-dom";
-import { NavLink } from "react-router-dom";
+import { NavMenus } from "@/components/shared/NavMenus";
 
 export function Table() {
-  return (
-    <QueryErrorResetBoundary>
-      {({ reset }) => {
-        return (
-          <ErrorBoundary
-            onReset={reset}
-            fallbackRender={({ error, resetErrorBoundary }) => {
-              return (
-                <div>
-                  <p>{error.message}</p>
-                  <button onClick={resetErrorBoundary}>reset</button>
-                </div>
-              );
-            }}
-          >
-            <React.Suspense
-              fallback={
-                <div>
-                  <p>fetching data</p>
-                </div>
-              }
-            >
-              <TableContent />
-            </React.Suspense>
-          </ErrorBoundary>
-        );
-      }}
-    </QueryErrorResetBoundary>
-  );
-}
-
-function TableContent() {
   const collectionRef = collection(firestore, "joke");
 
   const query = useSuspenseQuery({
@@ -83,6 +47,7 @@ function TableContent() {
 
   return (
     <>
+      <NavMenus />
       <div>
         <a
           href={encodeURI(
@@ -172,7 +137,6 @@ function TableContent() {
             </button>
           </form>
         </dialog>
-        <NavLink to="/">home</NavLink>
       </div>
 
       <table>
