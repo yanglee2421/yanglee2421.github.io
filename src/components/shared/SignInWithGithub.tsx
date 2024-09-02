@@ -13,6 +13,7 @@ export function SignInWithGithub() {
         });
       }}
       disabled={isPending}
+      className="btn-border block w-full"
     >
       Sign in with Github
     </button>
