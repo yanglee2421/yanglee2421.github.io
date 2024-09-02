@@ -7,8 +7,8 @@ export function RollCard() {
   const [rolling, setRolling] = React.useState(false);
 
   return (
-    <div>
-      <p>{number}</p>
+    <div className="space-y-3 rounded border px-5 py-2">
+      <p className="text-5xl font-light">{number}</p>
       <button
         onClick={async () => {
           const controller = new AnimateController(() => {
@@ -24,6 +24,7 @@ export function RollCard() {
           setRolling(false);
         }}
         disabled={rolling}
+        className="btn-indigo uppercase"
       >
         roll
       </button>

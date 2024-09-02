@@ -21,6 +21,7 @@ export function AsyncStore() {
       onChange={(evt) => {
         setValue(evt.target.value);
       }}
+      className="block w-full focus:border-blue-500 focus:ring-blue-500 disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none"
     />
   );
 }
