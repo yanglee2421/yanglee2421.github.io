@@ -1,3 +1,4 @@
+"use no memo";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   useReactTable,
@@ -46,159 +47,197 @@ export function Table() {
   }, [showDialog]);
 
   return (
-    <>
-      <NavMenus />
-      <div>
-        <a
-          href={encodeURI(
-            "data:text/csv;charset=utf-8," +
-              [
-                table
-                  .getVisibleFlatColumns()
-                  .filter((column) => column.accessorFn)
-                  .map((column) => column.id)
-                  .join(","),
-                ...table.getSelectedRowModel().rows.map((row) =>
+    <div className="flex min-h-dvh flex-col">
+      <header></header>
+      <main className="flex-auto px-5 py-2">
+        <aside>
+          <NavMenus />
+        </aside>
+        <div className="flex py-2">
+          <button
+            onClick={() => {
+              setShowDialog(true);
+            }}
+            className="btn-indigo uppercase"
+          >
+            add
+          </button>
+
+          <a
+            href={encodeURI(
+              "data:text/csv;charset=utf-8," +
+                [
                   table
                     .getVisibleFlatColumns()
                     .filter((column) => column.accessorFn)
-                    .map((column) => row.getValue(column.id))
+                    .map((column) => column.id)
                     .join(","),
-                ),
-              ].join("\n"),
-          )}
-          download={Date.now() + ".csv"}
-        >
-          export
-        </a>
-        <button
-          onClick={() => {
-            setShowDialog(true);
-          }}
-        >
-          add
-        </button>
-        <dialog ref={dialogRef}>
-          <form
-            action={async (formData) => {
-              const title = (() => {
-                const titleField = formData.get("title");
-
-                // Not a string or the string is empty
-                if (!titleField) {
-                  return "";
-                }
-
-                if (typeof titleField !== "string") {
-                  return "";
-                }
-
-                // Validation passed
-                return titleField;
-              })();
-
-              const context = (() => {
-                const contextField = formData.get("context");
-
-                // Not a string or the string is empty
-                if (!contextField) {
-                  return "";
-                }
-
-                if (typeof contextField !== "string") {
-                  return "";
-                }
-
-                // Validation passed
-                return contextField;
-              })();
-
-              await addDoc(collectionRef, { title, context });
-              await query.refetch();
-              setShowDialog(false);
-            }}
+                  ...table.getSelectedRowModel().rows.map((row) =>
+                    table
+                      .getVisibleFlatColumns()
+                      .filter((column) => column.accessorFn)
+                      .map((column) => row.getValue(column.id))
+                      .join(","),
+                  ),
+                ].join("\n"),
+            )}
+            download={Date.now() + ".csv"}
+            className="ms-auto uppercase text-indigo-500 hover:underline"
           >
-            <label>title</label>
-            <fieldset>
-              <input autoFocus type="text" name="title" />
-            </fieldset>
-            <label>context</label>
-            <fieldset>
-              <textarea name="context"></textarea>
-            </fieldset>
-            <SubmitButton />
-            <button
-              onClick={() => {
+            export
+          </a>
+          <dialog
+            ref={dialogRef}
+            className="w-full rounded px-5 py-2 backdrop:bg-black/50 md:max-w-md"
+          >
+            <form
+              action={async (formData) => {
+                const title = (() => {
+                  const titleField = formData.get("title");
+
+                  // Not a string or the string is empty
+                  if (!titleField) {
+                    return "";
+                  }
+
+                  if (typeof titleField !== "string") {
+                    return "";
+                  }
+
+                  // Validation passed
+                  return titleField;
+                })();
+
+                const context = (() => {
+                  const contextField = formData.get("context");
+
+                  // Not a string or the string is empty
+                  if (!contextField) {
+                    return "";
+                  }
+
+                  if (typeof contextField !== "string") {
+                    return "";
+                  }
+
+                  // Validation passed
+                  return contextField;
+                })();
+
+                await addDoc(collectionRef, { title, context });
+                await query.refetch();
                 setShowDialog(false);
               }}
-              type="button"
+              className="space-y-3"
             >
-              close
-            </button>
-          </form>
-        </dialog>
-      </div>
+              <label>title</label>
+              <fieldset>
+                <input
+                  autoFocus
+                  type="text"
+                  name="title"
+                  className="block w-full focus:border-blue-500 focus:ring-blue-500"
+                />
+              </fieldset>
+              <label>context</label>
+              <fieldset>
+                <textarea
+                  name="context"
+                  rows={6}
+                  className="block w-full focus:border-blue-500 focus:ring-blue-500"
+                ></textarea>
+              </fieldset>
+              <div className="flex gap-3">
+                <SubmitButton />
+                <button
+                  onClick={() => {
+                    setShowDialog(false);
+                  }}
+                  type="button"
+                  className="btn-border uppercase"
+                >
+                  close
+                </button>
+              </div>
+            </form>
+          </dialog>
+        </div>
 
-      <table>
-        <caption>joke</caption>
-        <thead>
-          {table.getHeaderGroups().map((headerGroup) => {
-            return (
-              <tr key={headerGroup.id}>
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <th key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder ||
-                        flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                    </th>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </thead>
-        <tbody>
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr key={row.id}>
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td key={cell.id}>
-                      {flexRender(
-                        cell.column.columnDef.cell,
-                        cell.getContext(),
-                      )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => {
-            return (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => {
-                  return (
-                    <td key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder ||
-                        flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext(),
-                        )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
-        </tfoot>
-      </table>
-    </>
+        <table className="w-full rounded border">
+          <thead className="border-b border-slate-200 bg-slate-50">
+            {table.getHeaderGroups().map((headerGroup) => {
+              return (
+                <tr key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => {
+                    return (
+                      <th
+                        key={header.id}
+                        colSpan={header.colSpan}
+                        className="px-6 py-3 text-left text-sm font-medium uppercase text-slate-900"
+                      >
+                        {header.isPlaceholder ||
+                          flexRender(
+                            header.column.columnDef.header,
+                            header.getContext(),
+                          )}
+                      </th>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </thead>
+          <tbody>
+            {table.getRowModel().rows.map((row) => {
+              return (
+                <tr key={row.id} className="odd:bg-white even:bg-slate-50">
+                  {row.getVisibleCells().map((cell) => {
+                    return (
+                      <td
+                        key={cell.id}
+                        className="max-w-72 px-6 py-4 text-sm font-medium text-slate-900"
+                      >
+                        <div className="whitespace-normal break-normal">
+                          {flexRender(
+                            cell.column.columnDef.cell,
+                            cell.getContext(),
+                          )}
+                        </div>
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tbody>
+          <tfoot>
+            {table.getFooterGroups().map((footerGroup) => {
+              return (
+                <tr key={footerGroup.id}>
+                  {footerGroup.headers.map((header) => {
+                    return (
+                      <td key={header.id} colSpan={header.colSpan}>
+                        {header.isPlaceholder ||
+                          flexRender(
+                            header.column.columnDef.footer,
+                            header.getContext(),
+                          )}
+                      </td>
+                    );
+                  })}
+                </tr>
+              );
+            })}
+          </tfoot>
+        </table>
+      </main>
+      <footer className="px-5 py-2">
+        &copy;2024 by{" "}
+        <a href="#" className="text-blue-500 hover:underline">
+          yanglee2421
+        </a>
+      </footer>
+    </div>
   );
 }
 
@@ -206,7 +245,11 @@ function SubmitButton() {
   const formStatus = useFormStatus();
 
   return (
-    <button type="submit" disabled={formStatus.pending}>
+    <button
+      type="submit"
+      disabled={formStatus.pending}
+      className="btn-blue uppercase"
+    >
       submit
     </button>
   );

@@ -18,6 +18,7 @@ export function DeleteButton(props: { id: string }) {
         });
       }}
       disabled={isPending}
+      className="btn-red uppercase"
     >
       delete
     </button>
