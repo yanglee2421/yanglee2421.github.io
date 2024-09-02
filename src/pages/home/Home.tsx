@@ -18,7 +18,7 @@ export function Home() {
   }
 
   return (
-    <>
+    <div className="flex h-dvh flex-col">
       <header>
         {user.photoURL && (
           <figure>
@@ -35,19 +35,25 @@ export function Home() {
           signout
         </button>
       </header>
-      <aside>
-        <NavMenus />
-      </aside>
-      <main>
+      <main className="flex-auto">
+        <aside>
+          <NavMenus />
+        </aside>
         <AsyncStore />
         <Countdown />
         <RollCard />
         <InputNumber value={number} onChange={setNumber} />
       </main>
-      <footer>
-        &copy;2024 <a href="https://github.com/yanglee2421">yanglee2421</a>
+      <footer className="px-5 py-2">
+        &copy;2024{" "}
+        <a
+          href="https://github.com/yanglee2421"
+          className="text-blue-500 hover:underline"
+        >
+          yanglee2421
+        </a>
       </footer>
-    </>
+    </div>
   );
 }
 

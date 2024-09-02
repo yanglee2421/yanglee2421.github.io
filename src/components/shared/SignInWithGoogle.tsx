@@ -14,6 +14,7 @@ export function SignInWithGoogle() {
           });
         }}
         disabled={isPending}
+        className=" block w-full btn-border"
       >
         Sign in with Google
       </button>

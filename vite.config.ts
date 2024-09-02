@@ -10,7 +10,6 @@ export default defineConfig(() => {
   return {
     plugins: [
       react({
-        include: [".scss"],
         babel: {
           plugins: ["babel-plugin-react-compiler"],
         },
