@@ -31,11 +31,12 @@ export function Clock() {
   }, [i18n.language]);
 
   return (
-    <div>
-      <time>{time}</time>
-      <br />
-      <time>{date}</time>
-      <time>{weekday}</time>
+    <div className="text-slate-700">
+      <time className="text-2xl">{time}</time>
+      <p className="flex gap-3">
+        <time>{date}</time>
+        <time className="text-sm">{weekday}</time>
+      </p>
     </div>
   );
 }

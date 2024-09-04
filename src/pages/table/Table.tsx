@@ -167,7 +167,7 @@ export function Table() {
           <thead className="border-b border-slate-200 bg-slate-50">
             {table.getHeaderGroups().map((headerGroup) => {
               return (
-                <tr key={headerGroup.id}>
+                <tr key={headerGroup.id} className="divide-x">
                   {headerGroup.headers.map((header) => {
                     return (
                       <th
@@ -187,10 +187,13 @@ export function Table() {
               );
             })}
           </thead>
-          <tbody>
+          <tbody className="divide-y">
             {table.getRowModel().rows.map((row) => {
               return (
-                <tr key={row.id} className="odd:bg-white even:bg-slate-50">
+                <tr
+                  key={row.id}
+                  className="divide-x odd:bg-white even:bg-slate-50"
+                >
                   {row.getVisibleCells().map((cell) => {
                     return (
                       <td
