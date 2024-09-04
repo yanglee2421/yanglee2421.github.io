@@ -28,46 +28,12 @@ export function Account() {
         </aside>
         <form
           action={async (formData) => {
-            const displayName = (() => {
-              const nameField = formData.get("displayName");
-
-              // Not a string or the string is empty
-              if (!nameField) {
-                return;
-              }
-
-              if (typeof nameField !== "string") {
-                return;
-              }
-
-              // Validation passed
-              return nameField;
-            })();
-
-            const photoURL = await (async () => {
-              const fileField = formData.get("photoURL");
-
-              // Not a file or the file is empty
-              if (!fileField) {
-                return;
-              }
-
-              if (typeof fileField === "string") {
-                return;
-              }
-
-              if (!fileField.size) {
-                return;
-              }
-
-              // Upload file to get image href
-              const fileRef = ref(storage, `user/avatar/${user.uid}`);
-              await uploadBytes(fileRef, fileField);
-              const href = await getDownloadURL(fileRef);
-
-              return href;
-            })();
-
+            const displayName = getFormValueAsString(formData, "displayName");
+            const photoURL = await getFormValueAsHref(
+              formData,
+              "photoURL",
+              user.uid,
+            );
             await updateProfile(user, { displayName, photoURL });
             await updateCurrentUser(auth, user);
           }}
@@ -127,4 +93,48 @@ function SubmitButton() {
       update
     </button>
   );
+}
+
+function getFormValueAsString(formData: FormData, field: string) {
+  const fieldValue = formData.get(field);
+
+  // Not a string or the string is empty
+  if (!fieldValue) {
+    return;
+  }
+
+  if (typeof fieldValue !== "string") {
+    return;
+  }
+
+  // Validation passed
+  return fieldValue;
+}
+
+async function getFormValueAsHref(
+  formData: FormData,
+  field: string,
+  userId: string,
+) {
+  const fieldValue = formData.get(field);
+
+  // Not a file or the file is empty
+  if (!fieldValue) {
+    return;
+  }
+
+  if (typeof fieldValue === "string") {
+    return;
+  }
+
+  if (!fieldValue.size) {
+    return;
+  }
+
+  // Upload file to get image href
+  const fileRef = ref(storage, `user/avatar/${userId}`);
+  await uploadBytes(fileRef, fieldValue);
+  const href = await getDownloadURL(fileRef);
+
+  return href;
 }

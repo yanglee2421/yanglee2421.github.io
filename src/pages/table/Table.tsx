@@ -92,38 +92,8 @@ export function Table() {
           >
             <form
               action={async (formData) => {
-                const title = (() => {
-                  const titleField = formData.get("title");
-
-                  // Not a string or the string is empty
-                  if (!titleField) {
-                    return "";
-                  }
-
-                  if (typeof titleField !== "string") {
-                    return "";
-                  }
-
-                  // Validation passed
-                  return titleField;
-                })();
-
-                const context = (() => {
-                  const contextField = formData.get("context");
-
-                  // Not a string or the string is empty
-                  if (!contextField) {
-                    return "";
-                  }
-
-                  if (typeof contextField !== "string") {
-                    return "";
-                  }
-
-                  // Validation passed
-                  return contextField;
-                })();
-
+                const title = getFormValue(formData, "title");
+                const context = getFormValue(formData, "context");
                 await addDoc(collectionRef, { title, context });
                 await query.refetch();
                 setShowDialog(false);
@@ -256,4 +226,20 @@ function SubmitButton() {
       submit
     </button>
   );
+}
+
+function getFormValue(formData: FormData, field: string) {
+  const fieldValue = formData.get(field);
+
+  // Not a string or the string is empty
+  if (!fieldValue) {
+    return "";
+  }
+
+  if (typeof fieldValue !== "string") {
+    return "";
+  }
+
+  // Validation passed
+  return fieldValue;
 }
