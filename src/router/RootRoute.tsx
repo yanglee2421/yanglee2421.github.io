@@ -11,6 +11,7 @@ import {
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { AclProvider } from "@/hooks/useAcl";
 import { defineAbilityFor } from "@/libs/defineAbilityFor";
+import { useIsDark } from "@/hooks/dom/useIsDark";
 
 export function RootRoute() {
   const outlet = useOutlet();
@@ -18,6 +19,7 @@ export function RootRoute() {
   const { i18n } = useTranslation();
   const [searchParams] = useSearchParams({ lang: "en" });
   const currentUser = useCurrentUser();
+  const isDark = useIsDark();
 
   React.useEffect(() => {
     switch (navigation.state) {
@@ -44,6 +46,11 @@ export function RootRoute() {
   return (
     <AclProvider value={defineAbilityFor(currentUser ? "admin" : "guest")}>
       {outlet}
+      <link
+        rel="icon"
+        type="image/svg+xml"
+        href={isDark ? "/favicon-dark.svg" : "/favicon.svg"}
+      />
       <ScrollRestoration />
     </AclProvider>
   );

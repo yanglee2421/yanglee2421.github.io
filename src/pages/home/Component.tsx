@@ -4,7 +4,7 @@ import { Home } from "./Home";
 export function Component() {
   return (
     <AuthGuard>
-      <title>Firebase React</title>
+      <title>GitHub IO</title>
       <Home />
     </AuthGuard>
   );
