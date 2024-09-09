@@ -3,25 +3,46 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
 
 export function Deferred() {
-  const [query, setQuery] = React.useState("");
+  const [query, setQuery] = React.useState("initial data");
   const deferredQuery = React.useDeferredValue(query);
+  const [show, setShow] = React.useState(false);
+  const [isPending, startTransition] = React.useTransition();
 
-  console.log("deferredQuery", query, deferredQuery);
+  console.log(query, "deferredQuery", deferredQuery);
 
   return (
-    <>
-      <input
-        type="text"
-        value={query}
-        onChange={(evt) => {
-          setQuery(evt.target.value);
-        }}
-      />
-      <p>{Object.is(query, deferredQuery) || "syncing"}</p>
-      <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
-        <FetchData query={deferredQuery}></FetchData>
-      </React.Suspense>
-    </>
+    <div className="space-y-3 px-5 py-2">
+      <fieldset>
+        <label className="flex items-center gap-2">
+          <input
+            type="checkbox"
+            checked={show}
+            onChange={(evt) => {
+              startTransition(() => {
+                setShow(evt.target.checked);
+              });
+            }}
+          />
+          <span>show suspense</span>
+        </label>
+      </fieldset>
+      <fieldset>
+        <input
+          type="text"
+          value={query}
+          onChange={(evt) => {
+            setQuery(evt.target.value);
+          }}
+        />
+      </fieldset>
+      <p>{!Object.is(query, deferredQuery) && "syncing"}</p>
+      <p>{isPending && "pending"}</p>
+      {show && (
+        <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
+          <FetchData query={deferredQuery}></FetchData>
+        </React.Suspense>
+      )}
+    </div>
   );
 }
 
@@ -30,7 +51,7 @@ type Props = {
 };
 
 function FetchData(props: Props) {
-  console.log("fetch data");
+  console.log("query props", props.query);
 
   const query = useSuspenseQuery({
     queryKey: ["suspense", props.query],
@@ -42,7 +63,9 @@ function FetchData(props: Props) {
     gcTime: 1000,
   });
 
-  return <p>{query.data}</p>;
+  console.log("query data", query.data);
+
+  return <p className="border-t">{query.data}</p>;
 }
 /**
  * Deferred value
