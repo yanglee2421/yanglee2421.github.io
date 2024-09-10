@@ -7,6 +7,7 @@ import { Countdown } from "./Countdown";
 import { InputNumber } from "./InputNumber";
 import { RollCard } from "./RollCard";
 import { NavMenus } from "@/components/shared/NavMenus";
+import { UserProfile } from "@/components/shared/UserProfile";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
@@ -20,12 +21,7 @@ export function Home() {
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="flex items-center px-5 py-2">
-        {user.photoURL && (
-          <figure>
-            <img src={user.photoURL} alt="" width={64} height={64} />
-            <figcaption>{user.displayName}</figcaption>
-          </figure>
-        )}
+        <UserProfile />
         <button
           onClick={() => {
             startTransition(() => signOut(auth));

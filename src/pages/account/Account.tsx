@@ -4,6 +4,7 @@ import { useFormStatus } from "react-dom";
 import { auth, storage } from "@/api/firebase/app";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { NavMenus } from "@/components/shared/NavMenus";
+import { UserProfile } from "@/components/shared/UserProfile";
 
 export function Account() {
   const user = useCurrentUser();
@@ -15,12 +16,7 @@ export function Account() {
   return (
     <div className="flex h-dvh flex-col">
       <header className="px-5 py-2">
-        {user.photoURL && (
-          <figure>
-            <img src={user.photoURL} alt="" width={64} height={64} />
-            <figcaption>{user.displayName}</figcaption>
-          </figure>
-        )}
+        <UserProfile />
       </header>
       <main className="flex-auto px-5 py-2">
         <aside>
@@ -34,6 +30,7 @@ export function Account() {
               "photoURL",
               user.uid,
             );
+
             await updateProfile(user, { displayName, photoURL });
             await updateCurrentUser(auth, user);
           }}
@@ -62,6 +59,14 @@ export function Account() {
             <input
               type="text"
               name="displayName"
+              className="block w-full focus:border-blue-500 focus:first-letter:ring-blue-500"
+            />
+          </fieldset>
+          <fieldset>
+            <label htmlFor="">Email</label>
+            <input
+              type="email"
+              name="email"
               className="block w-full focus:border-blue-500 focus:first-letter:ring-blue-500"
             />
           </fieldset>

@@ -1,6 +1,7 @@
 import { timeout } from "@/utils/timeout";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
+import { Lab } from "./Lab";
 
 export function Deferred() {
   const [query, setQuery] = React.useState("initial data");
@@ -42,6 +43,10 @@ export function Deferred() {
           <FetchData query={deferredQuery}></FetchData>
         </React.Suspense>
       )}
+      <React.Suspense fallback={<p className="animate-pulse">Pending</p>}>
+        <Lab p={1} />
+        <Lab p={2} />
+      </React.Suspense>
     </div>
   );
 }
