@@ -13,19 +13,19 @@ importers:
         version: 6.7.1
       '@casl/react':
         specifier: ^4.0.0
-        version: 4.0.0(@casl/ability@6.7.1)(react@19.0.0-rc-e210d081-20240909)
+        version: 4.0.0(@casl/ability@6.7.1)(react@19.0.0-rc-3dfd5d9e-20240910)
       '@tanstack/react-form':
         specifier: ^0.32.0
-        version: 0.32.0(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)(typescript@5.6.2)
+        version: 0.32.0(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)(typescript@5.6.2)
       '@tanstack/react-query':
         specifier: ^5.55.4
-        version: 5.55.4(react@19.0.0-rc-e210d081-20240909)
+        version: 5.55.4(react@19.0.0-rc-3dfd5d9e-20240910)
       '@tanstack/react-query-devtools':
         specifier: ^5.55.4
-        version: 5.55.4(@tanstack/react-query@5.55.4(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+        version: 5.55.4(@tanstack/react-query@5.55.4(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
       '@tanstack/react-table':
         specifier: ^8.20.5
-        version: 8.20.5(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+        version: 8.20.5(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
       '@tanstack/zod-form-adapter':
         specifier: ^0.31.0
         version: 0.31.0(zod@3.23.8)
@@ -48,29 +48,29 @@ importers:
         specifier: ^0.2.0
         version: 0.2.0
       react:
-        specifier: 19.0.0-rc-e210d081-20240909
-        version: 19.0.0-rc-e210d081-20240909
+        specifier: 19.0.0-rc-3dfd5d9e-20240910
+        version: 19.0.0-rc-3dfd5d9e-20240910
       react-dom:
-        specifier: 19.0.0-rc-e210d081-20240909
-        version: 19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909)
+        specifier: 19.0.0-rc-3dfd5d9e-20240910
+        version: 19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910)
       react-dropzone:
         specifier: ^14.2.3
-        version: 14.2.3(react@19.0.0-rc-e210d081-20240909)
+        version: 14.2.3(react@19.0.0-rc-3dfd5d9e-20240910)
       react-error-boundary:
         specifier: ^4.0.13
-        version: 4.0.13(react@19.0.0-rc-e210d081-20240909)
+        version: 4.0.13(react@19.0.0-rc-3dfd5d9e-20240910)
       react-i18next:
         specifier: ^15.0.1
-        version: 15.0.1(i18next@23.15.0)(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+        version: 15.0.1(i18next@23.15.0)(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
       react-router-dom:
         specifier: ^6.26.2
-        version: 6.26.2(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+        version: 6.26.2(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
       react-transition-group:
         specifier: ^4.4.5
-        version: 4.4.5(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+        version: 4.4.5(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
       recharts:
         specifier: ^2.12.7
-        version: 2.12.7(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+        version: 2.12.7(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
       shiki:
         specifier: ^1.16.3
         version: 1.16.3
@@ -79,13 +79,13 @@ importers:
         version: 11.1.12
       use-immer:
         specifier: ^0.9.0
-        version: 0.9.0(immer@10.1.1)(react@19.0.0-rc-e210d081-20240909)
+        version: 0.9.0(immer@10.1.1)(react@19.0.0-rc-3dfd5d9e-20240910)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
       zustand:
         specifier: ^4.5.5
-        version: 4.5.5(immer@10.1.1)(react@19.0.0-rc-e210d081-20240909)(types-react@19.0.0-rc.1)
+        version: 4.5.5(immer@10.1.1)(react@19.0.0-rc-3dfd5d9e-20240910)(types-react@19.0.0-rc.1)
     devDependencies:
       '@eslint/js':
         specifier: ^9.10.0
@@ -121,14 +121,14 @@ importers:
         specifier: ^10.4.20
         version: 10.4.20(postcss@8.4.45)
       babel-plugin-react-compiler:
-        specifier: 0.0.0-experimental-4e0eccf-20240830
-        version: 0.0.0-experimental-4e0eccf-20240830
+        specifier: 0.0.0-experimental-2bc6fec-20240910
+        version: 0.0.0-experimental-2bc6fec-20240910
       eslint-plugin-react-compiler:
-        specifier: 0.0.0-experimental-b8a7b48-20240830
-        version: 0.0.0-experimental-b8a7b48-20240830(eslint@8.57.0)
+        specifier: 0.0.0-experimental-b6997ec-20240910
+        version: 0.0.0-experimental-b6997ec-20240910(eslint@8.57.0)
       eslint-plugin-react-hooks:
-        specifier: 5.1.0-rc-4f604941-20240830
-        version: 5.1.0-rc-4f604941-20240830(eslint@8.57.0)
+        specifier: 5.1.0-rc-3dfd5d9e-20240910
+        version: 5.1.0-rc-3dfd5d9e-20240910(eslint@8.57.0)
       eslint-plugin-react-refresh:
         specifier: ^0.4.11
         version: 0.4.11(eslint@8.57.0)
@@ -1183,8 +1183,8 @@ packages:
   axios@1.7.7:
     resolution: {integrity: sha512-S4kL7XrjgBmvdGut0sN3yJxqYzrDOnivkBiN0OFs6hLiUam3UPvswUo0kqGyhqUZGEOytHyumEdXsAkgCOUf3Q==}
 
-  babel-plugin-react-compiler@0.0.0-experimental-4e0eccf-20240830:
-    resolution: {integrity: sha512-NrhscwyQweUgDfmWrNigyb6mJM22euUSoV2PHCZ7JPRN+vSpqbQuDS2JYfusCxueVMxG1Qaj2JFBAl9RPFeaLQ==}
+  babel-plugin-react-compiler@0.0.0-experimental-2bc6fec-20240910:
+    resolution: {integrity: sha512-ktoe5CVIGdUyos1SprZiobQtx4IdNFsoUKaKf58e6NOlycNBNkDr8V/j1lmqPfwIp/dxQYIZpV04xwzpfFqFKw==}
 
   balanced-match@1.0.2:
     resolution: {integrity: sha512-3oSeUO0TMV67hN1AmbXsK4yaqU7tjiHlbxRDZOpH0KW9+CeX4bRAaX0Anxt0tx2MrpRpWwQaPwIlISEJhYU5Pw==}
@@ -1420,14 +1420,14 @@ packages:
     resolution: {integrity: sha512-TtpcNJ3XAzx3Gq8sWRzJaVajRs0uVxA2YAkdb1jm2YkPz4G6egUFAyA3n5vtEIZefPk5Wa4UXbKuS5fKkJWdgA==}
     engines: {node: '>=10'}
 
-  eslint-plugin-react-compiler@0.0.0-experimental-b8a7b48-20240830:
-    resolution: {integrity: sha512-5AMC4eCj3egh0l2MACmYR3gu1m8i9kDx5K2PNiwRvNTb92kurNS1YSMHJmfYhWx2o/ZKlPvYIZstXTi+ZIKOCA==}
+  eslint-plugin-react-compiler@0.0.0-experimental-b6997ec-20240910:
+    resolution: {integrity: sha512-5VLQr2Lvxo4Ktf7TKC/0cPRJIKg4F34BreQmth5vHOc1aR8I6IZ84hY7T3ci2VlrfTKOHkEDEjGfOJWSoM9aZQ==}
     engines: {node: ^14.17.0 || ^16.0.0 || >= 18.0.0}
     peerDependencies:
       eslint: '>=7'
 
-  eslint-plugin-react-hooks@5.1.0-rc-4f604941-20240830:
-    resolution: {integrity: sha512-7IHBSzlQL498kfaPzQWV1t8dR/v3QTbXtG2x2bVjl5YOLpmf+I045NU78HMX7wAOaepWjsOwF591Q/O+nr3CJQ==}
+  eslint-plugin-react-hooks@5.1.0-rc-3dfd5d9e-20240910:
+    resolution: {integrity: sha512-bB2mPM2fKSgb+rrHtksYrawCribuatIBq8t1gZTyEwNbrWTDFc1H0r7FWZVgqOvR9n5hwOxF16KVXkgFwvGQMw==}
     engines: {node: '>=10'}
     peerDependencies:
       eslint: ^3.0.0 || ^4.0.0 || ^5.0.0 || ^6.0.0 || ^7.0.0 || ^8.0.0-0 || ^9.0.0
@@ -2077,10 +2077,10 @@ packages:
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
 
-  react-dom@19.0.0-rc-e210d081-20240909:
-    resolution: {integrity: sha512-h/ZtmV3WB7Q61dSUi1sl+U5A9vQt5+ZCaU0qaF8/eh1K91sRAUFAa0TkrU0JTEJ+uA8FQjt1k3ZJJUDPBepo9g==}
+  react-dom@19.0.0-rc-3dfd5d9e-20240910:
+    resolution: {integrity: sha512-QlgDCzD7Gk6aE+3xT1uGI2wR9dGdP8s5uVpvJTpXxe3Py37Mh4yCt07Gt6cVjtO3ChQlrAGHid9jqTKo4L+Luw==}
     peerDependencies:
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
   react-dropzone@14.2.3:
     resolution: {integrity: sha512-O3om8I+PkFKbxCukfIR3QAGftYXDZfOE2N1mr/7qebQJHs7U+/RSL/9xomJNpRg9kM5h9soQSdf0Gc7OHF5Fug==}
@@ -2138,8 +2138,8 @@ packages:
       react: '>=16.6.0'
       react-dom: '>=16.6.0'
 
-  react@19.0.0-rc-e210d081-20240909:
-    resolution: {integrity: sha512-2TetWmjnJdOc9lQXFhKE9gKCzQcuOYbdcHqT3Ar3965gCDtKzjDPSUjQUbOk75NBKN9v4VqbeM/vOpP+0n5xPw==}
+  react@19.0.0-rc-3dfd5d9e-20240910:
+    resolution: {integrity: sha512-BcW1XtpCkj6ueV++x9xWvlrkDkfYRiPaMni7ZUOeUZ+JodKodJdQp2D2r5u7P87eRZfsncBdyCd/4Hw8XEPGAg==}
     engines: {node: '>=0.10.0'}
 
   read-cache@1.0.0:
@@ -2202,8 +2202,8 @@ packages:
     engines: {node: '>=14.0.0'}
     hasBin: true
 
-  scheduler@0.25.0-rc-e210d081-20240909:
-    resolution: {integrity: sha512-sLyjQ8rjo6xP2SmZj5frkjHQ8JrzK+B2kba3jHK/UCbNYca/fqjgBjf1DqSnjhNZLlCS0okviMLJLe9NH4E8FQ==}
+  scheduler@0.25.0-rc-3dfd5d9e-20240910:
+    resolution: {integrity: sha512-apup8MV/PiWvoaXk1pP/Gbmhg1lQoGYGs9w+o3hxwxl+xcwP5NSQsnedFEFgwRTHFeTwyJl7sPY/WDSnHSEgWw==}
 
   semver@6.3.1:
     resolution: {integrity: sha512-BR7VvDCVHO+q2xBEWskxS6DJE1qRnb7DxzUrogb71CWoSficBxYsiAGd+Kl0mmq/MprG9yArRkyrQxTO6XjMzA==}
@@ -2741,10 +2741,10 @@ snapshots:
     dependencies:
       '@ucast/mongo2js': 1.3.4
 
-  '@casl/react@4.0.0(@casl/ability@6.7.1)(react@19.0.0-rc-e210d081-20240909)':
+  '@casl/react@4.0.0(@casl/ability@6.7.1)(react@19.0.0-rc-3dfd5d9e-20240910)':
     dependencies:
       '@casl/ability': 6.7.1
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
   '@esbuild/aix-ppc64@0.21.5':
     optional: true
@@ -3385,40 +3385,40 @@ snapshots:
 
   '@tanstack/query-devtools@5.55.1': {}
 
-  '@tanstack/react-form@0.32.0(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)(typescript@5.6.2)':
+  '@tanstack/react-form@0.32.0(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)(typescript@5.6.2)':
     dependencies:
       '@remix-run/node': 2.12.0(typescript@5.6.2)
       '@tanstack/form-core': 0.32.0
-      '@tanstack/react-store': 0.5.5(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+      '@tanstack/react-store': 0.5.5(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
       decode-formdata: 0.8.0
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
     transitivePeerDependencies:
       - react-dom
       - typescript
 
-  '@tanstack/react-query-devtools@5.55.4(@tanstack/react-query@5.55.4(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)':
+  '@tanstack/react-query-devtools@5.55.4(@tanstack/react-query@5.55.4(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)':
     dependencies:
       '@tanstack/query-devtools': 5.55.1
-      '@tanstack/react-query': 5.55.4(react@19.0.0-rc-e210d081-20240909)
-      react: 19.0.0-rc-e210d081-20240909
+      '@tanstack/react-query': 5.55.4(react@19.0.0-rc-3dfd5d9e-20240910)
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
-  '@tanstack/react-query@5.55.4(react@19.0.0-rc-e210d081-20240909)':
+  '@tanstack/react-query@5.55.4(react@19.0.0-rc-3dfd5d9e-20240910)':
     dependencies:
       '@tanstack/query-core': 5.55.4
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
-  '@tanstack/react-store@0.5.5(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)':
+  '@tanstack/react-store@0.5.5(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)':
     dependencies:
       '@tanstack/store': 0.5.5
-      react: 19.0.0-rc-e210d081-20240909
-      react-dom: 19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909)
-      use-sync-external-store: 1.2.2(react@19.0.0-rc-e210d081-20240909)
+      react: 19.0.0-rc-3dfd5d9e-20240910
+      react-dom: 19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910)
+      use-sync-external-store: 1.2.2(react@19.0.0-rc-3dfd5d9e-20240910)
 
-  '@tanstack/react-table@8.20.5(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)':
+  '@tanstack/react-table@8.20.5(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)':
     dependencies:
       '@tanstack/table-core': 8.20.5
-      react: 19.0.0-rc-e210d081-20240909
-      react-dom: 19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909)
+      react: 19.0.0-rc-3dfd5d9e-20240910
+      react-dom: 19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910)
 
   '@tanstack/store@0.5.5': {}
 
@@ -3703,7 +3703,7 @@ snapshots:
     transitivePeerDependencies:
       - debug
 
-  babel-plugin-react-compiler@0.0.0-experimental-4e0eccf-20240830:
+  babel-plugin-react-compiler@0.0.0-experimental-2bc6fec-20240910:
     dependencies:
       '@babel/generator': 7.2.0
       '@babel/types': 7.25.6
@@ -3939,7 +3939,7 @@ snapshots:
 
   escape-string-regexp@4.0.0: {}
 
-  eslint-plugin-react-compiler@0.0.0-experimental-b8a7b48-20240830(eslint@8.57.0):
+  eslint-plugin-react-compiler@0.0.0-experimental-b6997ec-20240910(eslint@8.57.0):
     dependencies:
       '@babel/core': 7.25.2
       '@babel/parser': 7.25.6
@@ -3951,7 +3951,7 @@ snapshots:
     transitivePeerDependencies:
       - supports-color
 
-  eslint-plugin-react-hooks@5.1.0-rc-4f604941-20240830(eslint@8.57.0):
+  eslint-plugin-react-hooks@5.1.0-rc-3dfd5d9e-20240910(eslint@8.57.0):
     dependencies:
       eslint: 8.57.0
 
@@ -4545,66 +4545,66 @@ snapshots:
 
   queue-microtask@1.2.3: {}
 
-  react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909):
+  react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
-      react: 19.0.0-rc-e210d081-20240909
-      scheduler: 0.25.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
+      scheduler: 0.25.0-rc-3dfd5d9e-20240910
 
-  react-dropzone@14.2.3(react@19.0.0-rc-e210d081-20240909):
+  react-dropzone@14.2.3(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       attr-accept: 2.2.2
       file-selector: 0.6.0
       prop-types: 15.8.1
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
-  react-error-boundary@4.0.13(react@19.0.0-rc-e210d081-20240909):
+  react-error-boundary@4.0.13(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       '@babel/runtime': 7.25.6
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
-  react-i18next@15.0.1(i18next@23.15.0)(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909):
+  react-i18next@15.0.1(i18next@23.15.0)(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       '@babel/runtime': 7.25.6
       html-parse-stringify: 3.0.1
       i18next: 23.15.0
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
     optionalDependencies:
-      react-dom: 19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909)
+      react-dom: 19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910)
 
   react-is@16.13.1: {}
 
   react-refresh@0.14.2: {}
 
-  react-router-dom@6.26.2(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909):
+  react-router-dom@6.26.2(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       '@remix-run/router': 1.19.2
-      react: 19.0.0-rc-e210d081-20240909
-      react-dom: 19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909)
-      react-router: 6.26.2(react@19.0.0-rc-e210d081-20240909)
+      react: 19.0.0-rc-3dfd5d9e-20240910
+      react-dom: 19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910)
+      react-router: 6.26.2(react@19.0.0-rc-3dfd5d9e-20240910)
 
-  react-router@6.26.2(react@19.0.0-rc-e210d081-20240909):
+  react-router@6.26.2(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       '@remix-run/router': 1.19.2
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
-  react-smooth@4.0.1(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909):
+  react-smooth@4.0.1(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       fast-equals: 5.0.1
       prop-types: 15.8.1
-      react: 19.0.0-rc-e210d081-20240909
-      react-dom: 19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909)
-      react-transition-group: 4.4.5(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+      react: 19.0.0-rc-3dfd5d9e-20240910
+      react-dom: 19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910)
+      react-transition-group: 4.4.5(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
 
-  react-transition-group@4.4.5(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909):
+  react-transition-group@4.4.5(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       '@babel/runtime': 7.25.6
       dom-helpers: 5.2.1
       loose-envify: 1.4.0
       prop-types: 15.8.1
-      react: 19.0.0-rc-e210d081-20240909
-      react-dom: 19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909)
+      react: 19.0.0-rc-3dfd5d9e-20240910
+      react-dom: 19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910)
 
-  react@19.0.0-rc-e210d081-20240909: {}
+  react@19.0.0-rc-3dfd5d9e-20240910: {}
 
   read-cache@1.0.0:
     dependencies:
@@ -4618,15 +4618,15 @@ snapshots:
     dependencies:
       decimal.js-light: 2.5.1
 
-  recharts@2.12.7(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909):
+  recharts@2.12.7(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       clsx: 2.1.1
       eventemitter3: 4.0.7
       lodash: 4.17.21
-      react: 19.0.0-rc-e210d081-20240909
-      react-dom: 19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909)
+      react: 19.0.0-rc-3dfd5d9e-20240910
+      react-dom: 19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910)
       react-is: 16.13.1
-      react-smooth: 4.0.1(react-dom@19.0.0-rc-e210d081-20240909(react@19.0.0-rc-e210d081-20240909))(react@19.0.0-rc-e210d081-20240909)
+      react-smooth: 4.0.1(react-dom@19.0.0-rc-3dfd5d9e-20240910(react@19.0.0-rc-3dfd5d9e-20240910))(react@19.0.0-rc-3dfd5d9e-20240910)
       recharts-scale: 0.4.5
       tiny-invariant: 1.3.3
       victory-vendor: 36.9.2
@@ -4686,7 +4686,7 @@ snapshots:
       source-map-js: 1.2.1
     optional: true
 
-  scheduler@0.25.0-rc-e210d081-20240909: {}
+  scheduler@0.25.0-rc-3dfd5d9e-20240910: {}
 
   semver@6.3.1: {}
 
@@ -4876,14 +4876,14 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-immer@0.9.0(immer@10.1.1)(react@19.0.0-rc-e210d081-20240909):
+  use-immer@0.9.0(immer@10.1.1)(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
       immer: 10.1.1
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
-  use-sync-external-store@1.2.2(react@19.0.0-rc-e210d081-20240909):
+  use-sync-external-store@1.2.2(react@19.0.0-rc-3dfd5d9e-20240910):
     dependencies:
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
 
   util-deprecate@1.0.2: {}
 
@@ -4998,10 +4998,10 @@ snapshots:
 
   zod@3.23.8: {}
 
-  zustand@4.5.5(immer@10.1.1)(react@19.0.0-rc-e210d081-20240909)(types-react@19.0.0-rc.1):
+  zustand@4.5.5(immer@10.1.1)(react@19.0.0-rc-3dfd5d9e-20240910)(types-react@19.0.0-rc.1):
     dependencies:
-      use-sync-external-store: 1.2.2(react@19.0.0-rc-e210d081-20240909)
+      use-sync-external-store: 1.2.2(react@19.0.0-rc-3dfd5d9e-20240910)
     optionalDependencies:
       '@types/react': types-react@19.0.0-rc.1
       immer: 10.1.1
-      react: 19.0.0-rc-e210d081-20240909
+      react: 19.0.0-rc-3dfd5d9e-20240910
