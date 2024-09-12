@@ -2,9 +2,9 @@ import { timeout } from "@/utils/timeout";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
 import { Lab } from "./Lab";
-
+import { UserProfile } from "@/components/shared/UserProfile";
 export function Deferred() {
-  const [query, setQuery] = React.useState("initial data");
+  const [query, setQuery] = React.useState("initial");
   const deferredQuery = React.useDeferredValue(query);
   const [show, setShow] = React.useState(false);
   const [isPending, startTransition] = React.useTransition();
@@ -13,6 +13,7 @@ export function Deferred() {
 
   return (
     <div className="space-y-3 px-5 py-2">
+      <UserProfile />
       <fieldset>
         <label className="flex items-center gap-2">
           <input
