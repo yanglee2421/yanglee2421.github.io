@@ -1,82 +1,103 @@
 import { timeout } from "@/utils/timeout";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
-import { Lab } from "./Lab";
 import { UserProfile } from "@/components/shared/UserProfile";
-export function Deferred() {
-  const [query, setQuery] = React.useState("initial");
-  const deferredQuery = React.useDeferredValue(query);
-  const [show, setShow] = React.useState(false);
-  const [isPending, startTransition] = React.useTransition();
+import { NavMenus } from "@/components/shared/NavMenus";
+import { codeToHtml } from "shiki";
+import classNames from "classnames";
 
-  console.log(query, "deferredQuery", deferredQuery);
+export function Deferred() {
+  const [query, setQuery] = React.useState({
+    select: "0",
+    input: "",
+  });
+  const deferredQuery = React.useDeferredValue(query);
+
+  const isStale = !Object.is(query, deferredQuery);
 
   return (
     <div className="space-y-3 px-5 py-2">
       <UserProfile />
-      <fieldset>
-        <label className="flex items-center gap-2">
+      <NavMenus />
+      <form
+        onSubmit={(evt) => {
+          evt.preventDefault();
+          evt.stopPropagation();
+
+          const formData = new FormData(evt.currentTarget);
+
+          setQuery({
+            input: formData.get("input") as string,
+            select: formData.get("select") as string,
+          });
+        }}
+        className="space-y-3"
+      >
+        <fieldset>
           <input
-            type="checkbox"
-            checked={show}
-            onChange={(evt) => {
-              startTransition(() => {
-                setShow(evt.target.checked);
-              });
-            }}
+            name="input"
+            type="text"
+            defaultValue={query.input}
+            className="block w-full"
           />
-          <span>show suspense</span>
-        </label>
-      </fieldset>
-      <fieldset>
-        <input
-          type="text"
-          value={query}
-          onChange={(evt) => {
-            setQuery(evt.target.value);
-          }}
-        />
-      </fieldset>
-      <p>{!Object.is(query, deferredQuery) && "syncing"}</p>
-      <p>{isPending && "pending"}</p>
-      {show && (
-        <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
-          <FetchData query={deferredQuery}></FetchData>
-        </React.Suspense>
-      )}
-      <React.Suspense fallback={<p className="animate-pulse">Pending</p>}>
-        <Lab p={1} />
-        <Lab p={2} />
+        </fieldset>
+        <fieldset>
+          <select
+            name="select"
+            defaultValue={query.select}
+            className="block w-full"
+          >
+            <option value="1">1</option>
+            <option value="2">2</option>
+            <option value="3">3</option>
+          </select>
+        </fieldset>
+        <div className="flex gap-2">
+          <button type="submit" disabled={isStale} className="btn-blue">
+            submit
+          </button>
+          <button type="reset" className="btn-border">
+            reset
+          </button>
+        </div>
+      </form>
+      <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
+        <FetchData query={deferredQuery} isStale={isStale} />
       </React.Suspense>
     </div>
   );
 }
 
 type Props = {
-  query: string;
+  query: NonNullable<unknown>;
+  isStale?: boolean;
 };
 
 function FetchData(props: Props) {
-  console.log("query props", props.query);
-
   const query = useSuspenseQuery({
     queryKey: ["suspense", props.query],
     async queryFn() {
       await timeout(1000 * 2);
-      return props.query;
+      const res = await codeToHtml(JSON.stringify(props.query, null, 2), {
+        lang: "json",
+        theme: "dark-plus",
+      });
+
+      return res;
     },
-    staleTime: 0,
-    gcTime: 1000,
   });
 
-  console.log("query data", query.data);
-
-  return <p className="border-t">{query.data}</p>;
+  return (
+    <div className="relative overflow-hidden rounded">
+      {props.isStale && (
+        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25">
+          <p className="animate-pulse capitalize text-white">feting...</p>
+        </div>
+      )}
+      <div
+        className={classNames("border-t")}
+        dangerouslySetInnerHTML={{ __html: query.data }}
+      ></div>
+    </div>
+  );
 }
-/**
- * Deferred value
- * 1. value params change
- * 2. dispatch normal update, keep deferred value as old value (do commit to screen)
- * 3. dispatch transition update, deferred value as same as value (do not commit to screen)
- * 4.
- */

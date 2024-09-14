@@ -1,7 +1,6 @@
 import { QueryErrorResetBoundary } from "@tanstack/react-query";
 import React from "react";
 import { ErrorBoundary } from "react-error-boundary";
-import { NavMenus } from "@/components/shared/NavMenus";
 import { Deferred } from "./Deferred";
 
 export function Component() {
@@ -24,7 +23,6 @@ export function Component() {
               }}
             >
               <React.Suspense fallback={<div>loading</div>}>
-                <NavMenus />
                 <Deferred />
               </React.Suspense>
             </ErrorBoundary>
