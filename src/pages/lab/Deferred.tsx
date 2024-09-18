@@ -122,7 +122,7 @@ function FetchData(props: Props) {
     <div className="relative overflow-hidden rounded">
       {isPending && (
         <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25">
-          <p className="animate-pulse capitalize text-white">feting...</p>
+          <p className="animate-pulse capitalize text-white">fetching...</p>
         </div>
       )}
       <div
