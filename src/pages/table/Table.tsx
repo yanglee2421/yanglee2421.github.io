@@ -11,6 +11,7 @@ import { firestore } from "@/api/firebase/app";
 import { columns } from "./columns";
 import { useFormStatus } from "react-dom";
 import { NavMenus } from "@/components/shared/NavMenus";
+import { UserProfile } from "@/components/shared/UserProfile";
 
 export function Table() {
   const collectionRef = collection(firestore, "joke");
@@ -22,9 +23,7 @@ export function Table() {
     },
   });
 
-  const data = React.useMemo(() => {
-    return query.data.docs;
-  }, [query.data]);
+  const data = React.useMemo(() => query.data.docs, [query.data]);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
@@ -38,17 +37,25 @@ export function Table() {
   const [showDialog, setShowDialog] = React.useState(false);
   const dialogRef = React.useRef<HTMLDialogElement>(null);
   React.useEffect(() => {
-    if (showDialog) {
-      dialogRef.current?.showModal();
+    const el = dialogRef.current;
+
+    if (!el) {
       return;
     }
 
-    dialogRef.current?.close();
+    if (showDialog) {
+      el.showModal();
+      return;
+    }
+
+    el.close();
   }, [showDialog]);
 
   return (
     <div className="flex min-h-dvh flex-col">
-      <header></header>
+      <header className="px-5 py-2">
+        <UserProfile />
+      </header>
       <main className="flex-auto px-5 py-2">
         <aside>
           <NavMenus />

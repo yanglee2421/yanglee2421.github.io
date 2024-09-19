@@ -3,24 +3,16 @@ import { useTranslation } from "react-i18next";
 import { HeadlessCalendar } from "@/components/headless/HeadlessCalendar";
 import { NavMenus } from "@/components/shared/NavMenus";
 import { Clock } from "./Clock";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import { UserProfile } from "@/components/shared/UserProfile";
 
 export function Calendar() {
   const [selectedTime, setSelectedTime] = React.useState(() => Date.now());
   const { i18n } = useTranslation();
-  const user = useCurrentUser();
 
   return (
     <div className="flex min-h-dvh flex-col">
       <header className="px-5 py-2">
-        {user && (
-          <figure>
-            {user.photoURL && (
-              <img src={user.photoURL} width={64} height={64} alt="" />
-            )}
-            <figcaption>{user.displayName}</figcaption>
-          </figure>
-        )}
+        <UserProfile />
       </header>
       <aside className="px-5 py-2">
         <NavMenus />

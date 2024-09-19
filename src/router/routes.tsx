@@ -4,11 +4,9 @@ export const routes = createRoutesFromElements(
   <Route
     id="root"
     lazy={async () => {
-      const { ErrorBoundary } = await import("./ErrorBoundary");
       const { RootRoute } = await import("./RootRoute");
 
       return {
-        ErrorBoundary,
         Component: RootRoute,
       };
     }}
