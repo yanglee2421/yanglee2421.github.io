@@ -1,8 +1,6 @@
 import { timeout } from "@/utils/timeout";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
-import { UserProfile } from "@/components/shared/UserProfile";
-import { NavMenus } from "@/components/shared/NavMenus";
 import { codeToHtml } from "shiki";
 import classNames from "classnames";
 
@@ -13,9 +11,7 @@ export function Deferred() {
   });
 
   return (
-    <div className="space-y-3 px-5 py-2">
-      <UserProfile />
-      <NavMenus />
+    <>
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
         <UncontrolerForm
           onSubmit={(formData) => {
@@ -57,7 +53,7 @@ export function Deferred() {
           <FetchData query={query} />
         </React.Suspense>
       )}
-    </div>
+    </>
   );
 }
 
