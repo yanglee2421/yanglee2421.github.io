@@ -3,6 +3,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
 import { codeToHtml } from "shiki";
 import classNames from "classnames";
+import { Slider } from "./Slider";
 
 export function Deferred() {
   const [query, setQuery] = React.useState({
@@ -53,6 +54,9 @@ export function Deferred() {
           <FetchData query={query} />
         </React.Suspense>
       )}
+      <div>
+        <Slider />
+      </div>
     </>
   );
 }

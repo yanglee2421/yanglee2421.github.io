@@ -10,7 +10,7 @@ export function Layout() {
   const outlet = useOutlet();
 
   return (
-    <div className="relative flex min-h-dvh flex-col">
+    <div className="min-h-dvh">
       <header className="flex items-center px-5 py-2">
         <UserProfile />
         <button
@@ -23,12 +23,12 @@ export function Layout() {
           signout
         </button>
       </header>
-      <div className="flex flex-auto gap-3 px-5 py-6">
-        <aside className="w-64">
+      <div>
+        <aside className="px-5 py-2">
           <NavMenus />
         </aside>
-        <div className="min-w-0 flex-1">
-          <main>{outlet}</main>
+        <div>
+          <main className="space-y-6 px-5 py-2">{outlet}</main>
           <footer className="px-5 py-2">
             &copy;2024{" "}
             <a
