@@ -7,9 +7,8 @@ import { codeToHtml } from "shiki";
 import classNames from "classnames";
 
 export function Deferred() {
-  const [isPending, startTransition] = React.useTransition();
   const [query, setQuery] = React.useState({
-    select: "0",
+    select: "",
     input: "",
   });
 
@@ -18,50 +17,14 @@ export function Deferred() {
       <UserProfile />
       <NavMenus />
       <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
-        <form
-          onSubmit={(evt) => {
-            evt.preventDefault();
-            evt.stopPropagation();
-
-            const formData = new FormData(evt.currentTarget);
-
-            startTransition(() => {
-              setQuery({
-                input: formData.get("input") as string,
-                select: formData.get("select") as string,
-              });
+        <UncontrolerForm
+          onSubmit={(formData) => {
+            setQuery({
+              input: formData.get("input") as string,
+              select: formData.get("select") as string,
             });
           }}
-          className="space-y-3"
-        >
-          <fieldset>
-            <input
-              name="input"
-              type="text"
-              defaultValue={query.input}
-              className="block w-full"
-            />
-          </fieldset>
-          <fieldset>
-            <select
-              name="select"
-              defaultValue={query.select}
-              className="block w-full"
-            >
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
-          </fieldset>
-          <div className="flex gap-2">
-            <button disabled={isPending} type="submit" className="btn-blue">
-              submit
-            </button>
-            <button type="reset" className="btn-border">
-              reset
-            </button>
-          </div>
-        </form>
+        />
         <div className="space-y-3">
           <fieldset>
             <input
@@ -81,6 +44,7 @@ export function Deferred() {
               }}
               className="block w-full"
             >
+              <option value="">none</option>
               <option value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -88,22 +52,22 @@ export function Deferred() {
           </fieldset>
         </div>
       </div>
-      <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
-        <FetchData query={query} isStale={isPending} />
-      </React.Suspense>
+      {query.select && (
+        <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
+          <FetchData query={query} />
+        </React.Suspense>
+      )}
     </div>
   );
 }
 
 type Props = {
   query: NonNullable<unknown>;
-  isStale?: boolean;
 };
 
 function FetchData(props: Props) {
   const deferredQuery = React.useDeferredValue(props.query);
-  const isStale = !Object.is(props.query, deferredQuery);
-  const isPending = isStale || props.isStale;
+  const isPending = !Object.is(props.query, deferredQuery);
 
   const query = useSuspenseQuery({
     queryKey: ["suspense", deferredQuery],
@@ -130,5 +94,48 @@ function FetchData(props: Props) {
         dangerouslySetInnerHTML={{ __html: query.data }}
       ></div>
     </div>
+  );
+}
+
+type UncontrolerFormProps = {
+  onSubmit(data: FormData): void;
+};
+
+function UncontrolerForm(props: UncontrolerFormProps) {
+  const [isPending, startTransition] = React.useTransition();
+
+  return (
+    <form
+      onSubmit={(evt) => {
+        evt.preventDefault();
+        evt.stopPropagation();
+
+        const formData = new FormData(evt.currentTarget);
+
+        startTransition(() => {
+          props.onSubmit(formData);
+        });
+      }}
+      className="space-y-3"
+    >
+      <fieldset>
+        <input name="input" type="text" className="block w-full" />
+      </fieldset>
+      <fieldset>
+        <select name="select" className="block w-full">
+          <option value="1">1</option>
+          <option value="2">2</option>
+          <option value="3">3</option>
+        </select>
+      </fieldset>
+      <div className="flex gap-2">
+        <button disabled={isPending} type="submit" className="btn-blue">
+          submit
+        </button>
+        <button type="reset" className="btn-border">
+          reset
+        </button>
+      </div>
+    </form>
   );
 }
