@@ -1,4 +1,3 @@
-"use no memo";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import {
   useReactTable,
@@ -12,6 +11,7 @@ import { columns } from "./columns";
 import { useFormStatus } from "react-dom";
 
 export function Table() {
+  "use no memo";
   const collectionRef = collection(firestore, "joke");
 
   const query = useSuspenseQuery({
