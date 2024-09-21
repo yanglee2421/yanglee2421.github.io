@@ -4,11 +4,9 @@ export const routes = createRoutesFromElements(
   <Route
     id="root"
     lazy={async () => {
-      const { ErrorBoundary } = await import("./ErrorBoundary");
       const { RootRoute } = await import("./RootRoute");
 
       return {
-        ErrorBoundary,
         Component: RootRoute,
       };
     }}
@@ -36,27 +34,35 @@ export const routes = createRoutesFromElements(
     />
 
     {/* Auth Pages */}
-    <Route id="home" index lazy={() => import("@/pages/home/Component")} />
     <Route
-      id="account"
-      path="account"
-      lazy={() => import("@/pages/account/Component")}
-    />
-    <Route
-      id="calendar"
-      path="calendar"
-      lazy={() => import("@/pages/calendar/Component")}
-    />
-    <Route
-      id="charts"
-      path="charts"
-      lazy={() => import("@/pages/charts/Component")}
-    />
-    <Route
-      id="table"
-      path="table"
-      lazy={() => import("@/pages/table/Component")}
-    />
-    <Route id="lab" path="lab" lazy={() => import("@/pages/lab/Component")} />
+      lazy={async () => {
+        const { Layout } = await import("@/components/Layout");
+
+        return { Component: Layout };
+      }}
+    >
+      <Route id="home" index lazy={() => import("@/pages/home/Component")} />
+      <Route
+        id="account"
+        path="account"
+        lazy={() => import("@/pages/account/Component")}
+      />
+      <Route
+        id="calendar"
+        path="calendar"
+        lazy={() => import("@/pages/calendar/Component")}
+      />
+      <Route
+        id="charts"
+        path="charts"
+        lazy={() => import("@/pages/charts/Component")}
+      />
+      <Route
+        id="table"
+        path="table"
+        lazy={() => import("@/pages/table/Component")}
+      />
+      <Route id="lab" path="lab" lazy={() => import("@/pages/lab/Component")} />
+    </Route>
   </Route>,
 );

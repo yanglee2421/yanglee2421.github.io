@@ -1,10 +1,14 @@
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import {
+  QueryClient,
+  QueryClientProvider,
+  QueryErrorResetBoundary,
+} from "@tanstack/react-query";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 export function QueryProvider(props: React.PropsWithChildren) {
   return (
     <QueryClientProvider client={queryClient}>
-      {props.children}
+      <QueryErrorResetBoundary>{props.children}</QueryErrorResetBoundary>
       <ReactQueryDevtools />
     </QueryClientProvider>
   );
