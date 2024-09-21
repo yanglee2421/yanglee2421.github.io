@@ -4,6 +4,7 @@ import React from "react";
 import { codeToHtml } from "shiki";
 import classNames from "classnames";
 import { Slider } from "./Slider";
+import { Lab } from "./Lab";
 
 export function Deferred() {
   const [query, setQuery] = React.useState({
@@ -12,8 +13,8 @@ export function Deferred() {
   });
 
   return (
-    <>
-      <div className="grid grid-cols-1 gap-3 md:grid-cols-2">
+    <div className="space-y-6">
+      <div className="grid grid-cols-1 gap-3 rounded border p-3 shadow md:grid-cols-2">
         <UncontrolerForm
           onSubmit={(formData) => {
             setQuery({
@@ -48,16 +49,25 @@ export function Deferred() {
             </select>
           </fieldset>
         </div>
+        <div className="col-span-full">
+          {query.select && (
+            <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
+              <FetchData query={query} />
+            </React.Suspense>
+          )}
+        </div>
       </div>
-      {query.select && (
-        <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
-          <FetchData query={query} />
-        </React.Suspense>
-      )}
-      <div>
+
+      <div className="rounded border p-3 shadow">
         <Slider />
       </div>
-    </>
+      <div className="rounded border p-3 shadow">
+        <React.Suspense fallback={<p className="animate-pulse">Suspense...</p>}>
+          <Lab p={1} />
+          <Lab p={2} />
+        </React.Suspense>
+      </div>
+    </div>
   );
 }
 
