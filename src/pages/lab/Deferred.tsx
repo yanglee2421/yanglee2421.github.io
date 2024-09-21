@@ -1,7 +1,8 @@
 import { timeout } from "@/utils/timeout";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import React from "react";
-import { codeToHtml } from "shiki";
+import { createHighlighterCore } from "shiki/core";
+import getWasm from "shiki/wasm";
 import classNames from "classnames";
 import { Slider } from "./Slider";
 import { Lab } from "./Lab";
@@ -79,11 +80,22 @@ function FetchData(props: Props) {
   const deferredQuery = React.useDeferredValue(props.query);
   const isPending = !Object.is(props.query, deferredQuery);
 
+  const highlighter = useSuspenseQuery({
+    queryKey: ["shiki", "dark-plus", "json"],
+    queryFn() {
+      return createHighlighterCore({
+        themes: [import("shiki/themes/dark-plus.mjs")],
+        langs: [import("shiki/langs/json.mjs")],
+        loadWasm: getWasm,
+      });
+    },
+  }).data;
+
   const query = useSuspenseQuery({
     queryKey: ["suspense", deferredQuery],
     async queryFn() {
       await timeout(1000 * 2);
-      const res = await codeToHtml(JSON.stringify(props.query, null, 2), {
+      const res = highlighter.codeToHtml(JSON.stringify(props.query, null, 2), {
         lang: "json",
         theme: "dark-plus",
       });
