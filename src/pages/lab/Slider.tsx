@@ -11,13 +11,18 @@ export function Slider() {
           evt.currentTarget.setPointerCapture(evt.pointerId);
         }}
         onPointerMove={(evt) => {
+          if (!evt.currentTarget.hasPointerCapture(evt.pointerId)) {
+            return;
+          }
+
           const el = ref.current!;
+          const elClientRect = el.getBoundingClientRect();
 
           evt.currentTarget.style.left =
-            minmax(evt.clientX - el.getBoundingClientRect().left, {
+            minmax(evt.clientX - elClientRect.left, {
               min: 0,
               max:
-                el.getBoundingClientRect().width -
+                elClientRect.width -
                 evt.currentTarget.getBoundingClientRect().width,
             }) + "px";
         }}
