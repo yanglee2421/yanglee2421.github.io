@@ -89,6 +89,13 @@ function FetchData(props: Props) {
         loadWasm: getWasm,
       });
     },
+    staleTime: Infinity,
+    gcTime: Infinity,
+    refetchInterval: false,
+    refetchIntervalInBackground: false,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
   }).data;
 
   const query = useSuspenseQuery({
