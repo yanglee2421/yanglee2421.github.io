@@ -2,8 +2,8 @@ import { NavLink } from "react-router-dom";
 
 export function NavMenus() {
   return (
-    <div className="overflow-auto">
-      <nav className="flex space-x-4 border px-6 py-2 sm:justify-center">
+    <div className="overflow-auto border">
+      <nav className="flex px-5 py-2 sm:justify-center">
         {navList.map((item) => (
           <NavLink
             to={item.href}
@@ -38,5 +38,9 @@ const navList = [
   {
     label: "lab",
     href: "/lab",
+  },
+  {
+    label: "overtime",
+    href: "/overtime",
   },
 ];

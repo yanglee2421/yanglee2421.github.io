@@ -35,6 +35,7 @@ export const routes = createRoutesFromElements(
 
     {/* Auth Pages */}
     <Route
+      id="AuthLayout"
       lazy={async () => {
         const { Layout } = await import("@/components/Layout");
 
@@ -63,6 +64,11 @@ export const routes = createRoutesFromElements(
         lazy={() => import("@/pages/table/Component")}
       />
       <Route id="lab" path="lab" lazy={() => import("@/pages/lab/Component")} />
+      <Route
+        id="overtime"
+        path="overtime"
+        lazy={() => import("@/pages/overtime/component")}
+      />
     </Route>
   </Route>,
 );

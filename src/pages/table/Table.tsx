@@ -1,27 +1,35 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import {
+  useMutation,
+  useQueryClient,
+  useSuspenseQuery,
+} from "@tanstack/react-query";
 import {
   useReactTable,
   flexRender,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import { addDoc, collection, getDocs } from "firebase/firestore";
+import {
+  addDoc,
+  getDocsFromServer,
+  type DocumentReference,
+} from "firebase/firestore";
 import React from "react";
-import { firestore } from "@/api/firebase/app";
+import { jokeCollection as collectionRef } from "@/api/firebase/app";
 import { columns } from "./columns";
 import { useFormStatus } from "react-dom";
 
+const queryKey = ["firebase", "joke"];
+
 export function Table() {
   "use no memo";
-  const collectionRef = collection(firestore, "joke");
-
   const query = useSuspenseQuery({
-    queryKey: ["firebase", "joke"],
-    queryFn() {
-      return getDocs(collectionRef);
+    queryKey,
+    async queryFn() {
+      const docs = await getDocsFromServer(collectionRef);
+
+      return docs.docs;
     },
   });
-
-  const data = React.useMemo(() => query.data.docs, [query.data]);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
@@ -29,7 +37,23 @@ export function Table() {
       return originalRow.id;
     },
     columns,
-    data,
+    data: query.data,
+  });
+
+  console.log(query.data);
+
+  const queryClient = useQueryClient();
+
+  const add = useMutation<DocumentReference, Error, FormData>({
+    async mutationFn(formData) {
+      const title = getFormValue(formData, "title");
+      const context = getFormValue(formData, "context");
+      const data = await addDoc(collectionRef, { title, context });
+      return data;
+    },
+    onSuccess() {
+      queryClient.invalidateQueries({ queryKey });
+    },
   });
 
   const [showDialog, setShowDialog] = React.useState(false);
@@ -90,11 +114,11 @@ export function Table() {
         >
           <form
             action={async (formData) => {
-              const title = getFormValue(formData, "title");
-              const context = getFormValue(formData, "context");
-              await addDoc(collectionRef, { title, context });
-              await query.refetch();
-              setShowDialog(false);
+              await add.mutateAsync(formData, {
+                onSuccess() {
+                  setShowDialog(false);
+                },
+              });
             }}
             className="space-y-3"
           >
@@ -133,72 +157,54 @@ export function Table() {
 
       <table className="w-full rounded border">
         <thead className="border-b border-slate-200 bg-slate-50">
-          {table.getHeaderGroups().map((headerGroup) => {
-            return (
-              <tr key={headerGroup.id} className="divide-x">
-                {headerGroup.headers.map((header) => {
-                  return (
-                    <th
-                      key={header.id}
-                      colSpan={header.colSpan}
-                      className="px-6 py-3 text-left text-sm font-medium uppercase text-slate-900"
-                    >
-                      {header.isPlaceholder ||
-                        flexRender(
-                          header.column.columnDef.header,
-                          header.getContext(),
-                        )}
-                    </th>
-                  );
-                })}
-              </tr>
-            );
-          })}
+          {table.getHeaderGroups().map((headerGroup) => (
+            <tr key={headerGroup.id} className="divide-x">
+              {headerGroup.headers.map((header) => (
+                <th
+                  key={header.id}
+                  colSpan={header.colSpan}
+                  className="px-6 py-3 text-left text-sm font-medium uppercase text-slate-900"
+                >
+                  {header.isPlaceholder ||
+                    flexRender(
+                      header.column.columnDef.header,
+                      header.getContext(),
+                    )}
+                </th>
+              ))}
+            </tr>
+          ))}
         </thead>
         <tbody className="divide-y">
-          {table.getRowModel().rows.map((row) => {
-            return (
-              <tr
-                key={row.id}
-                className="divide-x odd:bg-white even:bg-slate-50"
-              >
-                {row.getVisibleCells().map((cell) => {
-                  return (
-                    <td
-                      key={cell.id}
-                      className="max-w-72 px-6 py-4 text-sm font-medium text-slate-900"
-                    >
-                      <div className="whitespace-normal break-normal">
-                        {flexRender(
-                          cell.column.columnDef.cell,
-                          cell.getContext(),
-                        )}
-                      </div>
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
+          {table.getRowModel().rows.map((row) => (
+            <tr key={row.id} className="divide-x odd:bg-white even:bg-slate-50">
+              {row.getVisibleCells().map((cell) => (
+                <td
+                  key={cell.id}
+                  className="max-w-72 px-6 py-4 text-sm font-medium text-slate-900"
+                >
+                  <div className="whitespace-normal break-normal">
+                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                  </div>
+                </td>
+              ))}
+            </tr>
+          ))}
         </tbody>
         <tfoot>
-          {table.getFooterGroups().map((footerGroup) => {
-            return (
-              <tr key={footerGroup.id}>
-                {footerGroup.headers.map((header) => {
-                  return (
-                    <td key={header.id} colSpan={header.colSpan}>
-                      {header.isPlaceholder ||
-                        flexRender(
-                          header.column.columnDef.footer,
-                          header.getContext(),
-                        )}
-                    </td>
-                  );
-                })}
-              </tr>
-            );
-          })}
+          {table.getFooterGroups().map((footerGroup) => (
+            <tr key={footerGroup.id}>
+              {footerGroup.headers.map((header) => (
+                <td key={header.id} colSpan={header.colSpan}>
+                  {header.isPlaceholder ||
+                    flexRender(
+                      header.column.columnDef.footer,
+                      header.getContext(),
+                    )}
+                </td>
+              ))}
+            </tr>
+          ))}
         </tfoot>
       </table>
     </>
