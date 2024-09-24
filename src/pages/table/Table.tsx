@@ -8,11 +8,7 @@ import {
   flexRender,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import {
-  addDoc,
-  getDocsFromServer,
-  type DocumentReference,
-} from "firebase/firestore";
+import { addDoc, getDocs, type DocumentReference } from "firebase/firestore";
 import React from "react";
 import { jokeCollection as collectionRef } from "@/api/firebase/app";
 import { columns } from "./columns";
@@ -25,7 +21,7 @@ export function Table() {
   const query = useSuspenseQuery({
     queryKey,
     async queryFn() {
-      const docs = await getDocsFromServer(collectionRef);
+      const docs = await getDocs(collectionRef);
 
       return docs.docs;
     },
@@ -39,8 +35,6 @@ export function Table() {
     columns,
     data: query.data,
   });
-
-  console.log(query.data);
 
   const queryClient = useQueryClient();
 
@@ -240,3 +234,4 @@ function getFormValue(formData: FormData, field: string) {
   // Validation passed
   return fieldValue;
 }
+console.log(React.Suspense, React.StrictMode, React.Profiler, React.Fragment);
