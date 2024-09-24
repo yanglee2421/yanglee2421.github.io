@@ -15,6 +15,19 @@ import { useIsDark } from "@/hooks/dom/useIsDark";
 import { ErrorBoundary } from "react-error-boundary";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 import { Loading } from "@/components/Loading";
+import { useThemeStore, type Mode } from "@/hooks/store/useThemeStore";
+
+function modeToHasSelector(mode: Mode, isDark: boolean) {
+  switch (mode) {
+    case "system":
+      return isDark;
+
+    case "dark":
+      return true;
+    case "light":
+      return false;
+  }
+}
 
 export function RootRoute() {
   const outlet = useOutlet();
@@ -25,6 +38,24 @@ export function RootRoute() {
   const isDark = useIsDark();
   const { reset } = useQueryErrorResetBoundary();
   const lang = searchParams.get("lang");
+  const mode = useThemeStore((s) => s.mode);
+  const hasHydrated = React.useSyncExternalStore(
+    (onStateChange) => useThemeStore.persist.onFinishHydration(onStateChange),
+    () => useThemeStore.persist.hasHydrated(),
+    () => false,
+  );
+
+  React.useEffect(() => {
+    const darkSelector = "dark";
+    const hasSelector = modeToHasSelector(mode, isDark);
+
+    if (hasSelector) {
+      document.documentElement.classList.add(darkSelector);
+      return;
+    }
+
+    document.documentElement.classList.remove(darkSelector);
+  }, [isDark, mode]);
 
   React.useEffect(() => {
     switch (navigation.state) {
@@ -45,6 +76,10 @@ export function RootRoute() {
 
     i18n.changeLanguage(lang);
   }, [lang, i18n]);
+
+  if (!hasHydrated) {
+    return <p className="animate-pulse text-center capitalize">loading....</p>;
+  }
 
   return (
     <>
