@@ -4,6 +4,10 @@ import { AsyncStore } from "./AyncStore";
 import { Countdown } from "./Countdown";
 import { InputNumber } from "./InputNumber";
 import { RollCard } from "./RollCard";
+import { Button } from "@/components/ui/button";
+import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
+import { Label } from "@/components/ui/label";
+import { Card } from "@/components/ui/card";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
@@ -17,43 +21,42 @@ export function Home() {
     <>
       <Countdown />
       <RollCard />
-      <form action="" className="space-y-3 border px-5 py-2">
-        <AsyncStore />
-        <InputNumber value={number} onChange={setNumber} />
-        <div>
-          <label>
-            <input
-              type="checkbox"
-              className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 focus:ring-offset-0"
-            />
-            <span className="ms-2 capitalize">remember me</span>
-          </label>
-        </div>
-        <div className="flex gap-3">
-          <label>
-            <input
-              type="radio"
-              name="hale"
-              value="hale"
-              className="checked:text-red-500 focus:ring-red-500"
-            />
-            <span className="ms-2">hale</span>
-          </label>
-          <label>
-            <input
-              type="radio"
-              name="hale"
-              value="haloo"
-              className="checked:text-blue-500 focus:ring-blue-500"
-            />
-            <span className="ms-2">haloo</span>
-          </label>
-        </div>
-        <div className="flex gap-3">
-          <button className="btn-blue uppercase">submit</button>
-          <button className="btn-border uppercase">reset</button>
-        </div>
-      </form>
+      <Card>
+        <form action="" className="space-y-3 p-4">
+          <AsyncStore />
+          <InputNumber value={number} onChange={setNumber} />
+          <RadioGroup>
+            <div>
+              <label>
+                <input
+                  type="checkbox"
+                  className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 focus:ring-offset-0"
+                />
+                <span className="ms-2 capitalize">remember me</span>
+              </label>
+            </div>
+            <div className="flex gap-3 *:flex *:items-center *:gap-2">
+              <div>
+                <RadioGroupItem value="1" />
+                <Label>hale</Label>
+              </div>
+              <div>
+                <RadioGroupItem value="2" />
+                <Label>haloo</Label>
+              </div>
+            </div>
+          </RadioGroup>
+
+          <div className="flex gap-3">
+            <Button type="submit" className="uppercase">
+              submit
+            </Button>
+            <Button type="reset" variant={"outline"} className="uppercase">
+              reset
+            </Button>
+          </div>
+        </form>
+      </Card>
     </>
   );
 }

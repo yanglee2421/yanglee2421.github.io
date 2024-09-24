@@ -7,31 +7,13 @@
   .btn-indigo {
     @apply rounded border border-transparent bg-indigo-500 px-3 py-1 text-sm font-medium text-white hover:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 active:bg-indigo-700 disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
   }
-  .btn-red {
-    @apply rounded border border-transparent bg-red-500 px-3 py-1 text-sm font-medium text-white hover:bg-red-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-red-400 active:bg-red-700 disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
-  }
-  .btn-green {
-    @apply rounded border border-transparent bg-green-500 px-3 py-1 text-sm font-medium text-white hover:bg-green-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-green-400 active:bg-green-700 disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
-  }
-  .btn-blue {
-    @apply rounded border border-transparent bg-blue-500 px-3 py-1 text-sm font-medium text-white hover:bg-blue-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 active:bg-blue-700 disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
-  }
-  .btn-yellow {
-    @apply rounded border border-transparent bg-yellow-500 px-3 py-1 text-sm font-medium text-white hover:bg-yellow-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-yellow-400 active:bg-yellow-700 disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
-  }
   .btn-border {
     @apply rounded border px-3 py-1 text-sm font-medium hover:border-gray-300 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 active:border-gray-400 active:bg-zinc-200 disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
-  }
-
-  /* Paper */
-  .paper {
-    @apply rounded;
   }
 }
 
 @layer base {
   :root {
-
     --radius: 0.5rem;
 
     --background: 0 0% 100%;
@@ -80,9 +62,9 @@
 
     --chart-4: 43 74% 66%;
 
-    --chart-5: 27 87% 67%}
+    --chart-5: 27 87% 67%;
+  }
   .dark {
-
     --background: 240 10% 3.9%;
 
     --foreground: 0 0% 98%;
@@ -129,7 +111,7 @@
 
     --chart-4: 280 65% 60%;
 
-    --chart-5: 340 75% 55%
+    --chart-5: 340 75% 55%;
   }
 }
 

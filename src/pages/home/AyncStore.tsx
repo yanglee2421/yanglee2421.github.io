@@ -3,6 +3,7 @@ import React from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { timeout } from "@/utils/timeout";
+import { Input } from "@/components/ui/input";
 
 export function AsyncStore() {
   const value = useAsyncStore((store) => store.value);
@@ -15,13 +16,12 @@ export function AsyncStore() {
   );
 
   return (
-    <input
+    <Input
       disabled={!hasHydrated}
       value={value}
       onChange={(evt) => {
         setValue(evt.target.value);
       }}
-      className="block w-full focus:border-blue-500 focus:ring-blue-500 disabled:border-slate-200 disabled:bg-slate-50 disabled:text-slate-500 disabled:shadow-none"
     />
   );
 }

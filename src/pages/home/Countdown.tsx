@@ -1,3 +1,4 @@
+import { Button } from "@/components/ui/button";
 import React from "react";
 
 export function Countdown() {
@@ -5,10 +6,10 @@ export function Countdown() {
 
   return (
     <div className="space-y-3 rounded border px-5 py-2">
-      <p className="font-5xl text-5xl font-light text-slate-700 dark:bg-slate-200">{`${Math.round(second)}s`}</p>
+      <p className="font-5xl text-5xl font-light">{`${Math.round(second)}s`}</p>
 
       <div className="flex gap-3">
-        <button
+        <Button
           onClick={() => {
             let prevTime = performance.now();
             let animateId = 0;
@@ -41,18 +42,19 @@ export function Countdown() {
 
             play();
           }}
-          className="btn-green uppercase"
+          className="uppercase"
         >
           start
-        </button>
-        <button
+        </Button>
+        <Button
           onClick={() => {
             setSecond(100);
           }}
-          className="btn-yellow uppercase"
+          variant={"outline"}
+          className="uppercase"
         >
           restore
-        </button>
+        </Button>
       </div>
     </div>
   );

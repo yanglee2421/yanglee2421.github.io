@@ -4,6 +4,7 @@ import { auth } from "@/api/firebase/app";
 import { NavMenus } from "@/components/shared/NavMenus";
 import { UserProfile } from "@/components/shared/UserProfile";
 import { useOutlet } from "react-router-dom";
+import { Button } from "@/components/ui/button";
 
 export function Layout() {
   const [isPending, startTransition] = React.useTransition();
@@ -13,15 +14,17 @@ export function Layout() {
     <div className="min-h-dvh">
       <header className="flex items-center px-5 py-2">
         <UserProfile />
-        <button
+        <Button
           onClick={() => {
             startTransition(() => signOut(auth));
           }}
           disabled={isPending}
-          className="btn-red ms-auto uppercase"
+          variant={"destructive"}
+          size={"sm"}
+          className="ms-auto uppercase"
         >
           signout
-        </button>
+        </Button>
       </header>
       <div>
         <aside className="px-5 py-2">

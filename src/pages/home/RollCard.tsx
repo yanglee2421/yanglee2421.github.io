@@ -1,6 +1,7 @@
 import React from "react";
 import { AnimateController } from "@/libs/AnimateController";
 import { timeout } from "@/utils/timeout";
+import { Button } from "@/components/ui/button";
 
 export function RollCard() {
   const [number, setNumber] = React.useState(0);
@@ -9,7 +10,7 @@ export function RollCard() {
   return (
     <div className="space-y-3 rounded border px-5 py-2">
       <p className="text-5xl font-light">{number}</p>
-      <button
+      <Button
         onClick={async () => {
           const controller = new AnimateController(() => {
             React.startTransition(() => {
@@ -27,7 +28,7 @@ export function RollCard() {
         className="btn-indigo uppercase"
       >
         roll
-      </button>
+      </Button>
     </div>
   );
 }

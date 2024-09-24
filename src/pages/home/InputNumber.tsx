@@ -1,5 +1,6 @@
 import React from "react";
 import { minmax } from "@/utils/minmax";
+import { Input } from "@/components/ui/input";
 
 export function InputNumber(props: Props) {
   const { value, onChange, step = 1, min, max } = props;
@@ -29,7 +30,7 @@ export function InputNumber(props: Props) {
   };
 
   return (
-    <input
+    <Input
       value={optimisticValue || number2String(value)}
       onChange={(evt) => {
         setOptimisticValue(evt.target.value);
