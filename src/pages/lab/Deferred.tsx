@@ -6,6 +6,15 @@ import getWasm from "shiki/wasm";
 import classNames from "classnames";
 import { Slider } from "./Slider";
 import { Lab } from "./Lab";
+import { Input } from "@/components/ui/input";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 
 export function Deferred() {
   const [query, setQuery] = React.useState({
@@ -26,7 +35,7 @@ export function Deferred() {
         />
         <div className="space-y-3">
           <fieldset>
-            <input
+            <Input
               value={query.input}
               onChange={(evt) => {
                 setQuery((prev) => ({ ...prev, input: evt.target.value }));
@@ -36,18 +45,21 @@ export function Deferred() {
             />
           </fieldset>
           <fieldset>
-            <select
+            <Select
               value={query.select}
-              onChange={(evt) => {
-                setQuery((prev) => ({ ...prev, select: evt.target.value }));
+              onValueChange={(evt) => {
+                setQuery((prev) => ({ ...prev, select: evt }));
               }}
-              className="block w-full"
             >
-              <option value="">none</option>
-              <option value="1">1</option>
-              <option value="2">2</option>
-              <option value="3">3</option>
-            </select>
+              <SelectTrigger>
+                <SelectValue placeholder="hale" />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="1">1</SelectItem>
+                <SelectItem value="2">2</SelectItem>
+                <SelectItem value="3">3</SelectItem>
+              </SelectContent>
+            </Select>
           </fieldset>
         </div>
         <div className="col-span-full">
@@ -148,22 +160,27 @@ function UncontrolerForm(props: UncontrolerFormProps) {
       className="space-y-3"
     >
       <fieldset>
-        <input name="input" type="text" className="block w-full" />
+        <Input name="input" type="text" />
       </fieldset>
       <fieldset>
-        <select name="select" className="block w-full">
-          <option value="1">1</option>
-          <option value="2">2</option>
-          <option value="3">3</option>
-        </select>
+        <Select name="select">
+          <SelectTrigger>
+            <SelectValue placeholder="hale" />
+          </SelectTrigger>
+          <SelectContent>
+            <SelectItem value="1">1</SelectItem>
+            <SelectItem value="2">2</SelectItem>
+            <SelectItem value="3">3</SelectItem>
+          </SelectContent>
+        </Select>
       </fieldset>
       <div className="flex gap-2">
-        <button disabled={isPending} type="submit" className="btn-blue">
+        <Button disabled={isPending} type="submit" className="uppercase">
           submit
-        </button>
-        <button type="reset" className="btn-border">
+        </Button>
+        <Button variant={"outline"} type="reset" className="uppercase">
           reset
-        </button>
+        </Button>
       </div>
     </form>
   );
