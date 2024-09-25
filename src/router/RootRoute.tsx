@@ -16,6 +16,7 @@ import { ErrorBoundary } from "react-error-boundary";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 import { Loading } from "@/components/Loading";
 import { useThemeStore, type Mode } from "@/hooks/store/useThemeStore";
+import { Toaster } from "@/components/ui/toaster";
 
 function modeToHasSelector(mode: Mode, isDark: boolean) {
   switch (mode) {
@@ -108,6 +109,7 @@ export function RootRoute() {
             value={defineAbilityFor(currentUser ? "admin" : "guest")}
           >
             {outlet}
+            <Toaster />
           </AclProvider>
         </React.Suspense>
       </ErrorBoundary>
