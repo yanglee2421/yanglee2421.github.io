@@ -63,7 +63,19 @@ export const routes = createRoutesFromElements(
         path="table"
         lazy={() => import("@/pages/table/Component")}
       />
-      <Route id="lab" path="lab" lazy={() => import("@/pages/lab/Component")} />
+      <Route
+        id="lab"
+        path="lab"
+        lazy={async () => {
+          const [{ Component }, { loader }, { action }] = await Promise.all([
+            import("@/pages/lab/Component"),
+            import("@/pages/lab/loader"),
+            import("@/pages/lab/action"),
+          ]);
+
+          return { loader, Component, action };
+        }}
+      />
       <Route
         id="overtime"
         path="overtime"

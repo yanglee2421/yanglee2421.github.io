@@ -15,12 +15,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { Button } from "@/components/ui/button";
+import {
+  useLoaderData,
+  Form,
+  useActionData,
+  useSearchParams,
+} from "react-router-dom";
+import { type loader } from "./loader";
+import { Card } from "@/components/ui/card";
+import { action } from "./action";
 
 export function Deferred() {
   const [query, setQuery] = React.useState({
     select: "",
     input: "",
   });
+
+  const data = useLoaderData() as ReturnType<typeof loader>;
+  const actionData = useActionData() as ReturnType<typeof action>;
+  const [, setSearchParams] = useSearchParams();
+
+  console.log(data, actionData);
 
   return (
     <div className="space-y-6">
@@ -80,6 +95,30 @@ export function Deferred() {
           <Lab p={2} />
         </React.Suspense>
       </div>
+      <Card className="p-3">
+        <Form method="post" className="space-y-6">
+          <Input type="text" name="title" />
+          <Input type="text" name="description" />
+          <div className="flex gap-2">
+            <Button type="submit" className="uppercase">
+              Create
+            </Button>
+            <Button
+              onClick={() => {
+                setSearchParams((prev) => {
+                  prev.set("now", Date.now().toString());
+                  return prev;
+                });
+              }}
+              variant={"outline"}
+              type="button"
+              className="uppercase"
+            >
+              search
+            </Button>
+          </div>
+        </Form>
+      </Card>
     </div>
   );
 }

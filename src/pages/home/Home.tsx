@@ -1,61 +1,54 @@
 import React from "react";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { AsyncStore } from "./AyncStore";
 import { Countdown } from "./Countdown";
 import { InputNumber } from "./InputNumber";
 import { RollCard } from "./RollCard";
-import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
+import { useThemeStore } from "@/hooks/store/useThemeStore";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
-  const user = useCurrentUser();
-
-  if (!user) {
-    return null;
-  }
+  const mode = useThemeStore((s) => s.mode);
+  const setMode = useThemeStore((s) => s.setMode);
+  const label1 = React.useId();
+  const label2 = React.useId();
+  const label3 = React.useId();
 
   return (
     <>
       <Countdown />
       <RollCard />
-      <Card>
-        <form action="" className="space-y-3 p-4">
-          <AsyncStore />
-          <InputNumber value={number} onChange={setNumber} />
-          <RadioGroup>
-            <div>
-              <label>
-                <input
-                  type="checkbox"
-                  className="rounded border-gray-300 text-indigo-600 shadow-sm focus:border-indigo-300 focus:ring focus:ring-indigo-200 focus:ring-opacity-50 focus:ring-offset-0"
-                />
-                <span className="ms-2 capitalize">remember me</span>
-              </label>
-            </div>
-            <div className="flex gap-3 *:flex *:items-center *:gap-2">
-              <div>
-                <RadioGroupItem value="1" />
-                <Label>hale</Label>
-              </div>
-              <div>
-                <RadioGroupItem value="2" />
-                <Label>haloo</Label>
-              </div>
-            </div>
-          </RadioGroup>
-
-          <div className="flex gap-3">
-            <Button type="submit" className="uppercase">
-              submit
-            </Button>
-            <Button type="reset" variant={"outline"} className="uppercase">
-              reset
-            </Button>
+      <Card className="space-y-6 p-4">
+        <AsyncStore />
+        <InputNumber value={number} onChange={setNumber} />
+        <RadioGroup
+          value={mode}
+          onValueChange={(evt) => {
+            switch (evt) {
+              case "system":
+              case "light":
+              case "dark":
+                setMode(evt);
+                break;
+            }
+          }}
+          className="flex items-center gap-3 *:flex *:items-center *:gap-2 *:uppercase"
+        >
+          <div>
+            <RadioGroupItem id={label1} value="system" />
+            <Label htmlFor={label1}>system</Label>
           </div>
-        </form>
+          <div>
+            <RadioGroupItem id={label2} value="light" />
+            <Label htmlFor={label2}>light</Label>
+          </div>
+          <div>
+            <RadioGroupItem id={label3} value="dark" />
+            <Label htmlFor={label3}>dark</Label>
+          </div>
+        </RadioGroup>
       </Card>
     </>
   );
