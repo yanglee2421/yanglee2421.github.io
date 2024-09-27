@@ -13,6 +13,31 @@ import React from "react";
 import { jokeCollection as collectionRef } from "@/api/firebase/app";
 import { columns } from "./columns";
 import { useFormStatus } from "react-dom";
+import {
+  Table as TableRoot,
+  TableBody,
+  TableHead,
+  TableHeader,
+  TableCell,
+  TableRow,
+  TableFooter,
+} from "@/components/ui/table";
+import {
+  Dialog,
+  DialogTrigger,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { RefreshCcw } from "lucide-react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import classNames from "classnames";
 
 const queryKey = ["firebase", "joke"];
 
@@ -36,6 +61,8 @@ export function Table() {
     data: query.data,
   });
 
+  const formId = React.useId();
+  const [show, setShow] = React.useState(false);
   const queryClient = useQueryClient();
 
   const add = useMutation<DocumentReference, Error, FormData>({
@@ -50,172 +77,155 @@ export function Table() {
     },
   });
 
-  const [showDialog, setShowDialog] = React.useState(false);
-  const dialogRef = React.useRef<HTMLDialogElement>(null);
-  React.useEffect(() => {
-    const el = dialogRef.current;
-
-    if (!el) {
-      return;
-    }
-
-    if (showDialog) {
-      el.showModal();
-      return;
-    }
-
-    el.close();
-  }, [showDialog]);
-
   return (
     <>
-      <div className="flex py-2">
-        <button
-          onClick={() => {
-            setShowDialog(true);
-          }}
-          className="btn-indigo uppercase"
-        >
-          add
-        </button>
-
-        <a
-          href={encodeURI(
-            "data:text/csv;charset=utf-8," +
-              [
-                table
-                  .getVisibleFlatColumns()
-                  .filter((column) => column.accessorFn)
-                  .map((column) => column.id)
-                  .join(","),
-                ...table.getSelectedRowModel().rows.map((row) =>
-                  table
-                    .getVisibleFlatColumns()
-                    .filter((column) => column.accessorFn)
-                    .map((column) => row.getValue(column.id))
-                    .join(","),
-                ),
-              ].join("\n"),
-          )}
-          download={Date.now() + ".csv"}
-          className="ms-auto uppercase text-indigo-500 hover:underline"
-        >
-          export
-        </a>
-        <dialog
-          ref={dialogRef}
-          className="w-full rounded px-5 py-2 backdrop:bg-black/50 md:max-w-md"
-        >
-          <form
-            action={async (formData) => {
-              await add.mutateAsync(formData, {
-                onSuccess() {
-                  setShowDialog(false);
-                },
-              });
-            }}
-            className="space-y-3"
-          >
-            <label>title</label>
-            <fieldset>
-              <input
-                autoFocus
-                type="text"
-                name="title"
-                className="block w-full focus:border-blue-500 focus:ring-blue-500"
+      <Card>
+        <CardHeader>
+          <div className="flex justify-between">
+            <CardTitle>joke</CardTitle>
+            <Button
+              onClick={() => {
+                query.refetch();
+              }}
+              disabled={query.isRefetching}
+              size="icon"
+              variant={"ghost"}
+            >
+              <RefreshCcw
+                className={classNames(query.isRefetching && "animate-spin")}
               />
-            </fieldset>
-            <label>context</label>
-            <fieldset>
-              <textarea
-                name="context"
-                rows={6}
-                className="block w-full focus:border-blue-500 focus:ring-blue-500"
-              ></textarea>
-            </fieldset>
-            <div className="flex gap-3">
-              <SubmitButton />
-              <button
-                onClick={() => {
-                  setShowDialog(false);
-                }}
-                type="button"
-                className="btn-border uppercase"
-              >
-                close
-              </button>
-            </div>
-          </form>
-        </dialog>
-      </div>
+            </Button>
+          </div>
+        </CardHeader>
+        <CardContent>
+          <div className="flex">
+            <Dialog open={show} onOpenChange={setShow}>
+              <DialogTrigger asChild>
+                <Button className="uppercase">add</Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle className="uppercase">add</DialogTitle>
+                  <DialogDescription>Add a joke</DialogDescription>
+                </DialogHeader>
+                <form
+                  id={formId}
+                  action={async (formData) => {
+                    await add.mutateAsync(formData, {
+                      onSuccess() {
+                        setShow(false);
+                      },
+                    });
+                  }}
+                  className="space-y-3"
+                >
+                  <Label>title</Label>
+                  <fieldset>
+                    <Input autoFocus type="text" name="title" />
+                  </fieldset>
+                  <label>context</label>
+                  <fieldset>
+                    <Textarea name="context" rows={6}></Textarea>
+                  </fieldset>
+                </form>
+                <DialogFooter>
+                  <SubmitButton form={formId} />
+                </DialogFooter>
+              </DialogContent>
+            </Dialog>
 
-      <table className="w-full rounded border">
-        <thead className="border-b border-slate-200 bg-slate-50">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <tr key={headerGroup.id} className="divide-x">
-              {headerGroup.headers.map((header) => (
-                <th
-                  key={header.id}
-                  colSpan={header.colSpan}
-                  className="px-6 py-3 text-left text-sm font-medium uppercase text-slate-900"
-                >
-                  {header.isPlaceholder ||
-                    flexRender(
-                      header.column.columnDef.header,
-                      header.getContext(),
-                    )}
-                </th>
-              ))}
-            </tr>
-          ))}
-        </thead>
-        <tbody className="divide-y">
-          {table.getRowModel().rows.map((row) => (
-            <tr key={row.id} className="divide-x odd:bg-white even:bg-slate-50">
-              {row.getVisibleCells().map((cell) => (
-                <td
-                  key={cell.id}
-                  className="max-w-72 px-6 py-4 text-sm font-medium text-slate-900"
-                >
-                  <div className="whitespace-normal break-normal">
-                    {flexRender(cell.column.columnDef.cell, cell.getContext())}
-                  </div>
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tbody>
-        <tfoot>
-          {table.getFooterGroups().map((footerGroup) => (
-            <tr key={footerGroup.id}>
-              {footerGroup.headers.map((header) => (
-                <td key={header.id} colSpan={header.colSpan}>
-                  {header.isPlaceholder ||
-                    flexRender(
-                      header.column.columnDef.footer,
-                      header.getContext(),
-                    )}
-                </td>
-              ))}
-            </tr>
-          ))}
-        </tfoot>
-      </table>
+            <Button asChild variant={"link"}>
+              <a
+                href={encodeURI(
+                  "data:text/csv;charset=utf-8," +
+                    [
+                      table
+                        .getVisibleFlatColumns()
+                        .filter((column) => column.accessorFn)
+                        .map((column) => column.id)
+                        .join(","),
+                      ...table.getSelectedRowModel().rows.map((row) =>
+                        table
+                          .getVisibleFlatColumns()
+                          .filter((column) => column.accessorFn)
+                          .map((column) => row.getValue(column.id))
+                          .join(","),
+                      ),
+                    ].join("\n"),
+                )}
+                download={Date.now() + ".csv"}
+                className="ms-auto uppercase"
+              >
+                export
+              </a>
+            </Button>
+          </div>
+        </CardContent>
+        <TableRoot>
+          <TableHeader>
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>
+                    {header.isPlaceholder ||
+                      flexRender(
+                        header.column.columnDef.header,
+                        header.getContext(),
+                      )}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+          <TableBody>
+            {table.getRowModel().rows.map((row) => (
+              <TableRow key={row.id}>
+                {row.getVisibleCells().map((cell) => (
+                  <TableCell key={cell.id}>
+                    <div className="whitespace-normal break-normal">
+                      {flexRender(
+                        cell.column.columnDef.cell,
+                        cell.getContext(),
+                      )}
+                    </div>
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableBody>
+          <TableFooter>
+            {table.getFooterGroups().map((footerGroup) => (
+              <TableRow key={footerGroup.id}>
+                {footerGroup.headers.map((header) => (
+                  <TableCell key={header.id} colSpan={header.colSpan}>
+                    {header.isPlaceholder ||
+                      flexRender(
+                        header.column.columnDef.footer,
+                        header.getContext(),
+                      )}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableFooter>
+        </TableRoot>
+      </Card>
     </>
   );
 }
 
-function SubmitButton() {
+function SubmitButton(props: { form: string }) {
   const formStatus = useFormStatus();
 
   return (
-    <button
+    <Button
+      form={props.form}
       type="submit"
       disabled={formStatus.pending}
       className="btn-blue uppercase"
     >
       submit
-    </button>
+    </Button>
   );
 }
 
@@ -234,4 +244,3 @@ function getFormValue(formData: FormData, field: string) {
   // Validation passed
   return fieldValue;
 }
-console.log(React.Suspense, React.StrictMode, React.Profiler, React.Fragment);
