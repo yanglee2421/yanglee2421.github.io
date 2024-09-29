@@ -102,10 +102,14 @@ export function Login() {
 
               <div className="flex justify-between">
                 <Button asChild variant={"link"}>
-                  <Link to={"/forgot-password"}>Forgot Password?</Link>
+                  <Link to={"/forgot-password"} className="!p-0">
+                    Forgot Password?
+                  </Link>
                 </Button>
                 <Button asChild variant={"link"}>
-                  <Link to={"/signup"}>Sign Up?</Link>
+                  <Link to={"/signup"} className="!p-0">
+                    Sign Up?
+                  </Link>
                 </Button>
               </div>
               <Button type="submit" className="block w-full uppercase">
