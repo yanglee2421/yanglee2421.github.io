@@ -1,10 +1,27 @@
-import { useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
-import { getAuth, signInWithEmailAndPassword } from "firebase/auth";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { signInWithEmailAndPassword } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { SignInWithGithub } from "@/components/shared/SignInWithGithub";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
+import { auth } from "@/api/firebase/app";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const schema = z.object({
+  email: z.string().email(),
+  password: z.string().min(6).max(16),
+});
 
 export function Login() {
   const form = useForm({
@@ -13,13 +30,7 @@ export function Login() {
       password: "",
     },
 
-    async onSubmit(data) {
-      await signInWithEmailAndPassword(
-        getAuth(),
-        data.value.email,
-        data.value.password,
-      );
-    },
+    resolver: zodResolver(schema),
   });
 
   return (
@@ -27,112 +38,83 @@ export function Login() {
       <div className="min-w-0 flex-1"></div>
       <div className="flex w-full max-w-96 flex-col justify-center px-5 py-2">
         <div>
-          <form
-            onSubmit={(evt) => {
-              evt.preventDefault();
-              evt.stopPropagation();
-              form.handleSubmit();
-
-              if (!import.meta.env.DEV) {
-                return;
-              }
-
-              const errorEntries = Object.entries(form.state.fieldMeta)
-                .map(([key, value]) => [key, value.errors])
-                .filter(([, error]) => error.length);
-
-              if (!errorEntries.length) {
-                return;
-              }
-
-              console.error(
-                "Error Message:",
-                "\n",
-                Object.fromEntries(errorEntries),
-                "\n",
-                "Form Values:",
-                "\n",
-                form.state.values,
-              );
-            }}
-            onReset={(evt) => {
-              evt.stopPropagation();
-              form.reset();
-            }}
-            noValidate
-            autoComplete="off"
-            className="space-y-3"
-          >
-            <form.Field
-              name="email"
-              validatorAdapter={zodValidator()}
-              validators={{ onChange: z.string().email() }}
-              defaultValue=""
+          <Form {...form}>
+            <form
+              onSubmit={form.handleSubmit(async (data) => {
+                await signInWithEmailAndPassword(
+                  auth,
+                  data.email,
+                  data.password,
+                );
+              }, console.error)}
+              onReset={(evt) => {
+                evt.stopPropagation();
+                form.reset();
+              }}
+              noValidate
+              autoComplete="off"
+              className="space-y-3"
             >
-              {(field) => {
-                return (
-                  <label>
-                    <input
-                      value={field.state.value}
-                      onChange={(evt) => {
-                        field.handleChange(evt.target.value);
-                      }}
-                      onBlur={field.handleBlur}
-                      type="email"
-                      className="block w-full focus:border-blue-500 focus:ring-blue-500"
-                    />
-                  </label>
-                );
-              }}
-            </form.Field>
-            <form.Field
-              name="password"
-              validatorAdapter={zodValidator()}
-              validators={{
-                onChange: z.string().min(8).max(16),
-              }}
-            >
-              {(field) => {
-                return (
-                  <input
-                    value={field.state.value}
-                    onChange={(evt) => {
-                      field.handleChange(evt.target.value);
-                    }}
-                    onBlur={field.handleBlur}
-                    type="password"
-                    className="block w-full"
-                  />
-                );
-              }}
-            </form.Field>
-            <div className="flex justify-between">
-              <Link
-                to={"/forgot-password"}
-                className="text-blue-500 hover:underline"
-              >
-                Forgot Password?
-              </Link>
-              <Link to={"/signup"} className="text-blue-500 hover:underline">
-                Sign Up?
-              </Link>
-            </div>
-            <form.Subscribe selector={(state) => state.canSubmit}>
-              {(canSubmit) => {
-                return (
-                  <button
-                    disabled={!canSubmit}
-                    type="submit"
-                    className="btn-blue block w-full px-5 py-2 text-base uppercase"
-                  >
-                    sign in
-                  </button>
-                );
-              }}
-            </form.Subscribe>
-            <SignInWithGithub />
-            <SignInWithGoogle />
-          </form>
+              <FormField
+                control={form.control}
+                name="email"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>email</FormLabel>
+                    <FormControl>
+                      <Input
+                        value={field.value}
+                        onChange={(evt) => {
+                          field.onChange(evt.target.value);
+                        }}
+                        onBlur={field.onBlur}
+                        type="email"
+                        className="block w-full focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </FormControl>
+                    <FormDescription>typing email here</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+              <FormField
+                control={form.control}
+                name="password"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>password</FormLabel>
+                    <FormControl>
+                      <Input
+                        value={field.value}
+                        onChange={(evt) => {
+                          field.onChange(evt.target.value);
+                        }}
+                        onBlur={field.onBlur}
+                        type="password"
+                        className="block w-full focus:border-blue-500 focus:ring-blue-500"
+                      />
+                    </FormControl>
+                    <FormDescription>typing password here</FormDescription>
+                    <FormMessage />
+                  </FormItem>
+                )}
+              />
+
+              <div className="flex justify-between">
+                <Button asChild variant={"link"}>
+                  <Link to={"/forgot-password"}>Forgot Password?</Link>
+                </Button>
+                <Button asChild variant={"link"}>
+                  <Link to={"/signup"}>Sign Up?</Link>
+                </Button>
+              </div>
+              <Button type="submit" className="block w-full uppercase">
+                sign in
+              </Button>
+              <SignInWithGithub />
+              <SignInWithGoogle />
+            </form>
+          </Form>
         </div>
       </div>
     </div>

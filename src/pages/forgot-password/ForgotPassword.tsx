@@ -1,9 +1,24 @@
-import { useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { useForm } from "react-hook-form";
 import { sendPasswordResetEmail } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { auth } from "@/api/firebase/app";
+import {
+  Form,
+  FormField,
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
+
+const schema = z.object({
+  email: z.string().email(),
+});
 
 export function ForgotPassword() {
   const form = useForm({
@@ -11,20 +26,15 @@ export function ForgotPassword() {
       email: "",
     },
 
-    async onSubmit(props) {
-      await sendPasswordResetEmail(auth, props.value.email);
-    },
+    resolver: zodResolver(schema),
   });
 
   return (
-    <>
+    <Form {...form}>
       <form
-        onSubmit={async (evt) => {
-          evt.preventDefault();
-          evt.stopPropagation();
-
-          await form.handleSubmit();
-        }}
+        onSubmit={form.handleSubmit(async (data) => {
+          await sendPasswordResetEmail(auth, data.email);
+        })}
         onReset={(evt) => {
           evt.stopPropagation();
 
@@ -33,37 +43,34 @@ export function ForgotPassword() {
         noValidate
         autoComplete="off"
       >
-        <form.Field
+        <FormField
+          control={form.control}
           name="email"
-          validatorAdapter={zodValidator()}
-          validators={{
-            onChange: z.string().email(),
-          }}
-        >
-          {(field) => {
-            return (
-              <input
-                value={field.state.value}
-                onChange={(evt) => {
-                  field.handleChange(evt.target.value);
-                }}
-                onBlur={field.handleBlur}
-                type="email"
-              />
-            );
-          }}
-        </form.Field>
-        <form.Subscribe selector={(state) => state.canSubmit}>
-          {(canSubmit) => {
-            return (
-              <button type="submit" disabled={!canSubmit}>
-                send reset link
-              </button>
-            );
-          }}
-        </form.Subscribe>
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>email</FormLabel>
+              <FormControl>
+                <Input
+                  value={field.value}
+                  onChange={(evt) => {
+                    field.onChange(evt.target.value);
+                  }}
+                  onBlur={field.onBlur}
+                  type="email"
+                />
+              </FormControl>
+              <FormDescription>field FormDescription</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <Button type="submit" disabled={form.formState.isSubmitting}>
+          send reset link
+        </Button>
       </form>
-      <Link to={"/login"}>Back to login</Link>
-    </>
+      <Button asChild variant={"link"}>
+        <Link to={"/login"}>Back to login</Link>
+      </Button>
+    </Form>
   );
 }

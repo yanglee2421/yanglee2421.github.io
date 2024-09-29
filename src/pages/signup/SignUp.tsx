@@ -1,9 +1,33 @@
-import { useForm } from "@tanstack/react-form";
-import { zodValidator } from "@tanstack/zod-form-adapter";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { Link } from "react-router-dom";
 import { z } from "zod";
 import { auth } from "@/api/firebase/app";
+import {
+  Form,
+  FormField,
+  FormItem,
+  FormLabel,
+  FormControl,
+  FormDescription,
+  FormMessage,
+} from "@/components/ui/form";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Checkbox } from "@/components/ui/checkbox";
+
+const schema = z
+  .object({
+    email: z.string().email(),
+    password: z.string().min(6).max(16),
+    confirmPassword: z.string().min(6).max(16),
+    checked: z.boolean(),
+  })
+  .refine((value) => Object.is(value.password, value.confirmPassword), {
+    path: ["confirmPassword"],
+    message: "The password is not as same as confirm password",
+  });
 
 export function SignUp() {
   const form = useForm({
@@ -14,152 +38,115 @@ export function SignUp() {
       checked: false,
     },
 
-    async onSubmit(props) {
-      await createUserWithEmailAndPassword(
-        auth,
-        props.value.email,
-        props.value.password,
-      );
-    },
+    resolver: zodResolver(schema),
   });
 
   return (
-    <>
+    <Form {...form}>
       <form
-        onSubmit={async (evt) => {
-          evt.preventDefault();
+        onSubmit={form.handleSubmit(async (data) => {
+          console.log(data);
+
+          await createUserWithEmailAndPassword(auth, data.email, data.password);
+        }, console.error)}
+        onReset={(evt) => {
           evt.stopPropagation();
-
-          await form.handleSubmit();
-
-          if (!import.meta.env.DEV) {
-            return;
-          }
-
-          const errorEntries = Object.entries(form.state.fieldMeta)
-            .map(([key, value]) => {
-              return [key, value.errors];
-            })
-            .filter(([, error]) => error.length);
-
-          if (!errorEntries.length) {
-            return;
-          }
-
-          console.error(
-            "Error Message:",
-            "\n",
-            Object.fromEntries(errorEntries),
-            "\n",
-            "Form Values:",
-            "\n",
-            form.state.values,
-          );
+          form.reset();
         }}
       >
-        <form.Field
+        <FormField
+          control={form.control}
           name="email"
-          validatorAdapter={zodValidator()}
-          validators={{
-            onChange: z.string().email(),
-          }}
-        >
-          {(field) => {
-            return (
-              <input
-                value={field.state.value}
-                onChange={(evt) => {
-                  field.handleChange(evt.target.value);
-                }}
-                onBlur={field.handleBlur}
-                type="email"
-              />
-            );
-          }}
-        </form.Field>
-        <form.Field
-          name="password"
-          validatorAdapter={zodValidator()}
-          validators={{
-            onChange: z.string().min(8).max(16),
-          }}
-        >
-          {(field) => {
-            return (
-              <input
-                value={field.state.value}
-                onChange={(evt) => {
-                  field.handleChange(evt.target.value);
-                }}
-                onBlur={field.handleBlur}
-                type="password"
-              />
-            );
-          }}
-        </form.Field>
-        <form.Field
-          name="confirmPassword"
-          validators={{
-            onChangeListenTo: ["password"],
-            onChange(evt) {
-              return Object.is(
-                evt.value,
-                evt.fieldApi.form.getFieldValue("password"),
-              )
-                ? null
-                : "Passwords do not match";
-            },
-          }}
-        >
-          {(field) => {
-            return (
-              <input
-                value={field.state.value}
-                onChange={(evt) => {
-                  field.handleChange(evt.target.value);
-                }}
-                onBlur={field.handleBlur}
-              />
-            );
-          }}
-        </form.Field>
-        <form.Field
-          name="checked"
-          validatorAdapter={zodValidator()}
-          validators={{
-            onChange: z.literal(true),
-          }}
-        >
-          {(field) => {
-            return (
-              <label>
-                <input
-                  checked={field.state.value}
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>email</FormLabel>
+              <FormControl>
+                <Input
+                  value={field.value}
                   onChange={(evt) => {
-                    void evt;
-                    field.handleChange(evt.target.checked);
+                    field.onChange(evt.target.value);
                   }}
-                  type="checkbox"
+                  onBlur={field.onBlur}
+                  type="email"
                 />
-                I agree to
+              </FormControl>
+              <FormDescription>typing email here</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="password"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>password</FormLabel>
+              <FormControl>
+                <Input
+                  value={field.value}
+                  onChange={(evt) => {
+                    field.onChange(evt.target.value);
+                  }}
+                  onBlur={field.onBlur}
+                  type="password"
+                />
+              </FormControl>
+              <FormDescription>typing password here</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="confirmPassword"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>confirm password</FormLabel>
+              <FormControl>
+                <Input
+                  value={field.value}
+                  onChange={(evt) => {
+                    field.onChange(evt.target.value);
+                  }}
+                  onBlur={field.onBlur}
+                  type="password"
+                />
+              </FormControl>
+              <FormDescription>typing confirm password here</FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+        <FormField
+          control={form.control}
+          name="checked"
+          render={({ field }) => (
+            <FormItem>
+              <FormLabel>
+                <span>I agree to</span>
                 <Link to={"/privacy-policy"}>privacy policy & terms</Link>
-              </label>
-            );
-          }}
-        </form.Field>
-        <form.Subscribe
-          selector={(state) => state.values.checked && state.canSubmit}
-        >
-          {(canSubmit) => {
-            return (
-              <button type="submit" disabled={!canSubmit}>
-                register
-              </button>
-            );
-          }}
-        </form.Subscribe>
+              </FormLabel>
+              <FormControl>
+                <Checkbox
+                  checked={field.value}
+                  onCheckedChange={(evt) => {
+                    field.onChange(evt);
+                  }}
+                />
+              </FormControl>
+              <FormDescription></FormDescription>
+              <FormMessage />
+            </FormItem>
+          )}
+        />
+
+        <Button type="submit" className="uppercase">
+          register
+        </Button>
       </form>
-      <Link to={"/login"}>Sign in insead</Link>
-    </>
+      <Button asChild variant={"link"}>
+        <Link to={"/login"}>Sign in insead</Link>
+      </Button>
+    </Form>
   );
 }
