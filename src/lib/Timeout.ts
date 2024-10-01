@@ -1,10 +1,7 @@
 export class Timeout {
   private endAt: number;
-  constructor(
-    private readonly startAt: Date,
-    private readonly delay: number,
-  ) {
-    this.endAt = this.startAt.getTime() + this.delay;
+  constructor(private readonly delay: number) {
+    this.endAt = Date.now() + this.delay;
   }
 
   get() {

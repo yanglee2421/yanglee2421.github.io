@@ -1,61 +1,83 @@
 import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+  CardFooter,
+} from "@/components/ui/card";
+import {
+  Form,
+  FormControl,
+  FormDescription,
+  FormItem,
+  FormLabel,
+  FormMessage,
+} from "@/components/ui/form";
+import { Input } from "@/components/ui/input";
 import React from "react";
+import { useForm } from "react-hook-form";
 
 export function Countdown() {
   const [second, setSecond] = React.useState(100);
+  const form = useForm({
+    defaultValues: {},
+  });
 
   return (
-    <div className="space-y-3 rounded border px-5 py-2">
-      <p className="font-5xl text-5xl font-light">{`${Math.round(second)}s`}</p>
-
-      <div className="flex gap-3">
-        <Button
-          onClick={() => {
-            let prevTime = performance.now();
-            let animateId = 0;
-            const startTime = prevTime;
-            const startSecond = second;
-
-            const play = () => {
-              animateId = requestAnimationFrame(play);
-
-              const currentTime = performance.now();
-
-              if (currentTime - prevTime < 1000) {
-                return;
-              }
-
-              prevTime = currentTime;
-              const nextSecond = Math.max(
-                0,
-                startSecond - Math.round((currentTime - startTime) / 1000),
-              );
-
-              if (!nextSecond) {
-                cancelAnimationFrame(animateId);
-              }
-
-              React.startTransition(() => {
-                setSecond(nextSecond);
-              });
-            };
-
-            play();
-          }}
-          className="uppercase"
-        >
-          start
-        </Button>
-        <Button
-          onClick={() => {
-            setSecond(100);
-          }}
-          variant={"outline"}
-          className="uppercase"
-        >
-          restore
-        </Button>
-      </div>
-    </div>
+    <Card>
+      <CardHeader>
+        <CardTitle>{Math.round(second) + "s"}</CardTitle>
+      </CardHeader>
+      <CardContent>
+        <Form {...form}>
+          <form
+            action=""
+            className="grid grid-cols-1 gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            <FormItem>
+              <FormLabel>Hour</FormLabel>
+              <FormControl>
+                <Input />
+              </FormControl>
+              <FormDescription>hour</FormDescription>
+              <FormMessage />
+            </FormItem>
+            <FormItem>
+              <FormLabel>minute</FormLabel>
+              <FormControl>
+                <Input />
+              </FormControl>
+              <FormDescription>minute</FormDescription>
+              <FormMessage />
+            </FormItem>
+            <FormItem>
+              <FormLabel>second</FormLabel>
+              <FormControl>
+                <Input />
+              </FormControl>
+              <FormDescription>second</FormDescription>
+              <FormMessage />
+            </FormItem>
+          </form>
+        </Form>
+      </CardContent>
+      <CardFooter>
+        <div className="flex gap-3">
+          <Button onClick={() => {}} className="uppercase">
+            start
+          </Button>
+          <Button
+            onClick={() => {
+              setSecond(100);
+            }}
+            variant={"outline"}
+            className="uppercase"
+          >
+            restore
+          </Button>
+        </div>
+      </CardFooter>
+    </Card>
   );
 }
