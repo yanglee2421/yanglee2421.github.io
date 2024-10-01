@@ -10,13 +10,19 @@ import {
 } from "react-router-dom";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { AclProvider } from "@/hooks/useAcl";
-import { defineAbilityFor } from "@/libs/defineAbilityFor";
+import { defineAbilityFor } from "@/lib/defineAbilityFor";
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import { ErrorBoundary } from "react-error-boundary";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 import { Loading } from "@/components/Loading";
-import { useThemeStore, type Mode } from "@/hooks/store/useThemeStore";
+import {
+  useThemeStore,
+  useThemeStoreHasHydrated,
+  type Mode,
+} from "@/hooks/store/useThemeStore";
 import { Toaster } from "@/components/ui/toaster";
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 
 function modeToHasSelector(mode: Mode, isDark: boolean) {
   switch (mode) {
@@ -40,11 +46,7 @@ export function RootRoute() {
   const { reset } = useQueryErrorResetBoundary();
   const lang = searchParams.get("lang");
   const mode = useThemeStore((s) => s.mode);
-  const hasHydrated = React.useSyncExternalStore(
-    (onStateChange) => useThemeStore.persist.onFinishHydration(onStateChange),
-    () => useThemeStore.persist.hasHydrated(),
-    () => false,
-  );
+  const hasHydrated = useThemeStoreHasHydrated();
 
   React.useEffect(() => {
     const darkSelector = "dark";
@@ -94,14 +96,17 @@ export function RootRoute() {
       <ErrorBoundary
         onReset={reset}
         fallbackRender={({ error, resetErrorBoundary }) => (
-          <div className="m-6 rounded bg-red-200 px-5 py-2 text-white">
-            <title>Error</title>
+          <Card className="m-6 rounded bg-red-200 px-5 py-2 text-white">
             <h1 className="text-3xl">Error</h1>
             <p className="mb-1.5 text-red-500">{error.message}</p>
-            <button onClick={resetErrorBoundary} className="btn-red uppercase">
+            <Button
+              onClick={resetErrorBoundary}
+              variant={"destructive"}
+              className="uppercase"
+            >
               reset
-            </button>
-          </div>
+            </Button>
+          </Card>
         )}
       >
         <React.Suspense fallback={<Loading />}>

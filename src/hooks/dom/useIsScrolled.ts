@@ -1,7 +1,7 @@
 import React from "react";
 
-export function useIsScrolled() {
-  return React.useSyncExternalStore(
+export const useIsScrolled = () =>
+  React.useSyncExternalStore(
     (onStoreChange) => {
       document.addEventListener("scroll", onStoreChange);
 
@@ -10,5 +10,5 @@ export function useIsScrolled() {
       };
     },
     () => Boolean(document.documentElement.scrollTop),
+    () => false,
   );
-}

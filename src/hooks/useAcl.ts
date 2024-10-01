@@ -1,7 +1,7 @@
 import { useAbility } from "@casl/react";
 import React from "react";
-import { defineAbilityFor } from "@/libs/defineAbilityFor";
-import type { AppAbility } from "@/libs/defineAbilityFor";
+import { defineAbilityFor } from "@/lib/defineAbilityFor";
+import type { AppAbility } from "@/lib/defineAbilityFor";
 
 export const AclProvider = React.createContext<AppAbility>(
   defineAbilityFor(""),

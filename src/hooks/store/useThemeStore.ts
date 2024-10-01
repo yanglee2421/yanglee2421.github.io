@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { persist, createJSONStorage } from "zustand/middleware";
-import type React from "react";
+import React from "react";
 
 export type Mode = "system" | "dark" | "light";
 
@@ -83,4 +83,15 @@ export const useThemeStore = create(
       storage: createJSONStorage(() => globalThis.localStorage),
     },
   ),
+);
+
+export const useThemeStoreHasHydrated = () =>
+  React.useSyncExternalStore(
+    (onStateChange) => useThemeStore.persist.onFinishHydration(onStateChange),
+    () => useThemeStore.persist.hasHydrated(),
+    () => false,
+  );
+
+export const themeStoreHasHydrated = new Promise<ThemeStore>((resolve) =>
+  useThemeStore.persist.onFinishHydration(resolve),
 );

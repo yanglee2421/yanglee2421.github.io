@@ -6,15 +6,23 @@ import { RollCard } from "./RollCard";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { Card } from "@/components/ui/card";
-import { useThemeStore } from "@/hooks/store/useThemeStore";
+import {
+  useThemeStore,
+  useThemeStoreHasHydrated,
+} from "@/hooks/store/useThemeStore";
 
 export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
+  const hasHydrated = useThemeStoreHasHydrated();
   const mode = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.setMode);
   const label1 = React.useId();
   const label2 = React.useId();
   const label3 = React.useId();
+
+  if (!hasHydrated) {
+    return <p className="animate-pulse px-5 py-2 text-center">loading</p>;
+  }
 
   return (
     <>

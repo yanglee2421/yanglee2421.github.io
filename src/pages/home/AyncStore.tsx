@@ -2,18 +2,12 @@ import localforage from "localforage";
 import React from "react";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
-import { timeout } from "@/utils/timeout";
 import { Input } from "@/components/ui/input";
 
 export function AsyncStore() {
   const value = useAsyncStore((store) => store.value);
-  const setValue = useAsyncStore((store) => store.setValue);
-
-  const hasHydrated = React.useSyncExternalStore(
-    (onStoreChange) => useAsyncStore.persist.onFinishHydration(onStoreChange),
-    () => useAsyncStore.persist.hasHydrated(),
-    () => false,
-  );
+  const hasHydrated = useAsyncStoreHasHydrated();
+  const { setValue } = React.use(asyncStoreHasHydrated);
 
   return (
     <Input
@@ -26,32 +20,32 @@ export function AsyncStore() {
   );
 }
 
+type AsyncStore = {
+  value: string;
+  setValue: React.Dispatch<React.SetStateAction<string>>;
+};
+
 const useAsyncStore = create(
   persist<AsyncStore>(
-    (set, get) => {
-      return {
-        value: "",
-        setValue(updater) {
-          set({
-            value:
-              typeof updater === "function" ? updater(get().value) : updater,
-          });
-        },
-      };
-    },
+    (set, get) => ({
+      value: "",
+      setValue(updater) {
+        set({
+          value: typeof updater === "function" ? updater(get().value) : updater,
+        });
+      },
+    }),
     {
       name: "useAsyncStore",
       storage: createJSONStorage(() => {
         return {
-          async getItem(name) {
-            await timeout(1000 * 2);
+          getItem(name) {
             return localforage.getItem(name);
           },
-          async setItem(name, value) {
-            await timeout(1000 * 2);
+          setItem(name, value) {
             return localforage.setItem(name, value);
           },
-          async removeItem(name) {
+          removeItem(name) {
             return localforage.removeItem(name);
           },
         };
@@ -60,7 +54,13 @@ const useAsyncStore = create(
   ),
 );
 
-type AsyncStore = {
-  value: string;
-  setValue: React.Dispatch<React.SetStateAction<string>>;
-};
+const useAsyncStoreHasHydrated = () =>
+  React.useSyncExternalStore(
+    (onStoreChange) => useAsyncStore.persist.onFinishHydration(onStoreChange),
+    () => useAsyncStore.persist.hasHydrated(),
+    () => false,
+  );
+
+const asyncStoreHasHydrated = new Promise<AsyncStore>((resolve) =>
+  useAsyncStore.persist.onFinishHydration(resolve),
+);

@@ -1,5 +1,5 @@
 import React from "react";
-import { AnimateController } from "@/libs/AnimateController";
+import { AnimateController } from "@/lib/AnimateController";
 import { timeout } from "@/utils/timeout";
 import { Button } from "@/components/ui/button";
 
