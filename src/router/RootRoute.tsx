@@ -1,12 +1,13 @@
 import NProgress from "nprogress";
 import "nprogress/nprogress.css";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import {
   useOutlet,
-  useSearchParams,
   useNavigation,
   ScrollRestoration,
+  useParams,
+  Navigate,
+  useLocation,
 } from "react-router-dom";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { AclProvider } from "@/hooks/useAcl";
@@ -15,14 +16,12 @@ import { useIsDark } from "@/hooks/dom/useIsDark";
 import { ErrorBoundary } from "react-error-boundary";
 import { useQueryErrorResetBoundary } from "@tanstack/react-query";
 import { Loading } from "@/components/Loading";
-import {
-  useThemeStore,
-  useThemeStoreHasHydrated,
-  type Mode,
-} from "@/hooks/store/useThemeStore";
+import { useThemeStore, type Mode } from "@/hooks/store/useThemeStore";
 import { Toaster } from "@/components/ui/toaster";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
+import { useTranslation } from "react-i18next";
+import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 function modeToHasSelector(mode: Mode, isDark: boolean) {
   switch (mode) {
@@ -36,17 +35,31 @@ function modeToHasSelector(mode: Mode, isDark: boolean) {
   }
 }
 
+const LANGS = ["en", "zh"];
+
 export function RootRoute() {
   const outlet = useOutlet();
   const navigation = useNavigation();
-  const { i18n } = useTranslation();
-  const [searchParams] = useSearchParams({ lang: "en" });
   const currentUser = useCurrentUser();
   const isDark = useIsDark();
   const { reset } = useQueryErrorResetBoundary();
-  const lang = searchParams.get("lang");
   const mode = useThemeStore((s) => s.mode);
-  const hasHydrated = useThemeStoreHasHydrated();
+  const params = useParams();
+  const { i18n } = useTranslation();
+  const location = useLocation();
+  const fallbackLang = useLocaleStore((s) => s.fallbackLang);
+  const setFallbackLang = useLocaleStore((s) => s.set);
+
+  React.useEffect(() => {
+    if (!LANGS.includes(params.lang || "")) {
+      return;
+    }
+
+    setFallbackLang((prev) => ({
+      fallbackLang: params.lang || prev.fallbackLang,
+    }));
+    i18n.changeLanguage(params.lang);
+  }, [params.lang, i18n, setFallbackLang]);
 
   React.useEffect(() => {
     const darkSelector = "dark";
@@ -72,16 +85,18 @@ export function RootRoute() {
     }
   }, [navigation.state]);
 
-  React.useEffect(() => {
-    if (!lang) {
-      return;
-    }
-
-    i18n.changeLanguage(lang);
-  }, [lang, i18n]);
-
-  if (!hasHydrated) {
-    return <p className="animate-pulse text-center capitalize">loading....</p>;
+  if (!LANGS.includes(params.lang || "")) {
+    return (
+      <Navigate
+        to={{
+          pathname: `/${fallbackLang + location.pathname}`,
+          search: location.search,
+          hash: location.hash,
+        }}
+        state={location.state}
+        replace
+      />
+    );
   }
 
   return (

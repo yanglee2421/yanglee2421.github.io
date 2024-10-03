@@ -15,7 +15,7 @@ export function Home() {
   const [number, setNumber] = React.useState(Number.NaN);
   const hasHydrated = useThemeStoreHasHydrated();
   const mode = useThemeStore((s) => s.mode);
-  const setMode = useThemeStore((s) => s.setMode);
+  const setMode = useThemeStore((s) => s.set);
   const label1 = React.useId();
   const label2 = React.useId();
   const label3 = React.useId();
@@ -38,7 +38,7 @@ export function Home() {
               case "system":
               case "light":
               case "dark":
-                setMode(evt);
+                setMode({ mode: evt });
                 break;
             }
           }}

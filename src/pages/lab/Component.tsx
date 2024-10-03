@@ -3,7 +3,7 @@ import { Deferred } from "./Deferred";
 export function Component() {
   return (
     <>
-      <title>Charts</title>
+      <title>Lab</title>
       <Deferred />
     </>
   );

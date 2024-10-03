@@ -1,8 +1,6 @@
 import { timeout } from "@/utils/timeout";
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { useQuery } from "@tanstack/react-query";
 import React from "react";
-import { createHighlighterCore } from "shiki/core";
-import getWasm from "shiki/wasm";
 import classNames from "classnames";
 import { Slider } from "./Slider";
 import { Lab } from "./Lab";
@@ -21,28 +19,59 @@ import {
   useActionData,
   useSearchParams,
 } from "react-router-dom";
-import { type loader } from "./loader";
+import { type loader, type action } from "./route";
 import { Card } from "@/components/ui/card";
-import { action } from "./action";
+import { hightlighter } from "@/lib/hightlighter";
 
 export function Deferred() {
-  const [query, setQuery] = React.useState({
+  const [params, setParams] = React.useState({
     select: "",
     input: "",
   });
 
-  const data = useLoaderData() as ReturnType<typeof loader>;
-  const actionData = useActionData() as ReturnType<typeof action>;
+  const highlighter = React.use(hightlighter);
+
+  const query = useQuery({
+    queryKey: ["suspense", params],
+    async queryFn() {
+      await timeout(1000 * 1);
+      const res = highlighter.codeToHtml(JSON.stringify(params, null, 2), {
+        lang: "json",
+        theme: "dark-plus",
+      });
+
+      return res;
+    },
+
+    // notifyOnChangeProps: "all",
+    enabled: !!params.select,
+  });
+
+  const data = useLoaderData() as Awaited<ReturnType<typeof loader>>;
+  const actionData = useActionData() as Awaited<ReturnType<typeof action>>;
   const [, setSearchParams] = useSearchParams();
 
   console.log(data, actionData);
 
   return (
     <div className="space-y-6">
+      <title>{data.title}</title>
       <div className="grid grid-cols-1 gap-3 rounded border p-3 shadow md:grid-cols-2">
+        <div className="col-span-full">
+          {query.isPending && (
+            <p className="animate-pulse capitalize">pending...</p>
+          )}
+          {query.isError && <p>{query.error.message}</p>}
+          {query.isSuccess && (
+            <div
+              className={classNames("border-t")}
+              dangerouslySetInnerHTML={{ __html: query.data }}
+            ></div>
+          )}
+        </div>
         <UncontrolerForm
           onSubmit={(formData) => {
-            setQuery({
+            setParams({
               input: formData.get("input") as string,
               select: formData.get("select") as string,
             });
@@ -51,9 +80,9 @@ export function Deferred() {
         <div className="space-y-3">
           <fieldset>
             <Input
-              value={query.input}
+              value={params.input}
               onChange={(evt) => {
-                setQuery((prev) => ({ ...prev, input: evt.target.value }));
+                setParams((prev) => ({ ...prev, input: evt.target.value }));
               }}
               type="text"
               className="block w-full"
@@ -61,9 +90,9 @@ export function Deferred() {
           </fieldset>
           <fieldset>
             <Select
-              value={query.select}
+              value={params.select}
               onValueChange={(evt) => {
-                setQuery((prev) => ({ ...prev, select: evt }));
+                setParams((prev) => ({ ...prev, select: evt }));
               }}
             >
               <SelectTrigger>
@@ -76,13 +105,6 @@ export function Deferred() {
               </SelectContent>
             </Select>
           </fieldset>
-        </div>
-        <div className="col-span-full">
-          {query.select && (
-            <React.Suspense fallback={<p className="animate-pulse">loading</p>}>
-              <FetchData query={query} />
-            </React.Suspense>
-          )}
         </div>
       </div>
 
@@ -119,60 +141,6 @@ export function Deferred() {
           </div>
         </Form>
       </Card>
-    </div>
-  );
-}
-
-type Props = {
-  query: NonNullable<unknown>;
-};
-
-function FetchData(props: Props) {
-  const deferredQuery = React.useDeferredValue(props.query);
-  const isPending = !Object.is(props.query, deferredQuery);
-
-  const highlighter = useSuspenseQuery({
-    queryKey: ["shiki", "dark-plus", "json"],
-    queryFn() {
-      return createHighlighterCore({
-        themes: [import("shiki/themes/dark-plus.mjs")],
-        langs: [import("shiki/langs/json.mjs")],
-        loadWasm: getWasm,
-      });
-    },
-    staleTime: Infinity,
-    gcTime: Infinity,
-    refetchInterval: false,
-    refetchIntervalInBackground: false,
-    refetchOnMount: false,
-    refetchOnReconnect: false,
-    refetchOnWindowFocus: false,
-  }).data;
-
-  const query = useSuspenseQuery({
-    queryKey: ["suspense", deferredQuery],
-    async queryFn() {
-      await timeout(1000 * 2);
-      const res = highlighter.codeToHtml(JSON.stringify(props.query, null, 2), {
-        lang: "json",
-        theme: "dark-plus",
-      });
-
-      return res;
-    },
-  });
-
-  return (
-    <div className="relative overflow-hidden rounded">
-      {isPending && (
-        <div className="absolute inset-0 z-10 flex items-center justify-center bg-black/25">
-          <p className="animate-pulse capitalize text-white">fetching...</p>
-        </div>
-      )}
-      <div
-        className={classNames("border-t")}
-        dangerouslySetInnerHTML={{ __html: query.data }}
-      ></div>
     </div>
   );
 }
