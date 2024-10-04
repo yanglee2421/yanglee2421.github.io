@@ -1,14 +1,17 @@
-import {
-  useMutation,
-  useQueryClient,
-  useSuspenseQuery,
-} from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   useReactTable,
   flexRender,
   getCoreRowModel,
 } from "@tanstack/react-table";
-import { addDoc, getDocs, type DocumentReference } from "firebase/firestore";
+import {
+  addDoc,
+  getDocs,
+  type DocumentReference,
+  query,
+  limit,
+  startAt,
+} from "firebase/firestore";
 import React from "react";
 import { jokeCollection as collectionRef } from "@/api/firebase/app";
 import { columns } from "./columns";
@@ -38,19 +41,29 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import classNames from "classnames";
+import {
+  Pagination,
+  PaginationContent,
+  PaginationEllipsis,
+  PaginationItem,
+  PaginationLink,
+  PaginationNext,
+  PaginationPrevious,
+} from "@/components/ui/pagination";
 
 const queryKey = ["firebase", "joke"];
 
 export function Table() {
-  "use no memo";
-  const query = useSuspenseQuery({
+  const jokes = useQuery({
     queryKey,
     async queryFn() {
-      const docs = await getDocs(collectionRef);
+      const docs = await getDocs(query(collectionRef, limit(3)));
 
       return docs.docs;
     },
   });
+
+  const data = React.useMemo(() => jokes.data || [], [jokes.data]);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
@@ -58,7 +71,7 @@ export function Table() {
       return originalRow.id;
     },
     columns,
-    data: query.data,
+    data,
   });
 
   const formId = React.useId();
@@ -85,14 +98,14 @@ export function Table() {
             <CardTitle>joke</CardTitle>
             <Button
               onClick={() => {
-                query.refetch();
+                jokes.refetch();
               }}
-              disabled={query.isRefetching}
+              disabled={jokes.isRefetching}
               size="icon"
               variant={"ghost"}
             >
               <RefreshCcw
-                className={classNames(query.isRefetching && "animate-spin")}
+                className={classNames(jokes.isRefetching && "animate-spin")}
               />
             </Button>
           </div>
@@ -193,7 +206,7 @@ export function Table() {
               </TableRow>
             ))}
           </TableBody>
-          <TableFooter>
+          {/* <TableFooter>
             {table.getFooterGroups().map((footerGroup) => (
               <TableRow key={footerGroup.id}>
                 {footerGroup.headers.map((header) => (
@@ -207,8 +220,30 @@ export function Table() {
                 ))}
               </TableRow>
             ))}
-          </TableFooter>
+          </TableFooter> */}
         </TableRoot>
+        <div className="border-t py-2">
+          <Pagination>
+            <PaginationContent>
+              <PaginationItem>
+                <PaginationPrevious href="#" />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationLink href="#">1</PaginationLink>
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationEllipsis />
+              </PaginationItem>
+              <PaginationItem>
+                <PaginationNext
+                  onClick={() => {
+                    console.log("next");
+                  }}
+                />
+              </PaginationItem>
+            </PaginationContent>
+          </Pagination>
+        </div>
       </Card>
     </>
   );

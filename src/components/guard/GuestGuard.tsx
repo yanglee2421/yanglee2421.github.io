@@ -4,7 +4,6 @@ import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { NavigateToHome } from "./NavigateToHome";
 
 export function GuestGuard(props: React.PropsWithChildren) {
-  React.use(authReady);
   const currentUser = useCurrentUser();
 
   if (!currentUser) {
