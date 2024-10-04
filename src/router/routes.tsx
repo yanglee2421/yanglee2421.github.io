@@ -36,6 +36,11 @@ export const routes = createRoutesFromElements(
         path="dashboard"
         lazy={() => import("@/pages/dashboard/route")}
       />
+      <Route
+        id="overtime"
+        path="overtime"
+        lazy={() => import("@/pages/overtime/route")}
+      />
     </Route>
 
     {/* No */}

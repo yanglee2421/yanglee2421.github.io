@@ -1,35 +1,46 @@
-import {
-  Table,
-  TableHead,
-  TableHeader,
-  TableRow,
-  TableBody,
-  TableCell,
-} from "@/components/ui/table";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import { useQuery } from "@tanstack/react-query";
+import { getOptions } from "./queryOvertime";
 import React from "react";
 import {
-  DialogFooter,
-  DialogTitle,
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Form } from "@/components/ui/form";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useForm } from "react-hook-form";
-import { useQuery } from "@tanstack/react-query";
-import { queryOvertime } from "./queryOvertime";
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import {
+  Card,
+  CardHeader,
+  CardContent,
+  IconButton,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableRow,
+  TableCell,
+  TablePagination,
+  Button,
+  Box,
+  Divider,
+  Grid2,
+  TextField,
+} from "@mui/material";
+import { AddOutlined, RefreshOutlined } from "@mui/icons-material";
+import {
+  type DocumentData,
+  type QueryDocumentSnapshot,
+} from "firebase/firestore";
 
 export function Overtime() {
-  const [showDialog, setShowDialog] = React.useState(false);
   const user = useCurrentUser();
-  const form = useForm({
-    defaultValues: {},
+  const query = useQuery(getOptions());
+  const data = React.useMemo(() => query.data || [], [query.data]);
+  const table = useReactTable({
+    getCoreRowModel: getCoreRowModel(),
+    columns,
+    data,
   });
-  const query = useQuery(queryOvertime);
 
   if (!user) {
     return null;
@@ -46,33 +57,78 @@ export function Overtime() {
   return (
     <div>
       <Card>
-        <CardHeader>
-          <CardTitle>Overtime</CardTitle>
-        </CardHeader>
+        <CardHeader
+          title="overtime"
+          action={
+            <IconButton>
+              <RefreshOutlined />
+            </IconButton>
+          }
+        />
         <CardContent>
-          <Dialog open={showDialog} onOpenChange={setShowDialog}>
-            <DialogTrigger>
-              <Button className="uppercase">add</Button>
-            </DialogTrigger>
-
-            <DialogContent>
-              <DialogHeader>
-                <DialogTitle>ADD</DialogTitle>
-              </DialogHeader>
-              <Form {...form}>
-                <form></form>
-              </Form>
-              <DialogFooter>
-                <Button>ADD</Button>
-              </DialogFooter>
-            </DialogContent>
-          </Dialog>
+          <Grid2 container spacing={6}>
+            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+              <TextField fullWidth />
+            </Grid2>
+          </Grid2>
         </CardContent>
-        <Table>
-          <TableHeader></TableHeader>
-          <TableBody></TableBody>
-        </Table>
+        <Divider></Divider>
+        <Box sx={{ paddingInline: 4, paddingBlock: 2 }}>
+          <Button variant="contained" startIcon={<AddOutlined />}>
+            add
+          </Button>
+        </Box>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              {table.getHeaderGroups().map((hg) => (
+                <TableRow key={hg.id}>
+                  {hg.headers.map((h) => (
+                    <TableCell key={h.id}>
+                      {h.isPlaceholder ||
+                        flexRender(h.column.columnDef.header, h.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody>
+              {table.getRowModel().rows.map((r) => (
+                <TableRow key={r.id}>
+                  {r.getVisibleCells().map((c) => (
+                    <TableCell key={c.id}>
+                      {c.getIsPlaceholder() ||
+                        flexRender(c.column.columnDef.cell, c.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableBody>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          component={"div"}
+          page={0}
+          count={1}
+          rowsPerPage={20}
+          rowsPerPageOptions={[20, 50, 100]}
+          onPageChange={Boolean}
+          onRowsPerPageChange={Boolean}
+        />
       </Card>
     </div>
   );
 }
+
+const columnHelper =
+  createColumnHelper<QueryDocumentSnapshot<DocumentData, DocumentData>>();
+
+const columns = [
+  columnHelper.display({
+    id: "date",
+    header: "date",
+    cell(props) {
+      return props.row.original.data().date.toDate().toLocaleDateString();
+    },
+  }),
+];

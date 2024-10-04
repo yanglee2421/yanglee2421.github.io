@@ -3,7 +3,8 @@ import { authReady as authReadyPromise } from "@/api/firebase/app";
 
 export const authReady = queryOptions({
   queryKey: ["firebase", "authReady"],
-  queryFn() {
-    return authReadyPromise;
+  async queryFn() {
+    await authReadyPromise;
+    return {};
   },
 });

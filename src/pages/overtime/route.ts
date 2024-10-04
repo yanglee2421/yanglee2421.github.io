@@ -1,17 +1,17 @@
 import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
 import { queryClient } from "@/lib/queryClient";
-import { queryOvertime } from "./queryOvertime";
+import { getOptions } from "./queryOvertime";
 export { Overtime as Component } from "./Overtime";
 
 export async function loader(args: LoaderFunctionArgs) {
   const url = new URL(args.request.url);
 
-  await queryClient.ensureQueryData(queryOvertime());
+  await queryClient.ensureQueryData(getOptions());
 
-  return {};
+  return { url: url.search };
 }
 
 export async function action(args: ActionFunctionArgs) {
-  await queryClient.invalidateQueries(queryOvertime());
-  return Response.json({});
+  await queryClient.invalidateQueries(getOptions());
+  return { url: args.request.url };
 }

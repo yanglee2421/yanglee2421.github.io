@@ -1,5 +1,5 @@
-import { Box, IconButton, Link, styled } from "@mui/material";
-import { useOutlet } from "react-router-dom";
+import { Box, ButtonBase, IconButton, Link, styled } from "@mui/material";
+import { NavLink, useOutlet } from "react-router-dom";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { GitHub } from "@mui/icons-material";
@@ -24,7 +24,21 @@ export function AuthLayout() {
           </IconButton>
           <UserDropdown />
         </Header>
-        <Aside></Aside>
+        <Aside>
+          <ButtonBase
+            component={NavLink}
+            to="/overtime"
+            sx={(t) => ({
+              display: "block",
+              inlineSize: "100%",
+              paddingInline: 5,
+              paddingBlock: 2,
+              fontSize: t.typography.body1.fontSize,
+            })}
+          >
+            overtime
+          </ButtonBase>
+        </Aside>
         <AppWrapper>
           <Main>{outlet}</Main>
           <Footer>
@@ -82,7 +96,7 @@ const AppWrapper = styled("div")(({ theme: t }) => ({
 const Main = styled("main")(({ theme: t }) => ({
   flexGrow: 1,
 
-  padding: t.spacing(2),
+  padding: t.spacing(4),
 }));
 
 const Footer = styled("footer")(({ theme: t }) => ({
