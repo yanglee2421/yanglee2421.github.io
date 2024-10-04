@@ -49,6 +49,8 @@ export function ThemeProvider(props: React.PropsWithChildren) {
             position: "fixed",
             top: 0,
             inlineSize: "100dvw",
+
+            zIndex: theme.zIndex.drawer + 1,
           },
           "#nprogress .bar": {
             backgroundColor: theme.palette.primary.main,

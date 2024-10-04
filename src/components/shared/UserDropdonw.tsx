@@ -1,6 +1,6 @@
 import { useOnlineStatus } from "@/hooks/dom/useOnlineStatus";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { PersonOutlined } from "@mui/icons-material";
+import { PersonOutlined, SettingsOutlined } from "@mui/icons-material";
 import {
   Badge,
   Avatar,
@@ -10,6 +10,7 @@ import {
   ListItemIcon,
   ListItemText,
   Box,
+  Divider,
 } from "@mui/material";
 import React from "react";
 import { Translation } from "react-i18next";
@@ -59,12 +60,33 @@ export function UserDropdown() {
           <ListItemIcon>
             <PersonOutlined />
           </ListItemIcon>
-          <ListItemText>
-            <Translation ns="/layout/userdropdown">
-              {(t) => t("profile")}
-            </Translation>
-          </ListItemText>
+          <ListItemText
+            primaryTypographyProps={{
+              textTransform: "capitalize",
+            }}
+            primary={
+              <Translation ns="/layout/userdropdown">
+                {(t) => t("profile")}
+              </Translation>
+            }
+          />
         </MenuItem>
+        <MenuItem>
+          <ListItemIcon>
+            <SettingsOutlined />
+          </ListItemIcon>
+          <ListItemText
+            primaryTypographyProps={{
+              textTransform: "capitalize",
+            }}
+            primary={
+              <Translation ns="/layout/userdropdown">
+                {(t) => t("setting")}
+              </Translation>
+            }
+          />
+        </MenuItem>
+        <Divider />
         <Box sx={{ paddingInline: 3, paddingBlock: 3 }}>
           <Button
             onClick={() => {

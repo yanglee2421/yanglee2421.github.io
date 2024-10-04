@@ -1,10 +1,19 @@
-import { Box, ButtonBase, IconButton, Link, styled } from "@mui/material";
+import {
+  alpha,
+  Box,
+  ButtonBase,
+  IconButton,
+  Link,
+  styled,
+} from "@mui/material";
 import { NavLink, useOutlet } from "react-router-dom";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { GitHub } from "@mui/icons-material";
 import { AuthGuard } from "@/components/guard/AuthGuard";
 import { UserDropdown } from "../shared/UserDropdonw";
+import * as ScrollArea from "@radix-ui/react-scroll-area";
+import styles from "./styles.module.css";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
 
@@ -14,33 +23,73 @@ export function AuthLayout() {
   return (
     <AuthGuard>
       <LayoutWrapper>
-        <Header>
-          <GitHub fontSize="large" />
-          <Box sx={{ marginInlineStart: "auto" }}></Box>
-          <LangToggle />
-          <ModeToggle />
-          <IconButton href={github_url} target={github_url}>
-            <GitHub />
-          </IconButton>
-          <UserDropdown />
-        </Header>
-        <Aside>
-          <ButtonBase
-            component={NavLink}
-            to="/overtime"
-            sx={(t) => ({
-              display: "block",
-              inlineSize: "100%",
-              paddingInline: 5,
-              paddingBlock: 2,
-              fontSize: t.typography.h5.fontSize,
-              fontWeight: t.typography.body1.fontWeight,
-            })}
-          >
-            overtime
-          </ButtonBase>
+        <Aside sx={{ insetInlineStart: 0 }}>
+          <div>
+            <Nav>
+              <Box
+                sx={(t) => ({
+                  paddingInline: 5,
+                  paddingBlock: 2,
+                  borderBottomWidth: 1,
+                  borderBottomStyle: "solid",
+                  borderBottomColor: t.palette.divider,
+                  display: "flex",
+                  alignItems: "center",
+
+                  backgroundColor: alpha(t.palette.background.default, 0.6),
+                  backdropFilter: "blur(8px)",
+                })}
+              >
+                <GitHub />
+                <Box height={40}></Box>
+              </Box>
+              <Box component={"div"} sx={{ overflowY: "hidden", flexGrow: 1 }}>
+                <ScrollArea.Root className={styles.root}>
+                  <ScrollArea.Viewport className={styles.viewport}>
+                    <ButtonBase
+                      component={NavLink}
+                      to="/overtime"
+                      sx={(t) => ({
+                        display: "block",
+                        inlineSize: "100%",
+                        paddingInline: 5,
+                        paddingBlock: 2,
+                        fontSize: t.typography.h5.fontSize,
+                        fontWeight: t.typography.body1.fontWeight,
+                      })}
+                    >
+                      overtime
+                    </ButtonBase>
+                    <Box height={2000}></Box>
+                  </ScrollArea.Viewport>
+                  <ScrollArea.Scrollbar
+                    className={styles.scrollbar}
+                    orientation="vertical"
+                  >
+                    <ScrollArea.Thumb className={styles.thumb} />
+                  </ScrollArea.Scrollbar>
+                  <ScrollArea.Scrollbar
+                    className={styles.scrollbar}
+                    orientation="horizontal"
+                  >
+                    <ScrollArea.Thumb className={styles.thumb} />
+                  </ScrollArea.Scrollbar>
+                  <ScrollArea.Corner className={styles.corner} />
+                </ScrollArea.Root>
+              </Box>
+            </Nav>
+          </div>
         </Aside>
         <AppWrapper>
+          <Header>
+            <Box sx={{ marginInlineStart: "auto" }}></Box>
+            <LangToggle />
+            <ModeToggle />
+            <IconButton href={github_url} target={github_url}>
+              <GitHub />
+            </IconButton>
+            <UserDropdown />
+          </Header>
           <Main>{outlet}</Main>
           <Footer>
             &copy;2024 by{" "}
@@ -55,12 +104,52 @@ export function AuthLayout() {
 }
 
 const LayoutWrapper = styled("div")(({ theme: t }) => ({
-  minHeight: "100dvh",
+  display: "flex",
+}));
+
+const Aside = styled("aside")(({ theme: t }) => ({
+  position: "absolute",
+  zIndex: t.zIndex.drawer,
+  insetInlineStart: `-100%`,
+  transition: t.transitions.create("inset-inline-start"),
+
+  inlineSize: "100%",
+
+  [t.breakpoints.up("md")]: {
+    position: "static",
+    inlineSize: t.spacing(80),
+  },
+}));
+
+const Nav = styled("nav")(({ theme: t }) => ({
+  display: "flex",
+  flexDirection: "column",
+
+  position: "fixed",
+  insetBlockStart: 0,
+
+  inlineSize: "100%",
+  blockSize: "100%",
+
+  backgroundColor: t.palette.background.default,
+
+  [t.breakpoints.up("md")]: {
+    inlineSize: t.spacing(80),
+  },
+}));
+
+const AppWrapper = styled("div")(({ theme: t }) => ({
+  display: "flex",
+  flexDirection: "column",
+  flexGrow: 1,
+
+  minBlockSize: "100dvh",
 }));
 
 const Header = styled("header")(({ theme: t }) => ({
-  position: "sticky",
+  position: "fixed",
   insetBlockStart: 0,
+  inlineSize: "100%",
 
   display: "flex",
   gap: 12,
@@ -68,36 +157,23 @@ const Header = styled("header")(({ theme: t }) => ({
   paddingInline: t.spacing(5),
   paddingBlock: t.spacing(2),
 
-  boxShadow: t.shadows[1],
-}));
+  borderBottomWidth: 1,
+  borderBottomStyle: "solid",
+  borderBottomColor: t.palette.divider,
 
-const Aside = styled("aside")(({ theme: t }) => ({
-  borderInlineEndStyle: "solid",
-  borderInlineEndColor: t.palette.divider,
-
-  [t.breakpoints.up("md")]: {
-    position: "fixed",
-    insetInlineStart: 0,
-    inlineSize: t.spacing(96),
-    blockSize: `calc(100dvh - ${t.spacing(14)})`,
-    borderInlineEndWidth: 1,
-  },
-}));
-
-const AppWrapper = styled("div")(({ theme: t }) => ({
-  display: "flex",
-  flexDirection: "column",
+  backgroundColor: alpha(t.palette.background.default, 0.6),
+  backdropFilter: "blur(8px)",
 
   [t.breakpoints.up("md")]: {
-    paddingInlineStart: t.spacing(96),
-    minBlockSize: `calc(100dvh - ${t.spacing(14)})`,
+    inlineSize: `calc(100dvw - ${t.spacing(80)})`,
   },
 }));
 
 const Main = styled("main")(({ theme: t }) => ({
   flexGrow: 1,
 
-  padding: t.spacing(4),
+  paddingBlockStart: t.spacing(14 + 5),
+  paddingInline: t.spacing(5),
 }));
 
 const Footer = styled("footer")(({ theme: t }) => ({

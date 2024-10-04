@@ -35,12 +35,15 @@ import {
 
 export function Overtime() {
   const user = useCurrentUser();
-  const query = useQuery(getOptions());
+  const query = useQuery(getOptions({ userId: user?.uid || "" }));
   const data = React.useMemo(() => query.data || [], [query.data]);
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
     columns,
     data,
+    getRowId(originalRow) {
+      return originalRow.id;
+    },
   });
 
   if (!user) {
@@ -60,6 +63,7 @@ export function Overtime() {
       <Card>
         <CardHeader
           title="overtime"
+          titleTypographyProps={{ sx: { textTransform: "uppercase" } }}
           action={
             <IconButton>
               <RefreshOutlined />
@@ -139,6 +143,13 @@ const columns = [
     header: "date",
     cell(props) {
       return props.row.original.data().date.toDate().toLocaleDateString();
+    },
+  }),
+  columnHelper.display({
+    id: "hours",
+    header: "hours",
+    cell(props) {
+      return props.row.original.data().hours;
     },
   }),
 ];
