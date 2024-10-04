@@ -1,21 +1,18 @@
 import { getAuth, signInWithPopup } from "firebase/auth";
-import React from "react";
 import { app, githubAuthProvider } from "@/api/firebase/app";
-import { Button } from "@/components/ui/button";
+import { Button } from "@mui/material";
+import { GitHub } from "@mui/icons-material";
 
 export function SignInWithGithub() {
-  const [isPending, startTransition] = React.useTransition();
-
   return (
     <Button
       onClick={() => {
-        startTransition(async () => {
-          await signInWithPopup(getAuth(app), githubAuthProvider);
-        });
+        signInWithPopup(getAuth(app), githubAuthProvider);
       }}
-      disabled={isPending}
-      variant={"outline"}
-      className="block w-full"
+      variant={"outlined"}
+      size="large"
+      fullWidth
+      startIcon={<GitHub />}
     >
       Sign in with Github
     </Button>

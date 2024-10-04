@@ -1,21 +1,18 @@
 import { signInWithPopup } from "firebase/auth";
-import React from "react";
 import { auth, googleAuthProvider } from "@/api/firebase/app";
-import { Button } from "@/components/ui/button";
+import { Button } from "@mui/material";
+import { Google } from "@mui/icons-material";
 
 export function SignInWithGoogle() {
-  const [isPending, startTransition] = React.useTransition();
-
   return (
     <Button
       onClick={() => {
-        startTransition(async () => {
-          await signInWithPopup(auth, googleAuthProvider);
-        });
+        signInWithPopup(auth, googleAuthProvider);
       }}
-      disabled={isPending}
-      variant={"outline"}
-      className="block w-full"
+      variant={"outlined"}
+      size="large"
+      fullWidth
+      startIcon={<Google />}
     >
       Sign in with Google
     </Button>

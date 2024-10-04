@@ -1,42 +1,10 @@
-import React from "react";
-
-import {
-  Mode,
-  useThemeStore,
-  useThemeStoreHasHydrated,
-} from "@/hooks/store/useThemeStore";
-import {
-  IconButton,
-  ListItem,
-  Menu,
-  MenuItem,
-  ListItemIcon,
-  ListItemText,
-  styled,
-  Box,
-} from "@mui/material";
-import {
-  DarkModeOutlined,
-  LightModeOutlined,
-  DesktopWindowsOutlined,
-} from "@mui/icons-material";
+import { styled, Box, Button } from "@mui/material";
+import { TouchAppOutlined } from "@mui/icons-material";
 import { ModeToggle } from "@/components/shared/ModeToggle";
 import { LangToggle } from "@/components/shared/LangToggle";
+import { Link } from "react-router-dom";
 
 export function Home() {
-  const mode = useThemeStore((s) => s.mode);
-  const setMode = useThemeStore((s) => s.set);
-  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-  const handleClose = () => {
-    setAnchor(null);
-  };
-
-  const handleModeChange = (mode: Mode) => {
-    setMode({ mode });
-    handleClose();
-  };
-
   return (
     <>
       <Header>
@@ -44,6 +12,15 @@ export function Home() {
         <LangToggle />
         <ModeToggle />
       </Header>
+      <Button
+        variant="contained"
+        size="large"
+        startIcon={<TouchAppOutlined />}
+        component={Link}
+        to={"/dashboard"}
+      >
+        get started
+      </Button>
     </>
   );
 }

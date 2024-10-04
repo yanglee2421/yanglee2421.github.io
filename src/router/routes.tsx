@@ -18,7 +18,13 @@ export const routes = createRoutesFromElements(
     <Route
       id="guest_layout"
       lazy={() => import("@/components/layout/GuestLayout")}
-    ></Route>
+    >
+      <Route
+        id="login"
+        path="login"
+        lazy={() => import("@/pages/login/route")}
+      />
+    </Route>
 
     {/* Auth Pages */}
     <Route

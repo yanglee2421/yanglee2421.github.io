@@ -1,18 +1,15 @@
-import { Avatar, Badge, Box, IconButton, Link, styled } from "@mui/material";
+import { Box, IconButton, Link, styled } from "@mui/material";
 import { useOutlet } from "react-router-dom";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { GitHub } from "@mui/icons-material";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useOnlineStatus } from "@/hooks/dom/useOnlineStatus";
 import { AuthGuard } from "@/components/guard/AuthGuard";
+import { UserDropdown } from "../shared/UserDropdonw";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
 
 export function AuthLayout() {
   const outlet = useOutlet();
-  const user = useCurrentUser();
-  const isOnline = useOnlineStatus();
 
   return (
     <AuthGuard>
@@ -25,18 +22,7 @@ export function AuthLayout() {
           <IconButton href={github_url} target={github_url}>
             <GitHub />
           </IconButton>
-          {user && (
-            <Badge
-              variant="dot"
-              overlap="circular"
-              color={isOnline ? "success" : "error"}
-              anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
-            >
-              <Avatar src={user.photoURL || ""}>
-                {user.displayName?.substring(0, 1)}
-              </Avatar>
-            </Badge>
-          )}
+          <UserDropdown />
         </Header>
         <Aside></Aside>
         <AppWrapper>
