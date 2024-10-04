@@ -1,12 +1,10 @@
-import React from "react";
-import { authReady } from "@/api/firebase/app";
+import { useOutlet } from "react-router-dom";
+import { GuestGuard } from "../guard/GuestGuard";
 
-export const GuestLayout = React.lazy(async () => {
-  await authReady;
-  const { GuestGuard } = await import("@/components/guard/GuestGuard");
-  return {
-    default(props: React.PropsWithChildren) {
-      return <GuestGuard>{props.children}</GuestGuard>;
-    },
-  };
-});
+export function GuestLayout() {
+  const outlet = useOutlet();
+
+  return <GuestGuard>{outlet}</GuestGuard>;
+}
+
+export { GuestLayout as Component };

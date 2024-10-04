@@ -1,66 +1,60 @@
 import React from "react";
-import { AsyncStore } from "./AyncStore";
-import { Countdown } from "./Countdown";
-import { InputNumber } from "./InputNumber";
-import { RollCard } from "./RollCard";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { Label } from "@/components/ui/label";
-import { Card } from "@/components/ui/card";
+
 import {
+  Mode,
   useThemeStore,
   useThemeStoreHasHydrated,
 } from "@/hooks/store/useThemeStore";
+import {
+  IconButton,
+  ListItem,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  styled,
+  Box,
+} from "@mui/material";
+import {
+  DarkModeOutlined,
+  LightModeOutlined,
+  DesktopWindowsOutlined,
+} from "@mui/icons-material";
+import { ModeToggle } from "@/components/shared/ModeToggle";
+import { LangToggle } from "@/components/shared/LangToggle";
 
 export function Home() {
-  const [number, setNumber] = React.useState(Number.NaN);
-  const hasHydrated = useThemeStoreHasHydrated();
   const mode = useThemeStore((s) => s.mode);
   const setMode = useThemeStore((s) => s.set);
-  const label1 = React.useId();
-  const label2 = React.useId();
-  const label3 = React.useId();
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
-  if (!hasHydrated) {
-    return <p className="animate-pulse px-5 py-2 text-center">loading</p>;
-  }
+  const handleClose = () => {
+    setAnchor(null);
+  };
+
+  const handleModeChange = (mode: Mode) => {
+    setMode({ mode });
+    handleClose();
+  };
 
   return (
     <>
-      <Countdown />
-      <RollCard />
-      <Card className="space-y-6 p-4">
-        <AsyncStore />
-        <InputNumber value={number} onChange={setNumber} />
-        <RadioGroup
-          value={mode}
-          onValueChange={(evt) => {
-            switch (evt) {
-              case "system":
-              case "light":
-              case "dark":
-                setMode({ mode: evt });
-                break;
-            }
-          }}
-          className="flex items-center gap-3 *:flex *:items-center *:gap-2 *:uppercase"
-        >
-          <div>
-            <RadioGroupItem id={label1} value="system" />
-            <Label htmlFor={label1}>system</Label>
-          </div>
-          <div>
-            <RadioGroupItem id={label2} value="light" />
-            <Label htmlFor={label2}>light</Label>
-          </div>
-          <div>
-            <RadioGroupItem id={label3} value="dark" />
-            <Label htmlFor={label3}>dark</Label>
-          </div>
-        </RadioGroup>
-      </Card>
+      <Header>
+        <Box sx={{ marginInlineStart: "auto" }}></Box>
+        <LangToggle />
+        <ModeToggle />
+      </Header>
     </>
   );
 }
+
+const Header = styled("header")(({ theme: t }) => ({
+  display: "flex",
+  gap: 3,
+
+  paddingInline: t.spacing(5),
+  paddingBlock: t.spacing(2),
+}));
 
 const columns = 12;
 const gutter = 20;

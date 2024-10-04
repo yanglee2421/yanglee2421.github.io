@@ -1,5 +1,5 @@
 import { type ActionFunction, type LoaderFunctionArgs } from "react-router-dom";
-export { Deferred as Component } from "./Deferred";
+export { Lab as Component } from "./Lab";
 
 export async function loader(args: LoaderFunctionArgs) {
   console.log("loader run", args);

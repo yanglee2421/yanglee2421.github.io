@@ -1,12 +1,13 @@
 import React from "react";
 import { minmax } from "@/utils/minmax";
+import { styled, alpha } from "@mui/material";
 
 export function Slider() {
   const ref = React.useRef<HTMLDivElement>(null);
 
   return (
-    <div ref={ref} className="relative h-2 touch-none rounded bg-slate-200">
-      <div
+    <Track ref={ref}>
+      <Thumb
         onPointerDown={(evt) => {
           evt.currentTarget.setPointerCapture(evt.pointerId);
         }}
@@ -26,8 +27,41 @@ export function Slider() {
                 evt.currentTarget.getBoundingClientRect().width,
             }) + "px";
         }}
-        className="absolute top-1/2 size-5 -translate-y-1/2 cursor-pointer rounded-full bg-indigo-500 before:absolute before:start-1/2 before:top-1/2 before:block before:size-3 before:-translate-x-1/2 before:-translate-y-1/2 before:rounded-full before:bg-white before:content-['']"
-      ></div>
-    </div>
+      >
+        <Dot />
+      </Thumb>
+    </Track>
   );
 }
+
+const Track = styled("div")(({ theme: t }) => ({
+  position: "relative",
+  height: 4,
+  touchAction: "none ",
+  borderRadius: t.shape.borderRadius,
+  backgroundColor: alpha(t.palette.common.white, t.palette.action.hoverOpacity),
+}));
+
+const Thumb = styled("div")(({ theme: t }) => ({
+  position: "absolute",
+  top: "50%",
+  translate: "0 -50%",
+  inlineSize: t.spacing(5),
+  blockSize: t.spacing(5),
+  cursor: "pointer",
+  borderRadius: 99999,
+  backgroundColor: t.palette.primary.main,
+}));
+
+const Dot = styled("div")(({ theme: t }) => ({
+  backgroundColor: t.palette.primary.contrastText,
+
+  inlineSize: 10,
+  blockSize: 10,
+  borderRadius: 99999,
+
+  position: "absolute",
+  insetInline: "50%",
+  insetBlock: "50%",
+  translate: "-50% -50%",
+}));
