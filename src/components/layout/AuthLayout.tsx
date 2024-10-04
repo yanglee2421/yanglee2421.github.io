@@ -33,7 +33,8 @@ export function AuthLayout() {
               inlineSize: "100%",
               paddingInline: 5,
               paddingBlock: 2,
-              fontSize: t.typography.body1.fontSize,
+              fontSize: t.typography.h5.fontSize,
+              fontWeight: t.typography.body1.fontWeight,
             })}
           >
             overtime

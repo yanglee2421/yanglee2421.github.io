@@ -25,6 +25,7 @@ import {
   Divider,
   Grid2,
   TextField,
+  alpha,
 } from "@mui/material";
 import { AddOutlined, RefreshOutlined } from "@mui/icons-material";
 import {
@@ -73,7 +74,7 @@ export function Overtime() {
           </Grid2>
         </CardContent>
         <Divider></Divider>
-        <Box sx={{ paddingInline: 4, paddingBlock: 2 }}>
+        <Box sx={{ paddingInline: 4, paddingBlock: 3 }}>
           <Button variant="contained" startIcon={<AddOutlined />}>
             add
           </Button>
@@ -84,7 +85,16 @@ export function Overtime() {
               {table.getHeaderGroups().map((hg) => (
                 <TableRow key={hg.id}>
                   {hg.headers.map((h) => (
-                    <TableCell key={h.id}>
+                    <TableCell
+                      key={h.id}
+                      sx={(t) => ({
+                        bgcolor: alpha(
+                          t.palette.grey[700],
+                          t.palette.action.focusOpacity,
+                        ),
+                        textTransform: "uppercase",
+                      })}
+                    >
                       {h.isPlaceholder ||
                         flexRender(h.column.columnDef.header, h.getContext())}
                     </TableCell>
