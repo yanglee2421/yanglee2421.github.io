@@ -58,8 +58,22 @@ export function AuthLayout() {
                   >
                     overtime
                   </ButtonBase>
+                  <ButtonBase
+                    component={NavLink}
+                    to="/minesweeper"
+                    sx={(t) => ({
+                      display: "block",
+                      inlineSize: "100%",
+                      paddingInline: 5,
+                      paddingBlock: 2,
+                      fontSize: t.typography.h5.fontSize,
+                      fontWeight: t.typography.body1.fontWeight,
+                    })}
+                  >
+                    minesweeper
+                  </ButtonBase>
 
-                  <Box height={2000}></Box>
+                  <Box height={1000}></Box>
                 </ScrollView>
               </Box>
             </Nav>
