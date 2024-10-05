@@ -1,6 +1,7 @@
 import {
   CircleOutlined,
   FlagCircleOutlined,
+  FilterNoneOutlined,
   Filter1Outlined,
   Filter2Outlined,
   Filter3Outlined,
@@ -16,7 +17,7 @@ import { Box, Card, IconButton, CardContent, CardHeader } from "@mui/material";
 import React from "react";
 
 export function Minesweeper() {
-  const [list, setList] = React.useState(() => {
+  const [list] = React.useState(() => {
     const arr = [];
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
@@ -26,32 +27,34 @@ export function Minesweeper() {
 
     return arr;
   });
-  const [booms] = React.useState(() => {
-    const idx = Math.floor(Math.random() * list.length);
+  const [bombs] = React.useState(() => {
+    const set = new Set<number>();
 
-    return [list[idx].id];
+    while (set.size < 10) {
+      set.add(Math.floor(Math.random() * list.length));
+    }
+
+    return Array.from(set, (item) => list[item].id);
   });
 
   const [open, setOpen] = React.useState<string[]>([]);
   const [signed, setSigned] = React.useState<string[]>([]);
   const [] = React.useState();
 
-  console.log(list);
-
   const renderIcon = (id: string) => {
     if (signed.includes(id)) {
-      return <FlagCircleOutlined fontSize="large" />;
+      return <FlagCircleOutlined fontSize="large" color="warning" />;
     }
 
     if (!open.includes(id)) {
       return <CircleOutlined fontSize="large" />;
     }
 
-    if (booms.includes(id)) {
+    if (bombs.includes(id)) {
       return <OfflineBoltOutlined fontSize="large" color="error" />;
     }
 
-    return <Filter1Outlined fontSize="large" />;
+    return <Filter1Outlined fontSize="large" color="success" />;
   };
 
   return (
@@ -82,13 +85,61 @@ export function Minesweeper() {
                   return;
                 }
 
-                setOpen((p) => [...p, item.id]);
+                // Game over, because the bomb was clicked
+                if (bombs.includes(item.id)) {
+                  setOpen(list.map((item) => item.id));
+                  return;
+                }
+
+                let nextOpen: string[] = [];
+
+                setSigned((p) => p.filter((el) => el !== item.id));
+                setOpen((p) => {
+                  nextOpen = [...p, item.id];
+                  return nextOpen;
+                });
+
+                // Game over, only the bombs are left
+                const restIds = list.filter(
+                  (item) => !nextOpen.includes(item.id),
+                );
+
+                if (restIds.length !== bombs.length) {
+                  return;
+                }
+
+                if (restIds.some((el) => !bombs.includes(el.id))) {
+                  return;
+                }
+
+                setSigned(bombs.slice());
               }}
               onContextMenu={(e) => {
                 e.preventDefault();
-                setSigned((p) => [...p, item.id]);
+
+                let nextMarked: string[] = [];
+
+                setSigned((p) => {
+                  nextMarked = [...p, item.id];
+                  return nextMarked;
+                });
+
+                // The game is over, all bombs are marked
+                if (nextMarked.length !== bombs.length) {
+                  return;
+                }
+
+                if (nextMarked.some((id) => !bombs.includes(id))) {
+                  return;
+                }
+
+                setOpen(
+                  list
+                    .filter((item) => !bombs.includes(item.id))
+                    .map((item) => item.id),
+                );
               }}
-              disabled={open.includes(item.id) || signed.includes(item.id)}
+              disabled={open.includes(item.id)}
               size="large"
             >
               {renderIcon(item.id)}
