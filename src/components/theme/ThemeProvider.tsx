@@ -14,6 +14,14 @@ const lightTheme = createTheme({
     primary: {
       main: "#6366f1",
     },
+    text: {
+      primary: "#0f172a",
+      secondary: "#64748b",
+    },
+    background: {
+      default: "#f4f4f5",
+      paper: "#fafafa",
+    },
   },
 
   spacing(abs: number) {
@@ -26,6 +34,14 @@ const darkTheme = createTheme({
     mode: "dark",
     primary: {
       main: "#6366f1",
+    },
+    text: {
+      primary: "#ffffff",
+      secondary: "#94a3b8",
+    },
+    background: {
+      default: "#09090b",
+      paper: "#18181b",
     },
   },
 
@@ -55,6 +71,17 @@ export function ThemeProvider(props: React.PropsWithChildren) {
           "#nprogress .bar": {
             backgroundColor: theme.palette.primary.main,
             blockSize: theme.spacing(1),
+          },
+          ".animate-spin": {
+            animation: "spin 1s linear infinite",
+          },
+          "@keyframes spin": {
+            from: {
+              transform: "rotate(0deg)",
+            },
+            to: {
+              transform: "rotate(360deg)",
+            },
           },
         }}
       />

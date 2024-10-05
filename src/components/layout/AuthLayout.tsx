@@ -60,6 +60,7 @@ export function AuthLayout() {
                     >
                       overtime
                     </ButtonBase>
+
                     <Box height={2000}></Box>
                   </ScrollArea.Viewport>
                   <ScrollArea.Scrollbar
@@ -115,6 +116,8 @@ const Aside = styled("aside")(({ theme: t }) => ({
 
   inlineSize: "100%",
 
+  backgroundColor: t.palette.background.default,
+
   [t.breakpoints.up("md")]: {
     position: "static",
     inlineSize: t.spacing(80),
@@ -130,8 +133,6 @@ const Nav = styled("nav")(({ theme: t }) => ({
 
   inlineSize: "100%",
   blockSize: "100%",
-
-  backgroundColor: t.palette.background.default,
 
   [t.breakpoints.up("md")]: {
     inlineSize: t.spacing(80),

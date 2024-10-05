@@ -21,17 +21,21 @@ import {
   TableCell,
   TablePagination,
   Button,
-  Box,
-  Divider,
-  Grid2,
-  TextField,
-  alpha,
+  Checkbox,
+  Stack,
 } from "@mui/material";
-import { AddOutlined, RefreshOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  CheckBoxOutlined,
+  CheckOutlined,
+  CloseOutlined,
+  RefreshOutlined,
+} from "@mui/icons-material";
 import {
   type DocumentData,
   type QueryDocumentSnapshot,
 } from "firebase/firestore";
+import classNames from "classnames";
 
 export function Overtime() {
   const user = useCurrentUser();
@@ -64,25 +68,34 @@ export function Overtime() {
         <CardHeader
           title="overtime"
           titleTypographyProps={{ sx: { textTransform: "uppercase" } }}
+          subheader="overtime table here"
           action={
-            <IconButton>
-              <RefreshOutlined />
+            <IconButton
+              onClick={() => {
+                query.refetch();
+              }}
+              disabled={query.isRefetching}
+            >
+              <RefreshOutlined
+                className={classNames(query.isRefetching && "animate-spin")}
+              />
             </IconButton>
           }
         />
         <CardContent>
-          <Grid2 container spacing={6}>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField fullWidth />
-            </Grid2>
-          </Grid2>
+          <Stack direction={"row"} spacing={4}>
+            <Button variant="contained" startIcon={<AddOutlined />}>
+              add
+            </Button>
+            <Button
+              variant="outlined"
+              disabled={!table.getSelectedRowModel().rows.length}
+              startIcon={<CheckBoxOutlined />}
+            >
+              use
+            </Button>
+          </Stack>
         </CardContent>
-        <Divider></Divider>
-        <Box sx={{ paddingInline: 4, paddingBlock: 3 }}>
-          <Button variant="contained" startIcon={<AddOutlined />}>
-            add
-          </Button>
-        </Box>
         <TableContainer>
           <Table>
             <TableHead>
@@ -91,11 +104,8 @@ export function Overtime() {
                   {hg.headers.map((h) => (
                     <TableCell
                       key={h.id}
+                      padding={h.column.id === "check" ? "checkbox" : "normal"}
                       sx={(t) => ({
-                        bgcolor: alpha(
-                          t.palette.grey[700],
-                          t.palette.action.focusOpacity,
-                        ),
                         textTransform: "uppercase",
                       })}
                     >
@@ -110,7 +120,10 @@ export function Overtime() {
               {table.getRowModel().rows.map((r) => (
                 <TableRow key={r.id}>
                   {r.getVisibleCells().map((c) => (
-                    <TableCell key={c.id}>
+                    <TableCell
+                      key={c.id}
+                      padding={c.column.id === "check" ? "checkbox" : "normal"}
+                    >
                       {c.getIsPlaceholder() ||
                         flexRender(c.column.columnDef.cell, c.getContext())}
                     </TableCell>
@@ -139,6 +152,26 @@ const columnHelper =
 
 const columns = [
   columnHelper.display({
+    id: "check",
+    header(props) {
+      return (
+        <Checkbox
+          indeterminate={props.table.getIsSomeRowsSelected()}
+          checked={props.table.getIsAllRowsSelected()}
+          onChange={props.table.getToggleAllRowsSelectedHandler()}
+        />
+      );
+    },
+    cell(props) {
+      return (
+        <Checkbox
+          checked={props.row.getIsSelected()}
+          onChange={props.row.getToggleSelectedHandler()}
+        />
+      );
+    },
+  }),
+  columnHelper.display({
     id: "date",
     header: "date",
     cell(props) {
@@ -150,6 +183,17 @@ const columns = [
     header: "hours",
     cell(props) {
       return props.row.original.data().hours;
+    },
+  }),
+  columnHelper.display({
+    id: "enable",
+    header: "enable",
+    cell(props) {
+      return props.row.original.data().enable ? (
+        <CheckOutlined color="success" />
+      ) : (
+        <CloseOutlined />
+      );
     },
   }),
 ];
