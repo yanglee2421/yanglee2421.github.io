@@ -12,8 +12,7 @@ import { LangToggle } from "../shared/LangToggle";
 import { GitHub } from "@mui/icons-material";
 import { AuthGuard } from "@/components/guard/AuthGuard";
 import { UserDropdown } from "../shared/UserDropdonw";
-import * as ScrollArea from "@radix-ui/react-scroll-area";
-import styles from "./styles.module.css";
+import { ScrollView } from "../ui/ScrollView";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
 
@@ -44,39 +43,24 @@ export function AuthLayout() {
                 <Box height={40}></Box>
               </Box>
               <Box component={"div"} sx={{ overflowY: "hidden", flexGrow: 1 }}>
-                <ScrollArea.Root className={styles.root}>
-                  <ScrollArea.Viewport className={styles.viewport}>
-                    <ButtonBase
-                      component={NavLink}
-                      to="/overtime"
-                      sx={(t) => ({
-                        display: "block",
-                        inlineSize: "100%",
-                        paddingInline: 5,
-                        paddingBlock: 2,
-                        fontSize: t.typography.h5.fontSize,
-                        fontWeight: t.typography.body1.fontWeight,
-                      })}
-                    >
-                      overtime
-                    </ButtonBase>
+                <ScrollView>
+                  <ButtonBase
+                    component={NavLink}
+                    to="/overtime"
+                    sx={(t) => ({
+                      display: "block",
+                      inlineSize: "100%",
+                      paddingInline: 5,
+                      paddingBlock: 2,
+                      fontSize: t.typography.h5.fontSize,
+                      fontWeight: t.typography.body1.fontWeight,
+                    })}
+                  >
+                    overtime
+                  </ButtonBase>
 
-                    <Box height={2000}></Box>
-                  </ScrollArea.Viewport>
-                  <ScrollArea.Scrollbar
-                    className={styles.scrollbar}
-                    orientation="vertical"
-                  >
-                    <ScrollArea.Thumb className={styles.thumb} />
-                  </ScrollArea.Scrollbar>
-                  <ScrollArea.Scrollbar
-                    className={styles.scrollbar}
-                    orientation="horizontal"
-                  >
-                    <ScrollArea.Thumb className={styles.thumb} />
-                  </ScrollArea.Scrollbar>
-                  <ScrollArea.Corner className={styles.corner} />
-                </ScrollArea.Root>
+                  <Box height={2000}></Box>
+                </ScrollView>
               </Box>
             </Nav>
           </div>
