@@ -10,6 +10,7 @@ import {
   Filter7Outlined,
   Filter8Outlined,
   CloseOutlined,
+  OfflineBoltOutlined,
 } from "@mui/icons-material";
 import { Box, Card, IconButton, CardContent, CardHeader } from "@mui/material";
 import React from "react";
@@ -19,11 +20,16 @@ export function Minesweeper() {
     const arr = [];
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
-        arr.push(new Item(i, j));
+        arr.push(new Item(j, i));
       }
     }
 
     return arr;
+  });
+  const [booms] = React.useState(() => {
+    const idx = Math.floor(Math.random() * list.length);
+
+    return [list[idx].id];
   });
 
   const [open, setOpen] = React.useState<string[]>([]);
@@ -33,15 +39,19 @@ export function Minesweeper() {
   console.log(list);
 
   const renderIcon = (id: string) => {
-    if (open.includes(id)) {
-      return <Filter1Outlined fontSize="large" />;
-    }
-
     if (signed.includes(id)) {
       return <FlagCircleOutlined fontSize="large" />;
     }
 
-    return <CircleOutlined fontSize="large" />;
+    if (!open.includes(id)) {
+      return <CircleOutlined fontSize="large" />;
+    }
+
+    if (booms.includes(id)) {
+      return <OfflineBoltOutlined fontSize="large" color="error" />;
+    }
+
+    return <Filter1Outlined fontSize="large" />;
   };
 
   return (
