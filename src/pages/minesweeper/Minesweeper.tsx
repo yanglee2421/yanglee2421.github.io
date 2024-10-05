@@ -1,9 +1,17 @@
 import {
   CircleOutlined,
   FlagCircleOutlined,
-  LooksOneOutlined,
+  Filter1Outlined,
+  Filter2Outlined,
+  Filter3Outlined,
+  Filter4Outlined,
+  Filter5Outlined,
+  Filter6Outlined,
+  Filter7Outlined,
+  Filter8Outlined,
+  CloseOutlined,
 } from "@mui/icons-material";
-import { Box, IconButton, Paper } from "@mui/material";
+import { Box, Card, IconButton, CardContent, CardHeader } from "@mui/material";
 import React from "react";
 
 export function Minesweeper() {
@@ -26,7 +34,7 @@ export function Minesweeper() {
 
   const renderIcon = (id: string) => {
     if (open.includes(id)) {
-      return <LooksOneOutlined fontSize="large" />;
+      return <Filter1Outlined fontSize="large" />;
     }
 
     if (signed.includes(id)) {
@@ -37,26 +45,48 @@ export function Minesweeper() {
   };
 
   return (
-    <Paper
-      sx={{
-        display: "grid",
-        gridTemplateColumns: "repeat(9,minmax(0,1fr))",
-        gridTemplateRows: "repeat(9,minmax(0,1fr))",
-        placeItems: "center",
-      }}
-    >
-      {list.map((item) => (
-        <IconButton
-          key={item.id}
-          onClick={() => {
-            setOpen((p) => [...p, item.id]);
+    <Card>
+      <CardHeader
+        title="minesweeper"
+        subheader={new Date().toLocaleTimeString()}
+        action={
+          <IconButton>
+            <CloseOutlined />
+          </IconButton>
+        }
+      />
+      <CardContent>
+        <Box
+          sx={{
+            display: "grid",
+            gridTemplateColumns: "repeat(9,minmax(0,1fr))",
+            gridTemplateRows: "repeat(9,minmax(0,1fr))",
+            placeItems: "center",
           }}
-          size="large"
         >
-          {renderIcon(item.id)}
-        </IconButton>
-      ))}
-    </Paper>
+          {list.map((item) => (
+            <IconButton
+              key={item.id}
+              onClick={(e) => {
+                if (e.button !== 0) {
+                  return;
+                }
+
+                setOpen((p) => [...p, item.id]);
+              }}
+              onContextMenu={(e) => {
+                e.preventDefault();
+                setSigned((p) => [...p, item.id]);
+              }}
+              disabled={open.includes(item.id) || signed.includes(item.id)}
+              size="large"
+            >
+              {renderIcon(item.id)}
+            </IconButton>
+          ))}
+        </Box>
+      </CardContent>
+    </Card>
   );
 }
 
