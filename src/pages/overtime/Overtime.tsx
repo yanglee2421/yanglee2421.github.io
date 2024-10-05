@@ -25,7 +25,6 @@ import {
   Stack,
 } from "@mui/material";
 import {
-  AddOutlined,
   CheckBoxOutlined,
   CheckOutlined,
   CloseOutlined,
@@ -36,11 +35,12 @@ import {
   type QueryDocumentSnapshot,
 } from "firebase/firestore";
 import classNames from "classnames";
+import { Add } from "./Add";
 
 export function Overtime() {
   const user = useCurrentUser();
   const query = useQuery(getOptions({ userId: user?.uid || "" }));
-  const data = React.useMemo(() => query.data || [], [query.data]);
+  const data = React.useMemo(() => query.data?.docs || [], [query.data]);
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
     columns,
@@ -84,9 +84,7 @@ export function Overtime() {
         />
         <CardContent>
           <Stack direction={"row"} spacing={4}>
-            <Button variant="contained" startIcon={<AddOutlined />}>
-              add
-            </Button>
+            <Add />
             <Button
               variant="outlined"
               disabled={!table.getSelectedRowModel().rows.length}
@@ -105,7 +103,7 @@ export function Overtime() {
                     <TableCell
                       key={h.id}
                       padding={h.column.id === "check" ? "checkbox" : "normal"}
-                      sx={(t) => ({
+                      sx={() => ({
                         textTransform: "uppercase",
                       })}
                     >
@@ -136,7 +134,7 @@ export function Overtime() {
         <TablePagination
           component={"div"}
           page={0}
-          count={1}
+          count={query.data.size}
           rowsPerPage={20}
           rowsPerPageOptions={[20, 50, 100]}
           onPageChange={Boolean}
@@ -175,7 +173,7 @@ const columns = [
     id: "date",
     header: "date",
     cell(props) {
-      return props.row.original.data().date.toDate().toLocaleDateString();
+      return props.row.original.data().date?.toDate().toLocaleDateString();
     },
   }),
   columnHelper.display({

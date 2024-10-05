@@ -7,6 +7,8 @@ import {
   GlobalStyles,
 } from "@mui/material";
 import React from "react";
+import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
+import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 
 const lightTheme = createTheme({
   palette: {
@@ -57,7 +59,9 @@ export function ThemeProvider(props: React.PropsWithChildren) {
 
   return (
     <MuiThemeProvider theme={theme}>
-      {props.children}
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        {props.children}
+      </LocalizationProvider>
       <CssBaseline />
       <GlobalStyles
         styles={{
