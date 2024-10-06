@@ -44,10 +44,7 @@ export function Minesweeper() {
   const [] = React.useState();
 
   const handleGameOver = (win: boolean) => {
-    if (win) {
-      setMarked(bombs);
-    }
-
+    setMarked(win ? bombs : new Set());
     setOpen(new Set(list.map((item) => item.id)));
   };
 
