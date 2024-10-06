@@ -35,42 +35,29 @@ export function Minesweeper() {
       set.add(Math.floor(Math.random() * list.length));
     }
 
-    return Array.from(set, (item) => list[item].id);
+    return new Set(Array.from(set, (item) => list[item].id));
   });
 
-  const [open, setOpen] = React.useState<string[]>([]);
-  const [signed, setSigned] = React.useState<string[]>([]);
+  const [open, setOpen] = React.useState<Set<string>>(new Set());
+  const [signed, setSigned] = React.useState<Set<string>>(new Set());
   const [] = React.useState();
 
   const renderIcon = (item: Item) => {
     const id = item.id;
 
-    if (signed.includes(id)) {
+    if (signed.has(id)) {
       return <FlagCircleOutlined color="warning" />;
     }
 
-    if (!open.includes(id)) {
+    if (!open.has(id)) {
       return <CircleOutlined />;
     }
 
-    if (bombs.includes(id)) {
+    if (bombs.has(id)) {
       return <OfflineBoltOutlined color="error" />;
     }
 
-    const arroundBombs = list
-      .filter((el) => {
-        return (
-          Object.is(minmax(el.x, { min: item.x - 1, max: item.x + 1 }), el.x) &&
-          Object.is(minmax(el.y, { min: item.y - 1, max: item.y + 1 }), el.y)
-        );
-      })
-      .reduce((count, el) => {
-        if (bombs.includes(el.id)) {
-          return count + 1;
-        }
-
-        return count;
-      }, 0);
+    const arroundBombs = getAroundBombs(item, list, bombs);
 
     switch (arroundBombs) {
       case 0:
@@ -162,61 +149,98 @@ export function Minesweeper() {
                       }
 
                       // Game over, because the bomb was clicked
-                      if (bombs.includes(item.id)) {
-                        setOpen(list.map((item) => item.id));
+                      if (bombs.has(item.id)) {
+                        setOpen(new Set(list.map((item) => item.id)));
                         return;
                       }
 
-                      let nextOpen: string[] = [];
+                      setSigned((prev) => {
+                        const nextValue = new Set(prev);
+                        nextValue.delete(item.id);
 
-                      setSigned((p) => p.filter((el) => el !== item.id));
-                      setOpen((p) => {
-                        nextOpen = [...p, item.id];
+                        return nextValue;
+                      });
+
+                      let nextOpen = new Set<string>();
+
+                      setOpen((prev) => {
+                        nextOpen = new Set(prev);
+                        nextOpen.add(item.id);
+
+                        const handled = new Set<Item>();
+
+                        const fn = (item: Item) => {
+                          if (getAroundBombs(item, list, bombs)) {
+                            return;
+                          }
+
+                          if (handled.has(item)) {
+                            return;
+                          }
+
+                          handled.add(item);
+                          getAroundItems(item, list).forEach((el) => {
+                            nextOpen.add(el.id);
+                            fn(el);
+                          });
+                        };
+
+                        fn(item);
+
                         return nextOpen;
                       });
 
                       // Game over, only the bombs are left
-                      const restIds = list.filter(
-                        (item) => !nextOpen.includes(item.id),
+                      if (
+                        !isEqualSet(
+                          bombs,
+                          new Set(
+                            list
+                              .filter((item) => !nextOpen.has(item.id))
+                              .map((item) => item.id),
+                          ),
+                        )
+                      ) {
+                        return;
+                      }
+
+                      setSigned(bombs);
+                      setOpen(
+                        new Set(
+                          list
+                            .filter((el) => !bombs.has(el.id))
+                            .map((el) => el.id),
+                        ),
                       );
-
-                      if (restIds.length !== bombs.length) {
-                        return;
-                      }
-
-                      if (restIds.some((el) => !bombs.includes(el.id))) {
-                        return;
-                      }
-
-                      setSigned(bombs.slice());
                     }}
                     onContextMenu={(e) => {
                       e.preventDefault();
 
-                      let nextMarked: string[] = [];
+                      let nextMarked = new Set<string>();
 
-                      setSigned((p) => {
-                        nextMarked = [...p, item.id];
+                      setSigned((prev) => {
+                        nextMarked = new Set(prev);
+                        nextMarked.has(item.id)
+                          ? nextMarked.delete(item.id)
+                          : nextMarked.add(item.id);
                         return nextMarked;
                       });
 
                       // The game is over, all bombs are marked
-                      if (nextMarked.length !== bombs.length) {
+                      if (!isEqualSet(nextMarked, bombs)) {
                         return;
                       }
 
-                      if (nextMarked.some((id) => !bombs.includes(id))) {
-                        return;
-                      }
-
+                      setSigned(bombs);
                       setOpen(
-                        list
-                          .filter((item) => !bombs.includes(item.id))
-                          .map((item) => item.id),
+                        new Set(
+                          list
+                            .filter((item) => !bombs.has(item.id))
+                            .map((item) => item.id),
+                        ),
                       );
                     }}
-                    disabled={open.includes(item.id)}
-                    size="large"
+                    disabled={open.has(item.id)}
                   >
                     {renderIcon(item)}
                   </IconButton>
@@ -239,4 +263,30 @@ class Item {
   ) {
     this.id = `x${this.x}y${this.y}`;
   }
+}
+
+function getAroundItems(item: Item, list: Item[]) {
+  return list.filter(
+    (el) =>
+      !Object.is(item.id, el.id) &&
+      Object.is(minmax(el.x, { min: item.x - 1, max: item.x + 1 }), el.x) &&
+      Object.is(minmax(el.y, { min: item.y - 1, max: item.y + 1 }), el.y),
+  );
+}
+
+function isEqualSet(set1: Set<string>, set2: Set<string>) {
+  return Object.is(
+    [...set1.values()].sort().join(),
+    [...set2.values()].sort().join(),
+  );
+}
+
+function getAroundBombs(item: Item, list: Item[], bombs: Set<string>) {
+  return getAroundItems(item, list).reduce((count, el) => {
+    if (bombs.has(el.id)) {
+      return count + 1;
+    }
+
+    return count;
+  }, 0);
 }
