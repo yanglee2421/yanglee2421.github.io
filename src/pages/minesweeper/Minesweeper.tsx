@@ -20,6 +20,7 @@ import React from "react";
 export function Minesweeper() {
   const [list] = React.useState(() => {
     const arr = [];
+
     for (let i = 0; i < 9; i++) {
       for (let j = 0; j < 9; j++) {
         arr.push(new Item(j, i));
@@ -29,56 +30,25 @@ export function Minesweeper() {
     return arr;
   });
   const [bombs] = React.useState(() => {
-    const set = new Set<number>();
+    const bombSet = new Set<string>();
 
-    while (set.size < 10) {
-      set.add(Math.floor(Math.random() * list.length));
+    while (bombSet.size < 10) {
+      bombSet.add(list[Math.floor(Math.random() * list.length)].id);
     }
 
-    return new Set(Array.from(set, (item) => list[item].id));
+    return bombSet;
   });
 
   const [open, setOpen] = React.useState<Set<string>>(new Set());
-  const [signed, setSigned] = React.useState<Set<string>>(new Set());
+  const [marked, setMarked] = React.useState<Set<string>>(new Set());
   const [] = React.useState();
 
-  const renderIcon = (item: Item) => {
-    const id = item.id;
-
-    if (signed.has(id)) {
-      return <FlagCircleOutlined color="warning" />;
+  const handleGameOver = (win: boolean) => {
+    if (win) {
+      setMarked(bombs);
     }
 
-    if (!open.has(id)) {
-      return <CircleOutlined />;
-    }
-
-    if (bombs.has(id)) {
-      return <OfflineBoltOutlined color="error" />;
-    }
-
-    const arroundBombs = getAroundBombs(item, list, bombs);
-
-    switch (arroundBombs) {
-      case 0:
-        return <FilterNoneOutlined color="success" />;
-      case 1:
-        return <Filter1Outlined color="info" />;
-      case 2:
-        return <Filter2Outlined color="secondary" />;
-      case 3:
-        return <Filter3Outlined color="primary" />;
-      case 4:
-        return <Filter4Outlined color="action" />;
-      case 5:
-        return <Filter5Outlined color="error" />;
-      case 6:
-        return <Filter6Outlined />;
-      case 7:
-        return <Filter7Outlined />;
-      case 8:
-        return <Filter8Outlined />;
-    }
+    setOpen(new Set(list.map((item) => item.id)));
   };
 
   return (
@@ -150,11 +120,11 @@ export function Minesweeper() {
 
                       // Game over, because the bomb was clicked
                       if (bombs.has(item.id)) {
-                        setOpen(new Set(list.map((item) => item.id)));
+                        handleGameOver(false);
                         return;
                       }
 
-                      setSigned((prev) => {
+                      setMarked((prev) => {
                         const nextValue = new Set(prev);
                         nextValue.delete(item.id);
 
@@ -167,10 +137,10 @@ export function Minesweeper() {
                         nextOpen = new Set(prev);
                         nextOpen.add(item.id);
 
-                        const handled = new Set<Item>();
+                        const handled = new WeakSet<Item>();
 
                         const fn = (item: Item) => {
-                          if (getAroundBombs(item, list, bombs)) {
+                          if (isAroundBomb(item, list, bombs)) {
                             return;
                           }
 
@@ -204,21 +174,14 @@ export function Minesweeper() {
                         return;
                       }
 
-                      setSigned(bombs);
-                      setOpen(
-                        new Set(
-                          list
-                            .filter((el) => !bombs.has(el.id))
-                            .map((el) => el.id),
-                        ),
-                      );
+                      handleGameOver(true);
                     }}
                     onContextMenu={(e) => {
                       e.preventDefault();
 
                       let nextMarked = new Set<string>();
 
-                      setSigned((prev) => {
+                      setMarked((prev) => {
                         nextMarked = new Set(prev);
                         nextMarked.has(item.id)
                           ? nextMarked.delete(item.id)
@@ -231,18 +194,11 @@ export function Minesweeper() {
                         return;
                       }
 
-                      setSigned(bombs);
-                      setOpen(
-                        new Set(
-                          list
-                            .filter((item) => !bombs.has(item.id))
-                            .map((item) => item.id),
-                        ),
-                      );
+                      handleGameOver(true);
                     }}
                     disabled={open.has(item.id)}
                   >
-                    {renderIcon(item)}
+                    {renderIcon(item, list, bombs, open, marked)}
                   </IconButton>
                 </Box>
               </Box>
@@ -282,11 +238,54 @@ function isEqualSet(set1: Set<string>, set2: Set<string>) {
 }
 
 function getAroundBombs(item: Item, list: Item[], bombs: Set<string>) {
-  return getAroundItems(item, list).reduce((count, el) => {
-    if (bombs.has(el.id)) {
-      return count + 1;
-    }
+  return getAroundItems(item, list).filter((el) => bombs.has(el.id)).length;
+}
 
-    return count;
-  }, 0);
+function isAroundBomb(item: Item, list: Item[], bombs: Set<string>) {
+  return getAroundItems(item, list).some((el) => bombs.has(el.id));
+}
+
+function renderIcon(
+  item: Item,
+  list: Item[],
+  bombs: Set<string>,
+  open: Set<string>,
+  marked: Set<string>,
+) {
+  const id = item.id;
+
+  if (marked.has(id)) {
+    return <FlagCircleOutlined color="warning" />;
+  }
+
+  if (!open.has(id)) {
+    return <CircleOutlined />;
+  }
+
+  if (bombs.has(id)) {
+    return <OfflineBoltOutlined color="error" />;
+  }
+
+  const arroundBombs = getAroundBombs(item, list, bombs);
+
+  switch (arroundBombs) {
+    case 0:
+      return <FilterNoneOutlined color="success" />;
+    case 1:
+      return <Filter1Outlined color="info" />;
+    case 2:
+      return <Filter2Outlined color="secondary" />;
+    case 3:
+      return <Filter3Outlined color="primary" />;
+    case 4:
+      return <Filter4Outlined color="action" />;
+    case 5:
+      return <Filter5Outlined color="error" />;
+    case 6:
+      return <Filter6Outlined />;
+    case 7:
+      return <Filter7Outlined />;
+    case 8:
+      return <Filter8Outlined />;
+  }
 }
