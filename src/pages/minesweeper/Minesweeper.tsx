@@ -25,6 +25,8 @@ import {
   styled,
 } from "@mui/material";
 import React from "react";
+import { toTimeCarry } from "@/utils/countdown";
+import { AnimateController } from "@/lib/AnimateController";
 
 export function Minesweeper() {
   const [list, setList] = React.useState<Item[]>([]);
@@ -33,6 +35,9 @@ export function Minesweeper() {
   const [marked, setMarked] = React.useState<Set<string>>(new Set());
   const [x, setX] = React.useState(0);
   const [y, setY] = React.useState(0);
+  const [subheader, setSubheader] = React.useState("");
+  const startAtRef = React.useRef(0);
+  const animaRef = React.useRef<AnimateController | null>(null);
 
   const handleGameStart = (x: number, y: number, bombNumbers: number) => {
     React.startTransition(() => {
@@ -53,16 +58,37 @@ export function Minesweeper() {
       setBombs(bombSet);
       setX(x);
       setY(y);
+      startAtRef.current = Date.now();
+      animaRef.current?.abort();
+      animaRef.current = new AnimateController(() => {
+        const [s, ms] = toTimeCarry(Date.now() - startAtRef.current, 1000);
+        setSubheader(`${s}s ${ms}`);
+      });
+      animaRef.current.play();
     });
   };
 
+  const handleGameOver = React.useCallback((win: boolean) => {
+    React.startTransition(() => {
+      animaRef.current?.abort();
+      animaRef.current = null;
+      const [s, ms] = toTimeCarry(Date.now() - startAtRef.current, 1000);
+      setSubheader(`${s}s ${ms}`);
+      setMarked(win ? bombs : new Set());
+      setOpen(new Set(list.map((e) => e.id)));
+    });
+  }, []);
+
   const handleGameRestart = () => {
+    animaRef.current?.abort();
+    animaRef.current = null;
     setList([]);
     setBombs(new Set());
     setOpen(new Set());
     setMarked(new Set());
     setX(0);
     setY(0);
+    setSubheader("");
   };
 
   return (
@@ -75,7 +101,8 @@ export function Minesweeper() {
       >
         <CardHeader
           title="minesweeper"
-          subheader={new Date().toLocaleTimeString()}
+          titleTypographyProps={{ textTransform: "capitalize" }}
+          subheader={subheader}
           action={
             <IconButton onClick={handleGameRestart}>
               <CloseOutlined />
@@ -132,6 +159,7 @@ export function Minesweeper() {
                 setMarked={setMarked}
                 isOpen={open.has(item.id)}
                 isMarked={marked.has(item.id)}
+                handleGameOver={handleGameOver}
               />
             ))}
           </Box>
@@ -149,15 +177,20 @@ type CellProps = {
   setOpen: React.Dispatch<React.SetStateAction<Set<string>>>;
   isOpen: boolean;
   isMarked: boolean;
+  handleGameOver(win: boolean): void;
 };
 
 const Cell = React.memo((props: CellProps) => {
-  const { list, bombs, item, setMarked, setOpen, isOpen, isMarked } = props;
-
-  const handleGameOver = (win: boolean) => {
-    setMarked(win ? bombs : new Set());
-    setOpen(new Set(list.map((e) => e.id)));
-  };
+  const {
+    list,
+    bombs,
+    item,
+    setMarked,
+    setOpen,
+    isOpen,
+    isMarked,
+    handleGameOver,
+  } = props;
 
   return (
     <StyledCellOuter>

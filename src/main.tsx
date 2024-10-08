@@ -6,8 +6,6 @@ import "@/assets/style.css";
 
 createRoot(document.getElementById("root")!).render(
   <React.StrictMode>
-    <React.Profiler id="render" onRender={console.log}>
-      <App />
-    </React.Profiler>
+    <App />
   </React.StrictMode>,
 );

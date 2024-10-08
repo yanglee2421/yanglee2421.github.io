@@ -10,6 +10,6 @@ export function countdown(date: Date) {
   return `${day}天/${hour}小时/${min}分/${sec}秒/${restSec}毫秒`;
 }
 
-function toTimeCarry(totalTime: number, unit: number): [number, number] {
+export function toTimeCarry(totalTime: number, unit: number): [number, number] {
   return [Math.floor(totalTime / unit), totalTime % unit];
 }
