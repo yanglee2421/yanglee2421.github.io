@@ -37,7 +37,12 @@ export function Minesweeper() {
   const [y, setY] = React.useState(0);
   const [subheader, setSubheader] = React.useState("");
   const startAtRef = React.useRef(0);
-  const animaRef = React.useRef<AnimateController | null>(null);
+  const animaRef = React.useRef<AnimateController>(
+    new AnimateController(() => {
+      const [s, ms] = toTimeCarry(Date.now() - startAtRef.current, 1000);
+      setSubheader(`${s}s ${ms}`);
+    }),
+  );
 
   const handleGameStart = (x: number, y: number, bombNumbers: number) => {
     React.startTransition(() => {
@@ -59,29 +64,24 @@ export function Minesweeper() {
       setX(x);
       setY(y);
       startAtRef.current = Date.now();
-      animaRef.current?.abort();
-      animaRef.current = new AnimateController(() => {
-        const [s, ms] = toTimeCarry(Date.now() - startAtRef.current, 1000);
-        setSubheader(`${s}s ${ms}`);
-      });
+      animaRef.current.abort();
       animaRef.current.play();
     });
   };
 
-  const handleGameOver = React.useCallback((win: boolean) => {
-    React.startTransition(() => {
-      animaRef.current?.abort();
-      animaRef.current = null;
+  const handleGameOver = React.useCallback(
+    (win: boolean) => {
+      animaRef.current.abort();
       const [s, ms] = toTimeCarry(Date.now() - startAtRef.current, 1000);
       setSubheader(`${s}s ${ms}`);
       setMarked(win ? bombs : new Set());
       setOpen(new Set(list.map((e) => e.id)));
-    });
-  }, []);
+    },
+    [bombs, list],
+  );
 
   const handleGameRestart = () => {
-    animaRef.current?.abort();
-    animaRef.current = null;
+    animaRef.current.abort();
     setList([]);
     setBombs(new Set());
     setOpen(new Set());
@@ -270,9 +270,9 @@ const Cell = React.memo((props: CellProps) => {
 
               setMarked((prev) => {
                 nextMarked = new Set(prev);
-                nextMarked.has(item.id)
+                void (nextMarked.has(item.id)
                   ? nextMarked.delete(item.id)
-                  : nextMarked.add(item.id);
+                  : nextMarked.add(item.id));
                 return nextMarked;
               });
 
