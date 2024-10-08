@@ -22,6 +22,7 @@ import {
   CardHeader,
   Stack,
   Button,
+  styled,
 } from "@mui/material";
 import React from "react";
 
@@ -113,8 +114,8 @@ export function Minesweeper() {
           <Box
             sx={(t) => ({
               display: "grid",
-              gridTemplateColumns: `repeat(${x},minmax(40px,1fr))`,
-              gridTemplateRows: `repeat(${y},minmax(40px,1fr))`,
+              gridTemplateColumns: `repeat(${x},minmax(30px,1fr))`,
+              gridTemplateRows: `repeat(${y},minmax(30px,1fr))`,
               placeItems: "center",
               borderStyle: "solid",
               borderColor: t.palette.divider,
@@ -122,47 +123,16 @@ export function Minesweeper() {
             })}
           >
             {list.map((item) => (
-              <Box
+              <Cell
                 key={item.id}
-                sx={(t) => ({
-                  position: "relative",
-                  inlineSize: "100%",
-                  borderStyle: "solid",
-                  borderColor: t.palette.divider,
-                  borderWidth: "1px 1px 0 0",
-                })}
-              >
-                <Box
-                  sx={{
-                    paddingInlineStart: "100%",
-                    paddingBlockStart: "100%",
-                    inlineSize: 0,
-                    blockSize: 0,
-                  }}
-                ></Box>
-                <Box
-                  sx={{
-                    position: "absolute",
-                    inset: 0,
-                    zIndex: 10,
-                    inlineSize: "100%",
-                    blockSize: "100%",
-                    display: "flex",
-                    justifyContent: "center",
-                    alignItems: "center",
-                  }}
-                >
-                  <Cell
-                    list={list}
-                    bombs={bombs}
-                    item={item}
-                    setOpen={setOpen}
-                    setMarked={setMarked}
-                    isOpen={open.has(item.id)}
-                    isMarked={marked.has(item.id)}
-                  />
-                </Box>
-              </Box>
+                list={list}
+                bombs={bombs}
+                item={item}
+                setOpen={setOpen}
+                setMarked={setMarked}
+                isOpen={open.has(item.id)}
+                isMarked={marked.has(item.id)}
+              />
             ))}
           </Box>
         </CardContent>
@@ -186,102 +156,107 @@ const Cell = React.memo((props: CellProps) => {
 
   const handleGameOver = (win: boolean) => {
     setMarked(win ? bombs : new Set());
-    setOpen(new Set(list.map((item) => item.id)));
+    setOpen(new Set(list.map((e) => e.id)));
   };
 
   return (
-    <IconButton
-      onClick={(e) => {
-        if (e.button !== 0) {
-          return;
-        }
+    <StyledCellOuter>
+      <StyledCellInner>
+        <IconButton
+          size="small"
+          onClick={(e) => {
+            if (e.button !== 0) {
+              return;
+            }
 
-        React.startTransition(() => {
-          // Game over, because the bomb was clicked
-          if (bombs.has(item.id)) {
-            handleGameOver(false);
-            return;
-          }
-
-          setMarked((prev) => {
-            const nextValue = new Set(prev);
-            nextValue.delete(item.id);
-
-            return nextValue;
-          });
-
-          let nextOpen = new Set<string>();
-
-          setOpen((prev) => {
-            nextOpen = new Set(prev);
-            nextOpen.add(item.id);
-
-            const handled = new WeakSet<Item>();
-
-            const fn = (item: Item) => {
-              if (isAroundBomb(item, list, bombs)) {
+            React.startTransition(() => {
+              // Game over, because the bomb was clicked
+              if (bombs.has(item.id)) {
+                handleGameOver(false);
                 return;
               }
 
-              if (handled.has(item)) {
-                return;
-              }
+              setMarked((prev) => {
+                const nextValue = new Set(prev);
+                nextValue.delete(item.id);
 
-              handled.add(item);
-              getAroundItems(item, list).forEach((el) => {
-                nextOpen.add(el.id);
-                fn(el);
+                return nextValue;
               });
-            };
 
-            fn(item);
+              let nextOpen = new Set<string>();
 
-            return nextOpen;
-          });
+              setOpen((prev) => {
+                nextOpen = new Set(prev);
+                nextOpen.add(item.id);
 
-          // Game over, only the bombs are left
-          if (
-            !isEqualSet(
-              bombs,
-              new Set(
-                list
-                  .filter((item) => !nextOpen.has(item.id))
-                  .map((item) => item.id),
-              ),
-            )
-          ) {
-            return;
-          }
+                const handled = new WeakSet<Item>();
 
-          handleGameOver(true);
-        });
-      }}
-      onContextMenu={(e) => {
-        e.preventDefault();
+                const fn = (item: Item) => {
+                  if (isAroundBomb(item, list, bombs)) {
+                    return;
+                  }
 
-        React.startTransition(() => {
-          let nextMarked = new Set<string>();
+                  if (handled.has(item)) {
+                    return;
+                  }
 
-          setMarked((prev) => {
-            nextMarked = new Set(prev);
-            nextMarked.has(item.id)
-              ? nextMarked.delete(item.id)
-              : nextMarked.add(item.id);
-            return nextMarked;
-          });
+                  handled.add(item);
+                  getAroundItems(item, list).forEach((el) => {
+                    nextOpen.add(el.id);
+                    fn(el);
+                  });
+                };
 
-          // The game is over, all bombs are marked
-          if (!isEqualSet(nextMarked, bombs)) {
-            return;
-          }
+                fn(item);
 
-          handleGameOver(true);
-        });
-      }}
-      disabled={isOpen}
-    >
-      {renderIcon(item, list, bombs, isOpen, isMarked)}
-    </IconButton>
+                return nextOpen;
+              });
+
+              // Game over, only the bombs are left
+              if (
+                !isEqualSet(
+                  bombs,
+                  new Set(
+                    list
+                      .filter((item) => !nextOpen.has(item.id))
+                      .map((item) => item.id),
+                  ),
+                )
+              ) {
+                return;
+              }
+
+              handleGameOver(true);
+            });
+          }}
+          onContextMenu={(e) => {
+            e.preventDefault();
+
+            React.startTransition(() => {
+              let nextMarked = new Set<string>();
+
+              setMarked((prev) => {
+                nextMarked = new Set(prev);
+                nextMarked.has(item.id)
+                  ? nextMarked.delete(item.id)
+                  : nextMarked.add(item.id);
+                return nextMarked;
+              });
+
+              // The game is over, all bombs are marked
+              if (!isEqualSet(nextMarked, bombs)) {
+                return;
+              }
+
+              handleGameOver(true);
+            });
+          }}
+          disabled={isOpen}
+        >
+          {renderIcon(item, list, bombs, isOpen, isMarked)}
+        </IconButton>
+      </StyledCellInner>
+    </StyledCellOuter>
   );
 });
 
@@ -330,37 +305,65 @@ function renderIcon(
   const id = item.id;
 
   if (marked) {
-    return <FlagCircleOutlined color="warning" />;
+    return <FlagCircleOutlined color="warning" fontSize="small" />;
   }
 
   if (!open) {
-    return <CircleOutlined />;
+    return <CircleOutlined fontSize="small" />;
   }
 
   if (bombs.has(id)) {
-    return <OfflineBoltOutlined color="error" />;
+    return <OfflineBoltOutlined color="error" fontSize="small" />;
   }
 
   const arroundBombs = getAroundBombs(item, list, bombs);
 
   switch (arroundBombs) {
     case 0:
-      return <FilterNoneOutlined color="success" />;
+      return <FilterNoneOutlined color="success" fontSize="small" />;
     case 1:
-      return <Filter1Outlined color="info" />;
+      return <Filter1Outlined color="info" fontSize="small" />;
     case 2:
-      return <Filter2Outlined color="secondary" />;
+      return <Filter2Outlined color="secondary" fontSize="small" />;
     case 3:
-      return <Filter3Outlined color="primary" />;
+      return <Filter3Outlined color="primary" fontSize="small" />;
     case 4:
-      return <Filter4Outlined color="action" />;
+      return <Filter4Outlined color="action" fontSize="small" />;
     case 5:
-      return <Filter5Outlined color="error" />;
+      return <Filter5Outlined color="error" fontSize="small" />;
     case 6:
-      return <Filter6Outlined />;
+      return <Filter6Outlined fontSize="small" />;
     case 7:
-      return <Filter7Outlined />;
+      return <Filter7Outlined fontSize="small" />;
     case 8:
-      return <Filter8Outlined />;
+      return <Filter8Outlined fontSize="small" />;
   }
 }
+
+const StyledCellOuter = styled("div")(({ theme: t }) => ({
+  position: "relative",
+  inlineSize: "100%",
+  borderStyle: "solid",
+  borderColor: t.palette.divider,
+  borderWidth: "1px 1px 0 0",
+
+  "&::before": {
+    content: "''",
+    display: "block",
+    paddingInlineStart: "100%",
+    paddingBlockStart: "100%",
+    inlineSize: 0,
+    blockSize: 0,
+  },
+}));
+
+const StyledCellInner = styled("div")({
+  position: "absolute",
+  inset: 0,
+  zIndex: 10,
+  inlineSize: "100%",
+  blockSize: "100%",
+  display: "flex",
+  justifyContent: "center",
+  alignItems: "center",
+});
