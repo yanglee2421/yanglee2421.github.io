@@ -55,11 +55,6 @@ export function Minesweeper() {
     });
   };
 
-  const handleGameOver = (win: boolean) => {
-    setMarked(win ? bombs : new Set());
-    setOpen(new Set(list.map((item) => item.id)));
-  };
-
   const handleGameRestart = () => {
     setList([]);
     setBombs(new Set());
@@ -157,98 +152,15 @@ export function Minesweeper() {
                     alignItems: "center",
                   }}
                 >
-                  <IconButton
-                    onClick={(e) => {
-                      if (e.button !== 0) {
-                        return;
-                      }
-
-                      React.startTransition(() => {
-                        // Game over, because the bomb was clicked
-                        if (bombs.has(item.id)) {
-                          handleGameOver(false);
-                          return;
-                        }
-
-                        setMarked((prev) => {
-                          const nextValue = new Set(prev);
-                          nextValue.delete(item.id);
-
-                          return nextValue;
-                        });
-
-                        let nextOpen = new Set<string>();
-
-                        setOpen((prev) => {
-                          nextOpen = new Set(prev);
-                          nextOpen.add(item.id);
-
-                          const handled = new WeakSet<Item>();
-
-                          const fn = (item: Item) => {
-                            if (isAroundBomb(item, list, bombs)) {
-                              return;
-                            }
-
-                            if (handled.has(item)) {
-                              return;
-                            }
-
-                            handled.add(item);
-                            getAroundItems(item, list).forEach((el) => {
-                              nextOpen.add(el.id);
-                              fn(el);
-                            });
-                          };
-
-                          fn(item);
-
-                          return nextOpen;
-                        });
-
-                        // Game over, only the bombs are left
-                        if (
-                          !isEqualSet(
-                            bombs,
-                            new Set(
-                              list
-                                .filter((item) => !nextOpen.has(item.id))
-                                .map((item) => item.id),
-                            ),
-                          )
-                        ) {
-                          return;
-                        }
-
-                        handleGameOver(true);
-                      });
-                    }}
-                    onContextMenu={(e) => {
-                      e.preventDefault();
-
-                      React.startTransition(() => {
-                        let nextMarked = new Set<string>();
-
-                        setMarked((prev) => {
-                          nextMarked = new Set(prev);
-                          nextMarked.has(item.id)
-                            ? nextMarked.delete(item.id)
-                            : nextMarked.add(item.id);
-                          return nextMarked;
-                        });
-
-                        // The game is over, all bombs are marked
-                        if (!isEqualSet(nextMarked, bombs)) {
-                          return;
-                        }
-
-                        handleGameOver(true);
-                      });
-                    }}
-                    disabled={open.has(item.id)}
-                  >
-                    {renderIcon(item, list, bombs, open, marked)}
-                  </IconButton>
+                  <Cell
+                    list={list}
+                    bombs={bombs}
+                    item={item}
+                    setOpen={setOpen}
+                    setMarked={setMarked}
+                    isOpen={open.has(item.id)}
+                    isMarked={marked.has(item.id)}
+                  />
                 </Box>
               </Box>
             ))}
@@ -258,6 +170,120 @@ export function Minesweeper() {
     </Box>
   );
 }
+
+type CellProps = {
+  list: Item[];
+  bombs: Set<string>;
+  item: Item;
+  setMarked: React.Dispatch<React.SetStateAction<Set<string>>>;
+  setOpen: React.Dispatch<React.SetStateAction<Set<string>>>;
+  isOpen: boolean;
+  isMarked: boolean;
+};
+
+const Cell = React.memo((props: CellProps) => {
+  const { list, bombs, item, setMarked, setOpen, isOpen, isMarked } = props;
+
+  const handleGameOver = (win: boolean) => {
+    setMarked(win ? bombs : new Set());
+    setOpen(new Set(list.map((item) => item.id)));
+  };
+
+  return (
+    <IconButton
+      onClick={(e) => {
+        if (e.button !== 0) {
+          return;
+        }
+
+        React.startTransition(() => {
+          // Game over, because the bomb was clicked
+          if (bombs.has(item.id)) {
+            handleGameOver(false);
+            return;
+          }
+
+          setMarked((prev) => {
+            const nextValue = new Set(prev);
+            nextValue.delete(item.id);
+
+            return nextValue;
+          });
+
+          let nextOpen = new Set<string>();
+
+          setOpen((prev) => {
+            nextOpen = new Set(prev);
+            nextOpen.add(item.id);
+
+            const handled = new WeakSet<Item>();
+
+            const fn = (item: Item) => {
+              if (isAroundBomb(item, list, bombs)) {
+                return;
+              }
+
+              if (handled.has(item)) {
+                return;
+              }
+
+              handled.add(item);
+              getAroundItems(item, list).forEach((el) => {
+                nextOpen.add(el.id);
+                fn(el);
+              });
+            };
+
+            fn(item);
+
+            return nextOpen;
+          });
+
+          // Game over, only the bombs are left
+          if (
+            !isEqualSet(
+              bombs,
+              new Set(
+                list
+                  .filter((item) => !nextOpen.has(item.id))
+                  .map((item) => item.id),
+              ),
+            )
+          ) {
+            return;
+          }
+
+          handleGameOver(true);
+        });
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+
+        React.startTransition(() => {
+          let nextMarked = new Set<string>();
+
+          setMarked((prev) => {
+            nextMarked = new Set(prev);
+            nextMarked.has(item.id)
+              ? nextMarked.delete(item.id)
+              : nextMarked.add(item.id);
+            return nextMarked;
+          });
+
+          // The game is over, all bombs are marked
+          if (!isEqualSet(nextMarked, bombs)) {
+            return;
+          }
+
+          handleGameOver(true);
+        });
+      }}
+      disabled={isOpen}
+    >
+      {renderIcon(item, list, bombs, isOpen, isMarked)}
+    </IconButton>
+  );
+});
 
 class Item {
   id: string;
@@ -298,16 +324,16 @@ function renderIcon(
   item: Item,
   list: Item[],
   bombs: Set<string>,
-  open: Set<string>,
-  marked: Set<string>,
+  open: boolean,
+  marked: boolean,
 ) {
   const id = item.id;
 
-  if (marked.has(id)) {
+  if (marked) {
     return <FlagCircleOutlined color="warning" />;
   }
 
-  if (!open.has(id)) {
+  if (!open) {
     return <CircleOutlined />;
   }
 
