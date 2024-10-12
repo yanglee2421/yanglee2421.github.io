@@ -20,9 +20,10 @@ import {
   IconButton,
   CardContent,
   CardHeader,
-  Stack,
-  Button,
   styled,
+  Grid2,
+  TextField,
+  MenuItem,
 } from "@mui/material";
 import React from "react";
 import { toTimeCarry } from "@/utils/countdown";
@@ -63,9 +64,7 @@ export function Minesweeper() {
       setBombs(bombSet);
       setX(x);
       setY(y);
-      startAtRef.current = Date.now();
       animaRef.current.abort();
-      animaRef.current.play();
     });
   };
 
@@ -104,66 +103,62 @@ export function Minesweeper() {
           titleTypographyProps={{ textTransform: "capitalize" }}
           subheader={subheader}
           action={
-            <IconButton onClick={handleGameRestart}>
-              <CloseOutlined />
-            </IconButton>
+            null && (
+              <IconButton onClick={handleGameRestart}>
+                <CloseOutlined />
+              </IconButton>
+            )
           }
         />
         <CardContent>
-          {!list.length && (
-            <Stack spacing={6}>
-              <Button
-                onClick={() => handleGameStart(9, 9, 10)}
-                variant="outlined"
+          <Grid2 container spacing={6}>
+            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+              <TextField
+                onChange={(e) => {
+                  switch (e.target.value) {
+                    case "easy":
+                      handleGameStart(9, 9, 10);
+                      break;
+                    case "normal":
+                      handleGameStart(16, 16, 40);
+                      break;
+                    case "hard":
+                      handleGameStart(30, 16, 99);
+                      break;
+                  }
+                }}
                 fullWidth
-                color="success"
+                select
               >
-                easy
-              </Button>
-              <Button
-                onClick={() => handleGameStart(16, 16, 40)}
-                variant="outlined"
-                fullWidth
-                color="warning"
-              >
-                normal
-              </Button>
-              <Button
-                onClick={() => handleGameStart(30, 16, 99)}
-                variant="outlined"
-                fullWidth
-                color="error"
-              >
-                hard
-              </Button>
-            </Stack>
-          )}
-          <Box
-            sx={(t) => ({
-              display: "grid",
-              gridTemplateColumns: `repeat(${x},minmax(30px,1fr))`,
-              gridTemplateRows: `repeat(${y},minmax(30px,1fr))`,
-              placeItems: "center",
-              borderStyle: "solid",
-              borderColor: t.palette.divider,
-              borderWidth: "0 0 1px 1px",
-            })}
-          >
-            {list.map((item) => (
-              <Cell
-                key={item.id}
-                list={list}
-                bombs={bombs}
-                item={item}
-                setOpen={setOpen}
-                setMarked={setMarked}
-                isOpen={open.has(item.id)}
-                isMarked={marked.has(item.id)}
-                handleGameOver={handleGameOver}
-              />
-            ))}
-          </Box>
+                <MenuItem value="easy">easy</MenuItem>
+                <MenuItem value="normal">normal</MenuItem>
+                <MenuItem value="hard">hard</MenuItem>
+              </TextField>
+            </Grid2>
+          </Grid2>
         </CardContent>
+        <Box
+          sx={(t) => ({
+            display: "grid",
+            gridTemplateColumns: `repeat(${x},minmax(30px,1fr))`,
+            gridTemplateRows: `repeat(${y},minmax(30px,1fr))`,
+            placeItems: "center",
+          })}
+        >
+          {list.map((item) => (
+            <Cell
+              key={item.id}
+              list={list}
+              bombs={bombs}
+              item={item}
+              setOpen={setOpen}
+              setMarked={setMarked}
+              isOpen={open.has(item.id)}
+              isMarked={marked.has(item.id)}
+              handleGameOver={handleGameOver}
+            />
+          ))}
+        </Box>
       </Card>
     </Box>
   );
@@ -376,9 +371,6 @@ function renderIcon(
 const StyledCellOuter = styled("div")(({ theme: t }) => ({
   position: "relative",
   inlineSize: "100%",
-  borderStyle: "solid",
-  borderColor: t.palette.divider,
-  borderWidth: "1px 1px 0 0",
 
   "&::before": {
     content: "''",
