@@ -1,8 +1,7 @@
 import { minmax } from "@/utils/minmax";
 import {
   CircleOutlined,
-  FlagCircleOutlined,
-  FilterNoneOutlined,
+  CloseOutlined,
   Filter1Outlined,
   Filter2Outlined,
   Filter3Outlined,
@@ -11,19 +10,20 @@ import {
   Filter6Outlined,
   Filter7Outlined,
   Filter8Outlined,
-  CloseOutlined,
+  FilterNoneOutlined,
+  FlagCircleOutlined,
   OfflineBoltOutlined,
 } from "@mui/icons-material";
 import {
   Box,
   Card,
-  IconButton,
   CardContent,
   CardHeader,
-  styled,
   Grid2,
-  TextField,
+  IconButton,
   MenuItem,
+  styled,
+  TextField,
 } from "@mui/material";
 import React from "react";
 import { toTimeCarry } from "@/utils/countdown";
@@ -102,13 +102,11 @@ export function Minesweeper() {
           title="minesweeper"
           titleTypographyProps={{ textTransform: "capitalize" }}
           subheader={subheader}
-          action={
-            null && (
-              <IconButton onClick={handleGameRestart}>
-                <CloseOutlined />
-              </IconButton>
-            )
-          }
+          action={null && (
+            <IconButton onClick={handleGameRestart}>
+              <CloseOutlined />
+            </IconButton>
+          )}
         />
         <CardContent>
           <Grid2 container spacing={6}>

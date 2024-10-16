@@ -5,10 +5,19 @@
 @layer components {
   /* Button */
   .btn-indigo {
-    @apply rounded border border-transparent bg-indigo-500 px-3 py-1 text-sm font-medium text-white hover:bg-indigo-600 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-400 active:bg-indigo-700 disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
+    @apply rounded border border-transparent bg-indigo-500 px-3 py-1 text-sm
+      font-medium text-white hover:bg-indigo-600 focus-visible:outline
+      focus-visible:outline-2 focus-visible:outline-offset-2
+      focus-visible:outline-indigo-400 active:bg-indigo-700
+      disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100
+      disabled:text-slate-300;
   }
   .btn-border {
-    @apply rounded border px-3 py-1 text-sm font-medium hover:border-gray-300 hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-blue-400 active:border-gray-400 active:bg-zinc-200 disabled:cursor-not-allowed disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
+    @apply rounded border px-3 py-1 text-sm font-medium hover:border-gray-300
+      hover:bg-zinc-100 focus-visible:outline focus-visible:outline-2
+      focus-visible:outline-offset-2 focus-visible:outline-blue-400
+      active:border-gray-400 active:bg-zinc-200 disabled:cursor-not-allowed
+      disabled:border-0 disabled:bg-slate-100 disabled:text-slate-300;
   }
 }
 
