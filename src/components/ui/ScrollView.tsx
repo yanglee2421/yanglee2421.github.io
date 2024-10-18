@@ -23,23 +23,23 @@ export function ScrollView(props: React.PropsWithChildren) {
   );
 }
 
-const StyledScrollArea = styled(ScrollArea)(({ theme: t }) => ({
+const StyledScrollArea = styled(ScrollArea)(() => ({
   inlineSize: "100%",
   blockSize: "100%",
 }));
 
-const StyledScrollViewport = styled(ScrollAreaViewport)(({ theme: t }) => ({
+const StyledScrollViewport = styled(ScrollAreaViewport)(() => ({
   inlineSize: "100%",
   blockSize: "100%",
 }));
 
-const StyledScrollbar = styled(ScrollAreaScrollbar)(({ theme: t }) => ({
+const StyledScrollbar = styled(ScrollAreaScrollbar)(({ theme }) => ({
   display: "flex",
   userSelect: "none",
   touchAction: "none",
-  backgroundColor: t.palette.grey[200],
+  backgroundColor: theme.palette.grey[200],
   "&:hover": {
-    backgroundColor: t.palette.grey[300],
+    backgroundColor: theme.palette.grey[300],
   },
   "&[data-orientation=vertical]": {
     width: 4,
@@ -50,9 +50,9 @@ const StyledScrollbar = styled(ScrollAreaScrollbar)(({ theme: t }) => ({
   },
 }));
 
-const StyledThumb = styled(ScrollAreaThumb)(({ theme: t }) => ({
+const StyledThumb = styled(ScrollAreaThumb)(({ theme }) => ({
   flex: 1,
-  borderRadius: t.shape.borderRadius,
+  borderRadius: theme.shape.borderRadius,
   position: "relative",
 
   "&::before": {
@@ -66,10 +66,10 @@ const StyledThumb = styled(ScrollAreaThumb)(({ theme: t }) => ({
     blockSize: "100%",
     minInlineSize: 8,
     minBlockSize: 8,
-    backgroundColor: t.palette.grey.A700,
+    backgroundColor: theme.palette.grey.A700,
   },
 }));
 
-const StyledCorner = styled(ScrollAreaCorner)(({ theme: t }) => ({
-  backgroundColor: t.palette.primary.main,
+const StyledCorner = styled(ScrollAreaCorner)(({ theme }) => ({
+  backgroundColor: theme.palette.primary.main,
 }));
