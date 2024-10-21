@@ -2,15 +2,6 @@ import { minmax } from "@/utils/minmax";
 import {
   CircleOutlined,
   CloseOutlined,
-  Filter1Outlined,
-  Filter2Outlined,
-  Filter3Outlined,
-  Filter4Outlined,
-  Filter5Outlined,
-  Filter6Outlined,
-  Filter7Outlined,
-  Filter8Outlined,
-  FilterNoneOutlined,
   FlagCircleOutlined,
   OfflineBoltOutlined,
 } from "@mui/icons-material";
@@ -91,74 +82,69 @@ export function Minesweeper() {
   };
 
   return (
-    <Box>
-      <Card
+    <Card
+      sx={{}}
+    >
+      <CardHeader
+        title="minesweeper"
+        titleTypographyProps={{ textTransform: "capitalize" }}
+        subheader={subheader}
+        action={
+          <IconButton onClick={handleGameRestart}>
+            <CloseOutlined />
+          </IconButton>
+        }
+      />
+      <CardContent>
+        <Grid2 container spacing={6}>
+          <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            <TextField
+              onChange={(e) => {
+                switch (e.target.value) {
+                  case "easy":
+                    handleGameStart(9, 9, 10);
+                    break;
+                  case "normal":
+                    handleGameStart(16, 16, 40);
+                    break;
+                  case "hard":
+                    handleGameStart(30, 16, 99);
+                    break;
+                }
+              }}
+              fullWidth
+              select
+            >
+              <MenuItem value="easy">easy</MenuItem>
+              <MenuItem value="normal">normal</MenuItem>
+              <MenuItem value="hard">hard</MenuItem>
+            </TextField>
+          </Grid2>
+        </Grid2>
+      </CardContent>
+      <Box
         sx={{
-          marginInline: "auto",
-          inlineSize: "fit-content",
+          display: "grid",
+          gridTemplateColumns: `repeat(${x},minmax(30px,1fr))`,
+          gridTemplateRows: `repeat(${y},minmax(30px,1fr))`,
+          placeItems: "center",
         }}
       >
-        <CardHeader
-          title="minesweeper"
-          titleTypographyProps={{ textTransform: "capitalize" }}
-          subheader={subheader}
-          action={null && (
-            <IconButton onClick={handleGameRestart}>
-              <CloseOutlined />
-            </IconButton>
-          )}
-        />
-        <CardContent>
-          <Grid2 container spacing={6}>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField
-                onChange={(e) => {
-                  switch (e.target.value) {
-                    case "easy":
-                      handleGameStart(9, 9, 10);
-                      break;
-                    case "normal":
-                      handleGameStart(16, 16, 40);
-                      break;
-                    case "hard":
-                      handleGameStart(30, 16, 99);
-                      break;
-                  }
-                }}
-                fullWidth
-                select
-              >
-                <MenuItem value="easy">easy</MenuItem>
-                <MenuItem value="normal">normal</MenuItem>
-                <MenuItem value="hard">hard</MenuItem>
-              </TextField>
-            </Grid2>
-          </Grid2>
-        </CardContent>
-        <Box
-          sx={(t) => ({
-            display: "grid",
-            gridTemplateColumns: `repeat(${x},minmax(30px,1fr))`,
-            gridTemplateRows: `repeat(${y},minmax(30px,1fr))`,
-            placeItems: "center",
-          })}
-        >
-          {list.map((item) => (
-            <Cell
-              key={item.id}
-              list={list}
-              bombs={bombs}
-              item={item}
-              setOpen={setOpen}
-              setMarked={setMarked}
-              isOpen={open.has(item.id)}
-              isMarked={marked.has(item.id)}
-              handleGameOver={handleGameOver}
-            />
-          ))}
-        </Box>
-      </Card>
-    </Box>
+        {list.map((item) => (
+          <Cell
+            key={item.id}
+            list={list}
+            bombs={bombs}
+            item={item}
+            setOpen={setOpen}
+            setMarked={setMarked}
+            isOpen={open.has(item.id)}
+            isMarked={marked.has(item.id)}
+            handleGameOver={handleGameOver}
+          />
+        ))}
+      </Box>
+    </Card>
   );
 }
 
@@ -278,6 +264,7 @@ const Cell = React.memo((props: CellProps) => {
             });
           }}
           disabled={isOpen}
+          sx={{ fontFamily: "inherit", fontSize: "inherit" }}
         >
           {renderIcon(item, list, bombs, isOpen, isMarked)}
         </IconButton>
@@ -346,27 +333,19 @@ function renderIcon(
 
   switch (arroundBombs) {
     case 0:
-      return <FilterNoneOutlined color="success" fontSize="small" />;
     case 1:
-      return <Filter1Outlined color="info" fontSize="small" />;
     case 2:
-      return <Filter2Outlined color="secondary" fontSize="small" />;
     case 3:
-      return <Filter3Outlined color="primary" fontSize="small" />;
     case 4:
-      return <Filter4Outlined color="action" fontSize="small" />;
     case 5:
-      return <Filter5Outlined color="error" fontSize="small" />;
     case 6:
-      return <Filter6Outlined fontSize="small" />;
     case 7:
-      return <Filter7Outlined fontSize="small" />;
     case 8:
-      return <Filter8Outlined fontSize="small" />;
+      return <span>{arroundBombs}</span>;
   }
 }
 
-const StyledCellOuter = styled("div")(({ theme: t }) => ({
+const StyledCellOuter = styled("div")({
   position: "relative",
   inlineSize: "100%",
 
@@ -378,7 +357,7 @@ const StyledCellOuter = styled("div")(({ theme: t }) => ({
     inlineSize: 0,
     blockSize: 0,
   },
-}));
+});
 
 const StyledCellInner = styled("div")({
   position: "absolute",
@@ -389,4 +368,7 @@ const StyledCellInner = styled("div")({
   display: "flex",
   justifyContent: "center",
   alignItems: "center",
+
+  fontFamily: 'Consolas, "Courier New", monospace',
+  fontSize: 22,
 });

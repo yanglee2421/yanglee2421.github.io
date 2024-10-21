@@ -102,9 +102,9 @@ export function AuthLayout() {
   );
 }
 
-const LayoutWrapper = styled("div")(({ theme: t }) => ({
+const LayoutWrapper = styled("div")({
   display: "flex",
-}));
+});
 
 const Aside = styled("aside")(({ theme: t }) => ({
   position: "absolute",
@@ -119,6 +119,7 @@ const Aside = styled("aside")(({ theme: t }) => ({
   [t.breakpoints.up("md")]: {
     position: "static",
     inlineSize: t.spacing(80),
+    borderInlineEnd: "1px solid " + t.palette.divider,
   },
 }));
 
@@ -137,13 +138,13 @@ const Nav = styled("nav")(({ theme: t }) => ({
   },
 }));
 
-const AppWrapper = styled("div")(({ theme: t }) => ({
+const AppWrapper = styled("div")({
   display: "flex",
   flexDirection: "column",
   flexGrow: 1,
 
   minBlockSize: "100dvh",
-}));
+});
 
 const Header = styled("header")(({ theme: t }) => ({
   position: "fixed",

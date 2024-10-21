@@ -26,6 +26,7 @@ export function ScrollView(props: React.PropsWithChildren) {
 const StyledScrollArea = styled(ScrollArea)(() => ({
   inlineSize: "100%",
   blockSize: "100%",
+  overflow: "hidden",
 }));
 
 const StyledScrollViewport = styled(ScrollAreaViewport)(() => ({
