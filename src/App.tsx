@@ -1,6 +1,6 @@
 import {
-  createHashRouter,
   createBrowserRouter,
+  createHashRouter,
   RouterProvider,
 } from "react-router-dom";
 import { QueryProvider } from "@/components/QueryProvider";
