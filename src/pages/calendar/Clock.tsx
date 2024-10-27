@@ -1,4 +1,4 @@
-import { CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { CardHeader } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
@@ -32,12 +32,15 @@ export function Clock() {
   }, [i18n.language]);
 
   return (
-    <CardHeader>
-      <CardTitle>{time}</CardTitle>
-      <CardDescription className="flex gap-3">
-        <time>{date}</time>
-        <time className="text-sm">{weekday}</time>
-      </CardDescription>
+    <CardHeader
+      title={time}
+      subheader={
+        <>
+          <time>{date}</time>
+          <time className="text-sm">{weekday}</time>
+        </>
+      }
+    >
     </CardHeader>
   );
 }

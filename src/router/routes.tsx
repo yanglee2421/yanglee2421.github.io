@@ -51,5 +51,10 @@ export const routes = createRoutesFromElements(
       path="minesweeper"
       lazy={() => import("@/pages/minesweeper/route")}
     />
+    <Route
+      id="calendar"
+      path="calendar"
+      lazy={() => import("@/pages/calendar/Component")}
+    />
   </Route>,
 );

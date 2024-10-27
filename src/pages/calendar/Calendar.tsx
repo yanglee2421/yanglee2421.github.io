@@ -2,15 +2,16 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { HeadlessCalendar } from "@/components/headless/HeadlessCalendar";
 import { Clock } from "./Clock";
-import { Card, CardContent } from "@/components/ui/card";
 import {
+  Card,
+  CardContent,
   Table,
   TableBody,
   TableCell,
   TableHead,
-  TableHeader,
   TableRow,
-} from "@/components/ui/table";
+} from "@mui/material";
+import { chunk } from "@yotulee/run";
 
 export function Calendar() {
   const [selectedTime, setSelectedTime] = React.useState(() => Date.now());
@@ -38,36 +39,19 @@ export function Calendar() {
         render={(props) => {
           return (
             <Table>
-              <TableHeader>
+              <TableHead>
                 <TableRow>
                   {props.data.slice(0, 7).map((date) => {
                     const weekday = date.toLocaleString(i18n.language, {
                       weekday: "short",
                     });
 
-                    return <TableHead key={weekday}>{weekday}</TableHead>;
+                    return <TableCell key={weekday}>{weekday}</TableCell>;
                   })}
                 </TableRow>
-              </TableHeader>
+              </TableHead>
               <TableBody>
-                {props.data
-                  .reduce<Array<Date[]>>((rows, item) => {
-                    const lastRow = rows[rows.length - 1];
-
-                    if (!lastRow) {
-                      rows.push([item]);
-                      return rows;
-                    }
-
-                    if (lastRow.length < 7) {
-                      lastRow.push(item);
-                      return rows;
-                    }
-
-                    rows.push([item]);
-
-                    return rows;
-                  }, [])
+                {chunk(props.data, 7)
                   .map((row, idx) => (
                     <TableRow key={idx}>
                       {row.map((cell) => (

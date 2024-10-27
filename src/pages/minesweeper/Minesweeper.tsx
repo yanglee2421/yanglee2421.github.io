@@ -56,6 +56,7 @@ export function Minesweeper() {
       setX(x);
       setY(y);
       animaRef.current.abort();
+      setOpen(new Set());
     });
   };
 
@@ -108,7 +109,7 @@ export function Minesweeper() {
                     handleGameStart(16, 16, 40);
                     break;
                   case "hard":
-                    handleGameStart(30, 16, 99);
+                    handleGameStart(12, 12, 12);
                     break;
                 }
               }}
@@ -125,12 +126,12 @@ export function Minesweeper() {
       <Box
         sx={{
           display: "grid",
-          gridTemplateColumns: `repeat(${x},minmax(30px,1fr))`,
-          gridTemplateRows: `repeat(${y},minmax(30px,1fr))`,
+          gridTemplateColumns: `repeat(${x},minmax(0,1fr))`,
+          gridTemplateRows: `repeat(${y},minmax(0,1fr))`,
           placeItems: "center",
         }}
       >
-        {list.map((item) => (
+        {list.map((item, idx) => (
           <Cell
             key={item.id}
             list={list}
@@ -141,6 +142,7 @@ export function Minesweeper() {
             isOpen={open.has(item.id)}
             isMarked={marked.has(item.id)}
             handleGameOver={handleGameOver}
+            grayBg={!Object.is(idx % x % 2, 0)}
           />
         ))}
       </Box>
@@ -157,6 +159,7 @@ type CellProps = {
   isOpen: boolean;
   isMarked: boolean;
   handleGameOver(win: boolean): void;
+  grayBg?: boolean;
 };
 
 const Cell = React.memo((props: CellProps) => {
@@ -169,11 +172,12 @@ const Cell = React.memo((props: CellProps) => {
     isOpen,
     isMarked,
     handleGameOver,
+    grayBg,
   } = props;
 
   return (
     <StyledCellOuter>
-      <StyledCellInner>
+      <StyledCellInner sx={{ bgcolor: grayBg ? "gray" : void 0 }}>
         <IconButton
           size="small"
           onClick={(e) => {
