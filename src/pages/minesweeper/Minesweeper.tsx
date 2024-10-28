@@ -19,6 +19,7 @@ import {
 import React from "react";
 import { toTimeCarry } from "@/utils/countdown";
 import { AnimateController } from "@/lib/AnimateController";
+import { chunk } from "@yotulee/run";
 
 export function Minesweeper() {
   const [list, setList] = React.useState<Item[]>([]);
@@ -131,19 +132,26 @@ export function Minesweeper() {
           placeItems: "center",
         }}
       >
-        {list.map((item, idx) => (
-          <Cell
-            key={item.id}
-            list={list}
-            bombs={bombs}
-            item={item}
-            setOpen={setOpen}
-            setMarked={setMarked}
-            isOpen={open.has(item.id)}
-            isMarked={marked.has(item.id)}
-            handleGameOver={handleGameOver}
-            grayBg={!Object.is(idx % x % 2, 0)}
-          />
+        {chunk(list, x).map((row, rowIdx) => (
+          <React.Fragment key={rowIdx}>
+            {row.map((item, idx) => (
+              <Cell
+                key={item.id}
+                list={list}
+                bombs={bombs}
+                item={item}
+                setOpen={setOpen}
+                setMarked={setMarked}
+                isOpen={open.has(item.id)}
+                isMarked={marked.has(item.id)}
+                handleGameOver={handleGameOver}
+                grayBg={!Object.is(
+                  Object.is(0, rowIdx % 2),
+                  Object.is(idx % 2, 0),
+                )}
+              />
+            ))}
+          </React.Fragment>
         ))}
       </Box>
     </Card>
