@@ -1,12 +1,12 @@
 import { minmax } from "@/utils/minmax";
 import {
-  CircleOutlined,
   CloseOutlined,
   FlagCircleOutlined,
   OfflineBoltOutlined,
 } from "@mui/icons-material";
 import {
   Box,
+  ButtonBase,
   Card,
   CardContent,
   CardHeader,
@@ -15,6 +15,8 @@ import {
   MenuItem,
   styled,
   TextField,
+  type Theme,
+  useTheme,
 } from "@mui/material";
 import React from "react";
 import { toTimeCarry } from "@/utils/countdown";
@@ -183,104 +185,118 @@ const Cell = React.memo((props: CellProps) => {
     grayBg,
   } = props;
 
+  const theme = useTheme<Theme>();
+
   return (
     <StyledCellOuter>
-      <StyledCellInner sx={{ bgcolor: grayBg ? "gray" : void 0 }}>
-        <IconButton
-          size="small"
-          onClick={(e) => {
-            if (e.button !== 0) {
+      <ButtonBase
+        component={"div"}
+        onClick={(e) => {
+          if (e.button !== 0) {
+            return;
+          }
+
+          React.startTransition(() => {
+            // Game over, because the bomb was clicked
+            if (bombs.has(item.id)) {
+              handleGameOver(false);
               return;
             }
 
-            React.startTransition(() => {
-              // Game over, because the bomb was clicked
-              if (bombs.has(item.id)) {
-                handleGameOver(false);
-                return;
-              }
+            setMarked((prev) => {
+              const nextValue = new Set(prev);
+              nextValue.delete(item.id);
 
-              setMarked((prev) => {
-                const nextValue = new Set(prev);
-                nextValue.delete(item.id);
-
-                return nextValue;
-              });
-
-              let nextOpen = new Set<string>();
-
-              setOpen((prev) => {
-                nextOpen = new Set(prev);
-                nextOpen.add(item.id);
-
-                const handled = new WeakSet<Item>();
-
-                const fn = (item: Item) => {
-                  if (isAroundBomb(item, list, bombs)) {
-                    return;
-                  }
-
-                  if (handled.has(item)) {
-                    return;
-                  }
-
-                  handled.add(item);
-                  getAroundItems(item, list).forEach((el) => {
-                    nextOpen.add(el.id);
-                    fn(el);
-                  });
-                };
-
-                fn(item);
-
-                return nextOpen;
-              });
-
-              // Game over, only the bombs are left
-              if (
-                !isEqualSet(
-                  bombs,
-                  new Set(
-                    list
-                      .filter((item) => !nextOpen.has(item.id))
-                      .map((item) => item.id),
-                  ),
-                )
-              ) {
-                return;
-              }
-
-              handleGameOver(true);
+              return nextValue;
             });
-          }}
-          onContextMenu={(e) => {
-            e.preventDefault();
 
-            React.startTransition(() => {
-              let nextMarked = new Set<string>();
+            let nextOpen = new Set<string>();
 
-              setMarked((prev) => {
-                nextMarked = new Set(prev);
-                void (nextMarked.has(item.id)
-                  ? nextMarked.delete(item.id)
-                  : nextMarked.add(item.id));
-                return nextMarked;
-              });
+            setOpen((prev) => {
+              nextOpen = new Set(prev);
+              nextOpen.add(item.id);
 
-              // The game is over, all bombs are marked
-              if (!isEqualSet(nextMarked, bombs)) {
-                return;
-              }
+              const handled = new WeakSet<Item>();
 
-              handleGameOver(true);
+              const fn = (item: Item) => {
+                if (isAroundBomb(item, list, bombs)) {
+                  return;
+                }
+
+                if (handled.has(item)) {
+                  return;
+                }
+
+                handled.add(item);
+                getAroundItems(item, list).forEach((el) => {
+                  nextOpen.add(el.id);
+                  fn(el);
+                });
+              };
+
+              fn(item);
+
+              return nextOpen;
             });
-          }}
-          disabled={isOpen}
-          sx={{ fontFamily: "inherit", fontSize: "inherit" }}
-        >
-          {renderIcon(item, list, bombs, isOpen, isMarked)}
-        </IconButton>
-      </StyledCellInner>
+
+            // Game over, only the bombs are left
+            if (
+              !isEqualSet(
+                bombs,
+                new Set(
+                  list
+                    .filter((item) => !nextOpen.has(item.id))
+                    .map((item) => item.id),
+                ),
+              )
+            ) {
+              return;
+            }
+
+            handleGameOver(true);
+          });
+        }}
+        onContextMenu={(e) => {
+          e.preventDefault();
+
+          React.startTransition(() => {
+            let nextMarked = new Set<string>();
+
+            setMarked((prev) => {
+              nextMarked = new Set(prev);
+              void (nextMarked.has(item.id)
+                ? nextMarked.delete(item.id)
+                : nextMarked.add(item.id));
+              return nextMarked;
+            });
+
+            // The game is over, all bombs are marked
+            if (!isEqualSet(nextMarked, bombs)) {
+              return;
+            }
+
+            handleGameOver(true);
+          });
+        }}
+        disabled={isOpen}
+        sx={{
+          position: "absolute",
+          inset: 0,
+          zIndex: 10,
+          inlineSize: "100%",
+          blockSize: "100%",
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+
+          fontFamily: 'Consolas, "Courier New", monospace',
+          fontSize: 22,
+
+          bgcolor: grayBg ? theme.palette.grey[300] : void 0,
+        }}
+      >
+        {renderIcon(item, list, bombs, isOpen, isMarked)}
+      </ButtonBase>
     </StyledCellOuter>
   );
 });
@@ -334,7 +350,7 @@ function renderIcon(
   }
 
   if (!open) {
-    return <CircleOutlined fontSize="small" />;
+    return null;
   }
 
   if (bombs.has(id)) {
@@ -369,18 +385,4 @@ const StyledCellOuter = styled("div")({
     inlineSize: 0,
     blockSize: 0,
   },
-});
-
-const StyledCellInner = styled("div")({
-  position: "absolute",
-  inset: 0,
-  zIndex: 10,
-  inlineSize: "100%",
-  blockSize: "100%",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-
-  fontFamily: 'Consolas, "Courier New", monospace',
-  fontSize: 22,
 });
