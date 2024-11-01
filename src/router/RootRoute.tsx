@@ -1,17 +1,30 @@
 import NProgress from "nprogress";
 import React from "react";
 import {
-  useOutlet,
-  useNavigation,
-  ScrollRestoration,
-  useParams,
   Navigate,
+  ScrollRestoration,
   useLocation,
+  useNavigation,
+  useOutlet,
+  useParams,
 } from "react-router-dom";
 import { useTranslation } from "react-i18next";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 
-const LANGS = ["en", "zh"];
+const LANGS = new Set(["en", "zh"]);
+const getLang = (path: string | undefined, state: string) => {
+  const fallbackLang = LANGS.has(state) ? state : "en";
+
+  if (!path) {
+    return fallbackLang;
+  }
+
+  if (!LANGS.has(path)) {
+    return fallbackLang;
+  }
+
+  return path;
+};
 
 export function RootRoute() {
   const outlet = useOutlet();
@@ -19,19 +32,16 @@ export function RootRoute() {
   const params = useParams();
   const { i18n } = useTranslation();
   const location = useLocation();
-  const fallbackLang = useLocaleStore((s) => s.fallbackLang);
-  const setFallbackLang = useLocaleStore((s) => s.set);
+  const storeLang = useLocaleStore((s) => s.fallbackLang);
+  const setStoreLang = useLocaleStore((s) => s.set);
+  const lang = getLang(params.lang, storeLang);
 
   React.useEffect(() => {
-    if (!LANGS.includes(params.lang || "")) {
-      return;
-    }
-
-    setFallbackLang((prev) => ({
-      fallbackLang: params.lang || prev.fallbackLang,
+    setStoreLang(() => ({
+      fallbackLang: lang,
     }));
-    i18n.changeLanguage(params.lang);
-  }, [params.lang, i18n, setFallbackLang]);
+    i18n.changeLanguage(lang);
+  }, [lang, i18n, setStoreLang]);
 
   React.useEffect(() => {
     switch (navigation.state) {
@@ -45,11 +55,11 @@ export function RootRoute() {
     }
   }, [navigation.state]);
 
-  if (!LANGS.includes(params.lang || "")) {
+  if (lang !== params.lang) {
     return (
       <Navigate
         to={{
-          pathname: `/${fallbackLang + location.pathname}`,
+          pathname: `/${lang + location.pathname}`,
           search: location.search,
           hash: location.hash,
         }}
