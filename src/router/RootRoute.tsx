@@ -9,6 +9,7 @@ import {
   useParams,
 } from "react-router-dom";
 import { useTranslation } from "react-i18next";
+import { Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 const LANGS = new Set(["en", "zh"]);
@@ -45,7 +46,7 @@ export function RootRoute() {
   }, [navigation.state]);
 
   if (!hasHydrated) {
-    return <p>Loading...</p>;
+    return <Typography sx={{ textAlign: "center" }}>Loading...</Typography>;
   }
 
   return <Outlet />;
@@ -71,7 +72,7 @@ function Outlet() {
       fallbackLang: matchedLang,
     }));
 
-    // Sync lang in i18n & lang in store
+    // Sync i18n & store
     i18n.changeLanguage(matchedLang);
   }, [matchedLang, storeLang, setStoreLang, i18n]);
 

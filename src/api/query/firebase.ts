@@ -7,4 +7,6 @@ export const authReady = queryOptions({
     await authReadyPromise;
     return {};
   },
+  staleTime: Infinity,
+  gcTime: Infinity,
 });
