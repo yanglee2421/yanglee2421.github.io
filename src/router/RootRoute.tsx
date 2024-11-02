@@ -12,30 +12,22 @@ import { useTranslation } from "react-i18next";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 const LANGS = new Set(["en", "zh"]);
-const getMatchedLang = (path: string | undefined, state: string) => {
-  const fallbackLang = LANGS.has(state) ? state : "en";
-
-  if (!path) {
-    return fallbackLang;
+const getMatchedLang = (path = "", state: string) => {
+  if (LANGS.has(path)) {
+    return path;
   }
 
-  if (!LANGS.has(path)) {
-    return fallbackLang;
+  if (LANGS.has(state)) {
+    return state;
   }
 
-  return path;
+  return "en";
 };
 
 export function RootRoute() {
-  const outlet = useOutlet();
   const navigation = useNavigation();
-  const params = useParams();
-  const { i18n } = useTranslation();
-  const location = useLocation();
-  const storeLang = useLocaleStore((s) => s.fallbackLang);
-  const setStoreLang = useLocaleStore((s) => s.set);
   const hasHydrated = React.useSyncExternalStore(
-    (onStateChange) => useLocaleStore.persist.onFinishHydration(onStateChange),
+    (onStoreChange) => useLocaleStore.persist.onFinishHydration(onStoreChange),
     () => useLocaleStore.persist.hasHydrated(),
     () => false,
   );
@@ -52,14 +44,23 @@ export function RootRoute() {
     }
   }, [navigation.state]);
 
+  if (!hasHydrated) {
+    return <p>Loading...</p>;
+  }
+
+  return <Outlet />;
+}
+
+function Outlet() {
+  const outlet = useOutlet();
+  const params = useParams();
+  const location = useLocation();
+  const { i18n } = useTranslation();
+  const setStoreLang = useLocaleStore((s) => s.set);
+  const storeLang = useLocaleStore((s) => s.fallbackLang);
+  const matchedLang = getMatchedLang(params.lang, storeLang);
+
   React.useEffect(() => {
-    if (!hasHydrated) {
-      return;
-    }
-
-    // Get matched lang utill hydrate finish
-    const matchedLang = getMatchedLang(params.lang, storeLang);
-
     // Avoid unnecssary dispatch render
     if (matchedLang === storeLang) {
       return;
@@ -72,13 +73,7 @@ export function RootRoute() {
 
     // Sync lang in i18n & lang in store
     i18n.changeLanguage(matchedLang);
-  }, [hasHydrated, params.lang, storeLang, setStoreLang, i18n]);
-
-  if (!hasHydrated) {
-    return <p>Loading...</p>;
-  }
-
-  const matchedLang = getMatchedLang(params.lang, storeLang);
+  }, [matchedLang, storeLang, setStoreLang, i18n]);
 
   if (matchedLang !== params.lang) {
     return (
