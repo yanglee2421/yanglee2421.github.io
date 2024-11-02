@@ -12,7 +12,7 @@ import { useTranslation } from "react-i18next";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 const LANGS = new Set(["en", "zh"]);
-const getLang = (path: string | undefined, state: string) => {
+const getMatchedLang = (path: string | undefined, state: string) => {
   const fallbackLang = LANGS.has(state) ? state : "en";
 
   if (!path) {
@@ -34,14 +34,11 @@ export function RootRoute() {
   const location = useLocation();
   const storeLang = useLocaleStore((s) => s.fallbackLang);
   const setStoreLang = useLocaleStore((s) => s.set);
-  const lang = getLang(params.lang, storeLang);
-
-  React.useEffect(() => {
-    setStoreLang(() => ({
-      fallbackLang: lang,
-    }));
-    i18n.changeLanguage(lang);
-  }, [lang, i18n, setStoreLang]);
+  const hasHydrated = React.useSyncExternalStore(
+    (onStateChange) => useLocaleStore.persist.onFinishHydration(onStateChange),
+    () => useLocaleStore.persist.hasHydrated(),
+    () => false,
+  );
 
   React.useEffect(() => {
     switch (navigation.state) {
@@ -55,11 +52,39 @@ export function RootRoute() {
     }
   }, [navigation.state]);
 
-  if (lang !== params.lang) {
+  React.useEffect(() => {
+    if (!hasHydrated) {
+      return;
+    }
+
+    // Get matched lang utill hydrate finish
+    const matchedLang = getMatchedLang(params.lang, storeLang);
+
+    // Avoid unnecssary dispatch render
+    if (matchedLang === storeLang) {
+      return;
+    }
+
+    // Memorize matched lang to storage
+    setStoreLang(() => ({
+      fallbackLang: matchedLang,
+    }));
+
+    // Sync lang in i18n & lang in store
+    i18n.changeLanguage(matchedLang);
+  }, [hasHydrated, params.lang, storeLang, setStoreLang, i18n]);
+
+  if (!hasHydrated) {
+    return <p>Loading...</p>;
+  }
+
+  const matchedLang = getMatchedLang(params.lang, storeLang);
+
+  if (matchedLang !== params.lang) {
     return (
       <Navigate
         to={{
-          pathname: `/${lang + location.pathname}`,
+          pathname: `/${matchedLang + location.pathname}`,
           search: location.search,
           hash: location.hash,
         }}
