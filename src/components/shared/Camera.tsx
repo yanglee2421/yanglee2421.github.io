@@ -28,14 +28,16 @@ export function Camera(
     if (!ctx) {
       return;
     }
-    cvs.width = video.width;
-    cvs.height = video.height;
+
+    const size = video.getBoundingClientRect();
+    cvs.width = size.width;
+    cvs.height = size.height;
     ctx.drawImage(
       video,
       0,
       0,
-      video.width,
-      video.height,
+      size.width,
+      size.height,
       0,
       0,
       cvs.width,
@@ -58,13 +60,14 @@ export function Camera(
 }
 
 async function handleCamera(video: HTMLVideoElement) {
+  const size = video.getBoundingClientRect();
   const mediaStream = await navigator.mediaDevices.getUserMedia({
     video: {
-      width: video.width,
-      height: video.height,
+      width: size.width,
+      height: size.height,
     },
     audio: false,
   });
   video.srcObject = mediaStream;
-  video.onloadedmetadata = () => video.play();
+  video.onloadedmetadata = video.play.bind(video);
 }

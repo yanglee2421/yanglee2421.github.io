@@ -7,7 +7,7 @@ export function Lab() {
     <>
       <Paper sx={{ padding: 3 }}>
         <Slider />
-        <Camera width={300} height={200} />
+        <Camera />
       </Paper>
     </>
   );
