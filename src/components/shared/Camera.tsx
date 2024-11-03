@@ -11,14 +11,44 @@ export function Camera(
   React.useEffect(() => {
     const video = videoRef.current;
 
+    if ((video instanceof HTMLVideoElement)) {
+      handleCamera(video);
+    }
+  }, []);
+
+  const handleCutImage = () => {
+    const video = videoRef.current;
+
     if (!(video instanceof HTMLVideoElement)) {
       return;
     }
 
-    handleCamera(video);
-  }, []);
+    const cvs = document.createElement("canvas");
+    const ctx = cvs.getContext("2d");
+    if (!ctx) {
+      return;
+    }
+    cvs.width = video.width;
+    cvs.height = video.height;
+    ctx.drawImage(
+      video,
+      0,
+      0,
+      video.width,
+      video.height,
+      0,
+      0,
+      cvs.width,
+      cvs.height,
+    );
+  };
 
-  return <video ref={videoRef} {...props}></video>;
+  return (
+    <>
+      <video ref={videoRef} {...props}></video>
+      <button onClick={handleCutImage}>cut image</button>
+    </>
+  );
 }
 
 async function handleCamera(video: HTMLVideoElement) {
