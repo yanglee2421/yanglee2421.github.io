@@ -41,6 +41,12 @@ export function Camera(
       cvs.width,
       cvs.height,
     );
+
+    const link = document.createElement("a");
+    link.href = cvs.toDataURL();
+    link.download = Date.now() + ".png";
+    link.click();
+    link.remove();
   };
 
   return (
@@ -57,7 +63,7 @@ async function handleCamera(video: HTMLVideoElement) {
       width: video.width,
       height: video.height,
     },
-    audio: {},
+    audio: false,
   });
   video.srcObject = mediaStream;
   video.onloadedmetadata = () => video.play();
