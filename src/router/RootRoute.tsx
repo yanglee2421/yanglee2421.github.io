@@ -13,6 +13,7 @@ import { Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 const LANGS = new Set(["en", "zh"]);
+const FALLBACK_LANG = "en";
 const getMatchedLang = (path = "", state: string) => {
   if (LANGS.has(path)) {
     return path;
@@ -22,7 +23,7 @@ const getMatchedLang = (path = "", state: string) => {
     return state;
   }
 
-  return "en";
+  return FALLBACK_LANG;
 };
 
 export function RootRoute() {
