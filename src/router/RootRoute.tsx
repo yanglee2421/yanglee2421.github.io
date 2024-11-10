@@ -58,7 +58,7 @@ function Outlet() {
   const params = useParams();
   const location = useLocation();
   const { i18n } = useTranslation();
-  const setStoreLang = useLocaleStore((s) => s.set);
+  const setStoreLang = useLocaleStore((s) => s.update);
   const storeLang = useLocaleStore((s) => s.fallbackLang);
   const matchedLang = getMatchedLang(params.lang, storeLang);
 
@@ -69,9 +69,7 @@ function Outlet() {
     }
 
     // Memorize matched lang to storage
-    setStoreLang(() => ({
-      fallbackLang: matchedLang,
-    }));
+    setStoreLang({ fallbackLang: matchedLang });
 
     // Sync i18n & store
     i18n.changeLanguage(matchedLang);

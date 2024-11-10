@@ -1,14 +1,14 @@
 import { useIsDark } from "@/hooks/dom/useIsDark";
-import { useThemeStore, type Mode } from "@/hooks/store/useThemeStore";
 import {
   createTheme,
-  ThemeProvider as MuiThemeProvider,
   CssBaseline,
   GlobalStyles,
+  ThemeProvider as MuiThemeProvider,
 } from "@mui/material";
 import React from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
+import { type Mode, useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 const lightTheme = createTheme({
   palette: {
@@ -54,7 +54,7 @@ const darkTheme = createTheme({
 
 export function ThemeProvider(props: React.PropsWithChildren) {
   const isDark = useIsDark();
-  const mode = useThemeStore((s) => s.mode);
+  const mode = useLocaleStore((s) => s.mode);
   const theme = modeToHasSelector(mode, isDark) ? darkTheme : lightTheme;
 
   return (

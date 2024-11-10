@@ -1,26 +1,39 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+import { type WritableDraft } from "immer";
 import React from "react";
 
 const FALLBACK_LANG = "en";
+const DEFAULT_MODE = "system";
 
-type LocaleStore = {
+export type Mode = "light" | "dark" | "system";
+
+type LocaleStoreState = {
   fallbackLang: string;
-  set: (
-    partial:
-      | LocaleStore
-      | Partial<LocaleStore>
-      | ((state: LocaleStore) => LocaleStore | Partial<LocaleStore>),
-    replace?: boolean | undefined,
-  ) => void;
+  mode: Mode;
 };
 
-export const useLocaleStore = create(
-  persist<LocaleStore>(
-    (set) => ({
-      fallbackLang: FALLBACK_LANG,
-      set,
-    }),
+type LocaleStoreActions = {
+  update(
+    nextStateOrUpdater:
+      | LocaleStoreState
+      | Partial<LocaleStoreState>
+      | ((state: WritableDraft<LocaleStoreState>) => void),
+  ): void;
+};
+
+type LocaleStore = LocaleStoreState & LocaleStoreActions;
+
+export const useLocaleStore = create<LocaleStore>()(
+  persist(
+    immer(
+      (update) => ({
+        mode: DEFAULT_MODE,
+        fallbackLang: FALLBACK_LANG,
+        update,
+      }),
+    ),
     {
       name: "useLocaleStore",
       storage: createJSONStorage(() => window.localStorage),
@@ -36,5 +49,5 @@ export const useLocaleStoreHasHydrated = () =>
   );
 
 export const localeStoreHasHydrated = new Promise<LocaleStore>((resolve) =>
-  useLocaleStore.persist.onFinishHydration(resolve),
+  useLocaleStore.persist.onFinishHydration(resolve)
 );

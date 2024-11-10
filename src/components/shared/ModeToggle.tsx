@@ -1,21 +1,21 @@
 import React from "react";
-import { Mode, useThemeStore } from "@/hooks/store/useThemeStore";
 import {
   IconButton,
-  Menu,
-  MenuItem,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import {
   DarkModeOutlined,
-  LightModeOutlined,
   DesktopWindowsOutlined,
+  LightModeOutlined,
 } from "@mui/icons-material";
+import { Mode, useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 export function ModeToggle() {
-  const mode = useThemeStore((s) => s.mode);
-  const setMode = useThemeStore((s) => s.set);
+  const mode = useLocaleStore((s) => s.mode);
+  const updateMode = useLocaleStore((s) => s.update);
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const handleClose = () => {
@@ -23,7 +23,7 @@ export function ModeToggle() {
   };
 
   const handleModeChange = (mode: Mode) => {
-    setMode({ mode });
+    updateMode({ mode });
     handleClose();
   };
 
