@@ -47,7 +47,3 @@ export const useLocaleStoreHasHydrated = () =>
     () => useLocaleStore.persist.hasHydrated(),
     () => false,
   );
-
-export const localeStoreHasHydrated = new Promise<LocaleStore>((resolve) =>
-  useLocaleStore.persist.onFinishHydration(resolve)
-);
