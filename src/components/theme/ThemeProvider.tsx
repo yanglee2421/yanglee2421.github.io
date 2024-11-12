@@ -1,5 +1,6 @@
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import {
+  alpha,
   createTheme,
   CssBaseline,
   GlobalStyles,
@@ -10,19 +11,38 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { type Mode, useLocaleStore } from "@/hooks/store/useLocaleStore";
 
+const LIGHT_COLOR = "#fff";
+const DARK_COLOR = "#000";
+
 const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
       main: "#6366f1",
+      contrastText: LIGHT_COLOR,
+    },
+    secondary: {
+      main: "#9ca3af",
+      contrastText: LIGHT_COLOR,
+    },
+    error: {
+      main: "#ef4444",
+    },
+    success: {
+      main: "#22c55e",
+      contrastText: LIGHT_COLOR,
+    },
+    warning: {
+      main: "#f59e0b",
+      contrastText: LIGHT_COLOR,
     },
     text: {
-      primary: "#0f172a",
-      secondary: "#64748b",
+      primary: alpha(DARK_COLOR, 0.875),
+      secondary: alpha(DARK_COLOR, .5),
     },
     background: {
-      default: "#f4f4f5",
-      paper: "#fafafa",
+      default: LIGHT_COLOR,
+      paper: LIGHT_COLOR,
     },
   },
 
@@ -36,14 +56,30 @@ const darkTheme = createTheme({
     mode: "dark",
     primary: {
       main: "#6366f1",
+      contrastText: LIGHT_COLOR,
+    },
+    secondary: {
+      main: "#9ca3af",
+      contrastText: LIGHT_COLOR,
+    },
+    error: {
+      main: "#ef4444",
+    },
+    success: {
+      main: "#22c55e",
+      contrastText: LIGHT_COLOR,
+    },
+    warning: {
+      main: "#f59e0b",
+      contrastText: LIGHT_COLOR,
     },
     text: {
-      primary: "#ffffff",
-      secondary: "#94a3b8",
+      primary: alpha(LIGHT_COLOR, 0.875),
+      secondary: alpha(LIGHT_COLOR, .625),
     },
     background: {
-      default: "#09090b",
-      paper: "#18181b",
+      default: DARK_COLOR,
+      paper: DARK_COLOR,
     },
   },
 
