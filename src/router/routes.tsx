@@ -45,7 +45,6 @@ export const routes = createRoutesFromElements(
 
     {/* No */}
     <Route id="lab" path="lab" lazy={() => import("@/pages/lab/route")} />
-    <Route id="home" index lazy={() => import("@/pages/home/route")} />
     <Route
       id="minesweeper"
       path="minesweeper"
