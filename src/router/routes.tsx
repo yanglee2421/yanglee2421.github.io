@@ -31,6 +31,7 @@ export const routes = createRoutesFromElements(
       id="auth_layout"
       lazy={() => import("@/components/layout/AuthLayout")}
     >
+      <Route id="home" index lazy={() => import("@/pages/home/route")} />
       <Route
         id="dashboard"
         path="dashboard"
@@ -41,15 +42,15 @@ export const routes = createRoutesFromElements(
         path="overtime"
         lazy={() => import("@/pages/overtime/route")}
       />
+      <Route
+        id="minesweeper"
+        path="minesweeper"
+        lazy={() => import("@/pages/minesweeper/route")}
+      />
     </Route>
 
     {/* No */}
     <Route id="lab" path="lab" lazy={() => import("@/pages/lab/route")} />
-    <Route
-      id="minesweeper"
-      path="minesweeper"
-      lazy={() => import("@/pages/minesweeper/route")}
-    />
     <Route
       id="calendar"
       path="calendar"

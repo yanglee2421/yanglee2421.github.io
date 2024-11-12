@@ -48,6 +48,20 @@ export function AuthLayout() {
           <Box component={"div"} sx={{ overflowY: "auto", flexGrow: 1 }}>
             <ButtonBase
               component={NavLink}
+              to="/dashboard"
+              sx={(t) => ({
+                display: "block",
+                inlineSize: "100%",
+                paddingInline: 5,
+                paddingBlock: 2,
+                fontSize: t.typography.h5.fontSize,
+                fontWeight: t.typography.body1.fontWeight,
+              })}
+            >
+              dashboard
+            </ButtonBase>
+            <ButtonBase
+              component={NavLink}
               to="/overtime"
               sx={(t) => ({
                 display: "block",
