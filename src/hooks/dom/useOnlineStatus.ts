@@ -1,18 +1,16 @@
 import React from "react";
 
-export function useOnlineStatus() {
-  return React.useSyncExternalStore(
-    (onStoreChange) => {
-      window.addEventListener("online", onStoreChange);
-      window.addEventListener("offline", onStoreChange);
+export const useOnlineStatus = () =>
+  React.useSyncExternalStore(
+    (onStateChange) => {
+      window.addEventListener("online", onStateChange);
+      window.addEventListener("offline", onStateChange);
 
       return () => {
-        window.removeEventListener("online", onStoreChange);
-        window.removeEventListener("offline", onStoreChange);
+        window.removeEventListener("online", onStateChange);
+        window.removeEventListener("offline", onStateChange);
       };
     },
-    () => {
-      return navigator.onLine;
-    },
+    () => navigator.onLine,
+    () => false,
   );
-}

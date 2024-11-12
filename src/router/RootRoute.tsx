@@ -1,30 +1,38 @@
 import NProgress from "nprogress";
-import "nprogress/nprogress.css";
 import React from "react";
-import { useTranslation } from "react-i18next";
 import {
-  useOutlet,
-  useSearchParams,
-  useNavigation,
+  Navigate,
   ScrollRestoration,
+  useLocation,
+  useNavigation,
+  useOutlet,
+  useParams,
 } from "react-router-dom";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { AclProvider } from "@/hooks/useAcl";
-import { defineAbilityFor } from "@/libs/defineAbilityFor";
-import { useIsDark } from "@/hooks/dom/useIsDark";
-import { ErrorBoundary } from "react-error-boundary";
-import { useQueryErrorResetBoundary } from "@tanstack/react-query";
-import { Loading } from "@/components/Loading";
+import { useTranslation } from "react-i18next";
+import { Typography } from "@mui/material";
+import { useLocaleStore } from "@/hooks/store/useLocaleStore";
+
+const LANGS = new Set(["en", "zh"]);
+const FALLBACK_LANG = "en";
+const getMatchedLang = (path = "", state: string) => {
+  if (LANGS.has(path)) {
+    return path;
+  }
+
+  if (LANGS.has(state)) {
+    return state;
+  }
+
+  return FALLBACK_LANG;
+};
 
 export function RootRoute() {
-  const outlet = useOutlet();
   const navigation = useNavigation();
-  const { i18n } = useTranslation();
-  const [searchParams] = useSearchParams({ lang: "en" });
-  const currentUser = useCurrentUser();
-  const isDark = useIsDark();
-  const { reset } = useQueryErrorResetBoundary();
-  const lang = searchParams.get("lang");
+  const hasHydrated = React.useSyncExternalStore(
+    (onStoreChange) => useLocaleStore.persist.onFinishHydration(onStoreChange),
+    () => useLocaleStore.persist.hasHydrated(),
+    () => false,
+  );
 
   React.useEffect(() => {
     switch (navigation.state) {
@@ -38,44 +46,53 @@ export function RootRoute() {
     }
   }, [navigation.state]);
 
+  if (!hasHydrated) {
+    return <Typography sx={{ textAlign: "center" }}>Loading...</Typography>;
+  }
+
+  return <Outlet />;
+}
+
+function Outlet() {
+  const outlet = useOutlet();
+  const params = useParams();
+  const location = useLocation();
+  const { i18n } = useTranslation();
+  const setStoreLang = useLocaleStore((s) => s.update);
+  const storeLang = useLocaleStore((s) => s.fallbackLang);
+  const matchedLang = getMatchedLang(params.lang, storeLang);
+
   React.useEffect(() => {
-    if (!lang) {
+    // Avoid unnecssary dispatch render
+    if (matchedLang === storeLang) {
       return;
     }
 
-    i18n.changeLanguage(lang);
-  }, [lang, i18n]);
+    // Memorize matched lang to storage
+    setStoreLang({ fallbackLang: matchedLang });
+
+    // Sync i18n & store
+    i18n.changeLanguage(matchedLang);
+  }, [matchedLang, storeLang, setStoreLang, i18n]);
+
+  if (matchedLang !== params.lang) {
+    return (
+      <Navigate
+        to={{
+          pathname: `/${matchedLang + location.pathname}`,
+          search: location.search,
+          hash: location.hash,
+        }}
+        state={location.state}
+        replace
+      />
+    );
+  }
 
   return (
     <>
-      <link
-        rel="icon"
-        type="image/svg+xml"
-        href={isDark ? "/favicon-dark.svg" : "/favicon.svg"}
-      />
       <ScrollRestoration />
-
-      <ErrorBoundary
-        onReset={reset}
-        fallbackRender={({ error, resetErrorBoundary }) => (
-          <div className="m-6 rounded bg-red-200 px-5 py-2 text-white">
-            <title>Error</title>
-            <h1 className="text-3xl">Error</h1>
-            <p className="mb-1.5 text-red-500">{error.message}</p>
-            <button onClick={resetErrorBoundary} className="btn-red uppercase">
-              reset
-            </button>
-          </div>
-        )}
-      >
-        <React.Suspense fallback={<Loading />}>
-          <AclProvider
-            value={defineAbilityFor(currentUser ? "admin" : "guest")}
-          >
-            {outlet}
-          </AclProvider>
-        </React.Suspense>
-      </ErrorBoundary>
+      {outlet}
     </>
   );
 }

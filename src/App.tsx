@@ -1,15 +1,18 @@
 import {
-  createHashRouter,
   createBrowserRouter,
+  createHashRouter,
   RouterProvider,
 } from "react-router-dom";
 import { QueryProvider } from "@/components/QueryProvider";
 import { routes } from "@/router/routes";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 export function App() {
   return (
     <QueryProvider>
-      <RouterProvider router={router} />
+      <ThemeProvider>
+        <RouterProvider router={router} />
+      </ThemeProvider>
     </QueryProvider>
   );
 }

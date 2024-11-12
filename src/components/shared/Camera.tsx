@@ -11,24 +11,63 @@ export function Camera(
   React.useEffect(() => {
     const video = videoRef.current;
 
+    if ((video instanceof HTMLVideoElement)) {
+      handleCamera(video);
+    }
+  }, []);
+
+  const handleCutImage = () => {
+    const video = videoRef.current;
+
     if (!(video instanceof HTMLVideoElement)) {
       return;
     }
 
-    handleCamera(video);
-  }, []);
+    const cvs = document.createElement("canvas");
+    const ctx = cvs.getContext("2d");
+    if (!ctx) {
+      return;
+    }
 
-  return <video ref={videoRef} {...props}></video>;
+    const size = video.getBoundingClientRect();
+    cvs.width = size.width;
+    cvs.height = size.height;
+    ctx.drawImage(
+      video,
+      0,
+      0,
+      size.width,
+      size.height,
+      0,
+      0,
+      cvs.width,
+      cvs.height,
+    );
+
+    const link = document.createElement("a");
+    link.href = cvs.toDataURL();
+    link.download = Date.now() + ".png";
+    link.click();
+    link.remove();
+  };
+
+  return (
+    <>
+      <video ref={videoRef} {...props}></video>
+      <button onClick={handleCutImage}>cut image</button>
+    </>
+  );
 }
 
 async function handleCamera(video: HTMLVideoElement) {
+  const size = video.getBoundingClientRect();
   const mediaStream = await navigator.mediaDevices.getUserMedia({
     video: {
-      width: video.width,
-      height: video.height,
+      width: size.width,
+      height: size.height,
     },
-    audio: {},
+    audio: false,
   });
   video.srcObject = mediaStream;
-  video.onloadedmetadata = () => video.play();
+  video.onloadedmetadata = video.play.bind(video);
 }
