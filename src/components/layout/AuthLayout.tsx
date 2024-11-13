@@ -1,21 +1,24 @@
 import {
   alpha,
+  AppBar,
   Box,
   ButtonBase,
+  Icon,
   IconButton,
   Link,
   styled,
+  Toolbar,
 } from "@mui/material";
-import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";
 import { AuthGuard } from "@/components/guard/AuthGuard";
 import { UserDropdown } from "../shared/UserDropdonw";
 import React from "react";
+import { Materio } from "../svg/Materio";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
-const HEADER_SIZE = 14;
 const ASIDE_SIZE = 64;
 
 export function Component() {
@@ -32,7 +35,7 @@ function NavMenu() {
   return (
     <>
       <ButtonBase
-        component={NavLink}
+        component={RouterLink}
         to="/"
         sx={(t) => ({
           display: "block",
@@ -45,7 +48,7 @@ function NavMenu() {
         Home
       </ButtonBase>
       <ButtonBase
-        component={NavLink}
+        component={RouterLink}
         to="/dashboard"
         sx={(t) => ({
           display: "block",
@@ -58,7 +61,7 @@ function NavMenu() {
         dashboard
       </ButtonBase>
       <ButtonBase
-        component={NavLink}
+        component={RouterLink}
         to="/overtime"
         sx={(t) => ({
           display: "block",
@@ -71,7 +74,7 @@ function NavMenu() {
         overtime
       </ButtonBase>
       <ButtonBase
-        component={NavLink}
+        component={RouterLink}
         to="/minesweeper"
         sx={(t) => ({
           display: "block",
@@ -84,7 +87,7 @@ function NavMenu() {
         minesweeper
       </ButtonBase>
       <ButtonBase
-        component={NavLink}
+        component={RouterLink}
         to="/lab"
         sx={(t) => ({
           display: "block",
@@ -97,7 +100,7 @@ function NavMenu() {
         lab
       </ButtonBase>
       <ButtonBase
-        component={NavLink}
+        component={RouterLink}
         to="/calendar"
         sx={(t) => ({
           display: "block",
@@ -124,20 +127,36 @@ function AuthLayout(props: Props) {
   return (
     <AuthGuard>
       <Header>
-        <GitHub sx={{ display: { xs: "none", md: "unset" } }} />
-        <IconButton
-          onClick={() => update((p) => !p)}
-          sx={{ display: { md: "none" } }}
+        <AppBar
+          position="static"
+          elevation={0}
+          sx={{ bgcolor: "transparent" }}
         >
-          {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
-        </IconButton>
-        <Box sx={{ marginInlineStart: "auto" }}></Box>
-        <LangToggle />
-        <ModeToggle />
-        <IconButton href={github_url} target={github_url}>
-          <GitHub />
-        </IconButton>
-        <UserDropdown />
+          <Toolbar>
+            <Icon
+              component={RouterLink}
+              to="/"
+              fontSize="large"
+              color="primary"
+              sx={{ display: { xs: "none", sm: "block" } }}
+            >
+              <Materio fontSize="inherit" />
+            </Icon>
+            <IconButton
+              onClick={() => update((p) => !p)}
+              sx={{ display: { sm: "none" } }}
+            >
+              {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
+            </IconButton>
+            <Box sx={{ marginInlineStart: "auto" }}></Box>
+            <LangToggle />
+            <ModeToggle />
+            <IconButton href={github_url} target={github_url}>
+              <GitHub />
+            </IconButton>
+            <UserDropdown />
+          </Toolbar>
+        </AppBar>
       </Header>
       <Aside sx={{ maxInlineSize: showMenuInMobile ? "none" : 0 }}>
         <Nav>{props.navMenu}</Nav>
@@ -159,18 +178,16 @@ const Header = styled("header")(({ theme }) => ({
   position: "fixed",
   zIndex: theme.zIndex.appBar,
 
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing(1),
-
   inlineSize: "100%",
-  blockSize: theme.spacing(HEADER_SIZE),
-  paddingInline: theme.spacing(5),
-  paddingBlock: theme.spacing(2),
+  blockSize: theme.spacing(14),
   borderBlockEnd: `1px ${theme.palette.divider} solid`,
 
   backgroundColor: alpha(theme.palette.background.default, 0.6),
   backdropFilter: "blur(8px)",
+
+  [theme.breakpoints.up("sm")]: {
+    blockSize: theme.spacing(16),
+  },
 }));
 
 const Aside = styled("aside")(({ theme }) => ({
@@ -179,10 +196,11 @@ const Aside = styled("aside")(({ theme }) => ({
 
   inlineSize: "100dvw",
   blockSize: "100dvh",
-  paddingBlockStart: theme.spacing(HEADER_SIZE),
+  paddingBlockStart: theme.spacing(14),
 
-  [theme.breakpoints.up("md")]: {
+  [theme.breakpoints.up("sm")]: {
     maxInlineSize: theme.spacing(ASIDE_SIZE),
+    paddingBlockStart: theme.spacing(16),
   },
 
   overflow: "hidden",
@@ -202,22 +220,22 @@ const MainWrapper = styled("div")(({ theme }) => ({
   flexDirection: "column",
 
   minBlockSize: "100dvh",
-  paddingBlockStart: theme.spacing(HEADER_SIZE),
+  paddingBlockStart: theme.spacing(14),
 
-  [theme.breakpoints.up("md")]: {
+  [theme.breakpoints.up("sm")]: {
     display: "flex",
     paddingInlineStart: theme.spacing(ASIDE_SIZE),
+    paddingBlockStart: theme.spacing(16),
   },
 }));
 
 const Main = styled("main")(({ theme }) => ({
   flexGrow: 1,
 
-  paddingInline: theme.spacing(5),
-  paddingBlock: theme.spacing(2),
+  padding: theme.spacing(3.5),
+  paddingBlockEnd: theme.spacing(0),
 }));
 
 const Footer = styled("footer")(({ theme }) => ({
-  paddingInline: theme.spacing(5),
-  paddingBlock: theme.spacing(2),
+  padding: theme.spacing(3.5),
 }));

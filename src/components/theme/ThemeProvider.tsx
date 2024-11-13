@@ -1,6 +1,5 @@
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import {
-  alpha,
   createTheme,
   CssBaseline,
   GlobalStyles,
@@ -11,39 +10,44 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { type Mode, useLocaleStore } from "@/hooks/store/useLocaleStore";
 
-const LIGHT_COLOR = "#fff";
-const DARK_COLOR = "#000";
+const WHITE = "#fff";
 
 const lightTheme = createTheme({
   palette: {
     mode: "light",
     primary: {
       main: "#6366f1",
-      contrastText: LIGHT_COLOR,
+      contrastText: WHITE,
     },
     secondary: {
       main: "#9ca3af",
-      contrastText: LIGHT_COLOR,
+      contrastText: WHITE,
     },
     error: {
       main: "#ef4444",
-    },
-    success: {
-      main: "#22c55e",
-      contrastText: LIGHT_COLOR,
+      contrastText: WHITE,
     },
     warning: {
       main: "#f59e0b",
-      contrastText: LIGHT_COLOR,
+      contrastText: WHITE,
+    },
+    info: {
+      main: "#3b82f6",
+      contrastText: WHITE,
+    },
+    success: {
+      main: "#22c55e",
+      contrastText: WHITE,
     },
     text: {
-      primary: alpha(DARK_COLOR, 0.875),
-      secondary: alpha(DARK_COLOR, .5),
+      primary: "#09090b",
+      secondary: "#71717a",
     },
     background: {
-      default: LIGHT_COLOR,
-      paper: LIGHT_COLOR,
+      default: WHITE,
+      paper: WHITE,
     },
+    divider: "#e4e4e7",
   },
 
   spacing(abs: number) {
@@ -56,31 +60,37 @@ const darkTheme = createTheme({
     mode: "dark",
     primary: {
       main: "#6366f1",
-      contrastText: LIGHT_COLOR,
+      contrastText: WHITE,
     },
     secondary: {
       main: "#9ca3af",
-      contrastText: LIGHT_COLOR,
+      contrastText: WHITE,
     },
     error: {
       main: "#ef4444",
-    },
-    success: {
-      main: "#22c55e",
-      contrastText: LIGHT_COLOR,
+      contrastText: WHITE,
     },
     warning: {
       main: "#f59e0b",
-      contrastText: LIGHT_COLOR,
+      contrastText: WHITE,
+    },
+    info: {
+      main: "#3b82f6",
+      contrastText: WHITE,
+    },
+    success: {
+      main: "#22c55e",
+      contrastText: WHITE,
     },
     text: {
-      primary: alpha(LIGHT_COLOR, 0.875),
-      secondary: alpha(LIGHT_COLOR, .625),
+      primary: "#fafafa",
+      secondary: "#a1a1aa",
     },
     background: {
-      default: DARK_COLOR,
-      paper: DARK_COLOR,
+      default: "#09090b",
+      paper: "#09090b",
     },
+    divider: "#27272a",
   },
 
   spacing(abs: number) {
