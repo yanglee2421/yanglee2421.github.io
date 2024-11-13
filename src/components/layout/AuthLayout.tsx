@@ -15,6 +15,8 @@ import { UserDropdown } from "../shared/UserDropdonw";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
+const HEADER_SIZE = 14;
+const ASIDE_SIZE = 64;
 
 export function AuthLayout() {
   const outlet = useOutlet();
@@ -44,52 +46,60 @@ export function AuthLayout() {
         <UserDropdown />
       </Header>
       <Aside sx={{ maxInlineSize: showMenuInMobile ? "none" : 0 }}>
-        <Nav>
-          <Box component={"div"} sx={{ overflowY: "auto", flexGrow: 1 }}>
-            <ButtonBase
-              component={NavLink}
-              to="/dashboard"
-              sx={(t) => ({
-                display: "block",
-                inlineSize: "100%",
-                paddingInline: 5,
-                paddingBlock: 2,
-                fontSize: t.typography.h5.fontSize,
-                fontWeight: t.typography.body1.fontWeight,
-              })}
-            >
-              dashboard
-            </ButtonBase>
-            <ButtonBase
-              component={NavLink}
-              to="/overtime"
-              sx={(t) => ({
-                display: "block",
-                inlineSize: "100%",
-                paddingInline: 5,
-                paddingBlock: 2,
-                fontSize: t.typography.h5.fontSize,
-                fontWeight: t.typography.body1.fontWeight,
-              })}
-            >
-              overtime
-            </ButtonBase>
-            <ButtonBase
-              component={NavLink}
-              to="/minesweeper"
-              sx={(t) => ({
-                display: "block",
-                inlineSize: "100%",
-                paddingInline: 5,
-                paddingBlock: 2,
-                fontSize: t.typography.h5.fontSize,
-                fontWeight: t.typography.body1.fontWeight,
-              })}
-            >
-              minesweeper
-            </ButtonBase>
-            <Box height={1000}></Box>
-          </Box>
+        <Nav
+          onClick={(e) => {
+            if (e.target === e.currentTarget) {
+              return;
+            }
+
+            update((d) => {
+              d.showMenuInMobile = false;
+            });
+          }}
+        >
+          <ButtonBase
+            component={NavLink}
+            to="/dashboard"
+            sx={(t) => ({
+              display: "block",
+              inlineSize: "100%",
+              paddingInline: 5,
+              paddingBlock: 2,
+              fontSize: t.typography.h5.fontSize,
+              fontWeight: t.typography.body1.fontWeight,
+            })}
+          >
+            dashboard
+          </ButtonBase>
+          <ButtonBase
+            component={NavLink}
+            to="/overtime"
+            sx={(t) => ({
+              display: "block",
+              inlineSize: "100%",
+              paddingInline: 5,
+              paddingBlock: 2,
+              fontSize: t.typography.h5.fontSize,
+              fontWeight: t.typography.body1.fontWeight,
+            })}
+          >
+            overtime
+          </ButtonBase>
+          <ButtonBase
+            component={NavLink}
+            to="/minesweeper"
+            sx={(t) => ({
+              display: "block",
+              inlineSize: "100%",
+              paddingInline: 5,
+              paddingBlock: 2,
+              fontSize: t.typography.h5.fontSize,
+              fontWeight: t.typography.body1.fontWeight,
+            })}
+          >
+            minesweeper
+          </ButtonBase>
+          <Box height={1000}></Box>
         </Nav>
       </Aside>
       <MainWrapper sx={{ display: showMenuInMobile ? "none" : "flex" }}>
@@ -107,14 +117,14 @@ export function AuthLayout() {
 
 const Header = styled("header")(({ theme }) => ({
   position: "fixed",
-  zIndex: theme.zIndex.drawer + 1,
+  zIndex: theme.zIndex.appBar,
 
   display: "flex",
   alignItems: "center",
   gap: theme.spacing(1),
 
   inlineSize: "100%",
-  blockSize: theme.spacing(14),
+  blockSize: theme.spacing(HEADER_SIZE),
   paddingInline: theme.spacing(5),
   paddingBlock: theme.spacing(2),
   borderBlockEnd: `1px ${theme.palette.divider} solid`,
@@ -125,15 +135,14 @@ const Header = styled("header")(({ theme }) => ({
 
 const Aside = styled("aside")(({ theme }) => ({
   position: "fixed",
-  zIndex: theme.zIndex.drawer,
-  maxInlineSize: 0,
+  zIndex: theme.zIndex.appBar - 1,
 
   inlineSize: "100dvw",
   blockSize: "100dvh",
-  paddingBlockStart: theme.spacing(14),
+  paddingBlockStart: theme.spacing(HEADER_SIZE),
 
   [theme.breakpoints.up("md")]: {
-    maxInlineSize: theme.spacing(72),
+    maxInlineSize: theme.spacing(ASIDE_SIZE),
   },
 
   overflow: "hidden",
@@ -149,15 +158,15 @@ const Nav = styled("nav")(({ theme }) => ({
 }));
 
 const MainWrapper = styled("div")(({ theme }) => ({
+  display: "none",
   flexDirection: "column",
 
   minBlockSize: "100dvh",
-  paddingBlockStart: theme.spacing(14),
+  paddingBlockStart: theme.spacing(HEADER_SIZE),
 
-  paddingInlineStart: 0,
   [theme.breakpoints.up("md")]: {
     display: "flex",
-    paddingInlineStart: theme.spacing(72),
+    paddingInlineStart: theme.spacing(ASIDE_SIZE),
   },
 }));
 
