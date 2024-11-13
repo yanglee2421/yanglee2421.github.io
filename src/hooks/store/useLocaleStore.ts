@@ -12,7 +12,6 @@ export type Mode = "light" | "dark" | "system";
 type LocaleStoreState = {
   fallbackLang: string;
   mode: Mode;
-  showMenuInMobile: boolean;
 };
 
 type LocaleStoreActions = {
@@ -32,7 +31,7 @@ export const useLocaleStore = create<LocaleStore>()(
       (update) => ({
         mode: DEFAULT_MODE,
         fallbackLang: FALLBACK_LANG,
-        showMenuInMobile: false,
+
         update,
       }),
     ),

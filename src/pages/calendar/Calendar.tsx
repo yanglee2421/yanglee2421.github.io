@@ -5,6 +5,7 @@ import { Clock } from "./Clock";
 import {
   Card,
   CardContent,
+  Grid2,
   Table,
   TableBody,
   TableCell,
@@ -12,6 +13,8 @@ import {
   TableRow,
 } from "@mui/material";
 import { chunk } from "@yotulee/run";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 
 export function Calendar() {
   const [selectedTime, setSelectedTime] = React.useState(() => Date.now());
@@ -22,18 +25,25 @@ export function Calendar() {
     <Card>
       <Clock />
       <CardContent>
-        <input
-          type="month"
-          value={new Date(selectedTime)
-            .toJSON()
-            .split("-")
-            .slice(0, 2)
-            .join("-")}
-          onChange={(evt) => {
-            setSelectedTime(evt.target.valueAsDate?.getTime() || Date.now());
-          }}
-          className="block w-full text-slate-700 focus:border-blue-500 focus:ring-blue-500"
-        />
+        <Grid2 container spacing={6}>
+          <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+            <DatePicker
+              value={dayjs(selectedTime)}
+              onChange={(e) => {
+                console.log(e);
+                if (!e) {
+                  return;
+                }
+
+                setSelectedTime(e.toDate().getTime());
+              }}
+              slotProps={{
+                textField: { fullWidth: true },
+              }}
+              views={["month", "year"]}
+            />
+          </Grid2>
+        </Grid2>
       </CardContent>
       <Table>
         <TableHead>
@@ -60,7 +70,6 @@ export function Calendar() {
             ))}
         </TableBody>
       </Table>
-      {timeToCalendar(selectedTime)}
     </Card>
   );
 }

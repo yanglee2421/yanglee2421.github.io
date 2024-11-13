@@ -6,33 +6,127 @@ import {
   Link,
   styled,
 } from "@mui/material";
-import { NavLink, useOutlet } from "react-router-dom";
+import { NavLink, Outlet, useLocation } from "react-router-dom";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";
 import { AuthGuard } from "@/components/guard/AuthGuard";
 import { UserDropdown } from "../shared/UserDropdonw";
-import { useLocaleStore } from "@/hooks/store/useLocaleStore";
+import React from "react";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
 const HEADER_SIZE = 14;
 const ASIDE_SIZE = 64;
 
-export function AuthLayout() {
-  const outlet = useOutlet();
-  const showMenuInMobile = useLocaleStore((s) => s.showMenuInMobile);
-  const update = useLocaleStore((s) => s.update);
+export function Component() {
+  const location = useLocation();
+
+  return (
+    <AuthLayout key={location.pathname} navMenu={<NavMenu />}>
+      <Outlet />
+    </AuthLayout>
+  );
+}
+
+function NavMenu() {
+  return (
+    <>
+      <ButtonBase
+        component={NavLink}
+        to="/"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        Home
+      </ButtonBase>
+      <ButtonBase
+        component={NavLink}
+        to="/dashboard"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        dashboard
+      </ButtonBase>
+      <ButtonBase
+        component={NavLink}
+        to="/overtime"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        overtime
+      </ButtonBase>
+      <ButtonBase
+        component={NavLink}
+        to="/minesweeper"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        minesweeper
+      </ButtonBase>
+      <ButtonBase
+        component={NavLink}
+        to="/lab"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        lab
+      </ButtonBase>
+      <ButtonBase
+        component={NavLink}
+        to="/calendar"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        calendar
+      </ButtonBase>
+      <Box height={1000}></Box>
+    </>
+  );
+}
+
+type Props = React.PropsWithChildren<{
+  navMenu?: React.ReactNode;
+}>;
+
+function AuthLayout(props: Props) {
+  const [showMenuInMobile, update] = React.useState(false);
 
   return (
     <AuthGuard>
       <Header>
         <GitHub sx={{ display: { xs: "none", md: "unset" } }} />
         <IconButton
-          onClick={() => {
-            update((d) => {
-              d.showMenuInMobile = !d.showMenuInMobile;
-            });
-          }}
+          onClick={() => update((p) => !p)}
           sx={{ display: { md: "none" } }}
         >
           {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
@@ -46,64 +140,10 @@ export function AuthLayout() {
         <UserDropdown />
       </Header>
       <Aside sx={{ maxInlineSize: showMenuInMobile ? "none" : 0 }}>
-        <Nav
-          onClick={(e) => {
-            if (e.target === e.currentTarget) {
-              return;
-            }
-
-            update((d) => {
-              d.showMenuInMobile = false;
-            });
-          }}
-        >
-          <ButtonBase
-            component={NavLink}
-            to="/dashboard"
-            sx={(t) => ({
-              display: "block",
-              inlineSize: "100%",
-              paddingInline: 5,
-              paddingBlock: 2,
-              fontSize: t.typography.h5.fontSize,
-              fontWeight: t.typography.body1.fontWeight,
-            })}
-          >
-            dashboard
-          </ButtonBase>
-          <ButtonBase
-            component={NavLink}
-            to="/overtime"
-            sx={(t) => ({
-              display: "block",
-              inlineSize: "100%",
-              paddingInline: 5,
-              paddingBlock: 2,
-              fontSize: t.typography.h5.fontSize,
-              fontWeight: t.typography.body1.fontWeight,
-            })}
-          >
-            overtime
-          </ButtonBase>
-          <ButtonBase
-            component={NavLink}
-            to="/minesweeper"
-            sx={(t) => ({
-              display: "block",
-              inlineSize: "100%",
-              paddingInline: 5,
-              paddingBlock: 2,
-              fontSize: t.typography.h5.fontSize,
-              fontWeight: t.typography.body1.fontWeight,
-            })}
-          >
-            minesweeper
-          </ButtonBase>
-          <Box height={1000}></Box>
-        </Nav>
+        <Nav>{props.navMenu}</Nav>
       </Aside>
       <MainWrapper sx={{ display: showMenuInMobile ? "none" : "flex" }}>
-        <Main>{outlet}</Main>
+        <Main>{props.children}</Main>
         <Footer>
           &copy;2024 by{" "}
           <Link href={github_url} target={github_url}>
@@ -181,5 +221,3 @@ const Footer = styled("footer")(({ theme }) => ({
   paddingInline: theme.spacing(5),
   paddingBlock: theme.spacing(2),
 }));
-
-export { AuthLayout as Component };

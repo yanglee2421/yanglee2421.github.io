@@ -7,11 +7,11 @@ import {
   RotateRightOutlined,
 } from "@mui/icons-material";
 import {
-  Dialog,
   Button,
-  DialogTitle,
-  DialogContent,
+  Dialog,
   DialogActions,
+  DialogContent,
+  DialogTitle,
   Grid2,
   TextField,
 } from "@mui/material";
@@ -20,7 +20,7 @@ import { addDoc, Timestamp } from "firebase/firestore";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { DateField } from "@mui/x-date-pickers";
+import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
 const schema = z.object({
@@ -90,14 +90,19 @@ export function Add() {
                   control={form.control}
                   name="date"
                   render={({ field, fieldState }) => (
-                    <DateField
+                    <DatePicker
                       value={dayjs(field.value)}
                       onChange={(e) => {
                         field.onChange(e?.toDate());
                       }}
-                      onBlur={field.onBlur}
-                      helperText={fieldState.error?.message}
-                      fullWidth
+                      slotProps={{
+                        textField: {
+                          onBlur: field.onBlur,
+                          error: !!fieldState.error,
+                          helperText: fieldState.error?.message,
+                          fullWidth: true,
+                        },
+                      }}
                       label="Date"
                     />
                   )}
@@ -111,8 +116,7 @@ export function Add() {
                     <TextField
                       value={field.value}
                       onChange={(e) =>
-                        field.onChange(Number.parseInt(e.target.value) || 0)
-                      }
+                        field.onChange(Number.parseInt(e.target.value) || 0)}
                       onBlur={field.onBlur}
                       error={!!fieldState.error}
                       helperText={fieldState.error?.message}
@@ -128,13 +132,9 @@ export function Add() {
         <DialogActions>
           <Button
             form={formId}
-            startIcon={
-              add.isPending ? (
-                <RotateRightOutlined className="animate-spin" />
-              ) : (
-                <PlusOneOutlined />
-              )
-            }
+            startIcon={add.isPending
+              ? <RotateRightOutlined className="animate-spin" />
+              : <PlusOneOutlined />}
             disabled={add.isPending}
             type="submit"
             variant="contained"
