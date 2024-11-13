@@ -1,5 +1,3 @@
-import { useLocaleStore } from "@/hooks/store/useLocaleStore";
-import { ListOutlined } from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -7,7 +5,6 @@ import {
   CardContent,
   CardHeader,
   Grid2,
-  IconButton,
   Stack,
   TextField,
   Typography,
@@ -20,7 +17,6 @@ export function Dashboard() {
   const [data, setData] = React.useState("");
   const ref = React.useRef<WebSocket | null>(null);
   const [input, setInput] = React.useState("");
-  const update = useLocaleStore((s) => s.update);
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -70,17 +66,6 @@ export function Dashboard() {
           <CardHeader
             title="WebSocket"
             subheader={data || "Placeholder"}
-            action={
-              <IconButton
-                onClick={() => {
-                  update((d) => {
-                    d.showMenuInMobile = !d.showMenuInMobile;
-                  });
-                }}
-              >
-                <ListOutlined />
-              </IconButton>
-            }
           />
           <CardContent>
             <Grid2 container spacing={6}>

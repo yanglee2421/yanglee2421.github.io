@@ -63,17 +63,9 @@ function Outlet() {
   const matchedLang = getMatchedLang(params.lang, storeLang);
 
   React.useEffect(() => {
-    // Avoid unnecssary dispatch render
-    if (matchedLang === storeLang) {
-      return;
-    }
-
-    // Memorize matched lang to storage
     setStoreLang({ fallbackLang: matchedLang });
-
-    // Sync i18n & store
     i18n.changeLanguage(matchedLang);
-  }, [matchedLang, storeLang, setStoreLang, i18n]);
+  }, [setStoreLang, matchedLang, i18n]);
 
   if (matchedLang !== params.lang) {
     return (

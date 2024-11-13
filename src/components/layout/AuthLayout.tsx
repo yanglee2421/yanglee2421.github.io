@@ -1,99 +1,168 @@
 import {
   alpha,
+  AppBar,
   Box,
   ButtonBase,
+  Icon,
   IconButton,
   Link,
   styled,
+  Toolbar,
 } from "@mui/material";
-import { NavLink, useOutlet } from "react-router-dom";
+import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";
 import { AuthGuard } from "@/components/guard/AuthGuard";
 import { UserDropdown } from "../shared/UserDropdonw";
-import { useLocaleStore } from "@/hooks/store/useLocaleStore";
+import React from "react";
+import { Materio } from "../svg/Materio";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
+const ASIDE_SIZE = 64;
 
-export function AuthLayout() {
-  const outlet = useOutlet();
-  const showMenuInMobile = useLocaleStore((s) => s.showMenuInMobile);
-  const update = useLocaleStore((s) => s.update);
+export function Component() {
+  const location = useLocation();
+
+  return (
+    <AuthLayout key={location.pathname} navMenu={<NavMenu />}>
+      <Outlet />
+    </AuthLayout>
+  );
+}
+
+function NavMenu() {
+  return (
+    <>
+      <ButtonBase
+        component={RouterLink}
+        to="/"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        Home
+      </ButtonBase>
+      <ButtonBase
+        component={RouterLink}
+        to="/dashboard"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        dashboard
+      </ButtonBase>
+      <ButtonBase
+        component={RouterLink}
+        to="/overtime"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        overtime
+      </ButtonBase>
+      <ButtonBase
+        component={RouterLink}
+        to="/minesweeper"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        minesweeper
+      </ButtonBase>
+      <ButtonBase
+        component={RouterLink}
+        to="/lab"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        lab
+      </ButtonBase>
+      <ButtonBase
+        component={RouterLink}
+        to="/calendar"
+        sx={(t) => ({
+          display: "block",
+          inlineSize: "100%",
+          paddingInline: 5,
+          paddingBlock: 2,
+          fontSize: t.typography.h6.fontSize,
+        })}
+      >
+        calendar
+      </ButtonBase>
+      <Box height={1000}></Box>
+    </>
+  );
+}
+
+type Props = React.PropsWithChildren<{
+  navMenu?: React.ReactNode;
+}>;
+
+function AuthLayout(props: Props) {
+  const [showMenuInMobile, update] = React.useState(false);
 
   return (
     <AuthGuard>
       <Header>
-        <GitHub sx={{ display: { xs: "none", md: "unset" } }} />
-        <IconButton
-          onClick={() => {
-            update((d) => {
-              d.showMenuInMobile = !d.showMenuInMobile;
-            });
-          }}
-          sx={{ display: { md: "none" } }}
+        <AppBar
+          position="static"
+          elevation={0}
+          sx={{ bgcolor: "transparent" }}
         >
-          {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
-        </IconButton>
-        <Box sx={{ marginInlineStart: "auto" }}></Box>
-        <LangToggle />
-        <ModeToggle />
-        <IconButton href={github_url} target={github_url}>
-          <GitHub />
-        </IconButton>
-        <UserDropdown />
+          <Toolbar>
+            <Icon
+              component={RouterLink}
+              to="/"
+              fontSize="large"
+              color="primary"
+              sx={{ display: { xs: "none", sm: "block" } }}
+            >
+              <Materio fontSize="inherit" />
+            </Icon>
+            <IconButton
+              onClick={() => update((p) => !p)}
+              sx={{ display: { sm: "none" } }}
+            >
+              {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
+            </IconButton>
+            <Box sx={{ marginInlineStart: "auto" }}></Box>
+            <LangToggle />
+            <ModeToggle />
+            <IconButton href={github_url} target={github_url}>
+              <GitHub />
+            </IconButton>
+            <UserDropdown />
+          </Toolbar>
+        </AppBar>
       </Header>
       <Aside sx={{ maxInlineSize: showMenuInMobile ? "none" : 0 }}>
-        <Nav>
-          <Box component={"div"} sx={{ overflowY: "auto", flexGrow: 1 }}>
-            <ButtonBase
-              component={NavLink}
-              to="/dashboard"
-              sx={(t) => ({
-                display: "block",
-                inlineSize: "100%",
-                paddingInline: 5,
-                paddingBlock: 2,
-                fontSize: t.typography.h5.fontSize,
-                fontWeight: t.typography.body1.fontWeight,
-              })}
-            >
-              dashboard
-            </ButtonBase>
-            <ButtonBase
-              component={NavLink}
-              to="/overtime"
-              sx={(t) => ({
-                display: "block",
-                inlineSize: "100%",
-                paddingInline: 5,
-                paddingBlock: 2,
-                fontSize: t.typography.h5.fontSize,
-                fontWeight: t.typography.body1.fontWeight,
-              })}
-            >
-              overtime
-            </ButtonBase>
-            <ButtonBase
-              component={NavLink}
-              to="/minesweeper"
-              sx={(t) => ({
-                display: "block",
-                inlineSize: "100%",
-                paddingInline: 5,
-                paddingBlock: 2,
-                fontSize: t.typography.h5.fontSize,
-                fontWeight: t.typography.body1.fontWeight,
-              })}
-            >
-              minesweeper
-            </ButtonBase>
-            <Box height={1000}></Box>
-          </Box>
-        </Nav>
+        <Nav>{props.navMenu}</Nav>
       </Aside>
       <MainWrapper sx={{ display: showMenuInMobile ? "none" : "flex" }}>
-        <Main>{outlet}</Main>
+        <Main>{props.children}</Main>
         <Footer>
           &copy;2024 by{" "}
           <Link href={github_url} target={github_url}>
@@ -107,33 +176,31 @@ export function AuthLayout() {
 
 const Header = styled("header")(({ theme }) => ({
   position: "fixed",
-  zIndex: theme.zIndex.drawer + 1,
-
-  display: "flex",
-  alignItems: "center",
-  gap: theme.spacing(1),
+  zIndex: theme.zIndex.appBar,
 
   inlineSize: "100%",
   blockSize: theme.spacing(14),
-  paddingInline: theme.spacing(5),
-  paddingBlock: theme.spacing(2),
   borderBlockEnd: `1px ${theme.palette.divider} solid`,
 
   backgroundColor: alpha(theme.palette.background.default, 0.6),
   backdropFilter: "blur(8px)",
+
+  [theme.breakpoints.up("sm")]: {
+    blockSize: theme.spacing(16),
+  },
 }));
 
 const Aside = styled("aside")(({ theme }) => ({
   position: "fixed",
-  zIndex: theme.zIndex.drawer,
-  maxInlineSize: 0,
+  zIndex: theme.zIndex.appBar - 1,
 
   inlineSize: "100dvw",
   blockSize: "100dvh",
   paddingBlockStart: theme.spacing(14),
 
-  [theme.breakpoints.up("md")]: {
-    maxInlineSize: theme.spacing(72),
+  [theme.breakpoints.up("sm")]: {
+    maxInlineSize: theme.spacing(ASIDE_SIZE),
+    paddingBlockStart: theme.spacing(16),
   },
 
   overflow: "hidden",
@@ -149,28 +216,26 @@ const Nav = styled("nav")(({ theme }) => ({
 }));
 
 const MainWrapper = styled("div")(({ theme }) => ({
+  display: "none",
   flexDirection: "column",
 
   minBlockSize: "100dvh",
   paddingBlockStart: theme.spacing(14),
 
-  paddingInlineStart: 0,
-  [theme.breakpoints.up("md")]: {
+  [theme.breakpoints.up("sm")]: {
     display: "flex",
-    paddingInlineStart: theme.spacing(72),
+    paddingInlineStart: theme.spacing(ASIDE_SIZE),
+    paddingBlockStart: theme.spacing(16),
   },
 }));
 
 const Main = styled("main")(({ theme }) => ({
   flexGrow: 1,
 
-  paddingInline: theme.spacing(5),
-  paddingBlock: theme.spacing(2),
+  padding: theme.spacing(3.5),
+  paddingBlockEnd: theme.spacing(0),
 }));
 
 const Footer = styled("footer")(({ theme }) => ({
-  paddingInline: theme.spacing(5),
-  paddingBlock: theme.spacing(2),
+  padding: theme.spacing(3.5),
 }));
-
-export { AuthLayout as Component };
