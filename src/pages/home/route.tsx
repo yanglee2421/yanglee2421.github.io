@@ -1,4 +1,7 @@
 import { Typography } from "@mui/material";
+import { ReactLogo } from "@/components/svg/ReactLogo";
+import { Google } from "@/components/svg/Google";
+import { Github } from "@/components/svg/Github";
 
 export function Component() {
   return (
@@ -10,6 +13,9 @@ export function Component() {
         odio quasi repudiandae, tenetur ipsa facilis perferendis, provident
         expedita. Expedita, itaque recusandae.
       </Typography>
+      <Github />
+      <Google />
+      <ReactLogo />
     </>
   );
 }

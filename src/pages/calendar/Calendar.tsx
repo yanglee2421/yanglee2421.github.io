@@ -9,6 +9,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TableRow,
 } from "@mui/material";
@@ -45,31 +46,33 @@ export function Calendar() {
           </Grid2>
         </Grid2>
       </CardContent>
-      <Table>
-        <TableHead>
-          <TableRow>
-            {calendar.slice(0, 7).map((date) => {
-              const weekday = date.toLocaleString(i18n.language, {
-                weekday: "short",
-              });
+      <TableContainer>
+        <Table>
+          <TableHead>
+            <TableRow>
+              {calendar.slice(0, 7).map((date) => {
+                const weekday = date.toLocaleString(i18n.language, {
+                  weekday: "short",
+                });
 
-              return <TableCell key={weekday}>{weekday}</TableCell>;
-            })}
-          </TableRow>
-        </TableHead>
-        <TableBody>
-          {chunk(calendar, 7)
-            .map((row, idx) => (
-              <TableRow key={idx}>
-                {row.map((cell) => (
-                  <TableCell key={cell.toLocaleDateString()}>
-                    {cell.getDate()}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-        </TableBody>
-      </Table>
+                return <TableCell key={weekday}>{weekday}</TableCell>;
+              })}
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {chunk(calendar, 7)
+              .map((row, idx) => (
+                <TableRow key={idx}>
+                  {row.map((cell) => (
+                    <TableCell key={cell.toLocaleDateString()}>
+                      {cell.getDate()}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
     </Card>
   );
 }
