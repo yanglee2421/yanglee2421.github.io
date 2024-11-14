@@ -126,38 +126,40 @@ function AuthLayout(props: Props) {
 
   return (
     <AuthGuard>
-      <Header>
-        <AppBar
-          position="static"
-          elevation={0}
-          sx={{ bgcolor: "transparent" }}
-        >
-          <Toolbar>
-            <Icon
-              component={RouterLink}
-              to="/"
-              fontSize="large"
-              color="primary"
-              sx={{ display: { xs: "none", sm: "block" } }}
-            >
-              <Materio fontSize="inherit" />
-            </Icon>
-            <IconButton
-              onClick={() => update((p) => !p)}
-              sx={{ display: { sm: "none" } }}
-            >
-              {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
-            </IconButton>
-            <Box sx={{ marginInlineStart: "auto" }}></Box>
-            <LangToggle />
-            <ModeToggle />
-            <IconButton href={github_url} target={github_url}>
-              <GitHub />
-            </IconButton>
-            <UserDropdown />
-          </Toolbar>
-        </AppBar>
-      </Header>
+      <AppBar
+        elevation={0}
+        sx={(theme) => ({
+          bgcolor: "transparent",
+          borderBlockEnd: `1px solid ${theme.palette.divider}`,
+          backgroundColor: alpha(theme.palette.background.default, 0.6),
+          backdropFilter: "blur(8px)",
+        })}
+      >
+        <Toolbar>
+          <Icon
+            component={RouterLink}
+            to="/"
+            fontSize="large"
+            color="primary"
+            sx={{ display: { xs: "none", sm: "block" } }}
+          >
+            <Materio fontSize="inherit" />
+          </Icon>
+          <IconButton
+            onClick={() => update((p) => !p)}
+            sx={{ display: { sm: "none" } }}
+          >
+            {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
+          </IconButton>
+          <Box sx={{ marginInlineStart: "auto" }}></Box>
+          <LangToggle />
+          <ModeToggle />
+          <IconButton href={github_url} target={github_url}>
+            <GitHub />
+          </IconButton>
+          <UserDropdown />
+        </Toolbar>
+      </AppBar>
       <Aside sx={{ maxInlineSize: showMenuInMobile ? "none" : 0 }}>
         <Nav>{props.navMenu}</Nav>
       </Aside>
@@ -173,22 +175,6 @@ function AuthLayout(props: Props) {
     </AuthGuard>
   );
 }
-
-const Header = styled("header")(({ theme }) => ({
-  position: "fixed",
-  zIndex: theme.zIndex.appBar,
-
-  inlineSize: "100%",
-  blockSize: theme.spacing(14),
-  borderBlockEnd: `1px ${theme.palette.divider} solid`,
-
-  backgroundColor: alpha(theme.palette.background.default, 0.6),
-  backdropFilter: "blur(8px)",
-
-  [theme.breakpoints.up("sm")]: {
-    blockSize: theme.spacing(16),
-  },
-}));
 
 const Aside = styled("aside")(({ theme }) => ({
   position: "fixed",
@@ -232,10 +218,10 @@ const MainWrapper = styled("div")(({ theme }) => ({
 const Main = styled("main")(({ theme }) => ({
   flexGrow: 1,
 
-  padding: theme.spacing(3.5),
+  padding: theme.spacing(3),
   paddingBlockEnd: theme.spacing(0),
 }));
 
 const Footer = styled("footer")(({ theme }) => ({
-  padding: theme.spacing(3.5),
+  padding: theme.spacing(3),
 }));

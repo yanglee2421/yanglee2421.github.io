@@ -9,10 +9,12 @@ export function SignInWithGithub() {
       onClick={() => {
         signInWithPopup(getAuth(app), githubAuthProvider);
       }}
-      variant={"outlined"}
+      variant={"contained"}
+      color="inherit"
       size="large"
       fullWidth
       startIcon={<GitHub />}
+      sx={{ bgcolor: "black", color: "white" }}
     >
       Sign in with Github
     </Button>

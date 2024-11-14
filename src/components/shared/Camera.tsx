@@ -16,47 +16,7 @@ export function Camera(
     }
   }, []);
 
-  const handleCutImage = () => {
-    const video = videoRef.current;
-
-    if (!(video instanceof HTMLVideoElement)) {
-      return;
-    }
-
-    const cvs = document.createElement("canvas");
-    const ctx = cvs.getContext("2d");
-    if (!ctx) {
-      return;
-    }
-
-    const size = video.getBoundingClientRect();
-    cvs.width = size.width;
-    cvs.height = size.height;
-    ctx.drawImage(
-      video,
-      0,
-      0,
-      size.width,
-      size.height,
-      0,
-      0,
-      cvs.width,
-      cvs.height,
-    );
-
-    const link = document.createElement("a");
-    link.href = cvs.toDataURL();
-    link.download = Date.now() + ".png";
-    link.click();
-    link.remove();
-  };
-
-  return (
-    <>
-      <video ref={videoRef} {...props}></video>
-      <button onClick={handleCutImage}>cut image</button>
-    </>
-  );
+  return <video ref={videoRef} {...props}></video>;
 }
 
 async function handleCamera(video: HTMLVideoElement) {
