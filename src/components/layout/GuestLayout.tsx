@@ -2,11 +2,7 @@ import { Outlet } from "react-router-dom";
 import { GuestGuard } from "../guard/GuestGuard";
 import React from "react";
 import { styled } from "@mui/material";
-import reactLogo from "@/assets/react.svg";
-import viteLogo from "@/assets/vite.svg";
-
-const react_url = new URL(reactLogo, import.meta.url).href;
-const vite_url = new URL(viteLogo, import.meta.url).href;
+import { Logo } from "../svg/Logo";
 
 export function Component() {
   return (
@@ -16,12 +12,66 @@ export function Component() {
   );
 }
 
+const IMAGE_SIZE = 128;
+const ICON_SIZE = IMAGE_SIZE / 8;
+
 function GuestLayout(props: React.PropsWithChildren) {
+  const id = React.useId();
+  const cvsRef = React.useRef<HTMLCanvasElement>(null);
+
+  React.useEffect(() => {
+    const svg = document.getElementById(id);
+
+    if (!svg) return;
+
+    const svgData = new XMLSerializer().serializeToString(svg);
+    const svgBlob = new Blob([svgData], {
+      type: "image/svg+xml;charset=utf-8",
+    });
+    const url = URL.createObjectURL(svgBlob);
+    const img = new Image();
+    img.src = url;
+    img.width = ICON_SIZE;
+    img.height = ICON_SIZE;
+    img.onload = () => {
+      URL.revokeObjectURL(url);
+
+      const cvs = cvsRef.current;
+
+      if (!cvs) return;
+
+      const ctx = cvs.getContext("2d");
+
+      if (!ctx) return;
+
+      cvs.width = IMAGE_SIZE;
+      cvs.height = IMAGE_SIZE;
+      ctx.drawImage(
+        img,
+        0,
+        0,
+        IMAGE_SIZE,
+        IMAGE_SIZE,
+        IMAGE_SIZE / 2 - ICON_SIZE / 2,
+        IMAGE_SIZE / 2 - ICON_SIZE / 2,
+        IMAGE_SIZE,
+        IMAGE_SIZE,
+      );
+
+      img.remove();
+    };
+    document.body.append(img);
+  }, [id]);
+
   return (
     <GuestGuard>
       <Aside>
-        <img src={react_url} />
-        <img src={vite_url} />
+        <Logo
+          id={id}
+          width={ICON_SIZE}
+          height={ICON_SIZE}
+        />
+        <canvas ref={cvsRef} width={IMAGE_SIZE} height={IMAGE_SIZE}></canvas>
       </Aside>
       <Main>{props.children}</Main>
     </GuestGuard>
