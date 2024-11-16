@@ -1,8 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { GuestGuard } from "../guard/GuestGuard";
 import React from "react";
-import { styled } from "@mui/material";
-import { Logo } from "../svg/Logo";
+import { Box, styled, useTheme } from "@mui/material";
 
 export function Component() {
   return (
@@ -12,12 +11,13 @@ export function Component() {
   );
 }
 
-const IMAGE_SIZE = 128;
-const ICON_SIZE = IMAGE_SIZE / 8;
+const IMAGE_SIZE = 1024;
+const ICON_SIZE = IMAGE_SIZE * 3 / 4;
 
 function GuestLayout(props: React.PropsWithChildren) {
   const id = React.useId();
   const cvsRef = React.useRef<HTMLCanvasElement>(null);
+  const theme = useTheme();
 
   React.useEffect(() => {
     const svg = document.getElementById(id);
@@ -70,8 +70,28 @@ function GuestLayout(props: React.PropsWithChildren) {
           id={id}
           width={ICON_SIZE}
           height={ICON_SIZE}
+          bgcolor={theme.palette.primary.main}
+          display={"none"}
         />
-        <canvas ref={cvsRef} width={IMAGE_SIZE} height={IMAGE_SIZE}></canvas>
+        <Box
+          display={"flex"}
+          border="1px red solid"
+          width={IMAGE_SIZE}
+          height={IMAGE_SIZE}
+        >
+          <canvas ref={cvsRef} width={IMAGE_SIZE} height={IMAGE_SIZE}></canvas>
+        </Box>
+        <button
+          onClick={() => {
+            const link = document.createElement("a");
+            link.download = "icon.png";
+            link.href = cvsRef.current?.toDataURL("image/png", 1) || "";
+            link.click();
+            link.remove();
+          }}
+        >
+          export
+        </button>
       </Aside>
       <Main>{props.children}</Main>
     </GuestGuard>
@@ -110,3 +130,38 @@ const Main = styled("main")(({ theme }) => ({
     borderInlineStart: `1px solid ${theme.palette.divider}`,
   },
 }));
+
+function Logo(props: React.SVGProps<SVGSVGElement> & { bgcolor: string }) {
+  return (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="1em"
+      height="1em"
+      viewBox="0 0 24 24"
+      {...props}
+    >
+      <circle cx="12" cy="12" r="12" fill={props.bgcolor} />
+      <circle cx="12" cy="12" r="1" fill="#FFFFFF" />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="4"
+        ry="10"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+        fill="none"
+        transform="rotate(45 12 12)"
+      />
+      <ellipse
+        cx="12"
+        cy="12"
+        rx="4"
+        ry="10"
+        stroke="#FFFFFF"
+        strokeWidth="2"
+        fill="none"
+        transform="rotate(-45 12 12)"
+      />
+    </svg>
+  );
+}
