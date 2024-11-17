@@ -12,7 +12,7 @@ export function Component() {
 }
 
 const IMAGE_SIZE = 1024;
-const ICON_SIZE = IMAGE_SIZE * 5 / 8;
+const ICON_SIZE = IMAGE_SIZE * 1 / 2;
 
 function GuestLayout(props: React.PropsWithChildren) {
   const id = React.useId();
@@ -44,6 +44,8 @@ function GuestLayout(props: React.PropsWithChildren) {
 
       cvs.width = IMAGE_SIZE;
       cvs.height = IMAGE_SIZE;
+      ctx.fillStyle = theme.palette.primary.main;
+      ctx.fillRect(0, 0, IMAGE_SIZE, IMAGE_SIZE);
       ctx.drawImage(
         img,
         0,
@@ -59,7 +61,7 @@ function GuestLayout(props: React.PropsWithChildren) {
       img.remove();
     };
     document.body.append(img);
-  }, [id]);
+  }, [id, theme.palette.primary.main]);
 
   return (
     <GuestGuard>
@@ -73,7 +75,7 @@ function GuestLayout(props: React.PropsWithChildren) {
         />
         <Box
           display={"flex"}
-          border="1px red solid"
+          border="1px red dash"
           width={IMAGE_SIZE}
           height={IMAGE_SIZE}
         >
