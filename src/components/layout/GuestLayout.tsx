@@ -12,7 +12,7 @@ export function Component() {
 }
 
 const IMAGE_SIZE = 1024;
-const ICON_SIZE = IMAGE_SIZE * 3 / 4;
+const ICON_SIZE = IMAGE_SIZE * 5 / 8;
 
 function GuestLayout(props: React.PropsWithChildren) {
   const id = React.useId();
@@ -29,10 +29,8 @@ function GuestLayout(props: React.PropsWithChildren) {
       type: "image/svg+xml;charset=utf-8",
     });
     const url = URL.createObjectURL(svgBlob);
-    const img = new Image();
+    const img = new Image(ICON_SIZE, ICON_SIZE);
     img.src = url;
-    img.width = ICON_SIZE;
-    img.height = ICON_SIZE;
     img.onload = () => {
       URL.revokeObjectURL(url);
 
