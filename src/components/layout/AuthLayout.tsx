@@ -42,7 +42,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         Home
@@ -55,7 +55,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         dashboard
@@ -68,7 +68,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         overtime
@@ -81,7 +81,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         minesweeper
@@ -94,7 +94,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         lab
@@ -107,7 +107,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         calendar
