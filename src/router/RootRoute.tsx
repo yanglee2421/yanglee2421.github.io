@@ -7,7 +7,7 @@ import {
   useNavigation,
   useOutlet,
   useParams,
-} from "react-router-dom";
+} from "react-router";
 import { useTranslation } from "react-i18next";
 import { Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";

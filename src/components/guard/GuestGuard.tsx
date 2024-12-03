@@ -3,7 +3,7 @@ import { authReady } from "@/api/query/firebase";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { useQuery } from "@tanstack/react-query";
 import { Typography } from "@mui/material";
-import { Navigate, useSearchParams } from "react-router-dom";
+import { Navigate, useSearchParams } from "react-router";
 
 const HOMEPATH = "/";
 

@@ -9,7 +9,7 @@ import {
   styled,
   Toolbar,
 } from "@mui/material";
-import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
+import { Link as RouterLink, Outlet, useLocation } from "react-router";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";

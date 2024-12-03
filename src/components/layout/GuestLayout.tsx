@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet } from "react-router";
 import { GuestGuard } from "../guard/GuestGuard";
 import React from "react";
 import { Box, styled, useTheme } from "@mui/material";

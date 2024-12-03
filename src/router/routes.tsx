@@ -1,4 +1,4 @@
-import { createRoutesFromElements, Route } from "react-router-dom";
+import { createRoutesFromElements, Route } from "react-router";
 
 export const routes = createRoutesFromElements(
   <Route

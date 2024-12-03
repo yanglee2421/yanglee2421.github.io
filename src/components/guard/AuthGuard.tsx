@@ -3,7 +3,7 @@ import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { useQuery } from "@tanstack/react-query";
 import { authReady } from "@/api/query/firebase";
 import { Typography } from "@mui/material";
-import { Navigate, useLocation, useSearchParams } from "react-router-dom";
+import { Navigate, useLocation, useSearchParams } from "react-router";
 
 const LOGINPATH = "/login";
 

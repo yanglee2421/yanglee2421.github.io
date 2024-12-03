@@ -1,7 +1,7 @@
 import { TranslateOutlined } from "@mui/icons-material";
 import { IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
-import { useLocation, Link, useParams } from "react-router-dom";
+import { Link, useLocation, useParams } from "react-router";
 
 export function LangToggle() {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);

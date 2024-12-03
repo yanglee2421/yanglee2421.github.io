@@ -1,8 +1,5 @@
-import {
-  createBrowserRouter,
-  createHashRouter,
-  RouterProvider,
-} from "react-router-dom";
+import { createBrowserRouter, createHashRouter } from "react-router";
+import { RouterProvider } from "react-router/dom";
 import { QueryProvider } from "@/components/QueryProvider";
 import { routes } from "@/router/routes";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";

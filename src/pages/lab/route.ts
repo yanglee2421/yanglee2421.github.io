@@ -1,4 +1,4 @@
-import { type ActionFunction, type LoaderFunctionArgs } from "react-router-dom";
+import { type ActionFunction, type LoaderFunctionArgs } from "react-router";
 export { Lab as Component } from "./Lab";
 
 export async function loader(args: LoaderFunctionArgs) {
