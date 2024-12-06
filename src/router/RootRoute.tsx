@@ -9,7 +9,7 @@ import {
   useParams,
 } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Typography } from "@mui/material";
+import { Box, CircularProgress, Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 
 const LANGS = new Set(["en", "zh"]);
@@ -47,10 +47,36 @@ export function RootRoute() {
   }, [navigation.state]);
 
   if (!hasHydrated) {
-    return <Typography sx={{ textAlign: "center" }}>Loading...</Typography>;
+    return;
   }
 
-  return <Outlet />;
+  return (
+    <React.Suspense
+      fallback={
+        <Box
+          sx={{
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+            flexDirection: "column",
+            gap: 6,
+
+            position: "fixed",
+            inset: 0,
+            zIndex(theme) {
+              return theme.zIndex.modal;
+            },
+          }}
+        >
+          <CircularProgress />
+          <Typography>Loading...</Typography>
+        </Box>
+      }
+    >
+      <Outlet />
+      <ScrollRestoration />
+    </React.Suspense>
+  );
 }
 
 function Outlet() {
@@ -81,10 +107,5 @@ function Outlet() {
     );
   }
 
-  return (
-    <>
-      <ScrollRestoration />
-      {outlet}
-    </>
-  );
+  return outlet;
 }

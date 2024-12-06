@@ -1,19 +1,13 @@
 import React from "react";
-import { authReady } from "@/api/query/firebase";
+import { authReady } from "@/api/firebase/app";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useQuery } from "@tanstack/react-query";
-import { Typography } from "@mui/material";
 import { Navigate, useSearchParams } from "react-router";
 
 const HOMEPATH = "/";
 
 export function GuestGuard(props: React.PropsWithChildren) {
   const currentUser = useCurrentUser();
-  const query = useQuery(authReady);
-
-  if (query.isPending) {
-    return <Typography sx={{ textAlign: "center" }}>Loading...</Typography>;
-  }
+  React.use(authReady);
 
   if (!currentUser) {
     return props.children;

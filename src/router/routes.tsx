@@ -1,60 +1,71 @@
-import { createRoutesFromElements, Route } from "react-router";
+import { RouteObject } from "react-router";
 
-export const routes = createRoutesFromElements(
-  <Route
-    id="root"
-    path=":lang?"
-    lazy={async () => {
-      const { RootRoute } = await import("./RootRoute");
+export const routes: RouteObject[] = [{
+  id: "root",
+  path: ":lang?",
+  async lazy() {
+    const { RootRoute } = await import("./RootRoute");
 
-      return {
-        Component: RootRoute,
-      };
-    }}
-  >
-    <Route id="404" path="*" lazy={() => import("@/pages/not-fount/route")} />
-
-    {/* Guest Pages */}
-    <Route
-      id="guest_layout"
-      lazy={() => import("@/components/layout/GuestLayout")}
-    >
-      <Route
-        id="login"
-        path="login"
-        lazy={() => import("@/pages/login/route")}
-      />
-    </Route>
-
-    {/* Auth Pages */}
-    <Route
-      id="auth_layout"
-      lazy={() => import("@/components/layout/AuthLayout")}
-    >
-      <Route id="home" index lazy={() => import("@/pages/home/route")} />
-      <Route
-        id="dashboard"
-        path="dashboard"
-        lazy={() => import("@/pages/dashboard/route")}
-      />
-      <Route
-        id="overtime"
-        path="overtime"
-        lazy={() => import("@/pages/overtime/route")}
-      />
-      <Route
-        id="minesweeper"
-        path="minesweeper"
-        lazy={() => import("@/pages/minesweeper/route")}
-      />
-      <Route id="lab" path="lab" lazy={() => import("@/pages/lab/route")} />
-      <Route
-        id="calendar"
-        path="calendar"
-        lazy={() => import("@/pages/calendar/Component")}
-      />
-    </Route>
-
-    {/* No */}
-  </Route>,
-);
+    return {
+      Component: RootRoute,
+    };
+  },
+  children: [
+    {
+      id: "404",
+      path: "*",
+      lazy() {
+        return import("@/pages/not-fount/route");
+      },
+    },
+    {
+      id: "guest_layout",
+      lazy() {
+        return import("@/components/layout/GuestLayout");
+      },
+      children: [
+        {
+          id: "login",
+          path: "login",
+          lazy: () => import("@/pages/login/route"),
+        },
+      ],
+    },
+    {
+      id: "auth_layout",
+      lazy: () => import("@/components/layout/AuthLayout"),
+      children: [
+        {
+          id: "home",
+          index: true,
+          lazy: () => import("@/pages/home/route"),
+        },
+        {
+          id: "dashboard",
+          path: "dashboard",
+          lazy: () => import("@/pages/dashboard/route"),
+        },
+        {
+          id: "overtime",
+          path: "overtime",
+          lazy: () => import("@/pages/overtime/route"),
+        },
+        {
+          id: "minesweeper",
+          path: "minesweeper",
+          lazy: () => import("@/pages/minesweeper/route"),
+        },
+        {
+          id: "lab",
+          path: "lab",
+          lazy: () => import("@/pages/lab/route"),
+        },
+        {
+          id: "calendar",
+          path: "calendar",
+          lazy: () => import("@/pages/calendar/Component"),
+        },
+      ],
+    },
+  ],
+}];
