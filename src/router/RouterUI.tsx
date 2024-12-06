@@ -1,7 +1,11 @@
 import NProgress from "nprogress";
 import React from "react";
 import {
+  createBrowserRouter,
+  createHashRouter,
   Navigate,
+  RouteObject,
+  RouterProvider,
   ScrollRestoration,
   useLocation,
   useNavigation,
@@ -11,6 +15,86 @@ import {
 import { useTranslation } from "react-i18next";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
+
+// #region Routes
+
+const routes: RouteObject[] = [{
+  id: "root",
+  path: ":lang?",
+  Component: RootRoute,
+  children: [
+    {
+      id: "404",
+      path: "*",
+      lazy() {
+        return import("@/pages/not-fount/route");
+      },
+    },
+    {
+      id: "guest_layout",
+      lazy() {
+        return import("@/components/layout/GuestLayout");
+      },
+      children: [
+        {
+          id: "login",
+          path: "login",
+          lazy: () => import("@/pages/login/route"),
+        },
+      ],
+    },
+    {
+      id: "auth_layout",
+      lazy: () => import("@/components/layout/AuthLayout"),
+      children: [
+        {
+          id: "home",
+          index: true,
+          lazy: () => import("@/pages/home/route"),
+        },
+        {
+          id: "dashboard",
+          path: "dashboard",
+          lazy: () => import("@/pages/dashboard/route"),
+        },
+        {
+          id: "overtime",
+          path: "overtime",
+          lazy: () => import("@/pages/overtime/route"),
+        },
+        {
+          id: "minesweeper",
+          path: "minesweeper",
+          lazy: () => import("@/pages/minesweeper/route"),
+        },
+        {
+          id: "lab",
+          path: "lab",
+          lazy: () => import("@/pages/lab/route"),
+        },
+        {
+          id: "calendar",
+          path: "calendar",
+          lazy: () => import("@/pages/calendar/Component"),
+        },
+      ],
+    },
+  ],
+}];
+
+// #endregion
+
+// #region Router UI
+
+const router = import.meta.env.PROD
+  ? createHashRouter(routes)
+  : createBrowserRouter(routes);
+
+export const RouterUI = () => <RouterProvider router={router} />;
+
+// #endregion
+
+// #region Root Route
 
 const LANGS = new Set(["en", "zh"]);
 const FALLBACK_LANG = "en";
@@ -26,7 +110,7 @@ const getMatchedLang = (path = "", state: string) => {
   return FALLBACK_LANG;
 };
 
-export function RootRoute() {
+function RootRoute() {
   const navigation = useNavigation();
   const hasHydrated = React.useSyncExternalStore(
     (onStoreChange) => useLocaleStore.persist.onFinishHydration(onStoreChange),
@@ -109,3 +193,5 @@ function Outlet() {
 
   return outlet;
 }
+
+// #endregion
