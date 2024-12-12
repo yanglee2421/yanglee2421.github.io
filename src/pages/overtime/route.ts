@@ -1,4 +1,4 @@
-import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router-dom";
+import { ActionFunctionArgs, LoaderFunctionArgs } from "react-router";
 import { queryClient } from "@/lib/queryClient";
 import { getOptions } from "./queryOvertime";
 export { Overtime as Component } from "./Overtime";

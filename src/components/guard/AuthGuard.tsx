@@ -1,19 +1,13 @@
 import React from "react";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useQuery } from "@tanstack/react-query";
-import { authReady } from "@/api/query/firebase";
-import { Typography } from "@mui/material";
-import { Navigate, useLocation, useSearchParams } from "react-router-dom";
+import { authReady } from "@/api/firebase/app";
+import { Navigate, useLocation, useSearchParams } from "react-router";
 
 const LOGINPATH = "/login";
 
 export function AuthGuard(props: React.PropsWithChildren) {
   const currentUser = useCurrentUser();
-  const query = useQuery(authReady);
-
-  if (query.isPending) {
-    return <Typography sx={{ textAlign: "center" }}>Loading...</Typography>;
-  }
+  React.use(authReady);
 
   if (!currentUser) {
     return <NavigateToLogin />;

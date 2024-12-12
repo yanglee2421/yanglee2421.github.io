@@ -9,11 +9,10 @@ import {
   styled,
   Toolbar,
 } from "@mui/material";
-import { Link as RouterLink, Outlet, useLocation } from "react-router-dom";
+import { Link as RouterLink, Outlet, useLocation } from "react-router";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";
-import { AuthGuard } from "@/components/guard/AuthGuard";
 import { UserDropdown } from "../shared/UserDropdonw";
 import React from "react";
 import { Materio } from "../svg/Materio";
@@ -42,7 +41,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         Home
@@ -55,7 +54,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         dashboard
@@ -68,7 +67,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         overtime
@@ -81,7 +80,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         minesweeper
@@ -94,7 +93,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         lab
@@ -107,7 +106,7 @@ function NavMenu() {
           inlineSize: "100%",
           paddingInline: 5,
           paddingBlock: 2,
-          fontSize: t.typography.h6.fontSize,
+          fontSize: t.typography.body1.fontSize,
         })}
       >
         calendar
@@ -125,7 +124,7 @@ function AuthLayout(props: Props) {
   const [showMenuInMobile, update] = React.useState(false);
 
   return (
-    <AuthGuard>
+    <>
       <AppBar
         elevation={0}
         sx={(theme) => ({
@@ -172,7 +171,7 @@ function AuthLayout(props: Props) {
           </Link>
         </Footer>
       </MainWrapper>
-    </AuthGuard>
+    </>
   );
 }
 

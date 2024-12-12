@@ -65,6 +65,7 @@ export default defineConfig(() => {
       cssTarget: ["es2020", "edge88", "firefox78", "chrome87", "safari14"],
       cssMinify: "esbuild",
       cssCodeSplit: true,
+      // lib: { cssFileName: "style.css" },
 
       manifest: false,
       sourcemap: false,
