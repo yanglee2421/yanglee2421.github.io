@@ -67,17 +67,20 @@ const routes: RouteObject[] = [{
           path: "minesweeper",
           lazy: () => import("@/pages/minesweeper/route"),
         },
-        {
-          id: "lab",
-          path: "lab",
-          lazy: () => import("@/pages/lab/route"),
-        },
-        {
-          id: "calendar",
-          path: "calendar",
-          lazy: () => import("@/pages/calendar/Component"),
-        },
       ],
+    },
+    {
+      id: "blank_layout",
+      lazy: () => import("@/components/layout/BlankLayout"),
+      children: [{
+        id: "lab",
+        path: "lab",
+        lazy: () => import("@/pages/lab/route"),
+      }, {
+        id: "calendar",
+        path: "calendar",
+        lazy: () => import("@/pages/calendar/Component"),
+      }],
     },
   ],
 }];

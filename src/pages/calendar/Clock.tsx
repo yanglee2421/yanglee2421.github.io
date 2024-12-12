@@ -1,8 +1,17 @@
-import { CardHeader } from "@mui/material";
+import {
+  NavigateBeforeOutlined,
+  NavigateNextOutlined,
+} from "@mui/icons-material";
+import { CardHeader, IconButton } from "@mui/material";
 import React from "react";
 import { useTranslation } from "react-i18next";
 
-export function Clock() {
+type Props = {
+  onBeforeClick?(): void;
+  onNextClick?(): void;
+};
+
+export function Clock(props: Props) {
   const { i18n } = useTranslation();
   const [date, setDate] = React.useState(() => new Date().toDateString());
   const [time, setTime] = React.useState(() => new Date().toLocaleTimeString());
@@ -40,7 +49,16 @@ export function Clock() {
           <time className="text-sm">{weekday}</time>
         </>
       }
-    >
-    </CardHeader>
+      action={
+        <>
+          <IconButton onClick={props.onBeforeClick}>
+            <NavigateBeforeOutlined />
+          </IconButton>
+          <IconButton onClick={props.onNextClick}>
+            <NavigateNextOutlined />
+          </IconButton>
+        </>
+      }
+    />
   );
 }

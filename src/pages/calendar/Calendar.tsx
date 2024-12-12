@@ -3,9 +3,11 @@ import { useTranslation } from "react-i18next";
 import { timeToCalendar } from "@/utils/timeToCalendar";
 import { Clock } from "./Clock";
 import {
+  Badge,
   Card,
   CardContent,
   Grid2,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -13,35 +15,99 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { chunk } from "@yotulee/run";
+import { chunk, minmax } from "@yotulee/run";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 
+const inRange = (num: number, min: number, max: number) =>
+  Object.is(num, minmax(num, { min, max }));
+
+const renderBadgeContent = (
+  date: Date,
+  start?: Date,
+  end?: Date,
+) => {
+  if (!start) {
+    return;
+  }
+
+  const time = date.getTime();
+  const minTime = start.getTime();
+  const maxTime = end ? end.getTime() : Number.POSITIVE_INFINITY;
+
+  if (!inRange(time, minTime, maxTime)) {
+    return;
+  }
+
+  return (time - minTime) / (1000 * 60 * 60 * 24) + 1;
+};
+
 export function Calendar() {
-  const [selectedTime, setSelectedTime] = React.useState(() => Date.now());
+  const [selectedTime, setSelectedTime] = React.useState(
+    () => dayjs(new Date().toDateString()),
+  );
   const { i18n } = useTranslation();
-  const calendar = timeToCalendar(selectedTime).map((i) => new Date(i));
+  const calendar = timeToCalendar(selectedTime.toDate().getTime()).map((i) =>
+    new Date(i)
+  );
+  const [startDate, setStartDate] = React.useState<dayjs.Dayjs | null>(null);
+  const [endDate, setEndDate] = React.useState<dayjs.Dayjs | null>(null);
 
   return (
     <Card>
-      <Clock />
+      <Clock
+        onBeforeClick={() => {
+          setSelectedTime((p) => {
+            const date = p.toDate();
+            date.setMonth(date.getMonth() - 1);
+
+            return dayjs(date);
+          });
+        }}
+        onNextClick={() => {
+          setSelectedTime((p) => {
+            const date = p.toDate();
+            date.setMonth(date.getMonth() + 1);
+
+            return dayjs(date);
+          });
+        }}
+      />
       <CardContent>
         <Grid2 container spacing={6}>
           <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
             <DatePicker
-              value={dayjs(selectedTime)}
+              value={selectedTime}
               onChange={(e) => {
-                console.log(e);
                 if (!e) {
                   return;
                 }
 
-                setSelectedTime(e.toDate().getTime());
+                setSelectedTime(e);
               }}
               slotProps={{
-                textField: { fullWidth: true },
+                textField: { fullWidth: true, label: "Month" },
               }}
               views={["month", "year"]}
+            />
+          </Grid2>
+          <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+            <DatePicker
+              value={startDate}
+              onChange={setStartDate}
+              slotProps={{
+                textField: { fullWidth: true, label: "Start Date" },
+              }}
+            />
+          </Grid2>
+          <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+            <DatePicker
+              value={endDate}
+              onChange={setEndDate}
+              slotProps={{
+                textField: { fullWidth: true, label: "End Date" },
+                field: { clearable: true },
+              }}
             />
           </Grid2>
         </Grid2>
@@ -65,7 +131,18 @@ export function Calendar() {
                 <TableRow key={idx}>
                   {row.map((cell) => (
                     <TableCell key={cell.toLocaleDateString()}>
-                      {cell.getDate()}
+                      <Badge
+                        badgeContent={renderBadgeContent(
+                          cell,
+                          startDate?.toDate(),
+                          endDate?.toDate(),
+                        )}
+                        color="primary"
+                      >
+                        <IconButton size="small">
+                          {cell.getDate()}
+                        </IconButton>
+                      </Badge>
                     </TableCell>
                   ))}
                 </TableRow>
