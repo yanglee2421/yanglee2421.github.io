@@ -13,7 +13,6 @@ import { Link as RouterLink, Outlet, useLocation } from "react-router";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";
-import { AuthGuard } from "@/components/guard/AuthGuard";
 import { UserDropdown } from "../shared/UserDropdonw";
 import React from "react";
 import { Materio } from "../svg/Materio";
@@ -125,7 +124,7 @@ function AuthLayout(props: Props) {
   const [showMenuInMobile, update] = React.useState(false);
 
   return (
-    <AuthGuard>
+    <>
       <AppBar
         elevation={0}
         sx={(theme) => ({
@@ -172,7 +171,7 @@ function AuthLayout(props: Props) {
           </Link>
         </Footer>
       </MainWrapper>
-    </AuthGuard>
+    </>
   );
 }
 

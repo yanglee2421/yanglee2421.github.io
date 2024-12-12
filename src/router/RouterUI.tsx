@@ -4,17 +4,18 @@ import {
   createBrowserRouter,
   createHashRouter,
   Navigate,
+  Outlet,
   RouteObject,
   RouterProvider,
   ScrollRestoration,
   useLocation,
   useNavigation,
-  useOutlet,
   useParams,
 } from "react-router";
 import { useTranslation } from "react-i18next";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
+import { ThemeProvider } from "@/components/theme/ThemeProvider";
 
 // #region Routes
 
@@ -71,7 +72,7 @@ const routes: RouteObject[] = [{
     },
     {
       id: "blank_layout",
-      lazy: () => import("@/components/layout/BlankLayout"),
+      lazy: () => import("@/components/layout/AuthLayout"),
       children: [{
         id: "lab",
         path: "lab",
@@ -160,14 +161,15 @@ function RootRoute() {
         </Box>
       }
     >
-      <Outlet />
+      <ThemeProvider>
+        <RootOutlet />
+      </ThemeProvider>
       <ScrollRestoration />
     </React.Suspense>
   );
 }
 
-function Outlet() {
-  const outlet = useOutlet();
+function RootOutlet() {
   const params = useParams();
   const location = useLocation();
   const { i18n } = useTranslation();
@@ -194,7 +196,7 @@ function Outlet() {
     );
   }
 
-  return outlet;
+  return <Outlet />;
 }
 
 // #endregion

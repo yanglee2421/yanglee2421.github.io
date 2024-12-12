@@ -9,6 +9,9 @@ import React from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { type Mode, useLocaleStore } from "@/hooks/store/useLocaleStore";
+import "dayjs/locale/zh";
+import "dayjs/locale/en";
+import { useParams } from "react-router";
 
 const WHITE = "#fff";
 
@@ -102,10 +105,14 @@ export function ThemeProvider(props: React.PropsWithChildren) {
   const isDark = useIsDark();
   const mode = useLocaleStore((s) => s.mode);
   const theme = modeToHasSelector(mode, isDark) ? darkTheme : lightTheme;
+  const params = useParams();
 
   return (
     <MuiThemeProvider theme={theme}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider
+        dateAdapter={AdapterDayjs}
+        adapterLocale={params.lang}
+      >
         {props.children}
       </LocalizationProvider>
       <CssBaseline />
