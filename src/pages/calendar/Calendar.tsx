@@ -1,11 +1,11 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
 import { timeToCalendar } from "@/utils/timeToCalendar";
-import { Clock } from "./Clock";
 import {
   Badge,
   Card,
   CardContent,
+  CardHeader,
   Grid2,
   IconButton,
   Table,
@@ -18,6 +18,13 @@ import {
 import { chunk, minmax } from "@yotulee/run";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
+import { useParams } from "react-router";
+import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
+import {
+  NavigateBeforeOutlined,
+  NavigateNextOutlined,
+} from "@mui/icons-material";
 
 const inRange = (num: number, min: number, max: number) =>
   Object.is(num, minmax(num, { min, max }));
@@ -52,26 +59,45 @@ export function Calendar() {
   );
   const [startDate, setStartDate] = React.useState<dayjs.Dayjs | null>(null);
   const [endDate, setEndDate] = React.useState<dayjs.Dayjs | null>(null);
+  const params = useParams();
+  const date = useLocaleDate(params.lang);
+  const time = useLocaleTime(params.lang);
+
+  console.log(calendar);
 
   return (
     <Card>
-      <Clock
-        onBeforeClick={() => {
-          setSelectedTime((p) => {
-            const date = p.toDate();
-            date.setMonth(date.getMonth() - 1);
+      <CardHeader
+        title={time}
+        subheader={date}
+        action={
+          <>
+            <IconButton
+              onClick={() => {
+                setSelectedTime((p) => {
+                  const date = p.toDate();
+                  date.setMonth(date.getMonth() - 1);
 
-            return dayjs(date);
-          });
-        }}
-        onNextClick={() => {
-          setSelectedTime((p) => {
-            const date = p.toDate();
-            date.setMonth(date.getMonth() + 1);
+                  return dayjs(date);
+                });
+              }}
+            >
+              <NavigateBeforeOutlined />
+            </IconButton>
+            <IconButton
+              onClick={() => {
+                setSelectedTime((p) => {
+                  const date = p.toDate();
+                  date.setMonth(date.getMonth() + 1);
 
-            return dayjs(date);
-          });
-        }}
+                  return dayjs(date);
+                });
+              }}
+            >
+              <NavigateNextOutlined />
+            </IconButton>
+          </>
+        }
       />
       <CardContent>
         <Grid2 container spacing={6}>
@@ -79,11 +105,7 @@ export function Calendar() {
             <DatePicker
               value={selectedTime}
               onChange={(e) => {
-                if (!e) {
-                  return;
-                }
-
-                setSelectedTime(e);
+                void [e?.isValid() && setSelectedTime(e)];
               }}
               slotProps={{
                 textField: { fullWidth: true, label: "Month" },
