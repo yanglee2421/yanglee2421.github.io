@@ -90,8 +90,8 @@ importers:
         specifier: ^1.24.0
         version: 1.24.0
       use-immer:
-        specifier: ^0.10.0
-        version: 0.10.0(immer@10.1.1)(react@19.0.0)
+        specifier: ^0.11.0
+        version: 0.11.0(immer@10.1.1)(react@19.0.0)
       zod:
         specifier: ^3.23.8
         version: 3.23.8
@@ -2136,11 +2136,11 @@ packages:
   uri-js@4.4.1:
     resolution: {integrity: sha512-7rKUyy33Q1yc98pQ1DAmLtwX109F7TIfWlW1Ydo8Wl1ii1SeHieeh0HHfPeL2fMXK6z0s8ecKs9frCuLJvndBg==}
 
-  use-immer@0.10.0:
-    resolution: {integrity: sha512-/eVwNR4TG9Tm/dd+aHYLLaI0FLfYKlkTqKMkn78Ah/EYVzWd/zJIgpkdoFEKbhQJOGo8XN7/mWrTx0exp1c+Ug==}
+  use-immer@0.11.0:
+    resolution: {integrity: sha512-RNAqi3GqsWJ4bcCd4LMBgdzvPmTABam24DUaFiKfX9s3MSorNRz9RDZYJkllJoMHUxVLMDetwAuCDeyWNrp1yA==}
     peerDependencies:
       immer: '>=8.0.0'
-      react: ^16.8.0 || ^17.0.1 || ^18.0.0
+      react: ^16.8.0 || ^17.0.1 || ^18.0.0 || ^19.0.0
 
   vfile-message@4.0.2:
     resolution: {integrity: sha512-jRDZ1IMLttGj41KcZvlrYAaI3CfqpLpfpf+Mfig13viT6NKvRzWZ+lXz0Y5D60w6uJIBAOGq9mSHf0gktF0duw==}
@@ -4350,7 +4350,7 @@ snapshots:
     dependencies:
       punycode: 2.3.1
 
-  use-immer@0.10.0(immer@10.1.1)(react@19.0.0):
+  use-immer@0.11.0(immer@10.1.1)(react@19.0.0):
     dependencies:
       immer: 10.1.1
       react: 19.0.0
