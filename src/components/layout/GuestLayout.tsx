@@ -1,6 +1,7 @@
 import { Outlet } from "react-router";
 import React from "react";
 import { Box, styled, useTheme } from "@mui/material";
+import { GuestGuard } from "../guard/GuestGuard";
 
 export function Component() {
   return (
@@ -63,7 +64,7 @@ function GuestLayout(props: React.PropsWithChildren) {
   }, [id, theme.palette.primary.main]);
 
   return (
-    <>
+    <GuestGuard>
       <Aside>
         <Logo
           id={id}
@@ -93,7 +94,7 @@ function GuestLayout(props: React.PropsWithChildren) {
         </button>
       </Aside>
       <Main>{props.children}</Main>
-    </>
+    </GuestGuard>
   );
 }
 

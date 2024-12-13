@@ -2,29 +2,26 @@ import { useOnlineStatus } from "@/hooks/dom/useOnlineStatus";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { PersonOutlined, SettingsOutlined } from "@mui/icons-material";
 import {
-  Badge,
   Avatar,
-  Menu,
-  MenuItem,
+  Badge,
+  Box,
   Button,
+  Divider,
   ListItemIcon,
   ListItemText,
-  Box,
-  Divider,
+  Menu,
+  MenuItem,
 } from "@mui/material";
 import React from "react";
 import { Translation } from "react-i18next";
 import { signOut } from "firebase/auth";
 import { auth } from "@/api/firebase/app";
+import { Link } from "react-router";
 
 export function UserDropdown() {
   const user = useCurrentUser();
   const isOnline = useOnlineStatus();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
-
-  if (!user) {
-    return null;
-  }
 
   const handleClose = () => {
     setAnchor(null);
@@ -42,8 +39,8 @@ export function UserDropdown() {
         anchorOrigin={{ horizontal: "right", vertical: "bottom" }}
         sx={{ cursor: "pointer" }}
       >
-        <Avatar src={user.photoURL || ""}>
-          {user.displayName?.substring(0, 1)}
+        <Avatar src={user?.photoURL || ""}>
+          {user?.displayName?.substring(0, 1) || "?"}
         </Avatar>
       </Badge>
       <Menu
@@ -56,21 +53,6 @@ export function UserDropdown() {
           },
         }}
       >
-        <MenuItem>
-          <ListItemIcon>
-            <PersonOutlined />
-          </ListItemIcon>
-          <ListItemText
-            primaryTypographyProps={{
-              textTransform: "capitalize",
-            }}
-            primary={
-              <Translation ns="/layout/userdropdown">
-                {(t) => t("profile")}
-              </Translation>
-            }
-          />
-        </MenuItem>
         <MenuItem>
           <ListItemIcon>
             <SettingsOutlined />
@@ -86,20 +68,58 @@ export function UserDropdown() {
             }
           />
         </MenuItem>
-        <Divider />
-        <Box sx={{ paddingInline: 3, paddingBlock: 3 }}>
-          <Button
-            onClick={() => {
-              signOut(auth);
-            }}
-            size="small"
-            fullWidth
-            variant="contained"
-            color="error"
-          >
-            signout
-          </Button>
-        </Box>
+        {user
+          ? (
+            <>
+              <MenuItem>
+                <ListItemIcon>
+                  <PersonOutlined />
+                </ListItemIcon>
+                <ListItemText
+                  primaryTypographyProps={{
+                    textTransform: "capitalize",
+                  }}
+                  primary={
+                    <Translation ns="/layout/userdropdown">
+                      {(t) => t("profile")}
+                    </Translation>
+                  }
+                />
+              </MenuItem>
+              <Divider />
+              <Box sx={{ paddingInline: 3, paddingBlock: 3 }}>
+                <Button
+                  onClick={() => {
+                    signOut(auth);
+                    handleClose();
+                  }}
+                  size="small"
+                  fullWidth
+                  variant="contained"
+                  color="error"
+                >
+                  signout
+                </Button>
+              </Box>
+            </>
+          )
+          : (
+            <>
+              <Divider />
+              <Box sx={{ paddingInline: 3, paddingBlock: 3 }}>
+                <Button
+                  to="/login"
+                  component={Link}
+                  size="small"
+                  fullWidth
+                  variant="contained"
+                  color="info"
+                >
+                  Sign In
+                </Button>
+              </Box>
+            </>
+          )}
       </Menu>
     </>
   );

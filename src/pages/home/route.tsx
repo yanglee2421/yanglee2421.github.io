@@ -1,21 +1,42 @@
-import { Typography } from "@mui/material";
-import { ReactLogo } from "@/components/svg/ReactLogo";
-import { Google } from "@/components/svg/Google";
-import { Github } from "@/components/svg/Github";
+import { hightlighter } from "@/lib/hightlighter";
+import readme from "@/data/markdown.md?raw";
+import React from "react";
+import { useLocaleStore } from "@/hooks/store/useLocaleStore";
+import { useIsDark } from "@/hooks/dom/useIsDark";
+import { styled } from "@mui/material";
+
+const toIsDark = (mode: "dark" | "light" | "system", inDark: boolean) => {
+  switch (mode) {
+    case "dark":
+      return true;
+    case "light":
+      return false;
+    case "system":
+    default:
+      return inDark;
+  }
+};
+
+const PreWrapper = styled("div")({
+  "& code": {
+    fontFamily: "Consolas, 'Courier New', monospace",
+    fontSize: 20,
+  },
+});
 
 export function Component() {
+  const hl = React.use(hightlighter);
+  const mode = useLocaleStore((s) => s.mode);
+  const isDark = useIsDark();
+
   return (
-    <>
-      <Typography variant="h4">Home</Typography>
-      <Typography>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Repellendus
-        suscipit placeat dolores quos rem eaque assumenda molestias quibusdam
-        odio quasi repudiandae, tenetur ipsa facilis perferendis, provident
-        expedita. Expedita, itaque recusandae.
-      </Typography>
-      <Github />
-      <Google />
-      <ReactLogo />
-    </>
+    <PreWrapper
+      dangerouslySetInnerHTML={{
+        __html: hl.codeToHtml(readme, {
+          lang: "markdown",
+          theme: toIsDark(mode, isDark) ? "dark-plus" : "light-plus",
+        }),
+      }}
+    />
   );
 }

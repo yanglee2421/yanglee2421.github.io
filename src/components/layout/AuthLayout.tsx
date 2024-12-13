@@ -2,17 +2,33 @@ import {
   alpha,
   AppBar,
   Box,
-  ButtonBase,
   Icon,
   IconButton,
   Link,
   styled,
   Toolbar,
+  Typography,
 } from "@mui/material";
-import { Link as RouterLink, Outlet, useLocation } from "react-router";
+import {
+  Link as RouterLink,
+  NavLink,
+  Outlet,
+  useLocation,
+  useParams,
+} from "react-router";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
-import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";
+import {
+  CalendarMonthOutlined,
+  CalendarTodayOutlined,
+  ChevronRightOutlined,
+  CloseOutlined,
+  DashboardOutlined,
+  GitHub,
+  MenuOutlined,
+  ScienceOutlined,
+  SportsEsportsOutlined,
+} from "@mui/icons-material";
 import { UserDropdown } from "../shared/UserDropdonw";
 import React from "react";
 import { Materio } from "../svg/Materio";
@@ -30,89 +46,77 @@ export function Component() {
   );
 }
 
+const LinkWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(2),
+
+  "& a": {
+    textDecoration: "none",
+    color: theme.palette.text.primary,
+
+    display: "flex",
+    gap: theme.spacing(3),
+    alignItem: "center",
+
+    padding: theme.spacing(5),
+
+    [theme.breakpoints.up("sm")]: {
+      paddingInline: theme.spacing(3),
+      paddingBlock: theme.spacing(3),
+    },
+  },
+  "& a:hover": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "& a[aria-current=page]": {
+    color: theme.palette.primary.main,
+    backgroundColor: alpha(
+      theme.palette.primary.main,
+      theme.palette.action.activatedOpacity,
+    ),
+  },
+}));
+
+const list = [
+  {
+    to: "/dashboard",
+    label: "Dashboard",
+    icon: <DashboardOutlined color="inherit" />,
+  },
+  {
+    to: "/calendar",
+    label: "Calendar",
+    icon: <CalendarTodayOutlined />,
+  },
+  { to: "/overtime", label: "Overtime", icon: <CalendarMonthOutlined /> },
+  {
+    to: "/minesweeper",
+    label: "Minesweeper",
+    icon: <SportsEsportsOutlined />,
+  },
+  {
+    to: "/lab",
+    label: "Lab",
+    icon: <ScienceOutlined />,
+  },
+];
+
 function NavMenu() {
+  const params = useParams();
+
   return (
-    <>
-      <ButtonBase
-        component={RouterLink}
-        to="/"
-        sx={(t) => ({
-          display: "block",
-          inlineSize: "100%",
-          paddingInline: 5,
-          paddingBlock: 2,
-          fontSize: t.typography.body1.fontSize,
-        })}
-      >
-        Home
-      </ButtonBase>
-      <ButtonBase
-        component={RouterLink}
-        to="/dashboard"
-        sx={(t) => ({
-          display: "block",
-          inlineSize: "100%",
-          paddingInline: 5,
-          paddingBlock: 2,
-          fontSize: t.typography.body1.fontSize,
-        })}
-      >
-        dashboard
-      </ButtonBase>
-      <ButtonBase
-        component={RouterLink}
-        to="/overtime"
-        sx={(t) => ({
-          display: "block",
-          inlineSize: "100%",
-          paddingInline: 5,
-          paddingBlock: 2,
-          fontSize: t.typography.body1.fontSize,
-        })}
-      >
-        overtime
-      </ButtonBase>
-      <ButtonBase
-        component={RouterLink}
-        to="/minesweeper"
-        sx={(t) => ({
-          display: "block",
-          inlineSize: "100%",
-          paddingInline: 5,
-          paddingBlock: 2,
-          fontSize: t.typography.body1.fontSize,
-        })}
-      >
-        minesweeper
-      </ButtonBase>
-      <ButtonBase
-        component={RouterLink}
-        to="/lab"
-        sx={(t) => ({
-          display: "block",
-          inlineSize: "100%",
-          paddingInline: 5,
-          paddingBlock: 2,
-          fontSize: t.typography.body1.fontSize,
-        })}
-      >
-        lab
-      </ButtonBase>
-      <ButtonBase
-        component={RouterLink}
-        to="/calendar"
-        sx={(t) => ({
-          display: "block",
-          inlineSize: "100%",
-          paddingInline: 5,
-          paddingBlock: 2,
-          fontSize: t.typography.body1.fontSize,
-        })}
-      >
-        calendar
-      </ButtonBase>
-      <Box height={1000}></Box>
-    </>
+    <LinkWrapper>
+      {list.map((i) => (
+        <NavLink key={i.to} to={`/${params.lang + i.to}`} end>
+          {i.icon}
+          <Typography variant="body1" component="span" sx={{ fontWeight: 300 }}>
+            {i.label}
+          </Typography>
+          <ChevronRightOutlined sx={{ marginInlineStart: "auto" }} />
+        </NavLink>
+      ))}
+    </LinkWrapper>
   );
 }
 
@@ -194,7 +198,7 @@ const Aside = styled("aside")(({ theme }) => ({
 }));
 
 const Nav = styled("nav")(({ theme }) => ({
-  maxBlockSize: "100%",
+  blockSize: "100%",
 
   overflow: "auto",
   borderInlineEnd: `1px solid ${theme.palette.divider}`,
