@@ -117,6 +117,7 @@ export function Calendar() {
             <DatePicker
               value={startDate}
               onChange={setStartDate}
+              maxDate={endDate || void 0}
               slotProps={{
                 textField: { fullWidth: true, label: "Start Date" },
               }}
@@ -126,6 +127,7 @@ export function Calendar() {
             <DatePicker
               value={endDate}
               onChange={setEndDate}
+              minDate={startDate || void 0}
               slotProps={{
                 textField: { fullWidth: true, label: "End Date" },
                 field: { clearable: true },
