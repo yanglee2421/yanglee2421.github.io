@@ -63,8 +63,6 @@ export function Calendar() {
   const date = useLocaleDate(params.lang);
   const time = useLocaleTime(params.lang);
 
-  console.log(calendar);
-
   return (
     <Card>
       <CardHeader

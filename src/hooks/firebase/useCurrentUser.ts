@@ -1,9 +1,11 @@
 import React from "react";
-import { auth } from "@/api/firebase/app";
+import { auth, authReady } from "@/api/firebase/app";
 
-export const useCurrentUser = () =>
-  React.useSyncExternalStore(
+export const useCurrentUser = () => {
+  React.use(authReady);
+  return React.useSyncExternalStore(
     (onStateChange) => auth.onIdTokenChanged(onStateChange),
     () => auth.currentUser,
     () => null,
   );
+};

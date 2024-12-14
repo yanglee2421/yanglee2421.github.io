@@ -1,20 +1,10 @@
-import { Outlet } from "react-router";
 import React from "react";
 import { Box, styled, useTheme } from "@mui/material";
-import { GuestGuard } from "../guard/GuestGuard";
-
-export function Component() {
-  return (
-    <GuestLayout>
-      <Outlet />
-    </GuestLayout>
-  );
-}
 
 const IMAGE_SIZE = 1024;
 const ICON_SIZE = IMAGE_SIZE * 1 / 2;
 
-function GuestLayout(props: React.PropsWithChildren) {
+export function GuestLayout(props: React.PropsWithChildren) {
   const id = React.useId();
   const cvsRef = React.useRef<HTMLCanvasElement>(null);
   const theme = useTheme();
@@ -64,7 +54,7 @@ function GuestLayout(props: React.PropsWithChildren) {
   }, [id, theme.palette.primary.main]);
 
   return (
-    <GuestGuard>
+    <>
       <Aside>
         <Logo
           id={id}
@@ -94,7 +84,7 @@ function GuestLayout(props: React.PropsWithChildren) {
         </button>
       </Aside>
       <Main>{props.children}</Main>
-    </GuestGuard>
+    </>
   );
 }
 

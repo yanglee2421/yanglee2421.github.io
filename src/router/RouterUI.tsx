@@ -16,6 +16,10 @@ import { useTranslation } from "react-i18next";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
+import { GuestLayout } from "@/components/layout/GuestLayout";
+import { AuthLayout } from "@/components/layout/AuthLayout";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import { NavigateToHome } from "@/components/NavigateToHome";
 
 // #region Routes
 
@@ -33,8 +37,12 @@ const routes: RouteObject[] = [{
     },
     {
       id: "guest_layout",
-      lazy() {
-        return import("@/components/layout/GuestLayout");
+      Component() {
+        return useCurrentUser() ? <NavigateToHome /> : (
+          <GuestLayout>
+            <Outlet />
+          </GuestLayout>
+        );
       },
       children: [
         {
@@ -46,7 +54,14 @@ const routes: RouteObject[] = [{
     },
     {
       id: "auth_layout",
-      lazy: () => import("@/components/layout/AuthLayout"),
+      Component() {
+        const location = useLocation();
+        return (
+          <AuthLayout key={location.pathname}>
+            <Outlet />
+          </AuthLayout>
+        );
+      },
       children: [
         {
           id: "home",
@@ -72,7 +87,13 @@ const routes: RouteObject[] = [{
     },
     {
       id: "blank_layout",
-      lazy: () => import("@/components/layout/AuthLayout"),
+      Component() {
+        return (
+          <AuthLayout>
+            <Outlet />
+          </AuthLayout>
+        );
+      },
       children: [{
         id: "lab",
         path: "lab",

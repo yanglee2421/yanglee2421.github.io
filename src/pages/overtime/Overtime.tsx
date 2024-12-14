@@ -9,20 +9,20 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import {
-  Card,
-  CardHeader,
-  CardContent,
-  IconButton,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableRow,
-  TableCell,
-  TablePagination,
   Button,
+  Card,
+  CardContent,
+  CardHeader,
   Checkbox,
+  IconButton,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableHead,
+  TablePagination,
+  TableRow,
 } from "@mui/material";
 import {
   CheckBoxOutlined,
@@ -36,6 +36,7 @@ import {
 } from "firebase/firestore";
 import classNames from "classnames";
 import { Add } from "./Add";
+import { NavigateToLogin } from "@/components/NavigateToLogin";
 
 export function Overtime() {
   const user = useCurrentUser();
@@ -51,7 +52,7 @@ export function Overtime() {
   });
 
   if (!user) {
-    return null;
+    return <NavigateToLogin />;
   }
 
   if (query.isPending) {
@@ -145,8 +146,9 @@ export function Overtime() {
   );
 }
 
-const columnHelper =
-  createColumnHelper<QueryDocumentSnapshot<DocumentData, DocumentData>>();
+const columnHelper = createColumnHelper<
+  QueryDocumentSnapshot<DocumentData, DocumentData>
+>();
 
 const columns = [
   columnHelper.display({
@@ -187,11 +189,9 @@ const columns = [
     id: "enable",
     header: "enable",
     cell(props) {
-      return props.row.original.data().enable ? (
-        <CheckOutlined color="success" />
-      ) : (
-        <CloseOutlined />
-      );
+      return props.row.original.data().enable
+        ? <CheckOutlined color="success" />
+        : <CloseOutlined />;
     },
   }),
 ];
