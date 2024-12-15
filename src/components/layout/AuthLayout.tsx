@@ -9,13 +9,7 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import {
-  Link as RouterLink,
-  NavLink,
-  Outlet,
-  useLocation,
-  useParams,
-} from "react-router";
+import { Link as RouterLink, NavLink, useParams } from "react-router";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import {
@@ -35,16 +29,6 @@ import { Materio } from "../svg/Materio";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
 const ASIDE_SIZE = 64;
-
-export function Component() {
-  const location = useLocation();
-
-  return (
-    <AuthLayout key={location.pathname} navMenu={<NavMenu />}>
-      <Outlet />
-    </AuthLayout>
-  );
-}
 
 const LinkWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -120,11 +104,9 @@ function NavMenu() {
   );
 }
 
-type Props = React.PropsWithChildren<{
-  navMenu?: React.ReactNode;
-}>;
+type Props = React.PropsWithChildren;
 
-function AuthLayout(props: Props) {
+export const AuthLayout = (props: Props) => {
   const [showMenuInMobile, update] = React.useState(false);
 
   return (
@@ -164,7 +146,9 @@ function AuthLayout(props: Props) {
         </Toolbar>
       </AppBar>
       <Aside sx={{ maxInlineSize: showMenuInMobile ? "none" : 0 }}>
-        <Nav>{props.navMenu}</Nav>
+        <Nav>
+          <NavMenu />
+        </Nav>
       </Aside>
       <MainWrapper sx={{ display: showMenuInMobile ? "none" : "flex" }}>
         <Main>{props.children}</Main>
@@ -177,7 +161,7 @@ function AuthLayout(props: Props) {
       </MainWrapper>
     </>
   );
-}
+};
 
 const Aside = styled("aside")(({ theme }) => ({
   position: "fixed",

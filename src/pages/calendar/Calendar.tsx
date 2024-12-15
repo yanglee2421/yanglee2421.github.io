@@ -63,8 +63,6 @@ export function Calendar() {
   const date = useLocaleDate(params.lang);
   const time = useLocaleTime(params.lang);
 
-  console.log(calendar);
-
   return (
     <Card>
       <CardHeader
@@ -117,6 +115,7 @@ export function Calendar() {
             <DatePicker
               value={startDate}
               onChange={setStartDate}
+              maxDate={endDate || void 0}
               slotProps={{
                 textField: { fullWidth: true, label: "Start Date" },
               }}
@@ -126,6 +125,7 @@ export function Calendar() {
             <DatePicker
               value={endDate}
               onChange={setEndDate}
+              minDate={startDate || void 0}
               slotProps={{
                 textField: { fullWidth: true, label: "End Date" },
                 field: { clearable: true },
