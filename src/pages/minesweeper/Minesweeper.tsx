@@ -27,6 +27,87 @@ class Item {
   }
 }
 
+class MinesweeperGame {
+  cells: Array<Item> = [];
+  marked: Set<string> = new Set();
+  opened: Set<string> = new Set();
+  bombs: Set<string> = new Set();
+
+  constructor(
+    public readonly columns: number,
+    public readonly rows: number,
+    public readonly bombNums: number,
+    public readonly onGameOver: () => void,
+  ) {
+    for (let i = 0; i < this.rows; i++) {
+      for (let j = 0; j < this.columns; j++) {
+        this.cells.push(new Item(j, i));
+      }
+    }
+
+    while (this.bombs.size < this.bombNums) {
+      this.bombs.add(
+        this.cells[Math.floor(Math.random() * this.cells.length)].id,
+      );
+    }
+  }
+
+  open(id: string) {
+    this.opened.add(id);
+
+    const item = this.cells.find((i) => i.id === id);
+
+    if (!item) return;
+
+    const handled = new WeakSet<Item>();
+
+    const fn = (item: Item) => {
+      if (isAroundBomb(item, this.cells, this.bombs)) {
+        return;
+      }
+
+      if (handled.has(item)) {
+        return;
+      }
+
+      handled.add(item);
+      getAroundItems(item, this.cells).forEach((el) => {
+        this.opened.add(el.id);
+        fn(el);
+      });
+    };
+
+    fn(item);
+
+    // Game over, only the bombs are left
+    if (
+      isEqualSet(
+        this.bombs,
+        new Set(
+          this.cells
+            .filter((item) => !this.opened.has(item.id))
+            .map((item) => item.id),
+        ),
+      )
+    ) {
+      this.marked = this.bombs;
+
+      this.onGameOver();
+    }
+  }
+
+  mark(id: string) {
+    void [this.marked.has(id) ? this.marked.delete(id) : this.marked.add(id)];
+
+    // The game is over, all bombs are marked
+    if (isEqualSet(this.marked, this.bombs)) {
+      this.opened = new Set(this.cells.map((i) => i.id));
+
+      this.onGameOver();
+    }
+  }
+}
+
 type CellProps = {
   list: Item[];
   bombs: Set<string>;
@@ -271,8 +352,7 @@ export const Minesweeper = () => {
       sx={{ maxWidth: (t) => ({ maxWidth: t.breakpoints.values.sm }) }}
     >
       <CardHeader
-        title="minesweeper"
-        titleTypographyProps={{ textTransform: "capitalize" }}
+        title="Minesweeper"
         subheader={subheader}
         action={
           <IconButton onClick={handleGameRestart}>
@@ -282,7 +362,7 @@ export const Minesweeper = () => {
       />
       <CardContent>
         <Grid2 container spacing={6}>
-          <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid2 size={{ xs: 12 }}>
             <TextField
               value={subheader}
               onChange={(e) => {
@@ -291,7 +371,7 @@ export const Minesweeper = () => {
                     handleGameStart(9, 9, 10);
                     break;
                   case "normal":
-                    handleGameStart(16, 16, 40);
+                    handleGameStart(10, 16, 40);
                     break;
                   case "hard":
                     handleGameStart(12, 12, 12);
