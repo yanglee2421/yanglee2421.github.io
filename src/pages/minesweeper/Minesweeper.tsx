@@ -400,7 +400,7 @@ export const Minesweeper = () => {
         })
         : ({ game }),
     null,
-    () => ({ game: new MinesweeperGame(10, 10, 10, Boolean, Boolean) }),
+    () => ({ game: new MinesweeperGame(9, 9, 10, Boolean, Boolean) }),
   );
 
   const [now, setNow] = React.useState(0);
@@ -470,9 +470,9 @@ export const Minesweeper = () => {
               fullWidth
               select
             >
-              <MenuItem value="10,10,10">Easy</MenuItem>
-              <MenuItem value="10,12,12">Normal</MenuItem>
-              <MenuItem value="10,14,14">Hard</MenuItem>
+              <MenuItem value="9,9,10">Easy</MenuItem>
+              <MenuItem value="10,10,16">Normal</MenuItem>
+              <MenuItem value="10,10,20">Hard</MenuItem>
             </TextField>
           </Grid2>
         </Grid2>

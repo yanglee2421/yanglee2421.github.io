@@ -28,7 +28,7 @@ import React from "react";
 import { Materio } from "../svg/Materio";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
-const ASIDE_SIZE = 64;
+const ASIDE_SIZE = 72;
 
 const LinkWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -94,7 +94,7 @@ function NavMenu() {
       {list.map((i) => (
         <NavLink key={i.to} to={`/${params.lang + i.to}`} end>
           {i.icon}
-          <Typography variant="body1" component="span" sx={{ fontWeight: 300 }}>
+          <Typography variant="body1" component="span">
             {i.label}
           </Typography>
           <ChevronRightOutlined sx={{ marginInlineStart: "auto" }} />
