@@ -16,10 +16,6 @@ import { useTranslation } from "react-i18next";
 import { Box, CircularProgress, Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 import { ThemeProvider } from "@/components/theme/ThemeProvider";
-import { GuestLayout } from "@/components/layout/GuestLayout";
-import { AuthLayout } from "@/components/layout/AuthLayout";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { NavigateToHome } from "@/components/NavigateToHome";
 
 // #region Routes
 
@@ -37,13 +33,25 @@ const routes: RouteObject[] = [{
     },
     {
       id: "guest_layout",
-      Component() {
-        return useCurrentUser() ? <NavigateToHome /> : (
-          <GuestLayout>
-            <Outlet />
-          </GuestLayout>
-        );
+      async lazy() {
+        const [{ GuestLayout }, { NavigateToHome }, { useCurrentUser }] =
+          await Promise.all([
+            import("@/components/layout/GuestLayout"),
+            import("@/components/NavigateToHome"),
+            import("@/hooks/firebase/useCurrentUser"),
+          ]);
+
+        return {
+          Component() {
+            return useCurrentUser() ? <NavigateToHome /> : (
+              <GuestLayout>
+                <Outlet />
+              </GuestLayout>
+            );
+          },
+        };
       },
+
       children: [
         {
           id: "login",
@@ -54,14 +62,21 @@ const routes: RouteObject[] = [{
     },
     {
       id: "auth_layout",
-      Component() {
-        const location = useLocation();
-        return (
-          <AuthLayout key={location.pathname}>
-            <Outlet />
-          </AuthLayout>
-        );
+      async lazy() {
+        const { AuthLayout } = await import("@/components/layout/AuthLayout");
+
+        return {
+          Component() {
+            const location = useLocation();
+            return (
+              <AuthLayout key={location.pathname}>
+                <Outlet />
+              </AuthLayout>
+            );
+          },
+        };
       },
+
       children: [
         {
           id: "home",
@@ -87,13 +102,20 @@ const routes: RouteObject[] = [{
     },
     {
       id: "blank_layout",
-      Component() {
-        return (
-          <AuthLayout>
-            <Outlet />
-          </AuthLayout>
-        );
+      async lazy() {
+        const { AuthLayout } = await import("@/components/layout/AuthLayout");
+
+        return {
+          Component() {
+            return (
+              <AuthLayout>
+                <Outlet />
+              </AuthLayout>
+            );
+          },
+        };
       },
+
       children: [{
         id: "lab",
         path: "lab",

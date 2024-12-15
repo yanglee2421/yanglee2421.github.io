@@ -1,4 +1,3 @@
-import { minmax } from "@/utils/minmax";
 import { RestartAltOutlined } from "@mui/icons-material";
 import {
   alpha,
@@ -26,170 +25,7 @@ import {
   teal,
 } from "@mui/material/colors";
 import React from "react";
-
-class Item {
-  id: string;
-
-  constructor(
-    public readonly x: number,
-    public readonly y: number,
-  ) {
-    this.id = `x${this.x}y${this.y}`;
-  }
-}
-
-enum GAME_STATUS {
-  PENDING,
-  LOST,
-  WON,
-}
-
-class MinesweeperGame {
-  readonly cells: Array<Item> = [];
-  readonly marked: Set<string> = new Set();
-  readonly opened: Set<string> = new Set();
-  readonly bombs: Set<string> = new Set();
-
-  status: GAME_STATUS = GAME_STATUS.PENDING;
-  startTime = 0;
-  endTime = 0;
-
-  constructor(
-    public readonly columns: number,
-    public readonly rows: number,
-    public readonly bombNums: number,
-    public readonly onGameOver: () => void,
-    public readonly onGameStart: () => void,
-  ) {
-    for (let i = 0; i < this.rows; i++) {
-      for (let j = 0; j < this.columns; j++) {
-        this.cells.push(new Item(j, i));
-      }
-    }
-
-    while (this.bombs.size < this.bombNums) {
-      this.bombs.add(
-        this.cells[Math.floor(Math.random() * this.cells.length)].id,
-      );
-    }
-  }
-
-  open(item: Item) {
-    this.start();
-    this.opened.add(item.id);
-    this.marked.delete(item.id);
-
-    if (this.bombs.has(item.id)) {
-      return this.lose();
-    }
-
-    const handled = new WeakSet<Item>();
-
-    const fn = (item: Item) => {
-      if (this.isAroundBomb(item)) {
-        return;
-      }
-
-      if (handled.has(item)) {
-        return;
-      }
-
-      handled.add(item);
-      this.getAroundCells(item).forEach((el) => {
-        this.opened.add(el.id);
-        fn(el);
-      });
-    };
-
-    fn(item);
-
-    // Game over, only the bombs are left
-    if (
-      isEqualSet(
-        this.bombs,
-        new Set(
-          this.cells
-            .filter((item) => !this.opened.has(item.id))
-            .map((item) => item.id),
-        ),
-      )
-    ) {
-      this.win();
-    }
-  }
-
-  mark(id: string) {
-    if (this.opened.has(id)) return;
-
-    this.start();
-    void [this.marked.has(id) ? this.marked.delete(id) : this.marked.add(id)];
-
-    // The game is over, all bombs are marked
-    if (isEqualSet(this.marked, this.bombs)) {
-      this.win();
-    }
-  }
-
-  private start() {
-    if (this.isStarted) return;
-    if (this.isOver) return;
-
-    this.startTime = Date.now();
-    this.onGameStart();
-  }
-
-  private end() {
-    if (!this.isStarted) return;
-    if (this.isOver) return;
-
-    this.endTime = Date.now();
-    this.onGameOver();
-  }
-
-  private win() {
-    this.status = GAME_STATUS.WON;
-    this.bombs.forEach((i) => this.marked.add(i));
-    this.cells.forEach((i) => this.bombs.has(i.id) || this.opened.add(i.id));
-    this.end();
-  }
-
-  private lose() {
-    this.status = GAME_STATUS.LOST;
-    this.marked.clear();
-    this.cells.forEach((i) => this.opened.add(i.id));
-    this.end();
-  }
-
-  private getAroundCells(item: Item) {
-    return this.cells.filter(
-      (el) =>
-        !Object.is(item.id, el.id) &&
-        Object.is(minmax(el.x, { min: item.x - 1, max: item.x + 1 }), el.x) &&
-        Object.is(minmax(el.y, { min: item.y - 1, max: item.y + 1 }), el.y),
-    );
-  }
-
-  getAroundBombs(item: Item) {
-    return this.getAroundCells(item).filter((el) => this.bombs.has(el.id));
-  }
-
-  private isAroundBomb(item: Item) {
-    return this.getAroundCells(item).some((el) => this.bombs.has(el.id));
-  }
-
-  get isStarted() {
-    return !!this.startTime;
-  }
-  get isOver() {
-    return !!this.endTime;
-  }
-  get isLost() {
-    return this.status === GAME_STATUS.LOST;
-  }
-  get isWon() {
-    return this.status === GAME_STATUS.WON;
-  }
-}
+import { MinesweeperGame } from "@/lib/MinesweeperGame";
 
 type CellProps = {
   opened: boolean;
@@ -323,8 +159,10 @@ const Cell = (props: CellProps) => {
     <ButtonBase
       ref={ref}
       component={"div"}
+      onPointerDown={(e) => e.currentTarget.setPointerCapture(e.pointerId)}
       onPointerUp={(e) => {
         e.preventDefault();
+        e.currentTarget.releasePointerCapture(e.pointerId);
 
         if (e.pointerType === "mouse") {
           void [
@@ -400,12 +238,14 @@ export const Minesweeper = () => {
         })
         : ({ game }),
     null,
-    () => ({ game: new MinesweeperGame(10, 10, 10, Boolean, Boolean) }),
+    () => ({ game: new MinesweeperGame(9, 9, 10, Boolean, Boolean) }),
   );
 
   const [now, setNow] = React.useState(0);
 
   React.useEffect(() => {
+    if (!game.isRuning) return;
+
     let timer = 0;
 
     const fn = () => {
@@ -416,7 +256,7 @@ export const Minesweeper = () => {
     fn();
 
     return () => cancelAnimationFrame(timer);
-  }, []);
+  }, [game.isRuning]);
 
   const renderSubheader = () => {
     if (!game.isStarted) return "Standing by";
@@ -443,13 +283,15 @@ export const Minesweeper = () => {
         action={
           <IconButton
             onClick={() =>
-              dispatch([
-                game.columns,
-                game.rows,
-                game.bombNums,
-                Boolean,
-                Boolean,
-              ])}
+              React.startTransition(() =>
+                dispatch([
+                  game.columns,
+                  game.rows,
+                  game.bombNums,
+                  Boolean,
+                  Boolean,
+                ])
+              )}
           >
             <RestartAltOutlined />
           </IconButton>
@@ -465,14 +307,16 @@ export const Minesweeper = () => {
                   Number.parseInt(i)
                 );
 
-                dispatch([list[0], list[1], list[2], Boolean, Boolean]);
+                React.startTransition(() => {
+                  dispatch([list[0], list[1], list[2], Boolean, Boolean]);
+                });
               }}
               fullWidth
               select
             >
-              <MenuItem value="10,10,10">Easy</MenuItem>
-              <MenuItem value="10,12,12">Normal</MenuItem>
-              <MenuItem value="10,14,14">Hard</MenuItem>
+              <MenuItem value="9,9,10">Easy</MenuItem>
+              <MenuItem value="10,10,16">Normal</MenuItem>
+              <MenuItem value="10,10,20">Hard</MenuItem>
             </TextField>
           </Grid2>
         </Grid2>
@@ -493,11 +337,11 @@ export const Minesweeper = () => {
             borderStart={!Object.is(idx % game.columns, 0)}
             onMark={() => {
               game.mark(i.id);
-              dispatch();
+              React.startTransition(() => dispatch());
             }}
             onOpen={() => {
               game.open(i);
-              dispatch();
+              React.startTransition(() => dispatch());
             }}
             error={game.bombs.has(i.id)}
             disabled={game.isOver || game.opened.has(i.id)}
@@ -507,10 +351,3 @@ export const Minesweeper = () => {
     </Card>
   );
 };
-
-function isEqualSet(set1: Set<string>, set2: Set<string>) {
-  return Object.is(
-    [...set1.values()].sort().join(),
-    [...set2.values()].sort().join(),
-  );
-}
