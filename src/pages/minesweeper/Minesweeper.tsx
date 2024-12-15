@@ -1,6 +1,7 @@
 import { minmax } from "@/utils/minmax";
 import { RestartAltOutlined } from "@mui/icons-material";
 import {
+  alpha,
   Box,
   ButtonBase,
   Card,
@@ -10,7 +11,20 @@ import {
   IconButton,
   MenuItem,
   TextField,
+  useTheme,
 } from "@mui/material";
+import {
+  blue,
+  brown,
+  cyan,
+  deepPurple,
+  green,
+  grey,
+  indigo,
+  pink,
+  red,
+  teal,
+} from "@mui/material/colors";
 import React from "react";
 
 class Item {
@@ -24,12 +38,21 @@ class Item {
   }
 }
 
+enum GAME_STATUS {
+  PENDING,
+  LOST,
+  WON,
+}
+
 class MinesweeperGame {
   readonly cells: Array<Item> = [];
   readonly marked: Set<string> = new Set();
   readonly opened: Set<string> = new Set();
   readonly bombs: Set<string> = new Set();
-  started = false;
+
+  status: GAME_STATUS = GAME_STATUS.PENDING;
+  startTime = 0;
+  endTime = 0;
 
   constructor(
     public readonly columns: number,
@@ -54,6 +77,7 @@ class MinesweeperGame {
   open(item: Item) {
     this.start();
     this.opened.add(item.id);
+    this.marked.delete(item.id);
 
     if (this.bombs.has(item.id)) {
       return this.lose();
@@ -91,39 +115,52 @@ class MinesweeperGame {
       )
     ) {
       this.win();
-      this.onGameOver();
     }
   }
 
   mark(id: string) {
+    if (this.opened.has(id)) return;
+
     this.start();
     void [this.marked.has(id) ? this.marked.delete(id) : this.marked.add(id)];
 
     // The game is over, all bombs are marked
     if (isEqualSet(this.marked, this.bombs)) {
       this.win();
-      this.onGameOver();
     }
   }
 
-  start() {
-    if (!this.started) {
-      this.started = false;
-      this.onGameStart();
-    }
+  private start() {
+    if (this.isStarted) return;
+    if (this.isOver) return;
+
+    this.startTime = Date.now();
+    this.onGameStart();
   }
 
-  win() {
+  private end() {
+    if (!this.isStarted) return;
+    if (this.isOver) return;
+
+    this.endTime = Date.now();
+    this.onGameOver();
+  }
+
+  private win() {
+    this.status = GAME_STATUS.WON;
     this.bombs.forEach((i) => this.marked.add(i));
     this.cells.forEach((i) => this.bombs.has(i.id) || this.opened.add(i.id));
+    this.end();
   }
 
-  lose() {
+  private lose() {
+    this.status = GAME_STATUS.LOST;
     this.marked.clear();
     this.cells.forEach((i) => this.opened.add(i.id));
+    this.end();
   }
 
-  getAroundCells(item: Item) {
+  private getAroundCells(item: Item) {
     return this.cells.filter(
       (el) =>
         !Object.is(item.id, el.id) &&
@@ -136,8 +173,21 @@ class MinesweeperGame {
     return this.getAroundCells(item).filter((el) => this.bombs.has(el.id));
   }
 
-  isAroundBomb(item: Item) {
+  private isAroundBomb(item: Item) {
     return this.getAroundCells(item).some((el) => this.bombs.has(el.id));
+  }
+
+  get isStarted() {
+    return !!this.startTime;
+  }
+  get isOver() {
+    return !!this.endTime;
+  }
+  get isLost() {
+    return this.status === GAME_STATUS.LOST;
+  }
+  get isWon() {
+    return this.status === GAME_STATUS.WON;
   }
 }
 
@@ -149,12 +199,17 @@ type CellProps = {
   onOpen(): void;
   onMark(): void;
   error?: boolean;
+  disabled: boolean;
 };
+
+const map = new Map<number, string>();
 
 const Cell = (props: CellProps) => {
   const ref = React.useRef(null);
   const timerRef = React.useRef(0);
+  const lastPressRef = React.useRef(0);
   const [height, setHeight] = React.useState(0);
+  const theme = useTheme();
 
   React.useEffect(() => {
     const el = ref.current;
@@ -181,24 +236,125 @@ const Cell = (props: CellProps) => {
     return;
   };
 
+  map.set(
+    0,
+    alpha(
+      grey[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    1,
+    alpha(
+      green[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    2,
+    alpha(
+      blue[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    3,
+    alpha(
+      indigo[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    4,
+    alpha(
+      deepPurple[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    4,
+    alpha(
+      teal[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    5,
+    alpha(
+      cyan[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    6,
+    alpha(
+      brown[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    7,
+    alpha(
+      pink[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+  map.set(
+    9,
+    alpha(
+      red[500],
+      theme.palette.action.disabledOpacity,
+    ),
+  );
+
+  const renderColor = () => {
+    if (!props.opened) {
+      return props.marked ? theme.palette.warning.main : void 0;
+    }
+
+    if (props.error) {
+      return theme.palette.error.main;
+    }
+
+    return map.get(props.nums);
+  };
+
   return (
     <ButtonBase
       ref={ref}
       component={"div"}
-      onClick={() => {
+      onPointerUp={(e) => {
+        e.preventDefault();
+
+        if (e.pointerType === "mouse") {
+          void [
+            e.button === 0 && props.onOpen(),
+            e.button === 2 && props.onMark(),
+          ];
+
+          return;
+        }
+
+        const now = Date.now();
+        const diff = now - lastPressRef.current;
         clearTimeout(timerRef.current);
-        timerRef.current = setTimeout(props.onMark, 200);
+
+        if (diff < 300) {
+          props.onOpen();
+        } else {
+          timerRef.current = setTimeout(props.onMark, 300);
+        }
+
+        lastPressRef.current = now;
       }}
-      onDoubleClick={() => {
-        clearTimeout(timerRef.current);
-        props.onOpen();
-      }}
-      disabled={props.opened}
+      onContextMenu={(e) => e.preventDefault()}
+      disabled={props.disabled}
       sx={(t) => ({
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
 
+        color: renderColor(),
         fontFamily: 'Consolas, "Courier New", monospace',
         fontSize: {
           xs: t.typography.body1.fontSize,
@@ -212,7 +368,7 @@ const Cell = (props: CellProps) => {
           ? "1px solid " + t.palette.divider
           : void 0,
 
-        color: (props.opened && props.error) ? t.palette.error.main : void 0,
+        touchAction: "manipulation",
       })}
     >
       {render()}
@@ -222,36 +378,60 @@ const Cell = (props: CellProps) => {
 
 const MemoCell = React.memo(Cell);
 
+type ReducerState = { game: MinesweeperGame };
+type ReducerActionArgs = [ConstructorParameters<typeof MinesweeperGame> | void];
+
 export const Minesweeper = () => {
   const [{ game }, dispatch] = React.useReducer<
-    { game: MinesweeperGame },
+    ReducerState,
     null,
-    [
-      | {
-        columns: number;
-        rows: number;
-        bombNums: number;
-        onGameOver(): void;
-        onGameStart(): void;
-      }
-      | void,
-    ]
+    ReducerActionArgs
   >(
-    ({ game }, action) =>
-      action
+    ({ game }, args) =>
+      args
         ? ({
           game: new MinesweeperGame(
-            action.columns,
-            action.rows,
-            action.bombNums,
-            action.onGameOver,
-            action.onGameStart,
+            args[0],
+            args[1],
+            args[2],
+            args[3],
+            args[4],
           ),
         })
         : ({ game }),
     null,
-    () => ({ game: new MinesweeperGame(10, 10, 10, () => {}, () => {}) }),
+    () => ({ game: new MinesweeperGame(10, 10, 10, Boolean, Boolean) }),
   );
+
+  const [now, setNow] = React.useState(0);
+
+  React.useEffect(() => {
+    let timer = 0;
+
+    const fn = () => {
+      timer = requestAnimationFrame(fn);
+      setNow(Date.now());
+    };
+
+    fn();
+
+    return () => cancelAnimationFrame(timer);
+  }, []);
+
+  const renderSubheader = () => {
+    if (!game.isStarted) return "Standing by";
+
+    let diff = now - game.startTime;
+
+    if (game.isOver) {
+      diff = game.endTime - game.startTime;
+    }
+
+    const s = Math.floor(diff / 1000);
+    const ms = diff % 1000;
+
+    return `${s}s${ms}ms`;
+  };
 
   return (
     <Card
@@ -259,17 +439,17 @@ export const Minesweeper = () => {
     >
       <CardHeader
         title="Minesweeper"
-        subheader={null}
+        subheader={renderSubheader()}
         action={
           <IconButton
             onClick={() =>
-              dispatch({
-                columns: 9,
-                rows: 9,
-                bombNums: 1,
-                onGameOver() {},
-                onGameStart() {},
-              })}
+              dispatch([
+                game.columns,
+                game.rows,
+                game.bombNums,
+                Boolean,
+                Boolean,
+              ])}
           >
             <RestartAltOutlined />
           </IconButton>
@@ -279,12 +459,20 @@ export const Minesweeper = () => {
         <Grid2 container spacing={6}>
           <Grid2 size={{ xs: 12 }}>
             <TextField
+              value={`${game.columns},${game.rows},${game.bombNums}`}
+              onChange={(e) => {
+                const list = e.target.value.split(",").map((i) =>
+                  Number.parseInt(i)
+                );
+
+                dispatch([list[0], list[1], list[2], Boolean, Boolean]);
+              }}
               fullWidth
               select
             >
-              <MenuItem value="easy">easy</MenuItem>
-              <MenuItem value="normal">normal</MenuItem>
-              <MenuItem value="hard">hard</MenuItem>
+              <MenuItem value="10,10,10">Easy</MenuItem>
+              <MenuItem value="10,12,12">Normal</MenuItem>
+              <MenuItem value="10,14,14">Hard</MenuItem>
             </TextField>
           </Grid2>
         </Grid2>
@@ -312,6 +500,7 @@ export const Minesweeper = () => {
               dispatch();
             }}
             error={game.bombs.has(i.id)}
+            disabled={game.isOver || game.opened.has(i.id)}
           />
         ))}
       </Box>
