@@ -171,7 +171,7 @@ const Cell = (props: CellProps) => {
 
   const render = () => {
     if (props.opened) {
-      return props.error ? "*" : props.nums;
+      return props.error ? "X" : props.nums;
     }
 
     if (props.marked) {
