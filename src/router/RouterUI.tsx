@@ -124,6 +124,10 @@ const routes: RouteObject[] = [{
         id: "calendar",
         path: "calendar",
         lazy: () => import("@/pages/calendar/Component"),
+      }, {
+        id: "calculator",
+        path: "calculator",
+        lazy: () => import("@/pages/calculator/route"),
       }],
     },
   ],

@@ -37,16 +37,15 @@ export class MinesweeperGame {
         this.cells.push(new Item(j, i));
       }
     }
-
-    while (this.bombs.size < this.bombNums) {
-      this.bombs.add(
-        this.cells[Math.floor(Math.random() * this.cells.length)].id,
-      );
-    }
   }
 
   open(item: Item) {
-    this.start();
+    if (!this.isStarted) this.start();
+
+    if (!this.opened.size) {
+      this.generateBombs(item);
+    }
+
     this.opened.add(item.id);
     this.marked.delete(item.id);
 
@@ -91,8 +90,7 @@ export class MinesweeperGame {
 
   mark(id: string) {
     if (this.opened.has(id)) return;
-
-    this.start();
+    if (!this.isStarted) this.start();
     void [this.marked.has(id) ? this.marked.delete(id) : this.marked.add(id)];
 
     // The game is over, all bombs are marked
@@ -102,16 +100,11 @@ export class MinesweeperGame {
   }
 
   private start() {
-    if (this.isStarted) return;
-    if (this.isOver) return;
-
     this.startTime = Date.now();
     this.onGameStart();
   }
 
   private end() {
-    if (!this.isRuning) return;
-
     this.endTime = Date.now();
     this.onGameOver();
   }
@@ -139,6 +132,21 @@ export class MinesweeperGame {
     );
   }
 
+  private generateBombs(firstOpen: Item) {
+    const whitelist = new Set([
+      ...this.getAroundCells(firstOpen).map((i) => i.id),
+      firstOpen.id,
+    ]);
+
+    while (this.bombs.size < this.bombNums) {
+      const bombs = this.cells[Math.floor(Math.random() * this.cells.length)];
+
+      if (whitelist.has(bombs.id)) continue;
+
+      this.bombs.add(bombs.id);
+    }
+  }
+
   getAroundBombs(item: Item) {
     return this.getAroundCells(item).filter((el) => this.bombs.has(el.id));
   }
@@ -161,6 +169,9 @@ export class MinesweeperGame {
   }
   get isWon() {
     return this.status === GAME_STATUS.WON;
+  }
+  get restBombs() {
+    return this.bombs.size - this.marked.size;
   }
 
   static isEqualSet(set1: Set<string>, set2: Set<string>) {

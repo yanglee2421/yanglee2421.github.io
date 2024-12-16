@@ -13,6 +13,7 @@ import { Link as RouterLink, NavLink, useParams } from "react-router";
 import { ModeToggle } from "../shared/ModeToggle";
 import { LangToggle } from "../shared/LangToggle";
 import {
+  CalculateOutlined,
   CalendarMonthOutlined,
   CalendarTodayOutlined,
   ChevronRightOutlined,
@@ -72,6 +73,11 @@ const list = [
     to: "/calendar",
     label: "Calendar",
     icon: <CalendarTodayOutlined />,
+  },
+  {
+    to: "/calculator",
+    label: "Calculator",
+    icon: <CalculateOutlined />,
   },
   { to: "/overtime", label: "Overtime", icon: <CalendarMonthOutlined /> },
   {

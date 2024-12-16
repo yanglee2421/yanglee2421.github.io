@@ -234,57 +234,41 @@ export const Minesweeper = () => {
     () => ({ game: new MinesweeperGame(8, 8, 10, Boolean, Boolean) }),
   );
 
-  const [now, setNow] = React.useState(0);
-
-  React.useEffect(() => {
-    if (!game.isRuning) return;
-
-    let timer = 0;
-
-    const fn = () => {
-      timer = requestAnimationFrame(fn);
-      setNow(Date.now());
-    };
-
-    fn();
-
-    return () => cancelAnimationFrame(timer);
-  }, [game.isRuning]);
-
-  const renderSubheader = () => {
-    if (!game.isStarted) return "Standing by";
-
-    let diff = now - game.startTime;
-
-    if (game.isOver) {
-      diff = game.endTime - game.startTime;
-    }
-
-    const s = Math.floor(diff / 1000);
-    const ms = diff % 1000;
-
-    return `${s}s${ms}ms`;
-  };
-
   return (
     <Card
       sx={{ maxWidth: (t) => ({ maxWidth: t.breakpoints.values.sm }) }}
     >
       <CardHeader
         title="Minesweeper"
-        subheader={renderSubheader()}
+        subheader={
+          <Box sx={{ display: "flex", "justifyContent": "space-between" }}>
+            <span>
+              <Timer
+                enable={game.isRuning}
+                isStarted={game.isStarted}
+                isOver={game.isOver}
+                startTime={game.startTime}
+                endTime={game.endTime}
+              />
+            </span>
+
+            <span>
+              Rest Bombs: {game.restBombs}
+            </span>
+          </Box>
+        }
         action={
           <IconButton
             onClick={() =>
-              React.startTransition(() =>
+              React.startTransition(() => {
                 dispatch([
                   game.columns,
                   game.rows,
                   game.bombNums,
                   Boolean,
                   Boolean,
-                ])
-              )}
+                ]);
+              })}
           >
             <RestartAltOutlined />
           </IconButton>
@@ -306,6 +290,7 @@ export const Minesweeper = () => {
               }}
               fullWidth
               select
+              label="Game Mode"
             >
               <MenuItem value="8,8,10">Easy</MenuItem>
               <MenuItem value="9,9,10">Normal</MenuItem>
@@ -330,11 +315,11 @@ export const Minesweeper = () => {
             borderStart={!Object.is(idx % game.columns, 0)}
             onMark={() => {
               game.mark(i.id);
-              React.startTransition(() => dispatch());
+              dispatch();
             }}
             onOpen={() => {
               game.open(i);
-              React.startTransition(() => dispatch());
+              dispatch();
             }}
             error={game.bombs.has(i.id)}
             disabled={game.isOver || game.opened.has(i.id)}
@@ -344,3 +329,49 @@ export const Minesweeper = () => {
     </Card>
   );
 };
+
+type TimerProps = {
+  isStarted: boolean;
+  isOver: boolean;
+  startTime: number;
+  endTime: number;
+  enable: boolean;
+};
+
+function Timer(props: TimerProps) {
+  const [now, setNow] = React.useState(0);
+
+  React.useEffect(() => {
+    if (!props.enable) return;
+
+    let timer = 0;
+
+    const fn = () => {
+      timer = requestAnimationFrame(fn);
+      React.startTransition(() => {
+        setNow(Date.now());
+      });
+    };
+
+    fn();
+
+    return () => cancelAnimationFrame(timer);
+  }, [props.enable]);
+
+  const renderSubheader = () => {
+    if (!props.isStarted) return "Standing by";
+
+    let diff = now - props.startTime;
+
+    if (props.isOver) {
+      diff = props.endTime - props.startTime;
+    }
+
+    const s = Math.floor(diff / 1000);
+    const ms = diff % 1000;
+
+    return `${s}s${ms}ms`;
+  };
+
+  return renderSubheader();
+}
