@@ -216,16 +216,9 @@ const Cell = (props: CellProps) => {
 
 const MemoCell = React.memo(Cell);
 
-type ReducerState = { game: MinesweeperGame };
-type ReducerActionArgs = [ConstructorParameters<typeof MinesweeperGame> | void];
-
 export const Minesweeper = () => {
-  const [{ game }, dispatch] = React.useReducer<
-    ReducerState,
-    null,
-    ReducerActionArgs
-  >(
-    ({ game }, args) =>
+  const [{ game }, dispatch] = React.useReducer(
+    ({ game }, args?: [number, number, number, () => void, () => void]) =>
       args
         ? ({
           game: new MinesweeperGame(
@@ -238,7 +231,7 @@ export const Minesweeper = () => {
         })
         : ({ game }),
     null,
-    () => ({ game: new MinesweeperGame(9, 9, 10, Boolean, Boolean) }),
+    () => ({ game: new MinesweeperGame(8, 8, 10, Boolean, Boolean) }),
   );
 
   const [now, setNow] = React.useState(0);
@@ -314,9 +307,9 @@ export const Minesweeper = () => {
               fullWidth
               select
             >
-              <MenuItem value="9,9,10">Easy</MenuItem>
-              <MenuItem value="10,10,16">Normal</MenuItem>
-              <MenuItem value="10,10,20">Hard</MenuItem>
+              <MenuItem value="8,8,10">Easy</MenuItem>
+              <MenuItem value="9,9,10">Normal</MenuItem>
+              <MenuItem value="10,10,16">Hard</MenuItem>
             </TextField>
           </Grid2>
         </Grid2>
