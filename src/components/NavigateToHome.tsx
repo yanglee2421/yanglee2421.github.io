@@ -13,6 +13,7 @@ export const NavigateToHome = () => {
         pathname: searchParams.get("redirect_uri") || HOME_PATH,
         search: search.toString(),
       }}
+      replace
     />
   );
 };

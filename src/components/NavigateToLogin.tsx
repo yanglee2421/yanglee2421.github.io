@@ -14,6 +14,7 @@ export const NavigateToLogin = () => {
         pathname: LOGIN_PATH,
         search: search.toString(),
       }}
+      replace
     />
   );
 };
