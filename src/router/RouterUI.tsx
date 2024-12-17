@@ -127,15 +127,11 @@ const routes: RouteObject[] = [{
       }, {
         id: "calculator",
         path: "calculator",
-        children: [{
-          id: "calculator/index",
-          index: true,
-          lazy: () => import("@/pages/calculator/route"),
-        }, {
-          id: "calculator/add",
-          path: "add",
-          lazy: () => import("@/pages/calculator/addRoute"),
-        }],
+        lazy: () => import("@/pages/calculator/route"),
+      }, {
+        id: "invoices",
+        path: "invoices",
+        lazy: () => import("@/pages/invoices/route"),
       }],
     },
   ],

@@ -17,12 +17,13 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
+import { useNavigate, useParams } from "react-router";
 import { z } from "zod";
 
 const schema = z.object({
   invoices: z.array(z.object({
     amount: z.number(),
-    staff: z.string(),
+    staff: z.string().min(1),
     note: z.string(),
   })).min(1),
 });
@@ -32,6 +33,8 @@ type FormValues = z.infer<typeof schema>;
 export const Calculator = () => {
   const set = useDbStore((s) => s.set);
   const formId = React.useId();
+  const params = useParams();
+  const navigate = useNavigate();
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -55,20 +58,20 @@ export const Calculator = () => {
       <CardContent>
         <form
           id={formId}
-          action={() => {
-            form.handleSubmit((data) => {
-              set((d) => {
-                d.invoices = [
-                  ...data.invoices.map((i, idx) => ({
-                    ...i,
-                    id: data.invoices.length + idx,
-                    staff: i.staff.split(","),
-                  })),
-                  ...d.invoices,
-                ];
+          onSubmit={form.handleSubmit(async (data) => {
+            set((d) => {
+              data.invoices.forEach((i) => {
+                d.invoices.push({
+                  ...i,
+                  id: d.invoices.length,
+                  staff: i.staff.split(","),
+                  date: Date.now(),
+                });
               });
-            }, console.error)();
-          }}
+            });
+
+            await navigate("/" + params.lang + "/invoices");
+          }, console.error)}
           onReset={() => form.reset()}
           noValidate
         >
@@ -81,7 +84,7 @@ export const Calculator = () => {
                   </Grid2>
                 )}
                 <Grid2 size={{ xs: 12 }}>
-                  <Box sx={{ display: "flex" }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
                     <FormLabel>Item:{idx + 1}</FormLabel>
                     <IconButton
                       color="error"

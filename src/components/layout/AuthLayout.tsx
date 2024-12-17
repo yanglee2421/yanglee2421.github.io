@@ -23,6 +23,7 @@ import {
   MenuOutlined,
   ScienceOutlined,
   SportsEsportsOutlined,
+  WalletOutlined,
 } from "@mui/icons-material";
 import { UserDropdown } from "../shared/UserDropdonw";
 import React from "react";
@@ -79,6 +80,7 @@ const list = [
     label: "Calculator",
     icon: <CalculateOutlined />,
   },
+  { to: "/invoices", label: "Invoices", icon: <WalletOutlined /> },
   { to: "/overtime", label: "Overtime", icon: <CalendarMonthOutlined /> },
   {
     to: "/minesweeper",

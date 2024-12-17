@@ -5,13 +5,16 @@ import { type WritableDraft } from "immer";
 import React from "react";
 import localforage from "localforage";
 
+export type Invoice = {
+  id: number;
+  amount: number;
+  staff: string[];
+  note: string;
+  date: number;
+};
+
 type StoreState = {
-  invoices: Array<{
-    id: number;
-    amount: number;
-    staff: string[];
-    note: string;
-  }>;
+  invoices: Array<Invoice>;
 };
 
 type StoreActions = {
@@ -36,7 +39,7 @@ export const useDbStore = create<Store>()(
     {
       name: "useDbStore",
       storage: createJSONStorage(() => localforage),
-      version: 1,
+      version: 2,
     },
   ),
 );
