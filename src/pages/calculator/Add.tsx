@@ -29,7 +29,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export const Calculator = () => {
+export const Add = () => {
   const set = useDbStore((s) => s.set);
   const formId = React.useId();
 
@@ -81,7 +81,7 @@ export const Calculator = () => {
                   </Grid2>
                 )}
                 <Grid2 size={{ xs: 12 }}>
-                  <Box sx={{ display: "flex" }}>
+                  <Box sx={{ display: "flex", alignItems: "center" }}>
                     <FormLabel>Item:{idx + 1}</FormLabel>
                     <IconButton
                       color="error"
