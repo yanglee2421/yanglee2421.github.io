@@ -1,5 +1,5 @@
 import { type Invoice, useDbStore } from "@/hooks/store/useDbStore";
-import { CloseOutlined } from "@mui/icons-material";
+import { CloseOutlined, OutputOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -271,7 +271,7 @@ const InvoiceTable = () => {
             />
           </Grid2>
           <Grid2 size={{ xs: 12 }}>
-            <Box>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
               <Button
                 onClick={() => {
                   const rows = table.getSelectedRowModel().flatRows.map((i) =>
@@ -287,6 +287,39 @@ const InvoiceTable = () => {
                 variant="contained"
               >
                 View
+              </Button>
+              <Button
+                disabled={!table.getSelectedRowModel().flatRows.length}
+                startIcon={<OutputOutlined />}
+                variant="outlined"
+                href={encodeURI(
+                  "data:text/csv;charset=utf-8," +
+                    [
+                      table
+                        .getVisibleFlatColumns()
+                        .filter((column) => column.accessorFn)
+                        .map((column) => column.id)
+                        .join(","),
+                      ...table.getSelectedRowModel().rows.map((row) =>
+                        table
+                          .getVisibleFlatColumns()
+                          .filter((column) => column.accessorFn)
+                          .map((column) => {
+                            const val = row.getValue(column.id);
+
+                            if (Array.isArray(val)) {
+                              return val.join("@");
+                            }
+
+                            return val;
+                          })
+                          .join(",")
+                      ),
+                    ].join("\n"),
+                )}
+                download={new Date().toLocaleString() + ".csv"}
+              >
+                Output
               </Button>
             </Box>
           </Grid2>
