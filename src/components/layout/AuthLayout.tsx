@@ -21,6 +21,7 @@ import {
   DashboardOutlined,
   GitHub,
   MenuOutlined,
+  PeopleOutlineOutlined,
   ScienceOutlined,
   SportsEsportsOutlined,
   WalletOutlined,
@@ -81,6 +82,7 @@ const list = [
     icon: <CalculateOutlined />,
   },
   { to: "/invoices", label: "Invoices", icon: <WalletOutlined /> },
+  { to: "/staff", label: "Staff", icon: <PeopleOutlineOutlined /> },
   { to: "/overtime", label: "Overtime", icon: <CalendarMonthOutlined /> },
   {
     to: "/minesweeper",

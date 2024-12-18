@@ -85,7 +85,11 @@ export const Calculator = () => {
                 )}
                 <Grid2 size={{ xs: 12 }}>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <FormLabel>{idx + 1}</FormLabel>
+                    <FormLabel
+                      sx={{ color: (t) => t.palette.primary.main }}
+                    >
+                      #{idx + 1}
+                    </FormLabel>
                     {!!idx && (
                       <IconButton
                         color="error"
