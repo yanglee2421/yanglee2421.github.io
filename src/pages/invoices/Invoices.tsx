@@ -186,7 +186,7 @@ const InvoiceTable = () => {
     getCoreRowModel: getCoreRowModel(),
     columns,
     data,
-    getRowId: (r) => r.id + "",
+    getRowId: (r) => r.id,
 
     getPaginationRowModel: getPaginationRowModel(),
     rowCount: data.length,
@@ -285,6 +285,7 @@ const InvoiceTable = () => {
                   });
                 }}
                 variant="contained"
+                disabled={!table.getSelectedRowModel().flatRows.length}
               >
                 View
               </Button>

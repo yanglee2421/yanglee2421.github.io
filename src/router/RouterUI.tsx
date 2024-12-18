@@ -98,42 +98,32 @@ const routes: RouteObject[] = [{
           path: "minesweeper",
           lazy: () => import("@/pages/minesweeper/route"),
         },
+        {
+          id: "lab",
+          path: "lab",
+          lazy: () => import("@/pages/lab/route"),
+        },
+        {
+          id: "calendar",
+          path: "calendar",
+          lazy: () => import("@/pages/calendar/Component"),
+        },
+        {
+          id: "calculator",
+          path: "calculator",
+          lazy: () => import("@/pages/calculator/route"),
+        },
+        {
+          id: "invoices",
+          path: "invoices",
+          lazy: () => import("@/pages/invoices/route"),
+        },
+        {
+          id: "staff",
+          path: "staff",
+          lazy: () => import("@/pages/staff/route"),
+        },
       ],
-    },
-    {
-      id: "blank_layout",
-      async lazy() {
-        const { AuthLayout } = await import("@/components/layout/AuthLayout");
-
-        return {
-          Component() {
-            const location = useLocation();
-            return (
-              <AuthLayout key={location.pathname}>
-                <Outlet />
-              </AuthLayout>
-            );
-          },
-        };
-      },
-
-      children: [{
-        id: "lab",
-        path: "lab",
-        lazy: () => import("@/pages/lab/route"),
-      }, {
-        id: "calendar",
-        path: "calendar",
-        lazy: () => import("@/pages/calendar/Component"),
-      }, {
-        id: "calculator",
-        path: "calculator",
-        lazy: () => import("@/pages/calculator/route"),
-      }, {
-        id: "invoices",
-        path: "invoices",
-        lazy: () => import("@/pages/invoices/route"),
-      }],
     },
   ],
 }];

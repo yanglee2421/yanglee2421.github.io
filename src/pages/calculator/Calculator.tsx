@@ -35,6 +35,16 @@ export const Calculator = () => {
   const formId = React.useId();
   const params = useParams();
   const navigate = useNavigate();
+  const staffs = useDbStore((s) => s.staffs);
+  const staffMap = React.useMemo(() => {
+    const map = new Map<string, string>();
+
+    staffs.forEach((i) => {
+      map.set(i.alias, i.name);
+    });
+
+    return map;
+  }, [staffs]);
 
   const form = useForm<FormValues>({
     defaultValues: {
@@ -58,20 +68,23 @@ export const Calculator = () => {
       <CardContent>
         <form
           id={formId}
-          onSubmit={form.handleSubmit(async (data) => {
-            set((d) => {
-              data.invoices.forEach((i) => {
-                d.invoices.push({
-                  ...i,
-                  id: d.invoices.length + 1,
-                  staff: i.staff.split("@"),
-                  date: Date.now(),
+          action={() =>
+            form.handleSubmit(async (data) => {
+              set((d) => {
+                data.invoices.forEach((i) => {
+                  d.invoices.push({
+                    ...i,
+                    id: crypto.randomUUID(),
+                    staff: i.staff.split("@").map((i) =>
+                      staffMap.get(i.trim()) || i
+                    ),
+                    date: Date.now(),
+                  });
                 });
               });
-            });
 
-            await navigate("/" + params.lang + "/invoices");
-          }, console.error)}
+              await navigate("/" + params.lang + "/invoices");
+            }, console.error)()}
           onReset={() => form.reset()}
           noValidate
         >
