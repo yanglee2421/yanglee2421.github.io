@@ -13,8 +13,16 @@ export type Invoice = {
   date: number;
 };
 
+export type Staff = {
+  id: number;
+  name: string;
+  alias: string;
+  enable: boolean;
+};
+
 type StoreState = {
   invoices: Array<Invoice>;
+  staffs: Staff[];
 };
 
 type StoreActions = {
@@ -34,6 +42,7 @@ export const useDbStore = create<Store>()(
       (set) => ({
         set,
         invoices: [],
+        staffs: [],
       }),
     ),
     {

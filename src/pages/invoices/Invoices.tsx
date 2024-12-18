@@ -1,4 +1,5 @@
 import { type Invoice, useDbStore } from "@/hooks/store/useDbStore";
+import { CloseOutlined, OutputOutlined } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -7,6 +8,7 @@ import {
   CardHeader,
   Checkbox,
   Grid2,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -28,6 +30,7 @@ import {
 import dayjs from "dayjs";
 import * as mathjs from "mathjs";
 import React from "react";
+import { useSearchParams } from "react-router";
 
 const columnHelper = createColumnHelper<Invoice>();
 
@@ -72,26 +75,105 @@ const cellPaddingMap = new Map<string, "checkbox" | "none" | "normal">([[
   "checkbox",
 ]]);
 
-const checkDate = (day: dayjs.Dayjs | null, time: number) => {
+const checkDate = (day: string | null, time: number) => {
   if (!day) return true;
-  return day.toDate().toDateString() === new Date(time).toDateString();
+  return new Date(+day).toDateString() === new Date(time).toDateString();
 };
 
-const checkStaff = (staff: string, staffs: string[]) => {
+const checkStaff = (staff: string | null, staffs: string[]) => {
   if (!staff) return true;
   return staffs.join("").toLowerCase().includes(staff.toLowerCase());
 };
 
-const checkText = (search: string, target: string) => {
+const checkText = (search: string | null, target: string) => {
   if (!search) return true;
   return target.toLowerCase().includes(search.toLowerCase());
 };
 
 export const Invoices = () => {
+  const [searchParams] = useSearchParams();
+
+  const ids = searchParams.get("ids");
+
+  if (!ids) {
+    return <InvoiceTable />;
+  }
+
+  return <ResultPanel />;
+};
+
+const ResultPanel = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const ids = searchParams.get("ids")?.split("@") || [];
   const invoices = useDbStore((s) => s.invoices);
-  const [date, setDate] = React.useState<dayjs.Dayjs | null>(null);
-  const [staff, setStaff] = React.useState("");
-  const [note, setNote] = React.useState("");
+  const rows = invoices.filter((i) => ids.includes(i.id + ""));
+  const allStaffs = [...new Set(rows.flatMap((i) => i.staff))];
+
+  const map = new Map<string, string>();
+
+  allStaffs.forEach((s) => {
+    map.set(
+      s,
+      rows.filter((i) => i.staff.includes(s)).reduce((r, i) => {
+        return mathjs.add(
+          mathjs.divide(
+            mathjs.bignumber(i.amount),
+            mathjs.bignumber(i.staff.length),
+          ),
+          mathjs.bignumber(r),
+        ).toString();
+      }, "0"),
+    );
+  });
+
+  return (
+    <Card>
+      <CardHeader
+        title="Result"
+        action={
+          <IconButton
+            onClick={() => {
+              setSearchParams((p) => {
+                const n = new URLSearchParams(p);
+                n.delete("ids");
+                return n;
+              });
+            }}
+            color="error"
+          >
+            <CloseOutlined />
+          </IconButton>
+        }
+      />
+      <Table>
+        <TableHead>
+          <TableCell>Staff</TableCell>
+          <TableCell>Amount</TableCell>
+        </TableHead>
+        <TableBody>
+          {[...map.entries()].map((i) => (
+            <TableRow key={i[0]}>
+              <TableCell>{i[0]}</TableCell>
+              <TableCell>{i[1]}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
+  );
+};
+
+const InvoiceTable = () => {
+  const invoices = useDbStore((s) => s.invoices);
+  const [search, setSearch] = useSearchParams({
+    date: "",
+    staff: "",
+    note: "",
+  });
+
+  const date = search.get("date");
+  const staff = search.get("staff");
+  const note = search.get("note");
 
   const data = React.useMemo(() => {
     return invoices.filter((i) =>
@@ -148,7 +230,12 @@ export const Invoices = () => {
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
               value={staff}
-              onChange={(e) => setStaff(e.target.value)}
+              onChange={(e) =>
+                setSearch((p) => {
+                  const n = new URLSearchParams(p);
+                  n.set("staff", e.target.value);
+                  return n;
+                })}
               fullWidth
               label="Staff"
             />
@@ -156,15 +243,27 @@ export const Invoices = () => {
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
               value={note}
-              onChange={(e) => setNote(e.target.value)}
+              onChange={(e) =>
+                setSearch((p) => {
+                  const n = new URLSearchParams(p);
+                  n.set("note", e.target.value);
+                  return n;
+                })}
               fullWidth
               label="Note"
             />
           </Grid2>
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <DatePicker
-              value={date}
-              onChange={setDate}
+              value={date ? dayjs(Number.parseInt(date)) : null}
+              onChange={(e) => {
+                setSearch((p) => {
+                  const n = new URLSearchParams(p);
+                  const val = e?.toDate().getTime();
+                  void [val ? n.set("date", val + "") : n.delete("date")];
+                  return n;
+                });
+              }}
               slotProps={{
                 textField: { fullWidth: true, label: "Date" },
                 field: { clearable: true },
@@ -172,38 +271,55 @@ export const Invoices = () => {
             />
           </Grid2>
           <Grid2 size={{ xs: 12 }}>
-            <Box>
+            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
               <Button
                 onClick={() => {
                   const rows = table.getSelectedRowModel().flatRows.map((i) =>
                     i.original
                   );
-                  const allStaffs = [...new Set(rows.flatMap((i) => i.staff))];
 
-                  const map = new Map<string, string>();
-
-                  allStaffs.forEach((s) => {
-                    map.set(
-                      s,
-                      rows.filter((i) => i.staff.includes(s)).reduce((r, i) => {
-                        return mathjs.add(
-                          mathjs.divide(
-                            mathjs.bignumber(i.amount),
-                            mathjs.bignumber(i.staff.length),
-                          ),
-                          mathjs.bignumber(r),
-                        ).toString();
-                      }, "0"),
-                    );
+                  setSearch((s) => {
+                    const n = new URLSearchParams(s);
+                    n.set("ids", rows.map((i) => i.id).join("@"));
+                    return n;
                   });
-
-                  alert(
-                    JSON.stringify(Object.fromEntries(map.entries()), null, 2),
-                  );
                 }}
                 variant="contained"
               >
                 View
+              </Button>
+              <Button
+                disabled={!table.getSelectedRowModel().flatRows.length}
+                startIcon={<OutputOutlined />}
+                variant="outlined"
+                href={encodeURI(
+                  "data:text/csv;charset=utf-8," +
+                    [
+                      table
+                        .getVisibleFlatColumns()
+                        .filter((column) => column.accessorFn)
+                        .map((column) => column.id)
+                        .join(","),
+                      ...table.getSelectedRowModel().rows.map((row) =>
+                        table
+                          .getVisibleFlatColumns()
+                          .filter((column) => column.accessorFn)
+                          .map((column) => {
+                            const val = row.getValue(column.id);
+
+                            if (Array.isArray(val)) {
+                              return val.join("@");
+                            }
+
+                            return val;
+                          })
+                          .join(",")
+                      ),
+                    ].join("\n"),
+                )}
+                download={new Date().toLocaleString() + ".csv"}
+              >
+                Output
               </Button>
             </Box>
           </Grid2>
