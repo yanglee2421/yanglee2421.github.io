@@ -6,7 +6,7 @@ import React from "react";
 import localforage from "localforage";
 
 export type Invoice = {
-  id: number;
+  id: string;
   amount: number;
   staff: string[];
   note: string;
@@ -14,7 +14,7 @@ export type Invoice = {
 };
 
 export type Staff = {
-  id: number;
+  id: string;
   name: string;
   alias: string;
   enable: boolean;
