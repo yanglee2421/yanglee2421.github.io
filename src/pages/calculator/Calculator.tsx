@@ -63,8 +63,8 @@ export const Calculator = () => {
               data.invoices.forEach((i) => {
                 d.invoices.push({
                   ...i,
-                  id: d.invoices.length,
-                  staff: i.staff.split(","),
+                  id: d.invoices.length + 1,
+                  staff: i.staff.split("@"),
                   date: Date.now(),
                 });
               });
@@ -85,14 +85,16 @@ export const Calculator = () => {
                 )}
                 <Grid2 size={{ xs: 12 }}>
                   <Box sx={{ display: "flex", alignItems: "center" }}>
-                    <FormLabel>Item:{idx + 1}</FormLabel>
-                    <IconButton
-                      color="error"
-                      onClick={() => fields.remove(idx)}
-                      sx={{ marginInlineStart: "auto" }}
-                    >
-                      <CloseOutlined />
-                    </IconButton>
+                    <FormLabel>{idx + 1}</FormLabel>
+                    {!!idx && (
+                      <IconButton
+                        color="error"
+                        onClick={() => fields.remove(idx)}
+                        sx={{ marginInlineStart: "auto" }}
+                      >
+                        <CloseOutlined />
+                      </IconButton>
+                    )}
                   </Box>
                 </Grid2>
                 <Controller
