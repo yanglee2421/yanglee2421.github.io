@@ -76,7 +76,7 @@ export const Calculator = () => {
                     ...i,
                     id: crypto.randomUUID(),
                     staff: i.staff.split("@").map((i) =>
-                      staffMap.get(i.trim()) || i
+                      staffMap.get(i.trim()) || i.trim()
                     ),
                     date: Date.now(),
                   });
@@ -232,7 +232,7 @@ function NumberField(props: NumberFieldProps) {
       onBlur={(e) => {
         onBlur?.(e);
         setFocused(false);
-        onChange(Number.parseFloat(e.target.value));
+        onChange(Number.parseFloat(e.target.value.trim()));
       }}
       onChange={(e) => {
         setFocusVal(e.target.value);

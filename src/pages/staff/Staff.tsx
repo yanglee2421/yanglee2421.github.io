@@ -146,9 +146,10 @@ export const Staff = () => {
                 }
 
                 d.staffs.push({
-                  ...data,
                   id: crypto.randomUUID(),
                   enable: true,
+                  name: data.name.trim(),
+                  alias: data.alias.trim(),
                 });
               });
             }, console.error)()}
