@@ -107,8 +107,9 @@ const routes: RouteObject[] = [{
 
         return {
           Component() {
+            const location = useLocation();
             return (
-              <AuthLayout>
+              <AuthLayout key={location.pathname}>
                 <Outlet />
               </AuthLayout>
             );
