@@ -27,8 +27,9 @@ const ParticlesUI = () => {
 
   return (
     <Particles
-      options={{ preset: "snow" }}
+      options={{ preset: "snow", background: { opacity: 0 } }}
       particlesLoaded={particlesLoaded}
+      style={{ zIndex: -10, position: "absolute" }}
     />
   );
 };
@@ -72,25 +73,27 @@ export function Lab() {
   };
 
   return (
-    <Stack spacing={6}>
-      <Card>
-        <CardHeader title="Slider" />
-        <CardContent>
-          <Slider />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader title="Camera" />
-        <CardContent>
-          <Camera id={id} />
-        </CardContent>
-        <CardActions>
-          <Button onClick={handleCutImage} variant="contained">
-            cut image
-          </Button>
-        </CardActions>
-      </Card>
+    <>
+      <Stack spacing={6} sx={{ zIndex: 1, position: "relative" }}>
+        <Card>
+          <CardHeader title="Slider" />
+          <CardContent>
+            <Slider />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader title="Camera" />
+          <CardContent>
+            <Camera id={id} />
+          </CardContent>
+          <CardActions>
+            <Button onClick={handleCutImage} variant="contained">
+              cut image
+            </Button>
+          </CardActions>
+        </Card>
+      </Stack>
       <ParticlesUI />
-    </Stack>
+    </>
   );
 }
