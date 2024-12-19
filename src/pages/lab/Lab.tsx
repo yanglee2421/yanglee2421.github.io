@@ -9,6 +9,30 @@ import {
 } from "@mui/material";
 import { Camera } from "@/components/shared/Camera";
 import React from "react";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { type Container } from "@tsparticles/engine";
+import { loadSlim } from "@tsparticles/slim";
+import { loadSnowPreset } from "@tsparticles/preset-snow";
+
+const snowPro = initParticlesEngine(async (engine) => {
+  await loadSnowPreset(engine);
+  await loadSlim(engine);
+});
+
+const ParticlesUI = () => {
+  React.use(snowPro);
+  const particlesLoaded = async (container?: Container) => {
+    console.log(container);
+  };
+
+  return (
+    <Particles
+      options={{ preset: "snow", background: { opacity: 0 } }}
+      particlesLoaded={particlesLoaded}
+      style={{ zIndex: -10, position: "absolute" }}
+    />
+  );
+};
 
 export function Lab() {
   const id = React.useId();
@@ -49,24 +73,27 @@ export function Lab() {
   };
 
   return (
-    <Stack spacing={6}>
-      <Card>
-        <CardHeader title="Slider" />
-        <CardContent>
-          <Slider />
-        </CardContent>
-      </Card>
-      <Card>
-        <CardHeader title="Camera" />
-        <CardContent>
-          <Camera id={id} />
-        </CardContent>
-        <CardActions>
-          <Button onClick={handleCutImage} variant="contained">
-            cut image
-          </Button>
-        </CardActions>
-      </Card>
-    </Stack>
+    <>
+      <Stack spacing={6} sx={{ zIndex: 1, position: "relative" }}>
+        <Card>
+          <CardHeader title="Slider" />
+          <CardContent>
+            <Slider />
+          </CardContent>
+        </Card>
+        <Card>
+          <CardHeader title="Camera" />
+          <CardContent>
+            <Camera id={id} />
+          </CardContent>
+          <CardActions>
+            <Button onClick={handleCutImage} variant="contained">
+              cut image
+            </Button>
+          </CardActions>
+        </Card>
+      </Stack>
+      <ParticlesUI />
+    </>
   );
 }
