@@ -1,4 +1,3 @@
-import { type Invoice, useDbStore } from "@/hooks/store/useDbStore";
 import { CloseOutlined, OutputOutlined } from "@mui/icons-material";
 import {
   Box,
@@ -31,6 +30,7 @@ import dayjs from "dayjs";
 import * as mathjs from "mathjs";
 import React from "react";
 import { useSearchParams } from "react-router";
+import { type Invoice, useDbStore } from "@/hooks/store/useDbStore";
 
 const columnHelper = createColumnHelper<Invoice>();
 
@@ -171,16 +171,46 @@ const InvoiceTable = () => {
     note: "",
   });
 
-  const date = search.get("date");
-  const staff = search.get("staff");
-  const note = search.get("note");
+  const dateSearch = search.get("date");
+  const staffSearch = search.get("staff");
+  const noteSearch = search.get("note");
 
   const data = React.useMemo(() => {
     return invoices.filter((i) =>
-      checkDate(date, i.date) && checkStaff(staff, i.staff) &&
-      checkText(note, i.note)
+      checkDate(dateSearch, i.date) && checkStaff(staffSearch, i.staff) &&
+      checkText(noteSearch, i.note)
     );
-  }, [date, staff, invoices, note]);
+  }, [dateSearch, staffSearch, invoices, noteSearch]);
+
+  const [date, setDate] = React.useState(dateSearch);
+  const [staff, setStaff] = React.useState(staffSearch);
+  const [note, setNote] = React.useState(noteSearch);
+
+  React.useEffect(() => {
+    setSearch((p) => {
+      const n = new URLSearchParams(p);
+
+      if (date) {
+        n.set("date", date.trim());
+      } else {
+        n.delete("date");
+      }
+
+      if (staff) {
+        n.set("staff", staff.trim());
+      } else {
+        n.delete("staff");
+      }
+
+      if (note) {
+        n.set("note", note.trim());
+      } else {
+        n.delete("note");
+      }
+
+      return n;
+    });
+  }, [date, staff, note, setSearch]);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
@@ -229,39 +259,26 @@ const InvoiceTable = () => {
         <Grid2 container spacing={6}>
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
-              value={staff}
-              onChange={(e) =>
-                setSearch((p) => {
-                  const n = new URLSearchParams(p);
-                  n.set("staff", e.target.value);
-                  return n;
-                })}
+              value={staffSearch}
+              onChange={(e) => setStaff(e.target.value)}
               fullWidth
               label="Staff"
             />
           </Grid2>
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
-              value={note}
-              onChange={(e) =>
-                setSearch((p) => {
-                  const n = new URLSearchParams(p);
-                  n.set("note", e.target.value);
-                  return n;
-                })}
+              value={noteSearch}
+              onChange={(e) => setNote(e.target.value)}
               fullWidth
               label="Note"
             />
           </Grid2>
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <DatePicker
-              value={date ? dayjs(Number.parseInt(date)) : null}
+              value={dateSearch ? dayjs(Number.parseInt(dateSearch)) : null}
               onChange={(e) => {
-                setSearch((p) => {
-                  const n = new URLSearchParams(p);
-                  const val = e?.toDate().getTime();
-                  void [val ? n.set("date", val + "") : n.delete("date")];
-                  return n;
+                setDate(() => {
+                  return e?.toDate().getTime().toString() || null;
                 });
               }}
               slotProps={{

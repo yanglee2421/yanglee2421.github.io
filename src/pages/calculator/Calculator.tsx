@@ -127,7 +127,6 @@ export const Calculator = () => {
                         helperText={fieldState.error?.message}
                         label="Amount"
                         fullWidth
-                        inputMode="numeric"
                       />
                     </Grid2>
                   )}
@@ -237,7 +236,7 @@ function NumberField(props: NumberFieldProps) {
       onChange={(e) => {
         setFocusVal(e.target.value);
       }}
-      inputMode="numeric"
+      slotProps={{ htmlInput: { inputMode: "numeric" } }}
       {...restProps}
     />
   );

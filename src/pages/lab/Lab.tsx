@@ -12,10 +12,10 @@ import React from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { type Container } from "@tsparticles/engine";
 import { loadSlim } from "@tsparticles/slim";
-import { loadSnowPreset } from "@tsparticles/preset-snow";
+import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
 
 const snowPro = initParticlesEngine(async (engine) => {
-  await loadSnowPreset(engine);
+  await loadBubblesPreset(engine);
   await loadSlim(engine);
 });
 
@@ -27,9 +27,11 @@ const ParticlesUI = () => {
 
   return (
     <Particles
-      options={{ preset: "snow", background: { opacity: 0 } }}
+      options={{
+        preset: "bubbles",
+        background: { opacity: 0 },
+      }}
       particlesLoaded={particlesLoaded}
-      style={{ zIndex: -10, position: "absolute" }}
     />
   );
 };
