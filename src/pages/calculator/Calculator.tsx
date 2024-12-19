@@ -237,6 +237,7 @@ function NumberField(props: NumberFieldProps) {
       onChange={(e) => {
         setFocusVal(e.target.value);
       }}
+      inputMode="numeric"
       {...restProps}
     />
   );
