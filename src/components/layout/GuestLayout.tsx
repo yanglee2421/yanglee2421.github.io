@@ -4,7 +4,7 @@ import { Box, styled, useTheme } from "@mui/material";
 const IMAGE_SIZE = 1024;
 const ICON_SIZE = IMAGE_SIZE * 1 / 2;
 
-export function GuestLayout(props: React.PropsWithChildren) {
+export const GuestLayout = (props: React.PropsWithChildren) => {
   const id = React.useId();
   const cvsRef = React.useRef<HTMLCanvasElement>(null);
   const theme = useTheme();
@@ -86,7 +86,7 @@ export function GuestLayout(props: React.PropsWithChildren) {
       <Main>{props.children}</Main>
     </>
   );
-}
+};
 
 const MAIN_SIZE = 120;
 
@@ -121,7 +121,7 @@ const Main = styled("main")(({ theme }) => ({
   },
 }));
 
-function Logo(props: React.SVGProps<SVGSVGElement> & { bgcolor: string }) {
+const Logo = (props: React.SVGProps<SVGSVGElement> & { bgcolor: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -154,4 +154,4 @@ function Logo(props: React.SVGProps<SVGSVGElement> & { bgcolor: string }) {
       />
     </svg>
   );
-}
+};

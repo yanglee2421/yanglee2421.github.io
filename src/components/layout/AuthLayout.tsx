@@ -9,9 +9,6 @@ import {
   Toolbar,
   Typography,
 } from "@mui/material";
-import { Link as RouterLink, NavLink, useParams } from "react-router";
-import { ModeToggle } from "../shared/ModeToggle";
-import { LangToggle } from "../shared/LangToggle";
 import {
   CalculateOutlined,
   CalendarMonthOutlined,
@@ -26,8 +23,11 @@ import {
   SportsEsportsOutlined,
   WalletOutlined,
 } from "@mui/icons-material";
-import { UserDropdown } from "../shared/UserDropdonw";
+import { Link as RouterLink, NavLink, useParams } from "react-router";
 import React from "react";
+import { LangToggle } from "../shared/LangToggle";
+import { ModeToggle } from "../shared/ModeToggle";
+import { UserDropdown } from "../shared/UserDropdonw";
 import { Materio } from "../svg/Materio";
 
 const github_url = import.meta.env.VITE_GITHUB_URL;
@@ -69,7 +69,7 @@ const list = [
   {
     to: "/dashboard",
     label: "Dashboard",
-    icon: <DashboardOutlined color="inherit" />,
+    icon: <DashboardOutlined />,
   },
   {
     to: "/calendar",
@@ -81,9 +81,21 @@ const list = [
     label: "Calculator",
     icon: <CalculateOutlined />,
   },
-  { to: "/invoices", label: "Invoices", icon: <WalletOutlined /> },
-  { to: "/staff", label: "Staff", icon: <PeopleOutlineOutlined /> },
-  { to: "/overtime", label: "Overtime", icon: <CalendarMonthOutlined /> },
+  {
+    to: "/invoices",
+    label: "Invoices",
+    icon: <WalletOutlined />,
+  },
+  {
+    to: "/staff",
+    label: "Staff",
+    icon: <PeopleOutlineOutlined />,
+  },
+  {
+    to: "/overtime",
+    label: "Overtime",
+    icon: <CalendarMonthOutlined />,
+  },
   {
     to: "/minesweeper",
     label: "Minesweeper",
@@ -96,7 +108,7 @@ const list = [
   },
 ];
 
-function NavMenu() {
+const NavMenu = () => {
   const params = useParams();
 
   return (
@@ -112,7 +124,7 @@ function NavMenu() {
       ))}
     </LinkWrapper>
   );
-}
+};
 
 type Props = React.PropsWithChildren;
 
