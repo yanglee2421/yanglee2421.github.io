@@ -58,9 +58,6 @@ export function UserDropdown() {
             <SettingsOutlined />
           </ListItemIcon>
           <ListItemText
-            primaryTypographyProps={{
-              textTransform: "capitalize",
-            }}
             primary={
               <Translation ns="/layout/userdropdown">
                 {(t) => t("setting")}
@@ -69,57 +66,50 @@ export function UserDropdown() {
           />
         </MenuItem>
         {user
-          ? (
-            <>
-              <MenuItem>
-                <ListItemIcon>
-                  <PersonOutlined />
-                </ListItemIcon>
-                <ListItemText
-                  primaryTypographyProps={{
-                    textTransform: "capitalize",
-                  }}
-                  primary={
-                    <Translation ns="/layout/userdropdown">
-                      {(t) => t("profile")}
-                    </Translation>
-                  }
-                />
-              </MenuItem>
-              <Divider />
-              <Box sx={{ paddingInline: 3, paddingBlock: 3 }}>
-                <Button
-                  onClick={() => {
-                    signOut(auth);
-                    handleClose();
-                  }}
-                  size="small"
-                  fullWidth
-                  variant="contained"
-                  color="error"
-                >
-                  signout
-                </Button>
-              </Box>
-            </>
-          )
-          : (
-            <>
-              <Divider />
-              <Box sx={{ paddingInline: 3, paddingBlock: 3 }}>
-                <Button
-                  to="/login"
-                  component={Link}
-                  size="small"
-                  fullWidth
-                  variant="contained"
-                  color="info"
-                >
-                  Sign In
-                </Button>
-              </Box>
-            </>
-          )}
+          ? [
+            <MenuItem key="profile">
+              <ListItemIcon>
+                <PersonOutlined />
+              </ListItemIcon>
+              <ListItemText
+                primary={
+                  <Translation ns="/layout/userdropdown">
+                    {(t) => t("profile")}
+                  </Translation>
+                }
+              />
+            </MenuItem>,
+            <Divider key={"Divider"} />,
+            <Box sx={{ paddingInline: 3, paddingBlock: 3 }} key={"signout"}>
+              <Button
+                onClick={() => {
+                  signOut(auth);
+                  handleClose();
+                }}
+                size="small"
+                fullWidth
+                variant="contained"
+                color="error"
+              >
+                signout
+              </Button>
+            </Box>,
+          ]
+          : [
+            <Divider key={"Divider"} />,
+            <Box key={"login"} sx={{ paddingInline: 3, paddingBlock: 3 }}>
+              <Button
+                to="/login"
+                component={Link}
+                size="small"
+                fullWidth
+                variant="contained"
+                color="info"
+              >
+                Sign In
+              </Button>
+            </Box>,
+          ]}
       </Menu>
     </>
   );

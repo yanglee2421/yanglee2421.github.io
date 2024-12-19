@@ -50,7 +50,9 @@ const Cell = (props: CellProps) => {
   React.useEffect(() => {
     const el = ref.current;
 
-    if (!el) return;
+    if (!el) {
+      return;
+    }
 
     const observer = new ResizeObserver(([{ contentBoxSize }]) => {
       setHeight(contentBoxSize[0].inlineSize);
@@ -342,7 +344,9 @@ function Timer(props: TimerProps) {
   const [now, setNow] = React.useState(0);
 
   React.useEffect(() => {
-    if (!props.enable) return;
+    if (!props.enable) {
+      return;
+    }
 
     let timer = 0;
 
@@ -359,7 +363,9 @@ function Timer(props: TimerProps) {
   }, [props.enable]);
 
   const renderSubheader = () => {
-    if (!props.isStarted) return "Standing by";
+    if (!props.isStarted) {
+      return "Standing by";
+    }
 
     let diff = now - props.startTime;
 

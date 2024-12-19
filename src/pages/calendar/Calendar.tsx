@@ -1,6 +1,8 @@
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { timeToCalendar } from "@/utils/timeToCalendar";
+import { useParams } from "react-router";
+import { DatePicker } from "@mui/x-date-pickers";
+import dayjs from "dayjs";
 import {
   Badge,
   Card,
@@ -15,16 +17,14 @@ import {
   TableHead,
   TableRow,
 } from "@mui/material";
-import { chunk, minmax } from "@yotulee/run";
-import { DatePicker } from "@mui/x-date-pickers";
-import dayjs from "dayjs";
-import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
-import { useParams } from "react-router";
-import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
 import {
   NavigateBeforeOutlined,
   NavigateNextOutlined,
 } from "@mui/icons-material";
+import { chunk, minmax } from "@yotulee/run";
+import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
+import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
+import { timeToCalendar } from "@/utils/timeToCalendar";
 
 const inRange = (num: number, min: number, max: number) =>
   Object.is(num, minmax(num, { min, max }));
@@ -103,7 +103,9 @@ export function Calendar() {
             <DatePicker
               value={selectedTime}
               onChange={(e) => {
-                void [e?.isValid() && setSelectedTime(e)];
+                if (e?.isValid()) {
+                  setSelectedTime(e);
+                }
               }}
               slotProps={{
                 textField: { fullWidth: true, label: "Month" },
