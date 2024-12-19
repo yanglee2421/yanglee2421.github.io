@@ -9,6 +9,26 @@ import {
 } from "@mui/material";
 import { Camera } from "@/components/shared/Camera";
 import React from "react";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadSlim } from "@tsparticles/slim";
+
+const initParticle = initParticlesEngine(async (engine) => {
+  await engine.addPreset("snow", {});
+  await engine.load({ options: { preset: "snow" } });
+  await loadSlim(engine);
+});
+
+const ParticlesUI = () => {
+  React.use(initParticle);
+  const id = React.useId();
+  return (
+    <Particles
+      id={id}
+      url="http://foo.bar/particles.json"
+      particlesLoaded={async (c) => console.log(c)}
+    />
+  );
+};
 
 export function Lab() {
   const id = React.useId();
@@ -67,6 +87,7 @@ export function Lab() {
           </Button>
         </CardActions>
       </Card>
+      <ParticlesUI />
     </Stack>
   );
 }
