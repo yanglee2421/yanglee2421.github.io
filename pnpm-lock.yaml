@@ -41,6 +41,9 @@ importers:
       '@tsparticles/engine':
         specifier: ^3.7.1
         version: 3.7.1
+      '@tsparticles/preset-snow':
+        specifier: ^3.2.0
+        version: 3.2.0
       '@tsparticles/react':
         specifier: ^3.0.0
         version: 3.0.0(@tsparticles/engine@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)
@@ -1216,6 +1219,9 @@ packages:
   '@tsparticles/plugin-rgb-color@3.7.1':
     resolution: {integrity: sha512-taEraTpCYR6jpjflqBL95tN0zFU8JrAChXTt8mxVn7gddxoNMHI/LGymEPRCweLukwV6GQyAGOkeGEdWDPtYTA==}
 
+  '@tsparticles/preset-snow@3.2.0':
+    resolution: {integrity: sha512-S/nxsNSBgRG8nkeYePXLGdZ0I5ysJ5AelcWYlGxxWx0b6qurAw8NvyfQd7+GXuj6kaS/5+aay71L2apf1WG/yQ==}
+
   '@tsparticles/react@3.0.0':
     resolution: {integrity: sha512-hjGEtTT1cwv6BcjL+GcVgH++KYs52bIuQGW3PWv7z3tMa8g0bd6RI/vWSLj7p//NZ3uTjEIeilYIUPBh7Jfq/Q==}
     peerDependencies:
@@ -1267,6 +1273,9 @@ packages:
 
   '@tsparticles/updater-stroke-color@3.7.1':
     resolution: {integrity: sha512-VHhQkCNuxjx/Hy7A+g0Yijb24T0+wQ3jNsF/yfrR9dEdZWSBiimZLvV1bilPdAeEtieAJTAZo2VNhcD1snF0iQ==}
+
+  '@tsparticles/updater-wobble@3.7.1':
+    resolution: {integrity: sha512-YIlNg4L0w4egQJhPLpgcvcfv9+X621+cQsrdN9sSmajxhhwtEQvQUvFUzGTcvpjVi+GcBNp0t4sCKEzoP8iaYw==}
 
   '@types/babel__core@7.20.5':
     resolution: {integrity: sha512-qoQprZvz5wQFJwMDqeseRXWv3rqMvhgpbXFfVyWhbx9X47POIA6i/+dXefEmZKoAgOaTdaIgNSMqMIU61yRyzA==}
@@ -3516,6 +3525,12 @@ snapshots:
     dependencies:
       '@tsparticles/engine': 3.7.1
 
+  '@tsparticles/preset-snow@3.2.0':
+    dependencies:
+      '@tsparticles/basic': 3.7.1
+      '@tsparticles/engine': 3.7.1
+      '@tsparticles/updater-wobble': 3.7.1
+
   '@tsparticles/react@3.0.0(@tsparticles/engine@3.7.1)(react-dom@19.0.0(react@19.0.0))(react@19.0.0)':
     dependencies:
       '@tsparticles/engine': 3.7.1
@@ -3604,6 +3619,10 @@ snapshots:
       '@tsparticles/engine': 3.7.1
 
   '@tsparticles/updater-stroke-color@3.7.1':
+    dependencies:
+      '@tsparticles/engine': 3.7.1
+
+  '@tsparticles/updater-wobble@3.7.1':
     dependencies:
       '@tsparticles/engine': 3.7.1
 

@@ -10,22 +10,25 @@ import {
 import { Camera } from "@/components/shared/Camera";
 import React from "react";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { type Container } from "@tsparticles/engine";
 import { loadSlim } from "@tsparticles/slim";
+import { loadSnowPreset } from "@tsparticles/preset-snow";
 
-const initParticle = initParticlesEngine(async (engine) => {
-  await engine.addPreset("snow", {});
-  await engine.load({ options: { preset: "snow" } });
+const snowPro = initParticlesEngine(async (engine) => {
+  await loadSnowPreset(engine);
   await loadSlim(engine);
 });
 
 const ParticlesUI = () => {
-  React.use(initParticle);
-  const id = React.useId();
+  React.use(snowPro);
+  const particlesLoaded = async (container?: Container) => {
+    console.log(container);
+  };
+
   return (
     <Particles
-      id={id}
-      url="http://foo.bar/particles.json"
-      particlesLoaded={async (c) => console.log(c)}
+      options={{ preset: "snow" }}
+      particlesLoaded={particlesLoaded}
     />
   );
 };
