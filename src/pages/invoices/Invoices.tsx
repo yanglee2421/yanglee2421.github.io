@@ -108,7 +108,6 @@ const ResultPanel = () => {
   const invoices = useDbStore((s) => s.invoices);
   const rows = invoices.filter((i) => ids.includes(i.id + ""));
   const allStaffs = [...new Set(rows.flatMap((i) => i.staff))];
-
   const map = new Map<string, string>();
 
   allStaffs.forEach((s) => {
@@ -147,8 +146,8 @@ const ResultPanel = () => {
       />
       <Table>
         <TableHead>
-          <TableCell>Staff</TableCell>
-          <TableCell>Amount</TableCell>
+          <TableCell>STAFF</TableCell>
+          <TableCell>AMOUNT</TableCell>
         </TableHead>
         <TableBody>
           {[...map.entries()].map((i) => (
