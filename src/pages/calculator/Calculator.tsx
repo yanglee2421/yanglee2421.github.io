@@ -1,5 +1,3 @@
-import { useDbStore } from "@/hooks/store/useDbStore";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { AddOutlined, CloseOutlined } from "@mui/icons-material";
 import {
   Box,
@@ -15,10 +13,68 @@ import {
   TextField,
   TextFieldProps,
 } from "@mui/material";
+import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import { z } from "zod";
+import { useDbStore } from "@/hooks/store/useDbStore";
+
+type NumberFieldProps = Omit<TextFieldProps, "value" | "onChange"> & {
+  value: number;
+  onChange(val: number): void;
+};
+
+const renderVal = (
+  focused: boolean,
+  focusVal: number | string,
+  value: number,
+) => {
+  if (focused) {
+    return focusVal;
+  }
+
+  if (Number.isNaN(value)) {
+    return "";
+  }
+
+  return value;
+};
+
+const valToFocusVal = (val: number) => {
+  if (Number.isNaN(val)) {
+    return "";
+  }
+
+  return val;
+};
+
+const NumberField = (props: NumberFieldProps) => {
+  const { value, onChange, onBlur, onFocus, ...restProps } = props;
+  const [focused, setFocused] = React.useState(false);
+  const [focusVal, setFocusVal] = React.useState<number | string>("");
+
+  return (
+    <TextField
+      value={renderVal(focused, focusVal, value)}
+      onFocus={(e) => {
+        onFocus?.(e);
+        setFocused(true);
+        setFocusVal(valToFocusVal(value));
+      }}
+      onBlur={(e) => {
+        onBlur?.(e);
+        setFocused(false);
+        onChange(Number.parseFloat(e.target.value.trim()));
+      }}
+      onChange={(e) => {
+        setFocusVal(e.target.value);
+      }}
+      slotProps={{ htmlInput: { inputMode: "numeric" } }}
+      {...restProps}
+    />
+  );
+};
 
 const schema = z.object({
   invoices: z.array(z.object({
@@ -187,57 +243,3 @@ export const Calculator = () => {
     </Card>
   );
 };
-
-type NumberFieldProps = Omit<TextFieldProps, "value" | "onChange"> & {
-  value: number;
-  onChange(val: number): void;
-};
-
-function NumberField(props: NumberFieldProps) {
-  const { value, onChange, onBlur, onFocus, ...restProps } = props;
-  const [focused, setFocused] = React.useState(false);
-  const [focusVal, setFocusVal] = React.useState<number | string>("");
-
-  void value;
-
-  const renderVal = () => {
-    if (focused) {
-      return focusVal;
-    }
-
-    if (Number.isNaN(value)) {
-      return "";
-    }
-
-    return value;
-  };
-
-  const valToFocusVal = (val: number) => {
-    if (Number.isNaN(val)) {
-      return "";
-    }
-
-    return val;
-  };
-
-  return (
-    <TextField
-      value={renderVal()}
-      onFocus={(e) => {
-        onFocus?.(e);
-        setFocused(true);
-        setFocusVal(valToFocusVal(value));
-      }}
-      onBlur={(e) => {
-        onBlur?.(e);
-        setFocused(false);
-        onChange(Number.parseFloat(e.target.value.trim()));
-      }}
-      onChange={(e) => {
-        setFocusVal(e.target.value);
-      }}
-      slotProps={{ htmlInput: { inputMode: "numeric" } }}
-      {...restProps}
-    />
-  );
-}

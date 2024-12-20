@@ -1,4 +1,3 @@
-import { Slider } from "./Slider";
 import {
   Button,
   Card,
@@ -7,12 +6,13 @@ import {
   CardHeader,
   Stack,
 } from "@mui/material";
-import { Camera } from "@/components/shared/Camera";
-import React from "react";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { type Container } from "@tsparticles/engine";
-import { loadSlim } from "@tsparticles/slim";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
+import { loadSlim } from "@tsparticles/slim";
+import React from "react";
+import { Camera } from "@/components/shared/Camera";
+import { Slider } from "./Slider";
 
 const snowPro = initParticlesEngine(async (engine) => {
   await loadBubblesPreset(engine);
@@ -36,7 +36,7 @@ const ParticlesUI = () => {
   );
 };
 
-export function Lab() {
+export const Lab = () => {
   const id = React.useId();
 
   const handleCutImage = () => {
@@ -98,4 +98,4 @@ export function Lab() {
       <ParticlesUI />
     </>
   );
-}
+};
