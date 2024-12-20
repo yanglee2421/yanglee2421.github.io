@@ -1,5 +1,5 @@
 import { createHighlighterCore } from "shiki/core";
-import getWasm from "shiki/wasm";
+import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 
 export const hightlighter = createHighlighterCore({
   themes: [
@@ -15,5 +15,5 @@ export const hightlighter = createHighlighterCore({
     import("shiki/langs/ts.mjs"),
     import("shiki/langs/tsx.mjs"),
   ],
-  loadWasm: getWasm,
+  engine: createOnigurumaEngine(() => import("shiki/wasm")),
 });

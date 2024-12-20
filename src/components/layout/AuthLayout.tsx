@@ -13,6 +13,7 @@ import {
   CalculateOutlined,
   CalendarMonthOutlined,
   CalendarTodayOutlined,
+  ChatOutlined,
   ChevronRightOutlined,
   CloseOutlined,
   DashboardOutlined,
@@ -101,6 +102,7 @@ const list = [
     label: "Minesweeper",
     icon: <SportsEsportsOutlined />,
   },
+  { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
   {
     to: "/lab",
     label: "Lab",

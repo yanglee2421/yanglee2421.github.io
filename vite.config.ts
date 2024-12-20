@@ -89,6 +89,11 @@ export default defineConfig(() => {
           changeOrigin: true,
           ws: true,
         },
+        "/v1/chat/completions": {
+          target: "https://spark-api-open.xf-yun.com",
+          changeOrigin: true,
+          ws: true,
+        },
       },
       fs: {
         allow: [resolve(__dirname, "./")],

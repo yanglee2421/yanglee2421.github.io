@@ -123,6 +123,7 @@ const routes: RouteObject[] = [{
           path: "staff",
           lazy: () => import("@/pages/staff/route"),
         },
+        { id: "chat", path: "chat", lazy: () => import("@/pages/chat/route") },
       ],
     },
   ],
