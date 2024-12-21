@@ -13,6 +13,7 @@ import { loadSlim } from "@tsparticles/slim";
 import React from "react";
 import { Camera } from "@/components/shared/Camera";
 import { Slider } from "./Slider";
+import { useTestEffect } from "@/hooks/useTestEffect";
 
 const snowPro = initParticlesEngine(async (engine) => {
   await loadBubblesPreset(engine);
@@ -33,6 +34,18 @@ const ParticlesUI = () => {
       }}
       particlesLoaded={particlesLoaded}
     />
+  );
+};
+
+const Counter = () => {
+  const [count, setCount] = React.useState(0);
+
+  useTestEffect();
+
+  return (
+    <Button onClick={() => setCount((prev) => prev + 1)} variant="contained">
+      {count}
+    </Button>
   );
 };
 
@@ -96,6 +109,7 @@ export const Lab = () => {
         </Card>
       </Stack>
       <ParticlesUI />
+      <Counter />
     </>
   );
 };
