@@ -218,7 +218,66 @@ const Cell = (props: CellProps) => {
 
 const MemoCell = React.memo(Cell);
 
+type GameTimerProps = {
+  enable: boolean;
+  startTime: number;
+  endTime: number;
+  isOver: boolean;
+  isStarted: boolean;
+};
+
+const GameTimer = (props: GameTimerProps) => {
+  const [now, setNow] = React.useState(0);
+  const timer = React.useRef(0);
+
+  React.useEffect(() => {
+    if (!props.enable) return;
+
+    const run = () => {
+      timer.current = requestAnimationFrame(run);
+
+      React.startTransition(() => {
+        setNow(Date.now());
+      });
+    };
+    run();
+
+    return () => {
+      cancelAnimationFrame(timer.current);
+    };
+  }, [props.enable]);
+
+  const renderSubheader = () => {
+    if (!props.isStarted) {
+      return "Standing by";
+    }
+
+    let diff = now - props.startTime;
+
+    if (props.isOver) {
+      diff = props.endTime - props.startTime;
+    }
+
+    const s = Math.floor(diff / 1000);
+    const ms = diff % 1000;
+
+    return `${s}s${ms}ms`;
+  };
+
+  return renderSubheader();
+};
+
+const MemoGameTimer = React.memo(GameTimer);
+
 export const Minesweeper = () => {
+  const handleTimeStart = () => {
+    console.log("started");
+  };
+
+  const handleTimeEnd = () => {
+    console.log("end");
+  };
+
   const [{ game }, dispatch] = React.useReducer(
     ({ game }, args?: [number, number, number, () => void, () => void]) =>
       args
@@ -233,7 +292,9 @@ export const Minesweeper = () => {
         })
         : ({ game }),
     null,
-    () => ({ game: new MinesweeperGame(8, 8, 10, Boolean, Boolean) }),
+    () => ({
+      game: new MinesweeperGame(8, 8, 10, handleTimeEnd, handleTimeStart),
+    }),
   );
 
   return (
@@ -245,7 +306,7 @@ export const Minesweeper = () => {
         subheader={
           <Box sx={{ display: "flex", "justifyContent": "space-between" }}>
             <span>
-              <Timer
+              <MemoGameTimer
                 enable={game.isRuning}
                 isStarted={game.isStarted}
                 isOver={game.isOver}
@@ -267,8 +328,8 @@ export const Minesweeper = () => {
                   game.columns,
                   game.rows,
                   game.bombNums,
-                  Boolean,
-                  Boolean,
+                  handleTimeEnd,
+                  handleTimeStart,
                 ]);
               })}
           >
@@ -287,7 +348,13 @@ export const Minesweeper = () => {
                 );
 
                 React.startTransition(() => {
-                  dispatch([list[0], list[1], list[2], Boolean, Boolean]);
+                  dispatch([
+                    list[0],
+                    list[1],
+                    list[2],
+                    handleTimeEnd,
+                    handleTimeStart,
+                  ]);
                 });
               }}
               fullWidth
@@ -331,53 +398,3 @@ export const Minesweeper = () => {
     </Card>
   );
 };
-
-type TimerProps = {
-  isStarted: boolean;
-  isOver: boolean;
-  startTime: number;
-  endTime: number;
-  enable: boolean;
-};
-
-function Timer(props: TimerProps) {
-  const [now, setNow] = React.useState(0);
-
-  React.useEffect(() => {
-    if (!props.enable) {
-      return;
-    }
-
-    let timer = 0;
-
-    const fn = () => {
-      timer = requestAnimationFrame(fn);
-      React.startTransition(() => {
-        setNow(Date.now());
-      });
-    };
-
-    fn();
-
-    return () => cancelAnimationFrame(timer);
-  }, [props.enable]);
-
-  const renderSubheader = () => {
-    if (!props.isStarted) {
-      return "Standing by";
-    }
-
-    let diff = now - props.startTime;
-
-    if (props.isOver) {
-      diff = props.endTime - props.startTime;
-    }
-
-    const s = Math.floor(diff / 1000);
-    const ms = diff % 1000;
-
-    return `${s}s${ms}ms`;
-  };
-
-  return renderSubheader();
-}
