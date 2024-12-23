@@ -1,8 +1,4 @@
-import {
-  AddOutlined,
-  RotateRightOutlined,
-  SendOutlined,
-} from "@mui/icons-material";
+import { AddOutlined, SendOutlined, StopOutlined } from "@mui/icons-material";
 import {
   Avatar,
   Box,
@@ -71,8 +67,90 @@ type Message = {
 };
 
 export const Chat = () => {
-  const [msgList, setMsgList] = useImmer<Message[]>([]);
   React.use(hightlighter);
+  const [msgList, setMsgList] = useImmer<Message[]>([]);
+  const controller = React.useRef<AbortController | null>(null);
+
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+    controller.current = new AbortController();
+    const fd = new FormData(e.currentTarget);
+    const question = fd.get("content") as string;
+    const last = {
+      id: crypto.randomUUID(),
+      time: Date.now(),
+      role: "user",
+      content: question,
+    };
+
+    setMsgList((d) => {
+      d.push(last);
+      d.push({
+        id: crypto.randomUUID(),
+        time: Date.now(),
+        role: "assistant",
+        content: "",
+      });
+    });
+
+    const res = await fetch(
+      "/v1/chat/completions",
+      {
+        signal: controller.current.signal,
+        method: "POST",
+        body: JSON.stringify({
+          model: "4.0Ultra",
+          messages: msgList.map((i) => ({
+            role: i.role,
+            content: i.content,
+          })).concat([last]),
+          stream: true,
+          tools: [
+            {
+              type: "web_search",
+              web_search: {
+                enable: false,
+              },
+            },
+          ],
+        }),
+        headers: {
+          Authorization: "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
+        },
+      },
+    );
+
+    const reader = res.body?.getReader();
+
+    if (!reader) {
+      return;
+    }
+
+    const decoder = new TextDecoder();
+    let buf = "";
+
+    while (true) {
+      const { done, value } = await reader.read();
+      const decocded = decoder.decode(value, { stream: true });
+      console.log(decocded);
+      buf += decocded;
+
+      setMsgList((d) => {
+        const last = d[d.length - 1];
+        if (!last) return;
+        last.content = buf
+          .split("data:")
+          .map((i) => getContent(i))
+          .filter(Boolean)
+          .join("");
+      });
+
+      if (done) {
+        break;
+      }
+    }
+  };
 
   return (
     <Box>
@@ -94,86 +172,7 @@ export const Chat = () => {
         <CardActions>
           <Box sx={{ width: "100%" }}>
             <form
-              onSubmit={async (e) => {
-                e.preventDefault();
-                const fd = new FormData(e.currentTarget);
-                const question = fd.get("content");
-
-                const last = {
-                  id: crypto.randomUUID(),
-                  time: Date.now(),
-                  role: "user",
-                  content: question as string,
-                };
-
-                setMsgList((d) => {
-                  d.push(last);
-                });
-
-                const res = await fetch(
-                  "/v1/chat/completions",
-                  {
-                    method: "POST",
-                    body: JSON.stringify({
-                      model: "4.0Ultra",
-                      messages: msgList.map((i) => ({
-                        role: i.role,
-                        content: i.content,
-                      })).concat([last]),
-                      stream: true,
-                      tools: [
-                        {
-                          type: "web_search",
-                          web_search: {
-                            enable: false,
-                          },
-                        },
-                      ],
-                    }),
-                    headers: {
-                      Authorization:
-                        "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
-                    },
-                  },
-                );
-
-                const reader = res.body?.getReader();
-
-                if (reader) {
-                  const decoder = new TextDecoder();
-                  let buf = "";
-
-                  setMsgList((d) => {
-                    d.push({
-                      id: crypto.randomUUID(),
-                      time: Date.now(),
-                      role: "assistant",
-                      content: "",
-                    });
-                  });
-
-                  while (true) {
-                    const { done, value } = await reader.read();
-                    const decocded = decoder.decode(value, { stream: true });
-                    console.log(decocded);
-                    buf += decocded;
-
-                    setMsgList((d) => {
-                      const last = d[d.length - 1];
-                      if (!last) return;
-                      last.content = buf
-                        .split("data:")
-                        .map((i) => getContent(i))
-                        .filter(Boolean)
-                        .join("");
-                    });
-
-                    if (done) {
-                      break;
-                    }
-                  }
-                }
-              }}
+              onSubmit={handleSubmit}
             >
               <InputBase
                 name="content"
@@ -194,7 +193,14 @@ export const Chat = () => {
                   <AddOutlined />
                 </IconButton>
                 <Box sx={{ marginInlineStart: "auto" }}></Box>
-                <Sender />
+                <Sender
+                  onAbortClick={() => {
+                    controller.current?.abort();
+                    setMsgList((d) => {
+                      d.splice(-1, 1);
+                    });
+                  }}
+                />
               </Box>
             </form>
           </Box>
@@ -213,12 +219,22 @@ const getContent = (data: string) => {
   }
 };
 
-const Sender = () => {
+type SenderProps = {
+  onAbortClick(): void;
+};
+
+const Sender = (props: SenderProps) => {
   const fs = useFormStatus();
 
   return (
-    <IconButton disabled={fs.pending} type="submit">
-      {fs.pending ? <RotateRightOutlined /> : <SendOutlined />}
+    <IconButton
+      onClick={() => {
+        if (!fs.pending) return;
+        props.onAbortClick();
+      }}
+      type={fs.pending ? "button" : "submit"}
+    >
+      {fs.pending ? <StopOutlined /> : <SendOutlined />}
     </IconButton>
   );
 };
