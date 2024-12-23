@@ -4,6 +4,7 @@ import {
   SendOutlined,
 } from "@mui/icons-material";
 import {
+  Avatar,
   Box,
   Card,
   CardActions,
@@ -14,60 +15,100 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useFormStatus } from "react-dom";
+import { useImmer } from "use-immer";
 import { hightlighter } from "@/lib/hightlighter";
 
-export const Chat = () => {
+type MessageContentProps = {
+  last: boolean;
+  text: string;
+};
+
+const MessageContent = (props: MessageContentProps) => {
   const hgr = React.use(hightlighter);
-  const [msgList, setMsgList] = React.useState<string[]>([]);
+  const timer = React.useRef(0);
   const [msg, setMsg] = React.useState("");
+
+  React.useEffect(() => {
+    if (!props.last) return;
+
+    if (msg === props.text) return;
+
+    if (!props.text.startsWith(msg)) return;
+    timer.current = setTimeout(() => {
+      React.startTransition(() => {
+        setMsg((p) => props.text.slice(0, p.length + 1));
+      });
+    }, 4);
+
+    return () => clearTimeout(timer.current);
+  }, [msg, props.text, props.last]);
+
+  return (
+    <Box
+      sx={{
+        "pre.shiki": {
+          whiteSpace: "pre-wrap",
+        },
+      }}
+      dangerouslySetInnerHTML={{
+        __html: hgr.codeToHtml(props.last ? msg : props.text, {
+          lang: "markdown",
+          theme: "dark-plus",
+        }),
+      }}
+    >
+    </Box>
+  );
+};
+
+const MemoMessageContent = React.memo(MessageContent);
+
+type Message = {
+  id: string;
+  role: string;
+  content: string;
+  time: number;
+};
+
+export const Chat = () => {
+  const [msgList, setMsgList] = useImmer<Message[]>([]);
+  React.use(hightlighter);
 
   return (
     <Box>
       <Card>
         <CardHeader title="Chat" />
         <CardContent>
-          <ul>
-            {msgList.map((msg, i) => (
-              <li
-                key={i}
-              >
-                <Box
-                  sx={{
-                    "pre.shiki": {
-                      whiteSpace: "pre-wrap",
-                    },
-                  }}
-                  dangerouslySetInnerHTML={{
-                    __html: hgr.codeToHtml(msg, {
-                      lang: "markdown",
-                      theme: "dark-plus",
-                    }),
-                  }}
-                >
-                </Box>
-              </li>
-            ))}
-          </ul>
-          <Box
-            sx={{
-              "pre.shiki": {
-                whiteSpace: "pre-wrap",
-              },
-            }}
-            dangerouslySetInnerHTML={{
-              __html: hgr.codeToHtml(msg, {
-                lang: "markdown",
-                theme: "dark-plus",
-              }),
-            }}
-          >
-          </Box>
+          {msgList.map((msg, i) => (
+            <Box
+              key={msg.id}
+            >
+              <Avatar>{msg.role}</Avatar>
+              <MemoMessageContent
+                last={i + 1 === msgList.length}
+                text={msg.content}
+              />
+            </Box>
+          ))}
         </CardContent>
         <CardActions>
           <Box sx={{ width: "100%" }}>
             <form
-              action={async (fd) => {
-                setMsg("");
+              onSubmit={async (e) => {
+                e.preventDefault();
+                const fd = new FormData(e.currentTarget);
+                const question = fd.get("content");
+
+                const last = {
+                  id: crypto.randomUUID(),
+                  time: Date.now(),
+                  role: "user",
+                  content: question as string,
+                };
+
+                setMsgList((d) => {
+                  d.push(last);
+                });
 
                 const res = await fetch(
                   "/v1/chat/completions",
@@ -75,16 +116,10 @@ export const Chat = () => {
                     method: "POST",
                     body: JSON.stringify({
                       model: "4.0Ultra",
-                      messages: [
-                        {
-                          role: "system",
-                          content: "你是知识渊博的助理",
-                        },
-                        {
-                          role: "user",
-                          content: fd.get("content"),
-                        },
-                      ],
+                      messages: msgList.map((i) => ({
+                        role: i.role,
+                        content: i.content,
+                      })).concat([last]),
                       stream: true,
                       tools: [
                         {
@@ -106,18 +141,34 @@ export const Chat = () => {
 
                 if (reader) {
                   const decoder = new TextDecoder();
-                  let content = "";
+                  let buf = "";
+
+                  setMsgList((d) => {
+                    d.push({
+                      id: crypto.randomUUID(),
+                      time: Date.now(),
+                      role: "assistant",
+                      content: "",
+                    });
+                  });
 
                   while (true) {
                     const { done, value } = await reader.read();
                     const decocded = decoder.decode(value, { stream: true });
                     console.log(decocded);
-                    content += getContent(decocded);
-                    setMsg(content);
+                    buf += decocded;
+
+                    setMsgList((d) => {
+                      const last = d[d.length - 1];
+                      if (!last) return;
+                      last.content = buf
+                        .split("data:")
+                        .map((i) => getContent(i))
+                        .filter(Boolean)
+                        .join("");
+                    });
 
                     if (done) {
-                      setMsg("");
-                      setMsgList((prev) => [...prev, content]);
                       break;
                     }
                   }
