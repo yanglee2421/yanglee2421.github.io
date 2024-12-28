@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, styled, useTheme } from "@mui/material";
+import { alpha, Box, styled, useTheme } from "@mui/material";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadBigCirclesPreset } from "@tsparticles/preset-big-circles";
 import { loadSlim } from "@tsparticles/slim";
@@ -138,7 +138,8 @@ const Main = styled("main")(({ theme }) => ({
   inlineSize: "100dvw",
   blockSize: "100dvh",
 
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: alpha(theme.palette.background.default, .95),
+  backdropFilter: "blur(8px)",
 
   [theme.breakpoints.up("sm")]: {
     maxInlineSize: theme.spacing(MAIN_SIZE),
