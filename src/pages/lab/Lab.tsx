@@ -36,7 +36,7 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CircleOutlined } from "@mui/icons-material";
+import { DragIndicatorOutlined } from "@mui/icons-material";
 
 type SortableItemProps = React.PropsWithChildren<{ id: number }>;
 
@@ -45,16 +45,29 @@ const SortableItem = (props: SortableItemProps) => {
 
   return (
     <ListItem
-      ref={sort.setNodeRef}
       style={{
         transition: sort.transition,
         transform: CSS.Transform.toString(sort.transform),
       }}
-      {...sort.attributes}
-      {...sort.listeners}
+      sx={{
+        boxShadow: (t) => sort.isDragging ? t.shadows[1] : t.shadows[0],
+        backgroundColor: (t) =>
+          sort.isDragging ? t.palette.background.paper : void 0,
+        borderRadius: (t) =>
+          sort.isDragging ? t.shape.borderRadius / 2 : void 0,
+        position: "relative",
+        zIndex: (t) => sort.isDragging ? t.zIndex.speedDial : void 0,
+      }}
       secondaryAction={
-        <ListItemIcon>
-          <CircleOutlined />
+        <ListItemIcon
+          ref={sort.setNodeRef}
+          {...sort.attributes}
+          {...sort.listeners}
+          sx={{
+            cursor: "pointer",
+          }}
+        >
+          <DragIndicatorOutlined />
         </ListItemIcon>
       }
     >
