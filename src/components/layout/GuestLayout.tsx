@@ -1,10 +1,30 @@
 import React from "react";
-import { Box, styled, useTheme } from "@mui/material";
+import { alpha, Box, styled, useTheme } from "@mui/material";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadBigCirclesPreset } from "@tsparticles/preset-big-circles";
+import { loadSlim } from "@tsparticles/slim";
+
+const engineInit = initParticlesEngine(async (engine) => {
+  await loadBigCirclesPreset(engine);
+  await loadSlim(engine);
+});
+
+const ParticlesUI = () => {
+  React.use(engineInit);
+  return (
+    <Particles
+      options={{
+        preset: "big-circles",
+        background: { opacity: 0 },
+      }}
+    />
+  );
+};
 
 const IMAGE_SIZE = 1024;
 const ICON_SIZE = IMAGE_SIZE * 1 / 2;
 
-export function GuestLayout(props: React.PropsWithChildren) {
+export const GuestLayout = (props: React.PropsWithChildren) => {
   const id = React.useId();
   const cvsRef = React.useRef<HTMLCanvasElement>(null);
   const theme = useTheme();
@@ -55,38 +75,44 @@ export function GuestLayout(props: React.PropsWithChildren) {
 
   return (
     <>
+      <ParticlesUI />
       <Aside>
-        <Logo
-          id={id}
-          width={ICON_SIZE}
-          height={ICON_SIZE}
-          bgcolor={theme.palette.primary.main}
-          display={"none"}
-        />
-        <Box
-          display={"flex"}
-          border="1px red dash"
-          width={IMAGE_SIZE}
-          height={IMAGE_SIZE}
-        >
-          <canvas ref={cvsRef} width={IMAGE_SIZE} height={IMAGE_SIZE}></canvas>
-        </Box>
-        <button
-          onClick={() => {
-            const link = document.createElement("a");
-            link.download = "icon.png";
-            link.href = cvsRef.current?.toDataURL("image/png", 1) || "";
-            link.click();
-            link.remove();
-          }}
-        >
-          export
-        </button>
+        {void (
+          <>
+            <Logo
+              id={id}
+              width={ICON_SIZE}
+              height={ICON_SIZE}
+              bgcolor={theme.palette.primary.main}
+              display={"none"}
+            />
+            <Box
+              display={"flex"}
+              border="1px red dash"
+              width={IMAGE_SIZE}
+              height={IMAGE_SIZE}
+            >
+              <canvas ref={cvsRef} width={IMAGE_SIZE} height={IMAGE_SIZE}>
+              </canvas>
+            </Box>
+            <button
+              onClick={() => {
+                const link = document.createElement("a");
+                link.download = "icon.png";
+                link.href = cvsRef.current?.toDataURL("image/png", 1) || "";
+                link.click();
+                link.remove();
+              }}
+            >
+              export
+            </button>
+          </>
+        )}
       </Aside>
       <Main>{props.children}</Main>
     </>
   );
-}
+};
 
 const MAIN_SIZE = 120;
 
@@ -112,7 +138,8 @@ const Main = styled("main")(({ theme }) => ({
   inlineSize: "100dvw",
   blockSize: "100dvh",
 
-  backgroundColor: theme.palette.background.default,
+  backgroundColor: alpha(theme.palette.background.default, .95),
+  backdropFilter: "blur(8px)",
 
   [theme.breakpoints.up("sm")]: {
     maxInlineSize: theme.spacing(MAIN_SIZE),
@@ -121,7 +148,7 @@ const Main = styled("main")(({ theme }) => ({
   },
 }));
 
-function Logo(props: React.SVGProps<SVGSVGElement> & { bgcolor: string }) {
+const Logo = (props: React.SVGProps<SVGSVGElement> & { bgcolor: string }) => {
   return (
     <svg
       xmlns="http://www.w3.org/2000/svg"
@@ -154,4 +181,4 @@ function Logo(props: React.SVGProps<SVGSVGElement> & { bgcolor: string }) {
       />
     </svg>
   );
-}
+};

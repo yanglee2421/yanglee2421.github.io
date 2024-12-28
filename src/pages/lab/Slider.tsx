@@ -1,8 +1,8 @@
 import React from "react";
 import { minmax } from "@/utils/minmax";
-import { styled, alpha } from "@mui/material";
+import { alpha, styled } from "@mui/material";
 
-export function Slider() {
+export const Slider = () => {
   const ref = React.useRef<HTMLDivElement>(null);
 
   return (
@@ -22,8 +22,7 @@ export function Slider() {
           evt.currentTarget.style.left =
             minmax(evt.clientX - elClientRect.left, {
               min: 0,
-              max:
-                elClientRect.width -
+              max: elClientRect.width -
                 evt.currentTarget.getBoundingClientRect().width,
             }) + "px";
         }}
@@ -32,7 +31,7 @@ export function Slider() {
       </Thumb>
     </Track>
   );
-}
+};
 
 const Track = styled("div")(({ theme: t }) => ({
   position: "relative",
