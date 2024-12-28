@@ -1,9 +1,15 @@
 import {
+  Avatar,
   Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
+  List,
+  ListItem,
+  ListItemAvatar,
+  ListItemIcon,
+  ListItemText,
   Stack,
 } from "@mui/material";
 import { type Container } from "@tsparticles/engine";
@@ -14,6 +20,92 @@ import React from "react";
 import { Camera } from "@/components/shared/Camera";
 import { Slider } from "./Slider";
 import { useTestEffect } from "@/hooks/useTestEffect";
+import {
+  closestCenter,
+  DndContext,
+  KeyboardSensor,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import { CircleOutlined } from "@mui/icons-material";
+
+type SortableItemProps = React.PropsWithChildren<{ id: number }>;
+
+const SortableItem = (props: SortableItemProps) => {
+  const sort = useSortable({ id: props.id });
+
+  return (
+    <ListItem
+      ref={sort.setNodeRef}
+      style={{
+        transition: sort.transition,
+        transform: CSS.Transform.toString(sort.transform),
+      }}
+      {...sort.attributes}
+      {...sort.listeners}
+      secondaryAction={
+        <ListItemIcon>
+          <CircleOutlined />
+        </ListItemIcon>
+      }
+    >
+      {props.children}
+    </ListItem>
+  );
+};
+
+const SortableDnd = () => {
+  const [items, setItems] = React.useState([1, 2, 3]);
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  return (
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      onDragEnd={(e) => {
+        setItems((items) => {
+          if (!e.over) return items;
+
+          if (e.active.id === e.over.id) {
+            return items;
+          }
+
+          const oldIndex = items.indexOf(+e.active.id);
+          const newIndex = items.indexOf(+e.over.id);
+
+          return arrayMove(items, oldIndex, newIndex);
+        });
+      }}
+    >
+      <SortableContext items={items} strategy={verticalListSortingStrategy}>
+        <List>
+          {items.map((i) => (
+            <SortableItem key={i} id={i}>
+              <ListItemAvatar>
+                <Avatar>{i}</Avatar>
+              </ListItemAvatar>
+              <ListItemText primary={i} secondary="sec" />
+            </SortableItem>
+          ))}
+        </List>
+      </SortableContext>
+    </DndContext>
+  );
+};
 
 const snowPro = initParticlesEngine(async (engine) => {
   await loadBubblesPreset(engine);
@@ -105,11 +197,17 @@ export const Lab = () => {
             <Button onClick={handleCutImage} variant="contained">
               cut image
             </Button>
+            <Counter />
           </CardActions>
+        </Card>
+        <Card>
+          <CardHeader title="DnD" />
+          <CardContent>
+            <SortableDnd />
+          </CardContent>
         </Card>
       </Stack>
       <ParticlesUI />
-      <Counter />
     </>
   );
 };
