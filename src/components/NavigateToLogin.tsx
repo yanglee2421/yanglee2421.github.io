@@ -1,6 +1,5 @@
 import { Navigate, useLocation, useSearchParams } from "react-router";
-
-const LOGIN_PATH = "/login";
+import * as conf from "@/lib/conf";
 
 export const NavigateToLogin = () => {
   const location = useLocation();
@@ -11,7 +10,7 @@ export const NavigateToLogin = () => {
   return (
     <Navigate
       to={{
-        pathname: LOGIN_PATH,
+        pathname: conf.LOGIN_PATH,
         search: search.toString(),
       }}
       replace

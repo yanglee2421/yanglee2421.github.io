@@ -30,8 +30,8 @@ import { LangToggle } from "../shared/LangToggle";
 import { ModeToggle } from "../shared/ModeToggle";
 import { UserDropdown } from "../shared/UserDropdonw";
 import { Materio } from "../svg/Materio";
+import * as conf from "@/lib/conf";
 
-const github_url = import.meta.env.VITE_GITHUB_URL;
 const ASIDE_SIZE = 72;
 
 const LinkWrapper = styled("div")(({ theme }) => ({
@@ -145,15 +145,37 @@ export const AuthLayout = (props: Props) => {
         })}
       >
         <Toolbar>
-          <Icon
+          <Box
             component={RouterLink}
             to="/"
-            fontSize="large"
-            color="primary"
-            sx={{ display: { xs: "none", sm: "block" } }}
+            sx={{
+              display: "flex",
+              gap: 2.5,
+              alignItems: "flex-end",
+              textDecoration: "none",
+              color: "inherit",
+            }}
           >
-            <Materio fontSize="inherit" />
-          </Icon>
+            <Icon
+              fontSize="large"
+              color="primary"
+              sx={{ display: { xs: "none", sm: "block" } }}
+            >
+              <Materio fontSize="inherit" />
+            </Icon>
+            <Typography
+              component={"span"}
+              variant="h6"
+              sx={{
+                fontSize: (t) => t.spacing(5),
+                fontWeight: 600,
+                textTransform: "uppercase",
+              }}
+            >
+              github io
+            </Typography>
+          </Box>
+
           <IconButton
             onClick={() => update((p) => !p)}
             sx={{ display: { sm: "none" } }}
@@ -163,7 +185,7 @@ export const AuthLayout = (props: Props) => {
           <Box sx={{ marginInlineStart: "auto" }}></Box>
           <LangToggle />
           <ModeToggle />
-          <IconButton href={github_url} target={github_url}>
+          <IconButton href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
             <GitHub />
           </IconButton>
           <UserDropdown />
@@ -178,7 +200,7 @@ export const AuthLayout = (props: Props) => {
         <Main>{props.children}</Main>
         <Footer>
           &copy;2024 by{" "}
-          <Link href={github_url} target={github_url}>
+          <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
             yanglee2421
           </Link>
         </Footer>

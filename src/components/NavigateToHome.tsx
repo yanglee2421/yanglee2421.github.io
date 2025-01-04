@@ -1,6 +1,5 @@
 import { Navigate, useSearchParams } from "react-router";
-
-const HOME_PATH = "/";
+import * as conf from "@/lib/conf";
 
 export const NavigateToHome = () => {
   const [searchParams] = useSearchParams();
@@ -10,7 +9,7 @@ export const NavigateToHome = () => {
   return (
     <Navigate
       to={{
-        pathname: searchParams.get("redirect_uri") || HOME_PATH,
+        pathname: searchParams.get("redirect_uri") || conf.HOME_PATH,
         search: search.toString(),
       }}
       replace
