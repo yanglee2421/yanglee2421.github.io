@@ -44,25 +44,27 @@ const LegendContent = () => {
   );
 };
 
+const initData = () => {
+  const val = [{
+    value: 0,
+    time: performance.now(),
+  }];
+
+  while (val.length < window.innerWidth) {
+    val.push({
+      value: 0,
+      time: performance.now(),
+    });
+  }
+
+  return val;
+};
+
 const Microphone = () => {
   const audio = React.use(stream);
 
   const [pxs, setPxs] = React.useState(0);
-  const [data, setData] = React.useState(() => {
-    const val = [{
-      value: 0,
-      time: performance.now(),
-    }];
-
-    while (val.length < window.innerWidth) {
-      val.push({
-        value: 0,
-        time: performance.now(),
-      });
-    }
-
-    return val;
-  });
+  const [data, setData] = React.useState(initData);
 
   const theme = useTheme();
 
@@ -76,7 +78,9 @@ const Microphone = () => {
 
     const observer = new ResizeObserver(
       ([{ contentBoxSize: [{ inlineSize }] }]) => {
-        setPxs(inlineSize);
+        React.startTransition(() => {
+          setPxs(inlineSize);
+        });
       },
     );
     observer.observe(el);
@@ -132,6 +136,7 @@ const Microphone = () => {
       cancelAnimationFrame(timer.current);
       source.disconnect();
       audioContext.close();
+      analyser.disconnect();
     };
   }, [audio, pxs]);
 
@@ -139,7 +144,7 @@ const Microphone = () => {
     <Card>
       <CardHeader title="Microphone" />
       <CardContent>
-        <ResponsiveContainer ref={elRef} height={400}>
+        <ResponsiveContainer ref={elRef} height={320}>
           <LineChart data={data}>
             <XAxis
               dataKey={"time"}

@@ -149,7 +149,7 @@ export const AuthLayout = (props: Props) => {
             component={RouterLink}
             to="/"
             sx={{
-              display: "flex",
+              display: { xs: "none", sm: "flex" },
               gap: 2.5,
               alignItems: "flex-end",
               textDecoration: "none",
@@ -159,7 +159,6 @@ export const AuthLayout = (props: Props) => {
             <Icon
               fontSize="large"
               color="primary"
-              sx={{ display: { xs: "none", sm: "block" } }}
             >
               <Materio fontSize="inherit" />
             </Icon>
