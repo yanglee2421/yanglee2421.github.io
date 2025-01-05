@@ -5,12 +5,14 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  Grid2,
   List,
   ListItem,
   ListItemAvatar,
   ListItemIcon,
   ListItemText,
   Stack,
+  TextField,
 } from "@mui/material";
 import { type Container } from "@tsparticles/engine";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
@@ -36,7 +38,78 @@ import {
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { CircleOutlined } from "@mui/icons-material";
+import { DragIndicatorOutlined } from "@mui/icons-material";
+import { timeout } from "@yotulee/run";
+
+const WebSocketCard = () => {
+  const [data, setData] = React.useState("");
+  const ref = React.useRef<WebSocket | null>(null);
+  const [input, setInput] = React.useState("");
+
+  React.useEffect(() => {
+    const controller = new AbortController();
+    const connect = () => {
+      ref.current = new WebSocket("ws://localhost:8080");
+
+      ref.current.addEventListener("open", () => {}, {
+        signal: controller.signal,
+      });
+      ref.current.addEventListener("close", async () => {
+        await timeout(200);
+        connect();
+      }, {
+        signal: controller.signal,
+      });
+      ref.current.addEventListener("message", (e) => {
+        setData(String(e.data));
+      }, {
+        signal: controller.signal,
+      });
+      ref.current.addEventListener("error", () => {}, {
+        signal: controller.signal,
+      });
+    };
+
+    connect();
+
+    return () => {
+      controller.abort();
+      ref.current?.close();
+      ref.current = null;
+    };
+  }, [setData]);
+
+  return (
+    <Card>
+      <CardHeader
+        title="WebSocket"
+        subheader={data || "Placeholder"}
+      />
+      <CardContent>
+        <Grid2 container spacing={6}>
+          <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+            <TextField
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              fullWidth
+            />
+          </Grid2>
+        </Grid2>
+      </CardContent>
+      <CardActions>
+        <Button
+          onClick={() => {
+            ref.current?.send(input);
+          }}
+          variant="contained"
+        >
+          send
+        </Button>
+        <Button variant="outlined">reset</Button>
+      </CardActions>
+    </Card>
+  );
+};
 
 type SortableItemProps = React.PropsWithChildren<{ id: number }>;
 
@@ -45,16 +118,29 @@ const SortableItem = (props: SortableItemProps) => {
 
   return (
     <ListItem
-      ref={sort.setNodeRef}
       style={{
         transition: sort.transition,
         transform: CSS.Transform.toString(sort.transform),
       }}
-      {...sort.attributes}
-      {...sort.listeners}
+      sx={{
+        boxShadow: (t) => sort.isDragging ? t.shadows[1] : t.shadows[0],
+        backgroundColor: (t) =>
+          sort.isDragging ? t.palette.background.paper : void 0,
+        borderRadius: (t) =>
+          sort.isDragging ? t.shape.borderRadius / 2 : void 0,
+        position: "relative",
+        zIndex: (t) => sort.isDragging ? t.zIndex.speedDial : void 0,
+      }}
       secondaryAction={
-        <ListItemIcon>
-          <CircleOutlined />
+        <ListItemIcon
+          ref={sort.setNodeRef}
+          {...sort.attributes}
+          {...sort.listeners}
+          sx={{
+            cursor: "pointer",
+          }}
+        >
+          <DragIndicatorOutlined />
         </ListItemIcon>
       }
     >
@@ -206,6 +292,7 @@ export const Lab = () => {
             <SortableDnd />
           </CardContent>
         </Card>
+        <WebSocketCard />
       </Stack>
       <ParticlesUI />
     </>

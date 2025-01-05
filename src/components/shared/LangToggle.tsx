@@ -3,10 +3,45 @@ import { IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { Link, useLocation, useParams } from "react-router";
 
-export function LangToggle() {
-  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+type LangLinkProps = React.PropsWithChildren<{
+  locale: string;
+}>;
+
+const LangLink = (props: LangLinkProps) => {
   const location = useLocation();
   const params = useParams();
+
+  return (
+    <MenuItem
+      component={Link}
+      to={{
+        pathname: location.pathname.replace(
+          new RegExp(`^/${params.lang}`),
+          `/${props.locale}`,
+        ),
+        search: location.search,
+        hash: location.hash,
+      }}
+      selected={params.lang === props.locale}
+    >
+      {props.children}
+    </MenuItem>
+  );
+};
+
+const locales = [
+  {
+    locale: "en",
+    label: "English",
+  },
+  {
+    locale: "zh",
+    label: "简体中文",
+  },
+];
+
+export function LangToggle() {
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const handleClose = () => {
     setAnchor(null);
@@ -18,32 +53,9 @@ export function LangToggle() {
         <TranslateOutlined />
       </IconButton>
       <Menu open={!!anchor} anchorEl={anchor} onClose={handleClose}>
-        <MenuItem
-          component={Link}
-          to={{
-            pathname: location.pathname.replace(
-              new RegExp(`^/${params.lang}`),
-              "/en",
-            ),
-            search: location.search,
-            hash: location.hash,
-          }}
-        >
-          English
-        </MenuItem>
-        <MenuItem
-          component={Link}
-          to={{
-            pathname: location.pathname.replace(
-              new RegExp(`^/${params.lang}`),
-              "/zh",
-            ),
-            search: location.search,
-            hash: location.hash,
-          }}
-        >
-          简体中文
-        </MenuItem>
+        {locales.map((i) => (
+          <LangLink key={i.locale} locale={i.locale}>{i.label}</LangLink>
+        ))}
       </Menu>
     </>
   );

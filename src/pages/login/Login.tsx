@@ -4,8 +4,7 @@ import { SignInWithGithub } from "@/components/shared/SignInWithGithub";
 import { SignInWithGoogle } from "@/components/shared/SignInWithGoogle";
 import { GitHub } from "@mui/icons-material";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
-
-const github_url = import.meta.env.VITE_GITHUB_URL;
+import * as conf from "@/lib/conf";
 
 export function Login() {
   return (
@@ -36,7 +35,7 @@ export function Login() {
         <Stack direction={"row"} spacing={3} useFlexGap>
           <LangToggle />
           <ModeToggle />
-          <IconButton href={github_url} target={github_url}>
+          <IconButton href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
             <GitHub />
           </IconButton>
         </Stack>
