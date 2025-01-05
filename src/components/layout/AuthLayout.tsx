@@ -170,6 +170,7 @@ export const AuthLayout = (props: Props) => {
                 fontSize: (t) => t.spacing(5),
                 fontWeight: 600,
                 textTransform: "uppercase",
+                color: (t) => t.palette.text.primary,
               }}
             >
               github io
