@@ -1,6 +1,9 @@
+import { StopOutlined } from "@mui/icons-material";
 import {
   Box,
+  Button,
   Card,
+  CardActions,
   CardContent,
   CardHeader,
   Grid2,
@@ -19,7 +22,7 @@ import {
   YAxis,
 } from "recharts";
 
-const stream = navigator.mediaDevices.getUserMedia({
+const streamPro = navigator.mediaDevices.getUserMedia({
   video: false,
   audio: true,
 });
@@ -61,7 +64,7 @@ const initData = () => {
 };
 
 const Microphone = () => {
-  const audio = React.use(stream);
+  const audio = React.use(streamPro);
 
   const [pxs, setPxs] = React.useState(0);
   const [data, setData] = React.useState(initData);
@@ -183,11 +186,48 @@ const Microphone = () => {
   );
 };
 
+const createEchoDelayEffect = (audioContext: AudioContext) => {
+  const delay = audioContext.createDelay(1);
+  const dryNode = audioContext.createGain();
+  const wetNode = audioContext.createGain();
+  const mixer = audioContext.createGain();
+  const filter = audioContext.createBiquadFilter();
+
+  delay.delayTime.value = 0.75;
+  dryNode.gain.value = 1;
+  wetNode.gain.value = 0;
+  filter.frequency.value = 1100;
+  filter.type = "highpass";
+
+  return {
+    apply() {
+      wetNode.gain.setValueAtTime(0.75, audioContext.currentTime);
+    },
+    discard() {
+      wetNode.gain.setValueAtTime(0, audioContext.currentTime);
+    },
+    isApplied() {
+      return wetNode.gain.value > 0;
+    },
+    placeBetween(inputNode: AudioNode, outputNode: AudioNode) {
+      inputNode.connect(delay);
+      delay.connect(wetNode);
+      wetNode.connect(filter);
+      filter.connect(delay);
+
+      inputNode.connect(dryNode);
+      dryNode.connect(mixer);
+      wetNode.connect(mixer);
+      mixer.connect(outputNode);
+    },
+  };
+};
+
 const Sinewave = () => {
-  const audio = React.use(stream);
+  const stream = React.use(streamPro);
 
   const [width, setWidth] = React.useState(0);
-  const [height, setHeight] = React.useState(320);
+  const [height] = React.useState(320);
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
@@ -216,40 +256,50 @@ const Sinewave = () => {
     const cvs = ref.current;
     if (!cvs) return;
 
+    const canvasCtx = cvs.getContext("2d");
+    if (!canvasCtx) return;
+
     const audioCtx = new AudioContext();
-    const distortion = audioCtx.createWaveShaper();
+    const analyser = audioCtx.createAnalyser();
+    analyser.minDecibels = -90;
+    analyser.maxDecibels = -10;
+    analyser.smoothingTimeConstant = 0.85;
     const gainNode = audioCtx.createGain();
     const biquadFilter = audioCtx.createBiquadFilter();
     const convolver = audioCtx.createConvolver();
-    const source = audioCtx.createMediaStreamSource(audio);
-    const analyser = audioCtx.createAnalyser();
-    analyser.fftSize = 256;
-    const bufferLength = analyser.frequencyBinCount;
+    const echoDelay = createEchoDelayEffect(audioCtx);
+    const source = audioCtx.createMediaStreamSource(stream);
+    const distortion = audioCtx.createWaveShaper();
+    source.connect(distortion);
+    distortion.connect(biquadFilter);
+    biquadFilter.connect(gainNode);
+    convolver.connect(gainNode);
+    echoDelay.placeBetween(gainNode, analyser);
+    gainNode.connect(analyser);
+    // analyser.connect(audioCtx.destination);
+
+    canvasCtx.clearRect(0, 0, width, height);
+
+    analyser.fftSize = 2048;
+
+    const bufferLength = analyser.fftSize;
     const dataArray = new Uint8Array(bufferLength);
-    const canvasCtx = cvs.getContext("2d");
-    analyser.connect(source);
 
-    if (!canvasCtx) return;
-    const WIDTH = cvs.width;
-    const HEIGHT = cvs.height;
-
-    const draw = () => {
+    const draw = function () {
       timer.current = requestAnimationFrame(draw);
 
       analyser.getByteTimeDomainData(dataArray);
-
-      canvasCtx.fillStyle = "rgb(200, 200, 200)";
-      canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
+      canvasCtx.clearRect(0, 0, width, height);
       canvasCtx.lineWidth = 2;
-      canvasCtx.strokeStyle = "rgb(0, 0, 0)";
+      canvasCtx.strokeStyle = theme.palette.primary.main;
+      canvasCtx.beginPath();
 
-      const sliceWidth = WIDTH * 1.0 / bufferLength;
+      const sliceWidth = (width * 1.0) / bufferLength;
       let x = 0;
 
-      canvasCtx.beginPath();
       for (let i = 0; i < bufferLength; i++) {
-        const v = dataArray[i] / 128.0,
-          y = v * HEIGHT / 2;
+        const v = dataArray[i] / 128.0;
+        const y = (v * height) / 2;
 
         if (i === 0) {
           canvasCtx.moveTo(x, y);
@@ -260,18 +310,39 @@ const Sinewave = () => {
         x += sliceWidth;
       }
 
-      canvasCtx.lineTo(WIDTH, HEIGHT / 2);
+      canvasCtx.lineTo(width, height / 2);
       canvasCtx.stroke();
       canvasCtx.closePath();
     };
 
     draw();
 
+    distortion.oversample = "4x";
+    biquadFilter.gain.setTargetAtTime(0, audioCtx.currentTime, 0);
+
+    if (echoDelay.isApplied()) {
+      echoDelay.discard();
+    }
+
+    biquadFilter.disconnect(0);
+    biquadFilter.connect(gainNode);
+
     return () => {
+      cancelAnimationFrame(timer.current);
       audioCtx.close();
       analyser.disconnect();
+      gainNode.disconnect();
+      biquadFilter.disconnect();
+      convolver.disconnect();
+      source.disconnect();
+      distortion.disconnect();
     };
-  }, []);
+  }, [
+    stream,
+    width,
+    height,
+    theme.palette.primary.main,
+  ]);
 
   return (
     <Card>
@@ -296,14 +367,16 @@ const Sinewave = () => {
 };
 
 const Frequencybars = () => {
-  const audio = React.use(stream);
+  const stream = React.use(streamPro);
 
   const [width, setWidth] = React.useState(0);
-  const [height, setHeight] = React.useState(320);
+  const [height] = React.useState(320);
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
   const timer = React.useRef(0);
+
+  const theme = useTheme();
 
   React.useEffect(() => {
     const div = divRef.current;
@@ -326,47 +399,87 @@ const Frequencybars = () => {
     const cvs = ref.current;
     if (!cvs) return;
 
+    const canvasCtx = cvs.getContext("2d");
+    if (!canvasCtx) return;
+
     const audioCtx = new AudioContext();
     const analyser = audioCtx.createAnalyser();
+    analyser.minDecibels = -90;
+    analyser.maxDecibels = -10;
+    analyser.smoothingTimeConstant = 0.85;
+    const gainNode = audioCtx.createGain();
+    const biquadFilter = audioCtx.createBiquadFilter();
+    const convolver = audioCtx.createConvolver();
+    const echoDelay = createEchoDelayEffect(audioCtx);
+    const source = audioCtx.createMediaStreamSource(stream);
+    const distortion = audioCtx.createWaveShaper();
+    source.connect(distortion);
+    distortion.connect(biquadFilter);
+    biquadFilter.connect(gainNode);
+    convolver.connect(gainNode);
+    echoDelay.placeBetween(gainNode, analyser);
+    gainNode.connect(analyser);
+    // analyser.connect(audioCtx.destination);
+
     analyser.fftSize = 256;
-    const bufferLength = analyser.frequencyBinCount;
-    const dataArray = new Uint8Array(bufferLength);
-    const canvasCtx = cvs.getContext("2d");
-    analyser.connect(audio);
+    const bufferLengthAlt = analyser.frequencyBinCount;
+    const dataArrayAlt = new Uint8Array(bufferLengthAlt);
 
-    if (!canvasCtx) return;
-    const WIDTH = cvs.width;
-    const HEIGHT = cvs.height;
+    canvasCtx.clearRect(0, 0, width, height);
 
-    const draw = () => {
-      timer.current = requestAnimationFrame(draw);
+    const drawAlt = () => {
+      timer.current = requestAnimationFrame(drawAlt);
 
-      analyser.getByteFrequencyData(dataArray);
+      analyser.getByteFrequencyData(dataArrayAlt);
+      canvasCtx.clearRect(0, 0, width, height);
 
-      canvasCtx.fillStyle = "rgb(0, 0, 0)";
-      canvasCtx.fillRect(0, 0, WIDTH, HEIGHT);
-
-      const barWidth = (WIDTH / bufferLength) * 2.5;
+      const barWidth = (width / bufferLengthAlt) * 2.5;
       let barHeight;
       let x = 0;
 
-      for (let i = 0; i < bufferLength; i++) {
-        barHeight = dataArray[i];
+      for (let i = 0; i < bufferLengthAlt; i++) {
+        barHeight = dataArrayAlt[i];
 
-        canvasCtx.fillStyle = "rgb(" + (barHeight + 100) + ",50,50)";
-        canvasCtx.fillRect(x, HEIGHT - barHeight / 2, barWidth, barHeight / 2);
+        canvasCtx.fillStyle = theme.palette.primary.main;
+        canvasCtx.fillRect(
+          x,
+          height - barHeight / 2,
+          barWidth,
+          barHeight / 2,
+        );
 
         x += barWidth + 1;
       }
     };
 
-    draw();
+    drawAlt();
+
+    distortion.oversample = "4x";
+    biquadFilter.gain.setTargetAtTime(0, audioCtx.currentTime, 0);
+
+    if (echoDelay.isApplied()) {
+      echoDelay.discard();
+    }
+
+    biquadFilter.disconnect(0);
+    biquadFilter.connect(gainNode);
 
     return () => {
+      cancelAnimationFrame(timer.current);
       audioCtx.close();
       analyser.disconnect();
+      gainNode.disconnect();
+      biquadFilter.disconnect();
+      convolver.disconnect();
+      source.disconnect();
+      distortion.disconnect();
     };
-  }, []);
+  }, [
+    stream,
+    width,
+    height,
+    theme.palette.primary.main,
+  ]);
 
   return (
     <Card>
@@ -390,6 +503,26 @@ const Frequencybars = () => {
   );
 };
 
+const ControlCard = () => {
+  const stream = React.use(streamPro);
+
+  return (
+    <Card>
+      <CardHeader title="Control" />
+      <CardActions>
+        <Button
+          startIcon={<StopOutlined />}
+          onClick={() => stream.getAudioTracks().forEach((i) => i.stop())}
+          variant="contained"
+          color="error"
+        >
+          Stop
+        </Button>
+      </CardActions>
+    </Card>
+  );
+};
+
 export function Dashboard() {
   return (
     <Grid2 container spacing={6}>
@@ -409,6 +542,9 @@ export function Dashboard() {
       </Grid2>
       <Grid2 size={{ xs: 12, sm: 6 }}>
         <Frequencybars />
+      </Grid2>
+      <Grid2 size={{ xs: 12, sm: 6 }}>
+        <ControlCard />
       </Grid2>
     </Grid2>
   );
