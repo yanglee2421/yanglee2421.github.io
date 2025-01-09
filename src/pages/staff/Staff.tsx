@@ -17,6 +17,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -237,24 +238,27 @@ export const Staff = () => {
             </Grid2>
           </Grid2>
         </CardContent>
-        <Table>
-          <TableHead>
-            {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
-                {hg.headers.map((h) => (
-                  <TableCell
-                    key={h.id}
-                    sx={{ textTransform: "uppercase" }}
-                  >
-                    {h.isPlaceholder ||
-                      flexRender(h.column.columnDef.header, h.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableHead>
-          <TableBody>{renderBody()}</TableBody>
-        </Table>
+        <TableContainer>
+          <Table>
+            <TableHead>
+              {table.getHeaderGroups().map((hg) => (
+                <TableRow key={hg.id}>
+                  {hg.headers.map((h) => (
+                    <TableCell
+                      key={h.id}
+                      sx={{ textTransform: "uppercase" }}
+                    >
+                      {h.isPlaceholder ||
+                        flexRender(h.column.columnDef.header, h.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody>{renderBody()}</TableBody>
+          </Table>
+        </TableContainer>
+
         <TablePagination
           component={"div"}
           page={table.getState().pagination.pageIndex}
