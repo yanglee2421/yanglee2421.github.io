@@ -12,40 +12,11 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Translation } from "react-i18next";
-import {
-  Legend,
-  Line,
-  LineChart,
-  ResponsiveContainer,
-  Tooltip,
-  XAxis,
-  YAxis,
-} from "recharts";
 
 const streamPro = navigator.mediaDevices.getUserMedia({
   video: false,
   audio: true,
 });
-
-const LegendContent = () => {
-  return (
-    <Box
-      sx={{
-        textAlign: "center",
-        width: "100%",
-        display: "flex",
-        justifyContent: "center",
-      }}
-    >
-      <Typography
-        variant="overline"
-        color="textSecondary"
-      >
-        volume
-      </Typography>
-    </Box>
-  );
-};
 
 const initData = () => {
   const val = [{
@@ -63,43 +34,47 @@ const initData = () => {
   return val;
 };
 
-const Microphone = () => {
-  const audio = React.use(streamPro);
-
-  const [pxs, setPxs] = React.useState(0);
-  const [data, setData] = React.useState(initData);
-
-  const theme = useTheme();
-
-  const elRef = React.useRef(null);
-  const timer = React.useRef(0);
+const useSize = (ref: React.RefObject<HTMLElement | null>) => {
+  const [width, setWidth] = React.useState(0);
+  const [height, setHeight] = React.useState(0);
 
   React.useEffect(() => {
-    const el = elRef.current;
-
-    if (!el) return;
+    const div = ref.current;
+    if (!div) return;
 
     const observer = new ResizeObserver(
-      ([{ contentBoxSize: [{ inlineSize }] }]) => {
+      ([{ contentBoxSize: [{ inlineSize, blockSize }] }]) => {
         React.startTransition(() => {
-          setPxs(inlineSize);
+          setWidth(inlineSize);
+          setHeight(blockSize);
         });
       },
     );
-    observer.observe(el);
+    observer.observe(div);
 
     return () => {
       observer.disconnect();
     };
-  }, []);
+  }, [ref]);
+
+  return [width, height] as const;
+};
+
+const Microphone = () => {
+  const audio = React.use(streamPro);
+
+  const elRef = React.useRef<HTMLCanvasElement>(null);
+  const divRef = React.useRef<HTMLDivElement>(null);
+  const timer = React.useRef(0);
+
+  const theme = useTheme();
+  const [width, height] = useSize(divRef);
 
   React.useEffect(() => {
-    const stopAnimate = () => cancelAnimationFrame(timer.current);
-
-    if (!audio.active) {
-      stopAnimate();
-      return;
-    }
+    const canvas = elRef.current;
+    if (!canvas) return;
+    const canvasCtx = canvas.getContext("2d");
+    if (!canvasCtx) return;
 
     const audioContext = new AudioContext();
     const source = audioContext.createMediaStreamSource(audio);
@@ -109,85 +84,69 @@ const Microphone = () => {
     const dataArray = new Uint8Array(bufferLength);
     source.connect(analyser);
 
-    const fn = () => {
-      timer.current = requestAnimationFrame(fn);
+    let renderData = initData();
+
+    const draw = () => {
+      timer.current = requestAnimationFrame(draw);
 
       analyser.getByteTimeDomainData(dataArray);
 
       let sum = 0;
       for (let i = 0; i < bufferLength; i++) {
         const value = dataArray[i] - 128;
-        sum += value * value;
+        sum += value ** 2;
       }
       const volume = Math.sqrt(sum / bufferLength);
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
 
-      React.startTransition(() => {
-        setData((prev) => {
-          const nextValue = [...prev, {
-            time: performance.now(),
-            value: Math.floor(volume * 100),
-          }];
-
-          while (nextValue.length < pxs) {
-            nextValue.push({
-              value: 0,
-              time: performance.now(),
-            });
-          }
-
-          return nextValue.slice(-pxs);
-        });
+      renderData.push({
+        time: performance.now(),
+        value: Math.floor(volume),
       });
+
+      while (renderData.length < canvasWidth) {
+        renderData.push({
+          value: 0,
+          time: performance.now(),
+        });
+      }
+
+      renderData = renderData.slice(-canvasWidth);
+
+      canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+      canvasCtx.strokeStyle = theme.palette.primary.main;
+      canvasCtx.beginPath();
+      canvasCtx.moveTo(0, canvasHeight);
+
+      renderData.forEach((i, idx) => {
+        canvasCtx.lineTo(
+          idx + 1,
+          canvasHeight - Math.floor(i.value * 1 * canvasHeight / 128),
+        );
+      });
+
+      canvasCtx.stroke();
+      canvasCtx.closePath();
     };
 
-    fn();
+    draw();
 
     return () => {
-      stopAnimate();
+      cancelAnimationFrame(timer.current);
       source.disconnect();
       audioContext.close();
       analyser.disconnect();
     };
-  }, [audio, pxs]);
+  }, [audio, theme.palette.primary.main]);
 
   return (
     <Card>
       <CardHeader title="Microphone" />
       <CardContent>
-        <ResponsiveContainer ref={elRef} height={320}>
-          <LineChart data={data}>
-            <XAxis
-              dataKey={"time"}
-              tick={false}
-              tickSize={0}
-              stroke={theme.palette.divider}
-              strokeWidth={1}
-              allowDecimals
-            />
-            <YAxis
-              dataKey={"value"}
-              tick={false}
-              domain={[0, 5000]}
-              max={5000}
-              tickSize={0}
-              label={"aa"}
-              stroke={theme.palette.divider}
-              strokeWidth={1}
-              hide
-              allowDecimals
-            />
-
-            <Line
-              type="monotone"
-              dataKey={"value"}
-              stroke={theme.palette.primary.main}
-            />
-            <Legend
-              content={LegendContent}
-            />
-            <Tooltip />
-          </LineChart>
-        </ResponsiveContainer>
+        <Box ref={divRef} sx={{ height: 256 }}>
+          <canvas ref={elRef} width={width} height={height}></canvas>
+        </Box>
       </CardContent>
     </Card>
   );
@@ -233,37 +192,18 @@ const createEchoDelayEffect = (audioContext: AudioContext) => {
 const Sinewave = () => {
   const stream = React.use(streamPro);
 
-  const [width, setWidth] = React.useState(0);
-  const [height] = React.useState(320);
-
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
   const timer = React.useRef(0);
 
   const theme = useTheme();
+  const [width, height] = useSize(divRef);
 
   React.useEffect(() => {
-    const div = divRef.current;
-    if (!div) return;
+    const canvas = ref.current;
+    if (!canvas) return;
 
-    const cvs = ref.current;
-    if (!cvs) return;
-
-    const observer = new ResizeObserver(
-      ([{ contentBoxSize: [{ inlineSize }] }]) => {
-        setWidth(inlineSize);
-      },
-    );
-    observer.observe(div);
-
-    return () => observer.disconnect();
-  }, []);
-
-  React.useEffect(() => {
-    const cvs = ref.current;
-    if (!cvs) return;
-
-    const canvasCtx = cvs.getContext("2d");
+    const canvasCtx = canvas.getContext("2d");
     if (!canvasCtx) return;
 
     const audioCtx = new AudioContext();
@@ -285,8 +225,6 @@ const Sinewave = () => {
     gainNode.connect(analyser);
     // analyser.connect(audioCtx.destination);
 
-    canvasCtx.clearRect(0, 0, width, height);
-
     analyser.fftSize = 2048;
 
     const bufferLength = analyser.fftSize;
@@ -295,18 +233,21 @@ const Sinewave = () => {
     const draw = function () {
       timer.current = requestAnimationFrame(draw);
 
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
+
       analyser.getByteTimeDomainData(dataArray);
-      canvasCtx.clearRect(0, 0, width, height);
+      canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
       canvasCtx.lineWidth = 2;
       canvasCtx.strokeStyle = theme.palette.primary.main;
       canvasCtx.beginPath();
 
-      const sliceWidth = (width * 1.0) / bufferLength;
+      const sliceWidth = (canvasWidth * 1.0) / bufferLength;
       let x = 0;
 
       for (let i = 0; i < bufferLength; i++) {
         const v = dataArray[i] / 128.0;
-        const y = (v * height) / 2;
+        const y = (v * canvasHeight) / 2;
 
         if (i === 0) {
           canvasCtx.moveTo(x, y);
@@ -317,7 +258,7 @@ const Sinewave = () => {
         x += sliceWidth;
       }
 
-      canvasCtx.lineTo(width, height / 2);
+      canvasCtx.lineTo(canvasWidth, canvasHeight / 2);
       canvasCtx.stroke();
       canvasCtx.closePath();
     };
@@ -346,8 +287,6 @@ const Sinewave = () => {
     };
   }, [
     stream,
-    width,
-    height,
     theme.palette.primary.main,
   ]);
 
@@ -355,7 +294,7 @@ const Sinewave = () => {
     <Card>
       <CardHeader title="Sinewave" />
       <CardContent>
-        <div ref={divRef} style={{ height, position: "relative" }}>
+        <Box ref={divRef} sx={{ height: 256, position: "relative" }}>
           <canvas
             ref={ref}
             width={width}
@@ -367,7 +306,7 @@ const Sinewave = () => {
             }}
           >
           </canvas>
-        </div>
+        </Box>
       </CardContent>
     </Card>
   );
@@ -376,37 +315,18 @@ const Sinewave = () => {
 const Frequencybars = () => {
   const stream = React.use(streamPro);
 
-  const [width, setWidth] = React.useState(0);
-  const [height] = React.useState(320);
-
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
   const timer = React.useRef(0);
 
   const theme = useTheme();
+  const [width, height] = useSize(divRef);
 
   React.useEffect(() => {
-    const div = divRef.current;
-    if (!div) return;
+    const canvas = ref.current;
+    if (!canvas) return;
 
-    const cvs = ref.current;
-    if (!cvs) return;
-
-    const observer = new ResizeObserver(
-      ([{ contentBoxSize: [{ inlineSize }] }]) => {
-        setWidth(inlineSize);
-      },
-    );
-    observer.observe(div);
-
-    return () => observer.disconnect();
-  }, []);
-
-  React.useEffect(() => {
-    const cvs = ref.current;
-    if (!cvs) return;
-
-    const canvasCtx = cvs.getContext("2d");
+    const canvasCtx = canvas.getContext("2d");
     if (!canvasCtx) return;
 
     const audioCtx = new AudioContext();
@@ -432,15 +352,16 @@ const Frequencybars = () => {
     const bufferLengthAlt = analyser.frequencyBinCount;
     const dataArrayAlt = new Uint8Array(bufferLengthAlt);
 
-    canvasCtx.clearRect(0, 0, width, height);
-
     const drawAlt = () => {
       timer.current = requestAnimationFrame(drawAlt);
 
-      analyser.getByteFrequencyData(dataArrayAlt);
-      canvasCtx.clearRect(0, 0, width, height);
+      const canvasWidth = canvas.width;
+      const canvasHeight = canvas.height;
 
-      const barWidth = (width / bufferLengthAlt) * 2.5;
+      analyser.getByteFrequencyData(dataArrayAlt);
+      canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+
+      const barWidth = (canvasWidth / bufferLengthAlt) * 2.5;
       let barHeight;
       let x = 0;
 
@@ -450,7 +371,7 @@ const Frequencybars = () => {
         canvasCtx.fillStyle = theme.palette.primary.main;
         canvasCtx.fillRect(
           x,
-          height - barHeight / 2,
+          canvasHeight - barHeight / 2,
           barWidth,
           barHeight / 2,
         );
@@ -483,8 +404,6 @@ const Frequencybars = () => {
     };
   }, [
     stream,
-    width,
-    height,
     theme.palette.primary.main,
   ]);
 
@@ -492,7 +411,7 @@ const Frequencybars = () => {
     <Card>
       <CardHeader title="Frequencybars" />
       <CardContent>
-        <div ref={divRef} style={{ height, position: "relative" }}>
+        <Box ref={divRef} sx={{ height: 256, position: "relative" }}>
           <canvas
             ref={ref}
             width={width}
@@ -504,7 +423,7 @@ const Frequencybars = () => {
             }}
           >
           </canvas>
-        </div>
+        </Box>
       </CardContent>
     </Card>
   );
