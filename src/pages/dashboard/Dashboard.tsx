@@ -94,6 +94,13 @@ const Microphone = () => {
   }, []);
 
   React.useEffect(() => {
+    const stopAnimate = () => cancelAnimationFrame(timer.current);
+
+    if (!audio.active) {
+      stopAnimate();
+      return;
+    }
+
     const audioContext = new AudioContext();
     const source = audioContext.createMediaStreamSource(audio);
     const analyser = audioContext.createAnalyser();
@@ -136,7 +143,7 @@ const Microphone = () => {
     fn();
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      stopAnimate();
       source.disconnect();
       audioContext.close();
       analyser.disconnect();
