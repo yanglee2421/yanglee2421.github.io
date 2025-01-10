@@ -18,22 +18,6 @@ const streamPro = navigator.mediaDevices.getUserMedia({
   audio: true,
 });
 
-const initData = () => {
-  const val = [{
-    value: 0,
-    time: performance.now(),
-  }];
-
-  while (val.length < window.innerWidth) {
-    val.push({
-      value: 0,
-      time: performance.now(),
-    });
-  }
-
-  return val;
-};
-
 const useSize = (ref: React.RefObject<HTMLElement | null>) => {
   const [width, setWidth] = React.useState(0);
   const [height, setHeight] = React.useState(0);
@@ -84,7 +68,7 @@ const Microphone = () => {
     const dataArray = new Uint8Array(bufferLength);
     source.connect(analyser);
 
-    let renderData = initData();
+    let renderData: Array<{ value: number; time: number }> = [];
 
     const draw = () => {
       timer.current = requestAnimationFrame(draw);
@@ -104,13 +88,6 @@ const Microphone = () => {
         time: performance.now(),
         value: Math.floor(volume),
       });
-
-      while (renderData.length < canvasWidth) {
-        renderData.push({
-          value: 0,
-          time: performance.now(),
-        });
-      }
 
       renderData = renderData.slice(-canvasWidth);
 
