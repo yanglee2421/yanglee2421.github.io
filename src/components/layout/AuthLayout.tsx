@@ -2,6 +2,7 @@ import {
   alpha,
   AppBar,
   Box,
+  Container,
   Icon,
   IconButton,
   Link,
@@ -31,6 +32,10 @@ import { ModeToggle } from "../shared/ModeToggle";
 import { UserDropdown } from "../shared/UserDropdonw";
 import { Materio } from "../svg/Materio";
 import * as conf from "@/lib/conf";
+import { type Container as ParticlesContainer } from "@tsparticles/engine";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
+import { loadSlim } from "@tsparticles/slim";
 
 const ASIDE_SIZE = 72;
 
@@ -128,6 +133,30 @@ const NavMenu = () => {
   );
 };
 
+const snowPro = initParticlesEngine(async (engine) => {
+  await loadBubblesPreset(engine);
+  await loadSlim(engine);
+});
+
+const ParticlesUI = () => {
+  React.use(snowPro);
+  const particlesLoaded = async (container?: ParticlesContainer) => {
+    console.log(container);
+  };
+
+  return (
+    <Particles
+      options={{
+        preset: "bubbles",
+        background: { opacity: 0 },
+      }}
+      particlesLoaded={particlesLoaded}
+    />
+  );
+};
+
+const getFullYear = () => new Date().getFullYear();
+
 type Props = React.PropsWithChildren;
 
 export const AuthLayout = (props: Props) => {
@@ -135,6 +164,7 @@ export const AuthLayout = (props: Props) => {
 
   return (
     <>
+      <ParticlesUI />
       <AppBar
         elevation={0}
         sx={(theme) => ({
@@ -197,9 +227,11 @@ export const AuthLayout = (props: Props) => {
         </Nav>
       </Aside>
       <MainWrapper sx={{ display: showMenuInMobile ? "none" : "flex" }}>
-        <Main>{props.children}</Main>
+        <Main>
+          <Container>{props.children}</Container>
+        </Main>
         <Footer>
-          &copy;2024 by{" "}
+          &copy;{getFullYear()} by{" "}
           <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
             yanglee2421
           </Link>
@@ -251,10 +283,11 @@ const MainWrapper = styled("div")(({ theme }) => ({
 const Main = styled("main")(({ theme }) => ({
   flexGrow: 1,
 
-  padding: theme.spacing(3),
-  paddingBlockEnd: theme.spacing(0),
+  paddingInline: theme.spacing(3),
+  paddingBlock: theme.spacing(6),
 }));
 
 const Footer = styled("footer")(({ theme }) => ({
-  padding: theme.spacing(3),
+  paddingInline: theme.spacing(6),
+  paddingBlock: theme.spacing(3.75),
 }));

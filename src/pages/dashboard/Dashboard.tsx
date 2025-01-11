@@ -12,37 +12,9 @@ import {
 } from "@mui/material";
 import React from "react";
 import { Translation } from "react-i18next";
+import { useSize } from "@/hooks/dom/useSize";
 
-const streamPro = navigator.mediaDevices.getUserMedia({
-  video: false,
-  audio: true,
-});
-
-const useSize = (ref: React.RefObject<HTMLElement | null>) => {
-  const [width, setWidth] = React.useState(0);
-  const [height, setHeight] = React.useState(0);
-
-  React.useEffect(() => {
-    const div = ref.current;
-    if (!div) return;
-
-    const observer = new ResizeObserver(
-      ([{ contentBoxSize: [{ inlineSize, blockSize }] }]) => {
-        React.startTransition(() => {
-          setWidth(inlineSize);
-          setHeight(blockSize);
-        });
-      },
-    );
-    observer.observe(div);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, [ref]);
-
-  return [width, height] as const;
-};
+const streamPro = navigator.mediaDevices.getUserMedia({ audio: true });
 
 const Microphone = () => {
   const audio = React.use(streamPro);
@@ -93,6 +65,7 @@ const Microphone = () => {
 
       canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
       canvasCtx.strokeStyle = theme.palette.primary.main;
+      canvasCtx.lineWidth = 2;
       canvasCtx.beginPath();
       canvasCtx.moveTo(0, canvasHeight);
 
@@ -437,13 +410,13 @@ export function Dashboard() {
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
         </Typography>
       </Grid2>
-      <Grid2 size={{ xs: 12, sm: 6 }}>
+      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
         <Microphone />
       </Grid2>
-      <Grid2 size={{ xs: 12, sm: 6 }}>
+      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
         <Sinewave />
       </Grid2>
-      <Grid2 size={{ xs: 12, sm: 6 }}>
+      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
         <Frequencybars />
       </Grid2>
       <Grid2 size={{ xs: 12, sm: 6 }}>

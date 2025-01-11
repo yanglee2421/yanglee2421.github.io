@@ -10,6 +10,7 @@ import {
   IconButton,
   MenuItem,
   TextField,
+  Theme,
   useTheme,
 } from "@mui/material";
 import {
@@ -26,6 +27,7 @@ import {
 } from "@mui/material/colors";
 import React from "react";
 import { MinesweeperGame } from "@/lib/MinesweeperGame";
+import { useSize } from "@/hooks/dom/useSize";
 
 type CellProps = {
   opened: boolean;
@@ -40,40 +42,7 @@ type CellProps = {
 
 const map = new Map<number, string>();
 
-const Cell = (props: CellProps) => {
-  const ref = React.useRef(null);
-  const timerRef = React.useRef(0);
-  const lastPressRef = React.useRef(0);
-  const [height, setHeight] = React.useState(0);
-  const theme = useTheme();
-
-  React.useEffect(() => {
-    const el = ref.current;
-
-    if (!el) {
-      return;
-    }
-
-    const observer = new ResizeObserver(([{ contentBoxSize }]) => {
-      setHeight(contentBoxSize[0].inlineSize);
-    });
-    observer.observe(el);
-
-    return () => observer.disconnect();
-  }, []);
-
-  const render = () => {
-    if (props.opened) {
-      return props.error ? "X" : props.nums;
-    }
-
-    if (props.marked) {
-      return "!";
-    }
-
-    return;
-  };
-
+const getThemeColorData = (theme: Theme) => {
   map.set(
     0,
     alpha(
@@ -144,6 +113,29 @@ const Cell = (props: CellProps) => {
       theme.palette.action.disabledOpacity,
     ),
   );
+};
+
+const Cell = (props: CellProps) => {
+  const ref = React.useRef(null);
+  const timerRef = React.useRef(0);
+  const lastPressRef = React.useRef(0);
+
+  const theme = useTheme();
+  const [height] = useSize(ref);
+
+  getThemeColorData(theme);
+
+  const render = () => {
+    if (props.opened) {
+      return props.error ? "X" : props.nums;
+    }
+
+    if (props.marked) {
+      return "!";
+    }
+
+    return;
+  };
 
   const renderColor = () => {
     if (!props.opened) {
@@ -201,7 +193,7 @@ const Cell = (props: CellProps) => {
           sm: t.typography.h4.fontSize,
         },
 
-        height: height,
+        height,
 
         borderBlockStart: "1px solid " + t.palette.divider,
         borderInlineStart: props.borderStart
@@ -269,6 +261,17 @@ const GameTimer = (props: GameTimerProps) => {
 
 const MemoGameTimer = React.memo(GameTimer);
 
+type ReducerState = {
+  game: MinesweeperGame;
+};
+
+type ReducerArgs = [number, number, number, () => void, () => void];
+
+const reducer = (
+  { game }: ReducerState,
+  args?: ReducerArgs,
+) => ({ game: args ? new MinesweeperGame(...args) : game });
+
 export const Minesweeper = () => {
   const handleTimeStart = () => {
     console.log("started");
@@ -279,18 +282,7 @@ export const Minesweeper = () => {
   };
 
   const [{ game }, dispatch] = React.useReducer(
-    ({ game }, args?: [number, number, number, () => void, () => void]) =>
-      args
-        ? ({
-          game: new MinesweeperGame(
-            args[0],
-            args[1],
-            args[2],
-            args[3],
-            args[4],
-          ),
-        })
-        : ({ game }),
+    reducer,
     null,
     () => ({
       game: new MinesweeperGame(8, 8, 10, handleTimeEnd, handleTimeStart),
@@ -299,7 +291,10 @@ export const Minesweeper = () => {
 
   return (
     <Card
-      sx={{ maxWidth: (t) => ({ maxWidth: t.breakpoints.values.sm }) }}
+      sx={{
+        maxWidth: (t) => ({ maxWidth: t.breakpoints.values.sm }),
+        marginInline: "auto",
+      }}
     >
       <CardHeader
         title="Minesweeper"
@@ -373,6 +368,7 @@ export const Minesweeper = () => {
           display: "grid",
           gridTemplateColumns: `repeat(${game.columns},minmax(0,1fr))`,
           gridTemplateRows: `repeat(${game.rows},minmax(0,1fr))`,
+          alignItems: "flex-end",
         })}
       >
         {game.cells.map((i, idx) => (

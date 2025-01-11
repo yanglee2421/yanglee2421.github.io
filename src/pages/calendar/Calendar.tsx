@@ -120,6 +120,7 @@ export function Calendar() {
               maxDate={endDate || void 0}
               slotProps={{
                 textField: { fullWidth: true, label: "Start Date" },
+                field: { clearable: true },
               }}
             />
           </Grid2>
