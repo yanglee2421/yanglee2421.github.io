@@ -155,8 +155,6 @@ const ParticlesUI = () => {
   );
 };
 
-const getFullYear = () => new Date().getFullYear();
-
 type Props = React.PropsWithChildren;
 
 export const AuthLayout = (props: Props) => {
@@ -231,7 +229,7 @@ export const AuthLayout = (props: Props) => {
           <Container>{props.children}</Container>
         </Main>
         <Footer>
-          &copy;{getFullYear()} by{" "}
+          &copy;{conf.FULL_YEAR} by{" "}
           <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
             yanglee2421
           </Link>
@@ -283,8 +281,12 @@ const MainWrapper = styled("div")(({ theme }) => ({
 const Main = styled("main")(({ theme }) => ({
   flexGrow: 1,
 
-  paddingInline: theme.spacing(3),
-  paddingBlock: theme.spacing(6),
+  paddingBlock: theme.spacing(3),
+
+  [theme.breakpoints.up("sm")]: {
+    paddingInline: theme.spacing(3),
+    paddingBlock: theme.spacing(6),
+  },
 }));
 
 const Footer = styled("footer")(({ theme }) => ({
