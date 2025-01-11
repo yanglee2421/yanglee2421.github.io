@@ -14,10 +14,7 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import { type Container } from "@tsparticles/engine";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
-import { loadSlim } from "@tsparticles/slim";
+
 import React from "react";
 import { Camera } from "@/components/shared/Camera";
 import { Slider } from "./Slider";
@@ -193,28 +190,6 @@ const SortableDnd = () => {
   );
 };
 
-const snowPro = initParticlesEngine(async (engine) => {
-  await loadBubblesPreset(engine);
-  await loadSlim(engine);
-});
-
-const ParticlesUI = () => {
-  React.use(snowPro);
-  const particlesLoaded = async (container?: Container) => {
-    console.log(container);
-  };
-
-  return (
-    <Particles
-      options={{
-        preset: "bubbles",
-        background: { opacity: 0 },
-      }}
-      particlesLoaded={particlesLoaded}
-    />
-  );
-};
-
 const Counter = () => {
   const [count, setCount] = React.useState(0);
 
@@ -267,7 +242,7 @@ export const Lab = () => {
 
   return (
     <>
-      <Stack spacing={6} sx={{ zIndex: 1, position: "relative" }}>
+      <Stack spacing={6}>
         <Card>
           <CardHeader title="Slider" />
           <CardContent>
@@ -294,7 +269,6 @@ export const Lab = () => {
         </Card>
         <WebSocketCard />
       </Stack>
-      <ParticlesUI />
     </>
   );
 };
