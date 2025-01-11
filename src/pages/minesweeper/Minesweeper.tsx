@@ -26,8 +26,8 @@ import {
   teal,
 } from "@mui/material/colors";
 import React from "react";
-import { MinesweeperGame } from "@/lib/MinesweeperGame";
 import { useSize } from "@/hooks/dom/useSize";
+import { MinesweeperGame } from "@/lib/MinesweeperGame";
 
 type CellProps = {
   opened: boolean;
@@ -288,7 +288,6 @@ export const Minesweeper = () => {
       game: new MinesweeperGame(8, 8, 10, handleTimeEnd, handleTimeStart),
     }),
   );
-
   return (
     <Card
       sx={{
