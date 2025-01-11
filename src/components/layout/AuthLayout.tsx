@@ -229,10 +229,12 @@ export const AuthLayout = (props: Props) => {
           <Container>{props.children}</Container>
         </Main>
         <Footer>
-          &copy;{conf.FULL_YEAR} by{" "}
-          <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
-            yanglee2421
-          </Link>
+          <Container>
+            &copy; {conf.FULL_YEAR} by{" "}
+            <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
+              yanglee2421
+            </Link>
+          </Container>
         </Footer>
       </MainWrapper>
     </>
@@ -281,7 +283,7 @@ const MainWrapper = styled("div")(({ theme }) => ({
 const Main = styled("main")(({ theme }) => ({
   flexGrow: 1,
 
-  paddingBlock: theme.spacing(3),
+  paddingBlock: theme.spacing(2),
 
   [theme.breakpoints.up("sm")]: {
     paddingInline: theme.spacing(3),

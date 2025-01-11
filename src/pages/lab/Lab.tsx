@@ -14,7 +14,6 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-
 import React from "react";
 import { Camera } from "@/components/shared/Camera";
 import { Slider } from "./Slider";
@@ -40,8 +39,9 @@ import { timeout } from "@yotulee/run";
 
 const WebSocketCard = () => {
   const [data, setData] = React.useState("");
-  const ref = React.useRef<WebSocket | null>(null);
   const [input, setInput] = React.useState("");
+
+  const ref = React.useRef<WebSocket | null>(null);
 
   React.useEffect(() => {
     const controller = new AbortController();
@@ -130,9 +130,6 @@ const SortableItem = (props: SortableItemProps) => {
       }}
       secondaryAction={
         <ListItemIcon
-          ref={sort.setNodeRef}
-          {...sort.attributes}
-          {...sort.listeners}
           sx={{
             cursor: "pointer",
           }}
@@ -140,6 +137,9 @@ const SortableItem = (props: SortableItemProps) => {
           <DragIndicatorOutlined />
         </ListItemIcon>
       }
+      ref={sort.setNodeRef}
+      {...sort.attributes}
+      {...sort.listeners}
     >
       {props.children}
     </ListItem>
