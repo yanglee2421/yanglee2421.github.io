@@ -41,7 +41,6 @@ import { type Container as ParticlesContainer } from "@tsparticles/engine";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
 import { loadSlim } from "@tsparticles/slim";
-import { useSize } from "@/hooks/dom/useSize";
 
 const LinkWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -168,6 +167,13 @@ const AsideWrapper = styled("div")(({ theme }) => ({
   inlineSize: "100dvw",
   blockSize: "100dvh",
 
+  paddingBlockStart: theme.spacing(conf.HEADER_SIZE_XS),
+  [theme.breakpoints.up("sm")]: {
+    maxInlineSize: theme.spacing(conf.ASIDE_SIZE),
+
+    paddingBlockStart: theme.spacing(conf.HEADER_SIZE_SM),
+  },
+
   overflow: "hidden",
 
   backgroundColor: theme.palette.background.default,
@@ -176,15 +182,24 @@ const AsideWrapper = styled("div")(({ theme }) => ({
 const Aside = styled("aside")(({ theme }) => ({
   blockSize: "100%",
 
-  overflow: "auto",
+  overflowX: "visible",
+  overflowY: "auto",
   borderInlineEnd: `1px solid ${theme.palette.divider}`,
 }));
 
-const LayoutContainer = styled("div")({
+const LayoutContainer = styled("div")(({ theme }) => ({
   flexDirection: "column",
 
   minBlockSize: "100dvh",
-});
+
+  paddingBlockStart: theme.spacing(conf.HEADER_SIZE_XS),
+  [theme.breakpoints.up("sm")]: {
+    display: "flex",
+
+    paddingInlineStart: theme.spacing(conf.ASIDE_SIZE),
+    paddingBlockStart: theme.spacing(conf.HEADER_SIZE_SM),
+  },
+}));
 
 const MainWrapper = styled("div")(({ theme }) => ({
   flexGrow: 1,
@@ -211,20 +226,13 @@ type Props = React.PropsWithChildren;
 export const AuthLayout = (props: Props) => {
   const [key, update] = React.useState("");
 
-  const headerRef = React.useRef(null);
-  const asideRef = React.useRef(null);
-
   const location = useLocation();
-  const [, height] = useSize(headerRef);
-  const [width] = useSize(asideRef);
-
   const showMenuInMobile = Object.is(key, location.key);
 
   return (
     <>
       <ParticlesUI />
       <AppBar
-        ref={headerRef}
         elevation={0}
         sx={(theme) => ({
           bgcolor: "transparent",
@@ -284,25 +292,16 @@ export const AuthLayout = (props: Props) => {
       </AppBar>
       <AsideWrapper
         sx={{
-          maxInlineSize: {
-            xs: showMenuInMobile ? "none" : 0,
-            sm: width + 1 + "px",
-          },
-          paddingBlockStart: height + "px",
+          maxInlineSize: showMenuInMobile ? "none" : 0,
         }}
       >
-        <Aside ref={asideRef} sx={(t) => ({ width: { sm: t.spacing(72) } })}>
+        <Aside>
           <NavMenu />
         </Aside>
       </AsideWrapper>
       <LayoutContainer
         sx={{
-          display: {
-            xs: showMenuInMobile ? "none" : "flex",
-            sm: "flex",
-          },
-          paddingInlineStart: { sm: width + "px" },
-          paddingBlockStart: height + "px",
+          display: showMenuInMobile ? "none" : "flex",
         }}
       >
         <MainWrapper>
