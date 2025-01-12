@@ -25,7 +25,12 @@ import {
   SportsEsportsOutlined,
   WalletOutlined,
 } from "@mui/icons-material";
-import { Link as RouterLink, NavLink, useParams } from "react-router";
+import {
+  Link as RouterLink,
+  NavLink,
+  useLocation,
+  useParams,
+} from "react-router";
 import React from "react";
 import { LangToggle } from "../shared/LangToggle";
 import { ModeToggle } from "../shared/ModeToggle";
@@ -36,8 +41,7 @@ import { type Container as ParticlesContainer } from "@tsparticles/engine";
 import Particles, { initParticlesEngine } from "@tsparticles/react";
 import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
 import { loadSlim } from "@tsparticles/slim";
-
-const ASIDE_SIZE = 72;
+import { useSize } from "@/hooks/dom/useSize";
 
 const LinkWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -155,15 +159,72 @@ const ParticlesUI = () => {
   );
 };
 
+const AsideWrapper = styled("div")(({ theme }) => ({
+  position: "fixed",
+  zIndex: theme.zIndex.appBar - 1,
+  insetInlineStart: 0,
+  insetBlockStart: 0,
+
+  inlineSize: "100dvw",
+  blockSize: "100dvh",
+
+  overflow: "hidden",
+
+  backgroundColor: theme.palette.background.default,
+}));
+
+const Aside = styled("aside")(({ theme }) => ({
+  blockSize: "100%",
+
+  overflow: "auto",
+  borderInlineEnd: `1px solid ${theme.palette.divider}`,
+}));
+
+const LayoutContainer = styled("div")({
+  flexDirection: "column",
+
+  minBlockSize: "100dvh",
+});
+
+const MainWrapper = styled("div")(({ theme }) => ({
+  flexGrow: 1,
+
+  paddingBlock: theme.spacing(2),
+
+  [theme.breakpoints.up("sm")]: {
+    paddingInline: theme.spacing(3),
+    paddingBlock: theme.spacing(6),
+  },
+}));
+
+const FooterWrapper = styled("div")(({ theme }) => ({
+  paddingBlock: theme.spacing(1.75),
+
+  [theme.breakpoints.up("sm")]: {
+    paddingInline: theme.spacing(3),
+    paddingBlock: theme.spacing(3.75),
+  },
+}));
+
 type Props = React.PropsWithChildren;
 
 export const AuthLayout = (props: Props) => {
-  const [showMenuInMobile, update] = React.useState(false);
+  const [key, update] = React.useState("");
+
+  const headerRef = React.useRef(null);
+  const asideRef = React.useRef(null);
+
+  const location = useLocation();
+  const [, height] = useSize(headerRef);
+  const [width] = useSize(asideRef);
+
+  const showMenuInMobile = Object.is(key, location.key);
 
   return (
     <>
       <ParticlesUI />
       <AppBar
+        ref={headerRef}
         elevation={0}
         sx={(theme) => ({
           bgcolor: "transparent",
@@ -205,7 +266,9 @@ export const AuthLayout = (props: Props) => {
           </Box>
 
           <IconButton
-            onClick={() => update((p) => !p)}
+            onClick={() => {
+              update((prev) => prev === location.key ? "" : location.key);
+            }}
             sx={{ display: { sm: "none" } }}
           >
             {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
@@ -219,79 +282,47 @@ export const AuthLayout = (props: Props) => {
           <UserDropdown />
         </Toolbar>
       </AppBar>
-      <Aside sx={{ maxInlineSize: showMenuInMobile ? "none" : 0 }}>
-        <Nav>
+      <AsideWrapper
+        sx={{
+          maxInlineSize: {
+            xs: showMenuInMobile ? "none" : 0,
+            sm: width + 1 + "px",
+          },
+          paddingBlockStart: height + "px",
+        }}
+      >
+        <Aside ref={asideRef} sx={(t) => ({ width: { sm: t.spacing(72) } })}>
           <NavMenu />
-        </Nav>
-      </Aside>
-      <MainWrapper sx={{ display: showMenuInMobile ? "none" : "flex" }}>
-        <Main>
-          <Container>{props.children}</Container>
-        </Main>
-        <Footer>
-          <Container>
-            &copy; {conf.FULL_YEAR} by{" "}
-            <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
-              yanglee2421
-            </Link>
-          </Container>
-        </Footer>
-      </MainWrapper>
+        </Aside>
+      </AsideWrapper>
+      <LayoutContainer
+        sx={{
+          display: {
+            xs: showMenuInMobile ? "none" : "flex",
+            sm: "flex",
+          },
+          paddingInlineStart: { sm: width + "px" },
+          paddingBlockStart: height + "px",
+        }}
+      >
+        <MainWrapper>
+          <main>
+            <Container>
+              {props.children}
+            </Container>
+          </main>
+        </MainWrapper>
+        <FooterWrapper>
+          <footer>
+            <Container>
+              &copy; {conf.FULL_YEAR} by{" "}
+              <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
+                yanglee2421
+              </Link>
+            </Container>
+          </footer>
+        </FooterWrapper>
+      </LayoutContainer>
     </>
   );
 };
-
-const Aside = styled("aside")(({ theme }) => ({
-  position: "fixed",
-  zIndex: theme.zIndex.appBar - 1,
-
-  inlineSize: "100dvw",
-  blockSize: "100dvh",
-  paddingBlockStart: theme.spacing(14),
-
-  [theme.breakpoints.up("sm")]: {
-    maxInlineSize: theme.spacing(ASIDE_SIZE),
-    paddingBlockStart: theme.spacing(16),
-  },
-
-  overflow: "hidden",
-
-  backgroundColor: theme.palette.background.default,
-}));
-
-const Nav = styled("nav")(({ theme }) => ({
-  blockSize: "100%",
-
-  overflow: "auto",
-  borderInlineEnd: `1px solid ${theme.palette.divider}`,
-}));
-
-const MainWrapper = styled("div")(({ theme }) => ({
-  display: "none",
-  flexDirection: "column",
-
-  minBlockSize: "100dvh",
-  paddingBlockStart: theme.spacing(14),
-
-  [theme.breakpoints.up("sm")]: {
-    display: "flex",
-    paddingInlineStart: theme.spacing(ASIDE_SIZE),
-    paddingBlockStart: theme.spacing(16),
-  },
-}));
-
-const Main = styled("main")(({ theme }) => ({
-  flexGrow: 1,
-
-  paddingBlock: theme.spacing(2),
-
-  [theme.breakpoints.up("sm")]: {
-    paddingInline: theme.spacing(3),
-    paddingBlock: theme.spacing(6),
-  },
-}));
-
-const Footer = styled("footer")(({ theme }) => ({
-  paddingInline: theme.spacing(6),
-  paddingBlock: theme.spacing(3.75),
-}));

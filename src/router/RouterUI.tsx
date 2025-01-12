@@ -67,9 +67,8 @@ const routes: RouteObject[] = [{
 
         return {
           Component() {
-            const location = useLocation();
             return (
-              <AuthLayout key={location.pathname}>
+              <AuthLayout>
                 <Outlet />
               </AuthLayout>
             );
