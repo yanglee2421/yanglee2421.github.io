@@ -67,7 +67,7 @@ export default defineConfig(() => {
       cssCodeSplit: true,
       // lib: { cssFileName: "style.css" },
 
-      manifest: false,
+      manifest: true,
       sourcemap: false,
       chunkSizeWarningLimit: 500,
       assetsInlineLimit: 0,

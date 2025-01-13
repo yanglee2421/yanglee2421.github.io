@@ -36,7 +36,6 @@ import {
 } from "firebase/firestore";
 import classNames from "classnames";
 import { Add } from "./Add";
-import { NavigateToLogin } from "@/components/navigate";
 
 export function Overtime() {
   const user = useCurrentUser();
@@ -51,19 +50,7 @@ export function Overtime() {
     },
   });
 
-  if (!user) {
-    return <NavigateToLogin />;
-  }
-
-  if (query.isPending) {
-    return null;
-  }
-
-  if (query.isError) {
-    return null;
-  }
-
-  return (
+  return query.isSuccess && (
     <div>
       <Card>
         <CardHeader

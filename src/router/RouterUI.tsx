@@ -44,6 +44,7 @@ import { LangToggle } from "@/components/shared/LangToggle";
 import { UserDropdown } from "@/components/shared/UserDropdonw";
 import { ModeToggle } from "@/components/shared/ModeToggle";
 import * as conf from "@/lib/conf";
+import { NavigateToLogin } from "@/components/navigate";
 
 const LANGS = new Set(["en", "zh"]);
 const FALLBACK_LANG = "en";
@@ -380,7 +381,20 @@ const routes: RouteObject[] = [{
         {
           id: "overtime",
           path: "overtime",
-          lazy: () => import("@/pages/overtime/route"),
+          lazy: async () => {
+            const [{ Component, ...rest }, { useCurrentUser }] = await Promise
+              .all([
+                import("@/pages/overtime/route"),
+                import("@/hooks/firebase/useCurrentUser"),
+              ]);
+
+            return {
+              ...rest,
+              Component() {
+                return useCurrentUser() ? <Component /> : <NavigateToLogin />;
+              },
+            };
+          },
         },
         {
           id: "minesweeper",
