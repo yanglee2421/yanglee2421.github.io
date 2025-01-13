@@ -1,4 +1,4 @@
-import { QueryProvider } from "@/components/QueryProvider";
+import { QueryProvider } from "@/components/query";
 import { RouterUI } from "@/router/RouterUI";
 
 export function App() {

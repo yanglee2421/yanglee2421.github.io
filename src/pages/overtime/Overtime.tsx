@@ -36,7 +36,7 @@ import {
 } from "firebase/firestore";
 import classNames from "classnames";
 import { Add } from "./Add";
-import { NavigateToLogin } from "@/components/NavigateToLogin";
+import { NavigateToLogin } from "@/components/navigate";
 
 export function Overtime() {
   const user = useCurrentUser();

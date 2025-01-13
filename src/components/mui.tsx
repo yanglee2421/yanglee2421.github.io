@@ -101,7 +101,19 @@ const darkTheme = createTheme({
   },
 });
 
-export function ThemeProvider(props: React.PropsWithChildren) {
+const modeToHasSelector = (mode: Mode, isDark: boolean) => {
+  switch (mode) {
+    case "system":
+      return isDark;
+
+    case "dark":
+      return true;
+    case "light":
+      return false;
+  }
+};
+
+export const MuiProvider = (props: React.PropsWithChildren) => {
   const isDark = useIsDark();
   const mode = useLocaleStore((s) => s.mode);
   const theme = modeToHasSelector(mode, isDark) ? darkTheme : lightTheme;
@@ -144,16 +156,4 @@ export function ThemeProvider(props: React.PropsWithChildren) {
       />
     </MuiThemeProvider>
   );
-}
-
-function modeToHasSelector(mode: Mode, isDark: boolean) {
-  switch (mode) {
-    case "system":
-      return isDark;
-
-    case "dark":
-      return true;
-    case "light":
-      return false;
-  }
-}
+};
