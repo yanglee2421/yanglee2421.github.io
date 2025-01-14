@@ -10,6 +10,9 @@ import React from "react";
 import { modeToIsDark } from "@/lib/utils";
 
 const CodeWrapper = styled("div")({
+  "pre.shiki": {
+    whiteSpace: "pre-wrap",
+  },
   "& code": {
     fontFamily: "Consolas, 'Courier New', monospace",
     fontSize: 20,
