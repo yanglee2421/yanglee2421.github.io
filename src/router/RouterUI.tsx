@@ -61,7 +61,7 @@ const getMatchedLang = (path = "", state: string) => {
   return FALLBACK_LANG;
 };
 
-export const LangWrapper = (props: React.PropsWithChildren) => {
+const LangWrapper = (props: React.PropsWithChildren) => {
   const params = useParams();
   const location = useLocation();
   const { i18n } = useTranslation();
@@ -112,15 +112,7 @@ const fallback = (
   </Box>
 );
 
-export const RootOutlet = () => {
-  return (
-    <LangWrapper>
-      <Outlet />
-    </LangWrapper>
-  );
-};
-
-export const RootRoute = () => {
+const RootRoute = () => {
   const navigation = useNavigation();
   const hasHydrated = React.useSyncExternalStore(
     (onStoreChange) => useLocaleStore.persist.onFinishHydration(onStoreChange),
@@ -149,7 +141,9 @@ export const RootRoute = () => {
       fallback={fallback}
     >
       <MuiProvider>
-        <RootOutlet />
+        <LangWrapper>
+          <Outlet />
+        </LangWrapper>
       </MuiProvider>
       <ScrollRestoration />
     </React.Suspense>
@@ -278,7 +272,7 @@ const LinkWrapper = styled("div")(({ theme }) => ({
   },
 }));
 
-export const NavMenu = () => {
+const NavMenu = () => {
   const params = useParams();
 
   return (
