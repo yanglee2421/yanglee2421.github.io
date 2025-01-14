@@ -35,17 +35,7 @@ const MessageContent = (props: MessageContentProps) => {
     };
   }, [msg, props.text]);
 
-  return (
-    <Box
-      sx={{
-        "pre.shiki": {
-          whiteSpace: "pre-wrap",
-        },
-      }}
-    >
-      <Markdown code={msg} />
-    </Box>
-  );
+  return <Markdown code={msg} />;
 };
 
 const MemoMessageContent = React.memo(MessageContent);
