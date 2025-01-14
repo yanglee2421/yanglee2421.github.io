@@ -40,7 +40,7 @@ const locales = [
   },
 ];
 
-export function LangToggle() {
+export const LangToggle = () => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const handleClose = () => {
@@ -59,4 +59,4 @@ export function LangToggle() {
       </Menu>
     </>
   );
-}
+};

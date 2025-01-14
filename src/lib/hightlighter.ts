@@ -15,6 +15,8 @@ export const hightlighter = createHighlighterCore({
     import("shiki/langs/ts.mjs"),
     import("shiki/langs/tsx.mjs"),
     import("shiki/langs/html.mjs"),
+    import("shiki/langs/bash.mjs"),
+    import("shiki/langs/vue.mjs"),
   ],
   engine: createOnigurumaEngine(() => import("shiki/wasm")),
 });

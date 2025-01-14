@@ -29,17 +29,6 @@ import React from "react";
 import { useSize } from "@/hooks/dom/useSize";
 import { MinesweeperGame } from "@/lib/MinesweeperGame";
 
-type CellProps = {
-  opened: boolean;
-  marked: boolean;
-  nums: number;
-  borderStart?: boolean;
-  onOpen(): void;
-  onMark(): void;
-  error?: boolean;
-  disabled: boolean;
-};
-
 const map = new Map<number, string>();
 
 const getThemeColorData = (theme: Theme) => {
@@ -113,6 +102,17 @@ const getThemeColorData = (theme: Theme) => {
       theme.palette.action.disabledOpacity,
     ),
   );
+};
+
+type CellProps = {
+  opened: boolean;
+  marked: boolean;
+  nums: number;
+  borderStart?: boolean;
+  onOpen(): void;
+  onMark(): void;
+  error?: boolean;
+  disabled: boolean;
 };
 
 const Cell = (props: CellProps) => {
@@ -195,10 +195,11 @@ const Cell = (props: CellProps) => {
 
         height,
 
-        borderBlockStart: "1px solid " + t.palette.divider,
-        borderInlineStart: props.borderStart
-          ? "1px solid " + t.palette.divider
-          : void 0,
+        borderWidth: 1,
+        borderStyle: "solid",
+        borderColor: "transparent",
+        borderBlockStartColor: t.palette.divider,
+        borderInlineStartColor: props.borderStart ? t.palette.divider : void 0,
 
         touchAction: "manipulation",
       })}

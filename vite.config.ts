@@ -45,12 +45,22 @@ export default defineConfig(() => {
         },
         output: {
           manualChunks(id) {
-            if (id.includes("node_modules/apexcharts")) {
-              return "apexcharts";
+            if (id.includes("node_modules/firebase")) {
+              return "firebase";
             }
 
             if (id.includes("node_modules/recharts")) {
               return "recharts";
+            }
+
+            // if (id.includes("node_modules/shiki")) {
+            //   return "shiki";
+            // }
+            if (
+              id.includes("node_modules/react/") ||
+              id.includes("node_modules/react-dom/")
+            ) {
+              return "react";
             }
           },
           entryFileNames: "assets/[name]-[hash].js",
@@ -67,7 +77,7 @@ export default defineConfig(() => {
       cssCodeSplit: true,
       // lib: { cssFileName: "style.css" },
 
-      manifest: false,
+      manifest: true,
       sourcemap: false,
       chunkSizeWarningLimit: 500,
       assetsInlineLimit: 0,
