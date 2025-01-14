@@ -16,3 +16,18 @@ export const android_ripple = (color: string) => ({
   foreground: true,
   borderless: false,
 });
+
+export const modeToIsDark = (
+  mode: "dark" | "light" | "system",
+  inDark: boolean,
+) => {
+  switch (mode) {
+    case "dark":
+      return true;
+    case "light":
+      return false;
+    case "system":
+    default:
+      return inDark;
+  }
+};

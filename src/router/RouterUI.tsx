@@ -290,6 +290,12 @@ const NavMenu = () => {
   );
 };
 
+const AuthWrapper = (props: React.PropsWithChildren) =>
+  useCurrentUser() ? props.children : <NavigateToLogin />;
+
+const GuestWrapper = (props: React.PropsWithChildren) =>
+  useCurrentUser() ? <NavigateToHome /> : props.children;
+
 const routes: RouteObject[] = [{
   id: "root",
   path: ":lang?",
@@ -311,10 +317,12 @@ const routes: RouteObject[] = [{
 
         return {
           Component() {
-            return useCurrentUser() ? <NavigateToHome /> : (
-              <GuestLayout>
-                <Outlet />
-              </GuestLayout>
+            return (
+              <GuestWrapper>
+                <GuestLayout>
+                  <Outlet />
+                </GuestLayout>
+              </GuestWrapper>
             );
           },
         };
@@ -374,15 +382,18 @@ const routes: RouteObject[] = [{
           id: "overtime",
           path: "overtime",
           lazy: async () => {
-            const [{ Component, ...rest }] = await Promise
-              .all([
-                import("@/pages/overtime/route"),
-              ]);
+            const { Component, ...rest } = await import(
+              "@/pages/overtime/route"
+            );
 
             return {
               ...rest,
               Component() {
-                return useCurrentUser() ? <Component /> : <NavigateToLogin />;
+                return (
+                  <AuthWrapper>
+                    <Component />
+                  </AuthWrapper>
+                );
               },
             };
           },

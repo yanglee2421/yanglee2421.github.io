@@ -12,32 +12,28 @@ import {
 import React from "react";
 import { useFormStatus } from "react-dom";
 import { useImmer } from "use-immer";
-import { hightlighter } from "@/lib/hightlighter";
+import { Markdown } from "@/components/markdown";
 
 type MessageContentProps = {
-  last: boolean;
   text: string;
 };
 
 const MessageContent = (props: MessageContentProps) => {
-  const hgr = React.use(hightlighter);
   const timer = React.useRef(0);
   const [msg, setMsg] = React.useState("");
 
   React.useEffect(() => {
-    if (!props.last) return;
-
     if (msg === props.text) return;
-
     if (!props.text.startsWith(msg)) return;
+
     timer.current = setTimeout(() => {
-      React.startTransition(() => {
-        setMsg((p) => props.text.slice(0, p.length + 1));
-      });
+      setMsg((p) => props.text.slice(0, p.length + 1));
     }, 4);
 
-    return () => clearTimeout(timer.current);
-  }, [msg, props.text, props.last]);
+    return () => {
+      clearTimeout(timer.current);
+    };
+  }, [msg, props.text]);
 
   return (
     <Box
@@ -46,13 +42,8 @@ const MessageContent = (props: MessageContentProps) => {
           whiteSpace: "pre-wrap",
         },
       }}
-      dangerouslySetInnerHTML={{
-        __html: hgr.codeToHtml(props.last ? msg : props.text, {
-          lang: "markdown",
-          theme: "dark-plus",
-        }),
-      }}
     >
+      <Markdown code={msg} />
     </Box>
   );
 };
@@ -67,16 +58,20 @@ type Message = {
 };
 
 export const Chat = () => {
-  React.use(hightlighter);
-  const [msgList, setMsgList] = useImmer<Message[]>([]);
+  const [contentVal, setContentVal] = React.useState("");
+
   const controller = React.useRef<AbortController | null>(null);
+
+  const [msgList, setMsgList] = useImmer<Message[]>([]);
 
   const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
     e.preventDefault();
     e.stopPropagation();
+
     controller.current = new AbortController();
     const fd = new FormData(e.currentTarget);
     const question = fd.get("content") as string;
+
     const last = {
       id: crypto.randomUUID(),
       time: Date.now(),
@@ -93,6 +88,7 @@ export const Chat = () => {
         content: "",
       });
     });
+    setContentVal("");
 
     const res = await fetch(
       "/v1/chat/completions",
@@ -132,8 +128,11 @@ export const Chat = () => {
 
     while (true) {
       const { done, value } = await reader.read();
+      if (done) {
+        break;
+      }
+
       const decocded = decoder.decode(value, { stream: true });
-      console.log(decocded);
       buf += decocded;
 
       setMsgList((d) => {
@@ -145,10 +144,6 @@ export const Chat = () => {
           .filter(Boolean)
           .join("");
       });
-
-      if (done) {
-        break;
-      }
     }
   };
 
@@ -157,13 +152,12 @@ export const Chat = () => {
       <Card>
         <CardHeader title="Chat" />
         <CardContent>
-          {msgList.map((msg, i) => (
+          {msgList.map((msg) => (
             <Box
               key={msg.id}
             >
               <Avatar>{msg.role}</Avatar>
               <MemoMessageContent
-                last={i + 1 === msgList.length}
                 text={msg.content}
               />
             </Box>
@@ -175,6 +169,8 @@ export const Chat = () => {
               onSubmit={handleSubmit}
             >
               <InputBase
+                value={contentVal}
+                onChange={(e) => setContentVal(e.target.value)}
                 name="content"
                 fullWidth
                 multiline
