@@ -174,16 +174,16 @@ const InvoiceTable = () => {
   const staffSearch = search.get("staff");
   const noteSearch = search.get("note");
 
+  const [date, setDate] = React.useState(dateSearch);
+  const [staff, setStaff] = React.useState(staffSearch);
+  const [note, setNote] = React.useState(noteSearch);
+
   const data = React.useMemo(() => {
     return invoices.filter((i) =>
       checkDate(dateSearch, i.date) && checkStaff(staffSearch, i.staff) &&
       checkText(noteSearch, i.note)
     );
   }, [dateSearch, staffSearch, invoices, noteSearch]);
-
-  const [date, setDate] = React.useState(dateSearch);
-  const [staff, setStaff] = React.useState(staffSearch);
-  const [note, setNote] = React.useState(noteSearch);
 
   React.useEffect(() => {
     setSearch((p) => {
@@ -258,7 +258,7 @@ const InvoiceTable = () => {
         <Grid2 container spacing={6}>
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
-              value={staffSearch}
+              value={staff}
               onChange={(e) => setStaff(e.target.value)}
               fullWidth
               label="Staff"
@@ -266,7 +266,7 @@ const InvoiceTable = () => {
           </Grid2>
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
-              value={noteSearch}
+              value={note}
               onChange={(e) => setNote(e.target.value)}
               fullWidth
               label="Note"
@@ -274,10 +274,10 @@ const InvoiceTable = () => {
           </Grid2>
           <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
             <DatePicker
-              value={dateSearch ? dayjs(Number.parseInt(dateSearch)) : null}
+              value={date ? dayjs(Number.parseInt(date)) : null}
               onChange={(e) => {
                 setDate(() => {
-                  return e?.toDate().getTime().toString() || null;
+                  return e?.toDate().getTime().toString() || "";
                 });
               }}
               slotProps={{
