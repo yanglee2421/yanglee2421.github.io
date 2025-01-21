@@ -32,6 +32,7 @@ import {
   ChevronRightOutlined,
   DashboardOutlined,
   GitHub,
+  HandshakeOutlined,
   PeopleOutlineOutlined,
   ScienceOutlined,
   SportsEsportsOutlined,
@@ -238,6 +239,11 @@ const list = [
     label: "Lab",
     icon: <ScienceOutlined />,
   },
+  {
+    to: "/handbook",
+    label: "Handbook",
+    icon: <HandshakeOutlined />,
+  },
 ];
 
 const LinkWrapper = styled("div")(({ theme }) => ({
@@ -429,6 +435,11 @@ const routes: RouteObject[] = [{
           lazy: () => import("@/pages/staff/route"),
         },
         { id: "chat", path: "chat", lazy: () => import("@/pages/chat/route") },
+        {
+          id: "handbook",
+          path: "handbook",
+          lazy: () => import("@/pages/handbook/component"),
+        },
       ],
     },
   ],
