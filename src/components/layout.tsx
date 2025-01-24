@@ -11,40 +11,7 @@ import {
 } from "@mui/material";
 import { CloseOutlined, MenuOutlined } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router";
-import { type Container as ParticlesContainer } from "@tsparticles/engine";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
-import { loadBigCirclesPreset } from "@tsparticles/preset-big-circles";
-import { loadSlim } from "@tsparticles/slim";
 import React from "react";
-
-const snowPro = initParticlesEngine(async (engine) => {
-  await loadBubblesPreset(engine);
-  await loadBigCirclesPreset(engine);
-  await loadSlim(engine);
-});
-
-const particlesLoaded = async (container?: ParticlesContainer) => {
-  console.log(container);
-};
-
-type ParticlesUIProps = {
-  preset: string;
-};
-
-export const ParticlesUI = (props: ParticlesUIProps) => {
-  React.use(snowPro);
-
-  return (
-    <Particles
-      options={{
-        preset: props.preset,
-        background: { opacity: 0 },
-      }}
-      particlesLoaded={particlesLoaded}
-    />
-  );
-};
 
 const HEADER_SIZE_XS = 14;
 const HEADER_SIZE_SM = 16;
@@ -164,9 +131,7 @@ export const AuthLayout = (props: AuthLayoutProps) => {
           maxInlineSize: props.showMenuInMobile ? "none" : 0,
         }}
       >
-        <AuthAside>
-          {props.aside}
-        </AuthAside>
+        <AuthAside>{props.aside}</AuthAside>
       </AuthAsideWrapper>
       <AuthContainer
         sx={{
@@ -175,16 +140,12 @@ export const AuthLayout = (props: AuthLayoutProps) => {
       >
         <AuthMainWrapper>
           <main>
-            <Container>
-              {props.children}
-            </Container>
+            <Container>{props.children}</Container>
           </main>
         </AuthMainWrapper>
         <AuthFooterWrapper>
           <footer>
-            <Container>
-              {props.footer}
-            </Container>
+            <Container>{props.footer}</Container>
           </footer>
         </AuthFooterWrapper>
       </AuthContainer>
@@ -202,15 +163,13 @@ export const BlankLayout = (props: React.PropsWithChildren) => {
         },
       }}
     >
-      <Stack spacing={6}>
-        {props.children}
-      </Stack>
+      <Stack spacing={6}>{props.children}</Stack>
     </Box>
   );
 };
 
 const IMAGE_SIZE = 1024;
-const ICON_SIZE = IMAGE_SIZE * 1 / 2;
+const ICON_SIZE = (IMAGE_SIZE * 1) / 2;
 const MAIN_SIZE = 120;
 
 const GuestAside = styled("aside")(({ theme }) => ({
@@ -235,7 +194,7 @@ const GuestMain = styled("main")(({ theme }) => ({
   inlineSize: "100dvw",
   blockSize: "100dvh",
 
-  backgroundColor: alpha(theme.palette.background.default, .95),
+  backgroundColor: alpha(theme.palette.background.default, 0.95),
   backdropFilter: "blur(8px)",
 
   [theme.breakpoints.up("sm")]: {
@@ -321,7 +280,7 @@ export const GuestLayout = (props: React.PropsWithChildren) => {
         IMAGE_SIZE / 2 - ICON_SIZE / 2,
         IMAGE_SIZE / 2 - ICON_SIZE / 2,
         IMAGE_SIZE,
-        IMAGE_SIZE,
+        IMAGE_SIZE
       );
 
       img.remove();
@@ -331,39 +290,43 @@ export const GuestLayout = (props: React.PropsWithChildren) => {
 
   return (
     <>
-      <ParticlesUI preset="big-circles" />
       <GuestAside>
-        {void (
-          <>
-            <Logo
-              id={id}
-              width={ICON_SIZE}
-              height={ICON_SIZE}
-              bgcolor={theme.palette.primary.main}
-              display={"none"}
-            />
-            <Box
-              display={"flex"}
-              border="1px red dash"
-              width={IMAGE_SIZE}
-              height={IMAGE_SIZE}
-            >
-              <canvas ref={cvsRef} width={IMAGE_SIZE} height={IMAGE_SIZE}>
-              </canvas>
-            </Box>
-            <button
-              onClick={() => {
-                const link = document.createElement("a");
-                link.download = "icon.png";
-                link.href = cvsRef.current?.toDataURL("image/png", 1) || "";
-                link.click();
-                link.remove();
-              }}
-            >
-              export
-            </button>
-          </>
-        )}
+        {
+          void (
+            <>
+              <Logo
+                id={id}
+                width={ICON_SIZE}
+                height={ICON_SIZE}
+                bgcolor={theme.palette.primary.main}
+                display={"none"}
+              />
+              <Box
+                display={"flex"}
+                border="1px red dash"
+                width={IMAGE_SIZE}
+                height={IMAGE_SIZE}
+              >
+                <canvas
+                  ref={cvsRef}
+                  width={IMAGE_SIZE}
+                  height={IMAGE_SIZE}
+                ></canvas>
+              </Box>
+              <button
+                onClick={() => {
+                  const link = document.createElement("a");
+                  link.download = "icon.png";
+                  link.href = cvsRef.current?.toDataURL("image/png", 1) || "";
+                  link.click();
+                  link.remove();
+                }}
+              >
+                export
+              </button>
+            </>
+          )
+        }
       </GuestAside>
       <GuestMain>{props.children}</GuestMain>
     </>

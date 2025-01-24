@@ -32,76 +32,16 @@ import { MinesweeperGame } from "@/lib/MinesweeperGame";
 const map = new Map<number, string>();
 
 const getThemeColorData = (theme: Theme) => {
-  map.set(
-    0,
-    alpha(
-      grey[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    1,
-    alpha(
-      green[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    2,
-    alpha(
-      blue[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    3,
-    alpha(
-      indigo[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    4,
-    alpha(
-      deepPurple[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    4,
-    alpha(
-      teal[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    5,
-    alpha(
-      cyan[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    6,
-    alpha(
-      brown[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    7,
-    alpha(
-      pink[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
-  map.set(
-    9,
-    alpha(
-      red[500],
-      theme.palette.action.disabledOpacity,
-    ),
-  );
+  map.set(0, alpha(grey[500], theme.palette.action.disabledOpacity));
+  map.set(1, alpha(green[500], theme.palette.action.disabledOpacity));
+  map.set(2, alpha(blue[500], theme.palette.action.disabledOpacity));
+  map.set(3, alpha(indigo[500], theme.palette.action.disabledOpacity));
+  map.set(4, alpha(deepPurple[500], theme.palette.action.disabledOpacity));
+  map.set(4, alpha(teal[500], theme.palette.action.disabledOpacity));
+  map.set(5, alpha(cyan[500], theme.palette.action.disabledOpacity));
+  map.set(6, alpha(brown[500], theme.palette.action.disabledOpacity));
+  map.set(7, alpha(pink[500], theme.palette.action.disabledOpacity));
+  map.set(9, alpha(red[500], theme.palette.action.disabledOpacity));
 };
 
 type CellProps = {
@@ -221,13 +161,13 @@ type GameTimerProps = {
 
 const GameTimer = (props: GameTimerProps) => {
   const [now, setNow] = React.useState(0);
-  const timer = React.useRef(0);
 
   React.useEffect(() => {
     if (!props.enable) return;
 
+    let timer = 0;
     const run = () => {
-      timer.current = requestAnimationFrame(run);
+      timer = requestAnimationFrame(run);
 
       React.startTransition(() => {
         setNow(Date.now());
@@ -236,7 +176,7 @@ const GameTimer = (props: GameTimerProps) => {
     run();
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      cancelAnimationFrame(timer);
     };
   }, [props.enable]);
 
@@ -268,10 +208,9 @@ type ReducerState = {
 
 type ReducerArgs = [number, number, number, () => void, () => void];
 
-const reducer = (
-  { game }: ReducerState,
-  args?: ReducerArgs,
-) => ({ game: args ? new MinesweeperGame(...args) : game });
+const reducer = ({ game }: ReducerState, args?: ReducerArgs) => ({
+  game: args ? new MinesweeperGame(...args) : game,
+});
 
 export const Minesweeper = () => {
   const handleTimeStart = () => {
@@ -282,13 +221,9 @@ export const Minesweeper = () => {
     console.log("end");
   };
 
-  const [{ game }, dispatch] = React.useReducer(
-    reducer,
-    null,
-    () => ({
-      game: new MinesweeperGame(8, 8, 10, handleTimeEnd, handleTimeStart),
-    }),
-  );
+  const [{ game }, dispatch] = React.useReducer(reducer, null, () => ({
+    game: new MinesweeperGame(8, 8, 10, handleTimeEnd, handleTimeStart),
+  }));
   return (
     <Card
       sx={{
@@ -299,7 +234,7 @@ export const Minesweeper = () => {
       <CardHeader
         title="Minesweeper"
         subheader={
-          <Box sx={{ display: "flex", "justifyContent": "space-between" }}>
+          <Box sx={{ display: "flex", justifyContent: "space-between" }}>
             <span>
               <MemoGameTimer
                 enable={game.isRuning}
@@ -310,9 +245,7 @@ export const Minesweeper = () => {
               />
             </span>
 
-            <span>
-              Rest Bombs: {game.restBombs}
-            </span>
+            <span>Rest Bombs: {game.restBombs}</span>
           </Box>
         }
         action={
@@ -326,7 +259,8 @@ export const Minesweeper = () => {
                   handleTimeEnd,
                   handleTimeStart,
                 ]);
-              })}
+              })
+            }
           >
             <RestartAltOutlined />
           </IconButton>
@@ -338,9 +272,9 @@ export const Minesweeper = () => {
             <TextField
               value={`${game.columns},${game.rows},${game.bombNums}`}
               onChange={(e) => {
-                const list = e.target.value.split(",").map((i) =>
-                  Number.parseInt(i)
-                );
+                const list = e.target.value
+                  .split(",")
+                  .map((i) => Number.parseInt(i));
 
                 React.startTransition(() => {
                   dispatch([

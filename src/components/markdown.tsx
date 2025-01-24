@@ -58,13 +58,13 @@ export const Markdown = (props: MarkdownProps) => (
         const { children, className, ...rest } = props;
         const match = /language-(\w+)/.exec(className || "");
 
-        return match
-          ? <Code code={String(children)} lang={match[1]} />
-          : (
-            <code {...rest} className={className}>
-              {children}
-            </code>
-          );
+        return match ? (
+          <Code code={String(children)} lang={match[1]} />
+        ) : (
+          <code {...rest} className={className}>
+            {children}
+          </code>
+        );
       },
       pre: React.Fragment,
     }}

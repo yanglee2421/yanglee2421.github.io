@@ -48,19 +48,14 @@ export default defineConfig(() => {
             if (id.includes("node_modules/firebase")) {
               return "firebase";
             }
-
             if (id.includes("node_modules/recharts")) {
               return "recharts";
             }
-
-            // if (id.includes("node_modules/shiki")) {
-            //   return "shiki";
-            // }
-            if (
-              id.includes("node_modules/react/") ||
-              id.includes("node_modules/react-dom/")
-            ) {
+            if (id.includes("node_modules/react")) {
               return "react";
+            }
+            if (id.includes("node_modules/react-dom")) {
+              return "react-dom";
             }
           },
           entryFileNames: "assets/[name]-[hash].js",

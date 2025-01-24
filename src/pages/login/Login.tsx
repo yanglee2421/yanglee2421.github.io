@@ -3,7 +3,7 @@ import { ModeToggle } from "@/components/shared/ModeToggle";
 import { SignInWithGithub, SignInWithGoogle } from "@/components/sign";
 import { GitHub } from "@mui/icons-material";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
-import * as conf from "@/lib/conf";
+import * as consts from "@/lib/constants";
 
 export function Login() {
   return (
@@ -34,7 +34,7 @@ export function Login() {
         <Stack direction={"row"} spacing={3} useFlexGap>
           <LangToggle />
           <ModeToggle />
-          <IconButton href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
+          <IconButton href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
             <GitHub />
           </IconButton>
         </Stack>

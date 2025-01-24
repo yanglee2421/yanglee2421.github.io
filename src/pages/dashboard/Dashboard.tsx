@@ -21,7 +21,6 @@ const Microphone = () => {
 
   const elRef = React.useRef<HTMLCanvasElement>(null);
   const divRef = React.useRef<HTMLDivElement>(null);
-  const timer = React.useRef(0);
 
   const theme = useTheme();
   const [width, height] = useSize(divRef);
@@ -41,9 +40,10 @@ const Microphone = () => {
     source.connect(analyser);
 
     let renderData: Array<{ value: number; time: number }> = [];
+    let timer = 0;
 
     const draw = () => {
-      timer.current = requestAnimationFrame(draw);
+      timer = requestAnimationFrame(draw);
 
       analyser.getByteTimeDomainData(dataArray);
 
@@ -67,13 +67,16 @@ const Microphone = () => {
       canvasCtx.strokeStyle = theme.palette.primary.main;
       canvasCtx.lineWidth = 2;
       canvasCtx.beginPath();
-      canvasCtx.moveTo(0, canvasHeight);
 
       renderData.forEach((i, idx) => {
-        canvasCtx.lineTo(
-          idx + 1,
-          canvasHeight - Math.floor(i.value * 1 * canvasHeight / 128),
-        );
+        const y = canvasHeight - Math.floor((i.value * canvasHeight) / 128);
+        if (!idx) {
+          canvasCtx.moveTo(0, y);
+
+          return;
+        }
+
+        canvasCtx.lineTo(idx + 1, y);
       });
 
       canvasCtx.stroke();
@@ -83,7 +86,7 @@ const Microphone = () => {
     draw();
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      cancelAnimationFrame(timer);
       source.disconnect();
       audioContext.close();
       analyser.disconnect();
@@ -144,7 +147,6 @@ const Sinewave = () => {
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
-  const timer = React.useRef(0);
 
   const theme = useTheme();
   const [width, height] = useSize(divRef);
@@ -180,8 +182,9 @@ const Sinewave = () => {
     const bufferLength = analyser.fftSize;
     const dataArray = new Uint8Array(bufferLength);
 
+    let timer = 0;
     const draw = function () {
-      timer.current = requestAnimationFrame(draw);
+      timer = requestAnimationFrame(draw);
 
       const canvasWidth = canvas.width;
       const canvasHeight = canvas.height;
@@ -226,7 +229,7 @@ const Sinewave = () => {
     biquadFilter.connect(gainNode);
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      cancelAnimationFrame(timer);
       audioCtx.close();
       analyser.disconnect();
       gainNode.disconnect();
@@ -235,10 +238,7 @@ const Sinewave = () => {
       source.disconnect();
       distortion.disconnect();
     };
-  }, [
-    stream,
-    theme.palette.primary.main,
-  ]);
+  }, [stream, theme.palette.primary.main]);
 
   return (
     <Card>
@@ -254,8 +254,7 @@ const Sinewave = () => {
               insetInlineStart: 0,
               insetBlockStart: 0,
             }}
-          >
-          </canvas>
+          ></canvas>
         </Box>
       </CardContent>
     </Card>
@@ -267,7 +266,6 @@ const Frequencybars = () => {
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
-  const timer = React.useRef(0);
 
   const theme = useTheme();
   const [width, height] = useSize(divRef);
@@ -302,8 +300,9 @@ const Frequencybars = () => {
     const bufferLengthAlt = analyser.frequencyBinCount;
     const dataArrayAlt = new Uint8Array(bufferLengthAlt);
 
+    let timer = 0;
     const drawAlt = () => {
-      timer.current = requestAnimationFrame(drawAlt);
+      timer = requestAnimationFrame(drawAlt);
 
       const canvasWidth = canvas.width;
       const canvasHeight = canvas.height;
@@ -323,7 +322,7 @@ const Frequencybars = () => {
           x,
           canvasHeight - barHeight / 2,
           barWidth,
-          barHeight / 2,
+          barHeight / 2
         );
 
         x += barWidth + 1;
@@ -343,7 +342,7 @@ const Frequencybars = () => {
     biquadFilter.connect(gainNode);
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      cancelAnimationFrame(timer);
       audioCtx.close();
       analyser.disconnect();
       gainNode.disconnect();
@@ -352,10 +351,7 @@ const Frequencybars = () => {
       source.disconnect();
       distortion.disconnect();
     };
-  }, [
-    stream,
-    theme.palette.primary.main,
-  ]);
+  }, [stream, theme.palette.primary.main]);
 
   return (
     <Card>
@@ -371,8 +367,7 @@ const Frequencybars = () => {
               insetInlineStart: 0,
               insetBlockStart: 0,
             }}
-          >
-          </canvas>
+          ></canvas>
         </Box>
       </CardContent>
     </Card>
@@ -399,6 +394,106 @@ const ControlCard = () => {
   );
 };
 
+type RenderNode = {
+  x: number;
+  y: number;
+};
+
+const SvgCard = () => {
+  const [renderNodes, setRenderNodes] = React.useState<RenderNode[]>([]);
+
+  const divRef = React.useRef<HTMLDivElement>(null);
+  const seed = React.useRef(1);
+
+  const [width, height] = useSize(divRef);
+  const theme = useTheme();
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      seed.current = Math.floor(Math.random() * 700);
+    }, 200);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    let timer = 0;
+    const draw = () => {
+      timer = requestAnimationFrame(draw);
+
+      setRenderNodes((p) => {
+        const val = [
+          ...p,
+          { x: performance.now(), y: height - (seed.current * height) / 700 },
+        ];
+        return val.slice(-width);
+      });
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(timer);
+    };
+  }, [width, height]);
+
+  return (
+    <Card>
+      <CardHeader title="SVG" />
+      <CardContent>
+        <Box ref={divRef} sx={{ height: 300, position: "relative" }}>
+          <svg
+            width={width}
+            height={height}
+            viewBox={`0 0 ${width} ${height}`}
+            xmlns="http://www.w3.org/2000/svg"
+            style={{
+              backgroundColor: theme.palette.background.paper,
+              position: "absolute",
+              insetInlineStart: 0,
+              insetBlockStart: 0,
+            }}
+          >
+            <line
+              x1={0}
+              y1={height}
+              x2={width}
+              y2={height}
+              stroke={theme.palette.divider}
+              strokeWidth={1}
+            />
+            <line
+              x1={0}
+              y1={0}
+              x2={0}
+              y2={height}
+              stroke={theme.palette.divider}
+              strokeWidth={1}
+            />
+            <polyline
+              points={renderNodes.map((i, idx) => `${idx},${i.y}`).join(" ")}
+              fill="none"
+              stroke={theme.palette.primary.main}
+              strokeWidth={2}
+            />
+            <circle cx={0} cy={200} r={4} fill="red" />
+            <text
+              x={10}
+              y={height - 10}
+              fontSize={12}
+              textAnchor="middle"
+              color={theme.palette.text.secondary}
+            >
+              1
+            </text>
+          </svg>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+
 export function Dashboard() {
   return (
     <Grid2 container spacing={6}>
@@ -421,6 +516,9 @@ export function Dashboard() {
       </Grid2>
       <Grid2 size={{ xs: 12, sm: 6 }}>
         <ControlCard />
+      </Grid2>
+      <Grid2 size={{ xs: 12, sm: 6 }}>
+        <SvgCard />
       </Grid2>
     </Grid2>
   );

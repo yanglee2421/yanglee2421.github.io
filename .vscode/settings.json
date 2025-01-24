@@ -1,38 +1,26 @@
 {
-  "[javascript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
+  "editor.fontSize": 20,
+  "editor.formatOnSave": true,
+  "editor.linkedEditing": true,
+  "editor.tabSize": 2,
+  "editor.defaultFormatter": "denoland.vscode-deno",
+  "workbench.iconTheme": "vscode-icons",
   "[typescript]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "[javascriptreact]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[typescriptreact]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
-  "[markdown]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "[json]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+  "[vue]": {
+    "editor.defaultFormatter": "esbenp.prettier-vscode"
   },
   "[jsonc]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
+    "editor.defaultFormatter": "vscode.json-language-features"
   },
-  "[css]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "[html]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "[yaml]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "[scss]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  },
-  "[less]": {
-    "editor.defaultFormatter": "denoland.vscode-deno"
-  }
+  "git.confirmSync": false,
+  "git.enableSmartCommit": true,
+  "git.autofetch": true,
+  "deno.unstable": [
+    "--unstable-component"
+  ],
 }

@@ -17,7 +17,6 @@ import { useTranslation } from "react-i18next";
 import {
   alpha,
   Box,
-  CircularProgress,
   Icon,
   IconButton,
   Link,
@@ -44,9 +43,44 @@ import { Materio } from "@/components/svg/Materio";
 import { LangToggle } from "@/components/shared/LangToggle";
 import { UserDropdown } from "@/components/shared/UserDropdonw";
 import { ModeToggle } from "@/components/shared/ModeToggle";
-import * as conf from "@/lib/conf";
+import * as consts from "@/lib/constants";
 import { NavigateToHome, NavigateToLogin } from "@/components/navigate";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import { QueryProvider } from "@/components/query";
+import { type Container as ParticlesContainer } from "@tsparticles/engine";
+import Particles, { initParticlesEngine } from "@tsparticles/react";
+import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
+import { loadBigCirclesPreset } from "@tsparticles/preset-big-circles";
+import { loadSlim } from "@tsparticles/slim";
+import { AuthLayout, GuestLayout } from "@/components/layout";
+
+const snowPro = initParticlesEngine(async (engine) => {
+  await loadBubblesPreset(engine);
+  await loadBigCirclesPreset(engine);
+  await loadSlim(engine);
+});
+
+const particlesLoaded = async (container?: ParticlesContainer) => {
+  console.log(container);
+};
+
+type ParticlesUIProps = {
+  preset: string;
+};
+
+export const ParticlesUI = (props: ParticlesUIProps) => {
+  React.use(snowPro);
+
+  return (
+    <Particles
+      options={{
+        preset: props.preset,
+        background: { opacity: 0 },
+      }}
+      particlesLoaded={particlesLoaded}
+    />
+  );
+};
 
 const LANGS = new Set(["en", "zh"]);
 const FALLBACK_LANG = "en";
@@ -92,34 +126,8 @@ const LangWrapper = (props: React.PropsWithChildren) => {
   return props.children;
 };
 
-const fallback = (
-  <Box
-    sx={{
-      display: "flex",
-      alignItems: "center",
-      justifyContent: "center",
-      flexDirection: "column",
-      gap: 6,
-
-      position: "fixed",
-      inset: 0,
-      zIndex(theme) {
-        return theme.zIndex.modal;
-      },
-    }}
-  >
-    <CircularProgress />
-    <Typography>Loading...</Typography>
-  </Box>
-);
-
-const RootRoute = () => {
+const NprogressBar = () => {
   const navigation = useNavigation();
-  const hasHydrated = React.useSyncExternalStore(
-    (onStoreChange) => useLocaleStore.persist.onFinishHydration(onStoreChange),
-    () => useLocaleStore.persist.hasHydrated(),
-    () => false,
-  );
 
   React.useEffect(() => {
     switch (navigation.state) {
@@ -133,21 +141,20 @@ const RootRoute = () => {
     }
   }, [navigation.state]);
 
-  if (!hasHydrated) {
-    return fallback;
-  }
+  return null;
+};
 
+const RootRoute = () => {
   return (
-    <React.Suspense
-      fallback={fallback}
-    >
+    <QueryProvider>
       <MuiProvider>
+        <ScrollRestoration />
+        <NprogressBar />
         <LangWrapper>
           <Outlet />
         </LangWrapper>
       </MuiProvider>
-      <ScrollRestoration />
-    </React.Suspense>
+    </QueryProvider>
   );
 };
 
@@ -155,10 +162,7 @@ const FULL_YEAR = new Date().getFullYear();
 
 const logo = (
   <>
-    <Icon
-      fontSize="large"
-      color="primary"
-    >
+    <Icon fontSize="large" color="primary">
       <Materio fontSize="inherit" />
     </Icon>
     <Typography
@@ -181,7 +185,7 @@ const header = (
     <Box sx={{ marginInlineStart: "auto" }}></Box>
     <LangToggle />
     <ModeToggle />
-    <IconButton href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
+    <IconButton href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
       <GitHub />
     </IconButton>
     <UserDropdown />
@@ -191,7 +195,7 @@ const header = (
 const footer = (
   <>
     &copy; {FULL_YEAR} by{" "}
-    <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
+    <Link href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
       yanglee2421
     </Link>
   </>
@@ -273,7 +277,7 @@ const LinkWrapper = styled("div")(({ theme }) => ({
     color: theme.palette.primary.main,
     backgroundColor: alpha(
       theme.palette.primary.main,
-      theme.palette.action.activatedOpacity,
+      theme.palette.action.activatedOpacity
     ),
   },
 }));
@@ -302,148 +306,140 @@ const AuthWrapper = (props: React.PropsWithChildren) =>
 const GuestWrapper = (props: React.PropsWithChildren) =>
   useCurrentUser() ? <NavigateToHome /> : props.children;
 
-const routes: RouteObject[] = [{
-  id: "root",
-  path: ":lang?",
-  Component: RootRoute,
-  children: [
-    {
-      id: "404",
-      path: "*",
-      lazy() {
-        return import("@/pages/not-fount/route");
+const AuthRoute = () => {
+  const [key, update] = React.useState("");
+
+  const location = useLocation();
+  const showMenuInMobile = Object.is(key, location.key);
+
+  return (
+    <AuthLayout
+      aside={<NavMenu />}
+      header={header}
+      footer={footer}
+      logo={logo}
+      showMenuInMobile={showMenuInMobile}
+      onShowMenuInMobileChange={() => {
+        update((prev) => (prev === location.key ? "" : location.key));
+      }}
+    >
+      <ParticlesUI preset="bubbles" />
+      <Outlet />
+    </AuthLayout>
+  );
+};
+
+const GuestRoute = () => (
+  <GuestWrapper>
+    <GuestLayout>
+      <Outlet />
+    </GuestLayout>
+  </GuestWrapper>
+);
+
+const routes: RouteObject[] = [
+  {
+    id: "root",
+    path: ":lang?",
+    Component: RootRoute,
+    children: [
+      {
+        id: "404",
+        path: "*",
+        lazy() {
+          return import("@/pages/not-fount/route");
+        },
       },
-    },
-    {
-      id: "guest_layout",
-      async lazy() {
-        const [{ GuestLayout }] = await Promise.all([
-          import("@/components/layout"),
-        ]);
-
-        return {
-          Component() {
-            return (
-              <GuestWrapper>
-                <GuestLayout>
-                  <Outlet />
-                </GuestLayout>
-              </GuestWrapper>
-            );
+      {
+        id: "guest_layout",
+        Component: GuestRoute,
+        children: [
+          {
+            id: "login",
+            path: "login",
+            lazy: () => import("@/pages/login/route"),
           },
-        };
+        ],
       },
-
-      children: [
-        {
-          id: "login",
-          path: "login",
-          lazy: () => import("@/pages/login/route"),
-        },
-      ],
-    },
-    {
-      id: "auth_layout",
-      async lazy() {
-        const { AuthLayout, ParticlesUI } = await import("@/components/layout");
-
-        return {
-          Component() {
-            const [key, update] = React.useState("");
-
-            const location = useLocation();
-            const showMenuInMobile = Object.is(key, location.key);
-
-            return (
-              <AuthLayout
-                aside={<NavMenu />}
-                header={header}
-                footer={footer}
-                logo={logo}
-                showMenuInMobile={showMenuInMobile}
-                onShowMenuInMobileChange={() => {
-                  update((prev) => prev === location.key ? "" : location.key);
-                }}
-              >
-                <ParticlesUI preset="bubbles" />
-                <Outlet />
-              </AuthLayout>
-            );
+      {
+        id: "auth_layout",
+        Component: AuthRoute,
+        children: [
+          {
+            id: "home",
+            index: true,
+            lazy: () => import("@/pages/home/route"),
           },
-        };
+          {
+            id: "dashboard",
+            path: "dashboard",
+            lazy: () => import("@/pages/dashboard/route"),
+          },
+          {
+            id: "overtime",
+            path: "overtime",
+            lazy: async () => {
+              const { Component, ...rest } = await import(
+                "@/pages/overtime/route"
+              );
+
+              return {
+                ...rest,
+                Component() {
+                  return (
+                    <AuthWrapper>
+                      <Component />
+                    </AuthWrapper>
+                  );
+                },
+              };
+            },
+          },
+          {
+            id: "minesweeper",
+            path: "minesweeper",
+            lazy: () => import("@/pages/minesweeper/route"),
+          },
+          {
+            id: "lab",
+            path: "lab",
+            lazy: () => import("@/pages/lab/route"),
+          },
+          {
+            id: "calendar",
+            path: "calendar",
+            lazy: () => import("@/pages/calendar/Component"),
+          },
+          {
+            id: "calculator",
+            path: "calculator",
+            lazy: () => import("@/pages/calculator/route"),
+          },
+          {
+            id: "invoices",
+            path: "invoices",
+            lazy: () => import("@/pages/invoices/route"),
+          },
+          {
+            id: "staff",
+            path: "staff",
+            lazy: () => import("@/pages/staff/route"),
+          },
+          {
+            id: "chat",
+            path: "chat",
+            lazy: () => import("@/pages/chat/route"),
+          },
+          {
+            id: "handbook",
+            path: "handbook",
+            lazy: () => import("@/pages/handbook/component"),
+          },
+        ],
       },
-
-      children: [
-        {
-          id: "home",
-          index: true,
-          lazy: () => import("@/pages/home/route"),
-        },
-        {
-          id: "dashboard",
-          path: "dashboard",
-          lazy: () => import("@/pages/dashboard/route"),
-        },
-        {
-          id: "overtime",
-          path: "overtime",
-          lazy: async () => {
-            const { Component, ...rest } = await import(
-              "@/pages/overtime/route"
-            );
-
-            return {
-              ...rest,
-              Component() {
-                return (
-                  <AuthWrapper>
-                    <Component />
-                  </AuthWrapper>
-                );
-              },
-            };
-          },
-        },
-        {
-          id: "minesweeper",
-          path: "minesweeper",
-          lazy: () => import("@/pages/minesweeper/route"),
-        },
-        {
-          id: "lab",
-          path: "lab",
-          lazy: () => import("@/pages/lab/route"),
-        },
-        {
-          id: "calendar",
-          path: "calendar",
-          lazy: () => import("@/pages/calendar/Component"),
-        },
-        {
-          id: "calculator",
-          path: "calculator",
-          lazy: () => import("@/pages/calculator/route"),
-        },
-        {
-          id: "invoices",
-          path: "invoices",
-          lazy: () => import("@/pages/invoices/route"),
-        },
-        {
-          id: "staff",
-          path: "staff",
-          lazy: () => import("@/pages/staff/route"),
-        },
-        { id: "chat", path: "chat", lazy: () => import("@/pages/chat/route") },
-        {
-          id: "handbook",
-          path: "handbook",
-          lazy: () => import("@/pages/handbook/component"),
-        },
-      ],
-    },
-  ],
-}];
+    ],
+  },
+];
 
 const router = import.meta.env.PROD
   ? createHashRouter(routes)
