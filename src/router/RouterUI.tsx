@@ -43,7 +43,7 @@ import { Materio } from "@/components/svg/Materio";
 import { LangToggle } from "@/components/shared/LangToggle";
 import { UserDropdown } from "@/components/shared/UserDropdonw";
 import { ModeToggle } from "@/components/shared/ModeToggle";
-import * as conf from "@/lib/conf";
+import * as consts from "@/lib/constants";
 import { NavigateToHome, NavigateToLogin } from "@/components/navigate";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { QueryProvider } from "@/components/query";
@@ -185,7 +185,7 @@ const header = (
     <Box sx={{ marginInlineStart: "auto" }}></Box>
     <LangToggle />
     <ModeToggle />
-    <IconButton href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
+    <IconButton href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
       <GitHub />
     </IconButton>
     <UserDropdown />
@@ -195,7 +195,7 @@ const header = (
 const footer = (
   <>
     &copy; {FULL_YEAR} by{" "}
-    <Link href={conf.GITHUB_URL} target={conf.GITHUB_URL}>
+    <Link href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
       yanglee2421
     </Link>
   </>
