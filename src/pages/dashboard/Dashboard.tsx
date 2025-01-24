@@ -67,13 +67,16 @@ const Microphone = () => {
       canvasCtx.strokeStyle = theme.palette.primary.main;
       canvasCtx.lineWidth = 2;
       canvasCtx.beginPath();
-      canvasCtx.moveTo(0, canvasHeight);
 
       renderData.forEach((i, idx) => {
-        canvasCtx.lineTo(
-          idx + 1,
-          canvasHeight - Math.floor(i.value * 1 * canvasHeight / 128),
-        );
+        const y = canvasHeight - Math.floor((i.value * canvasHeight) / 128);
+        if (!idx) {
+          canvasCtx.moveTo(0, y);
+
+          return;
+        }
+
+        canvasCtx.lineTo(idx + 1, y);
       });
 
       canvasCtx.stroke();
@@ -235,10 +238,7 @@ const Sinewave = () => {
       source.disconnect();
       distortion.disconnect();
     };
-  }, [
-    stream,
-    theme.palette.primary.main,
-  ]);
+  }, [stream, theme.palette.primary.main]);
 
   return (
     <Card>
@@ -254,8 +254,7 @@ const Sinewave = () => {
               insetInlineStart: 0,
               insetBlockStart: 0,
             }}
-          >
-          </canvas>
+          ></canvas>
         </Box>
       </CardContent>
     </Card>
@@ -323,7 +322,7 @@ const Frequencybars = () => {
           x,
           canvasHeight - barHeight / 2,
           barWidth,
-          barHeight / 2,
+          barHeight / 2
         );
 
         x += barWidth + 1;
@@ -352,10 +351,7 @@ const Frequencybars = () => {
       source.disconnect();
       distortion.disconnect();
     };
-  }, [
-    stream,
-    theme.palette.primary.main,
-  ]);
+  }, [stream, theme.palette.primary.main]);
 
   return (
     <Card>
@@ -371,8 +367,7 @@ const Frequencybars = () => {
               insetInlineStart: 0,
               insetBlockStart: 0,
             }}
-          >
-          </canvas>
+          ></canvas>
         </Box>
       </CardContent>
     </Card>
