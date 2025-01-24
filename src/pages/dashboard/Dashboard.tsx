@@ -394,6 +394,105 @@ const ControlCard = () => {
   );
 };
 
+type RenderNode = {
+  x: number;
+  y: number;
+};
+
+const SvgCard = () => {
+  const [renderNodes, setRenderNodes] = React.useState<RenderNode[]>([]);
+
+  const divRef = React.useRef<HTMLDivElement>(null);
+  const seed = React.useRef(1);
+  const timer = React.useRef(0);
+
+  const [width, height] = useSize(divRef);
+  const theme = useTheme();
+
+  React.useEffect(() => {
+    const timer = setInterval(() => {
+      seed.current = Math.floor(Math.random() * 700);
+    }, 200);
+
+    return () => {
+      clearInterval(timer);
+    };
+  }, []);
+
+  React.useEffect(() => {
+    const draw = () => {
+      timer.current = requestAnimationFrame(draw);
+
+      setRenderNodes((p) => {
+        const val = [
+          ...p,
+          { x: performance.now(), y: height - (seed.current * height) / 700 },
+        ];
+        return val.slice(-width);
+      });
+    };
+    draw();
+
+    return () => {
+      cancelAnimationFrame(timer.current);
+    };
+  }, [width, height]);
+
+  return (
+    <Card>
+      <CardHeader title="SVG" />
+      <CardContent>
+        <Box ref={divRef} sx={{ height: 300, position: "relative" }}>
+          <svg
+            width={width}
+            height={height}
+            xmlns="http://www.w3.org/2000/svg"
+            style={{
+              backgroundColor: theme.palette.background.paper,
+              position: "absolute",
+              insetInlineStart: 0,
+              insetBlockStart: 0,
+            }}
+          >
+            <line
+              x1={0}
+              y1={height}
+              x2={width}
+              y2={height}
+              stroke={theme.palette.divider}
+              strokeWidth={1}
+            />
+            <line
+              x1={0}
+              y1={0}
+              x2={0}
+              y2={height}
+              stroke={theme.palette.divider}
+              strokeWidth={1}
+            />
+            <polyline
+              points={renderNodes.map((i, idx) => `${idx},${i.y}`).join(" ")}
+              fill="none"
+              stroke={theme.palette.primary.main}
+              strokeWidth={2}
+            />
+            <circle cx={0} cy={200} r={4} fill="red" />
+            <text
+              x={10}
+              y={height - 10}
+              fontSize={12}
+              textAnchor="middle"
+              color={theme.palette.text.secondary}
+            >
+              1
+            </text>
+          </svg>
+        </Box>
+      </CardContent>
+    </Card>
+  );
+};
+
 export function Dashboard() {
   return (
     <Grid2 container spacing={6}>
@@ -416,6 +515,9 @@ export function Dashboard() {
       </Grid2>
       <Grid2 size={{ xs: 12, sm: 6 }}>
         <ControlCard />
+      </Grid2>
+      <Grid2 size={{ xs: 12, sm: 6 }}>
+        <SvgCard />
       </Grid2>
     </Grid2>
   );
