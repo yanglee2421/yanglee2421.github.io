@@ -19,19 +19,18 @@ type MessageContentProps = {
 };
 
 const MessageContent = (props: MessageContentProps) => {
-  const timer = React.useRef(0);
   const [msg, setMsg] = React.useState("");
 
   React.useEffect(() => {
     if (msg === props.text) return;
     if (!props.text.startsWith(msg)) return;
 
-    timer.current = setTimeout(() => {
+    const timer = setTimeout(() => {
       setMsg((p) => props.text.slice(0, p.length + 1));
     }, 4);
 
     return () => {
-      clearTimeout(timer.current);
+      clearTimeout(timer);
     };
   }, [msg, props.text]);
 
@@ -80,32 +79,31 @@ export const Chat = () => {
     });
     setContentVal("");
 
-    const res = await fetch(
-      "/v1/chat/completions",
-      {
-        signal: controller.current.signal,
-        method: "POST",
-        body: JSON.stringify({
-          model: "4.0Ultra",
-          messages: msgList.map((i) => ({
+    const res = await fetch("/v1/chat/completions", {
+      signal: controller.current.signal,
+      method: "POST",
+      body: JSON.stringify({
+        model: "4.0Ultra",
+        messages: msgList
+          .map((i) => ({
             role: i.role,
             content: i.content,
-          })).concat([last]),
-          stream: true,
-          tools: [
-            {
-              type: "web_search",
-              web_search: {
-                enable: false,
-              },
+          }))
+          .concat([last]),
+        stream: true,
+        tools: [
+          {
+            type: "web_search",
+            web_search: {
+              enable: false,
             },
-          ],
-        }),
-        headers: {
-          Authorization: "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
-        },
+          },
+        ],
+      }),
+      headers: {
+        Authorization: "Bearer rCJALwydCHKaiiBolPGv:gxneLXlgwLjQQcsNnnEW",
       },
-    );
+    });
 
     const reader = res.body?.getReader();
 
@@ -143,21 +141,15 @@ export const Chat = () => {
         <CardHeader title="Chat" />
         <CardContent>
           {msgList.map((msg) => (
-            <Box
-              key={msg.id}
-            >
+            <Box key={msg.id}>
               <Avatar>{msg.role}</Avatar>
-              <MemoMessageContent
-                text={msg.content}
-              />
+              <MemoMessageContent text={msg.content} />
             </Box>
           ))}
         </CardContent>
         <CardActions>
           <Box sx={{ width: "100%" }}>
-            <form
-              onSubmit={handleSubmit}
-            >
+            <form onSubmit={handleSubmit}>
               <InputBase
                 value={contentVal}
                 onChange={(e) => setContentVal(e.target.value)}

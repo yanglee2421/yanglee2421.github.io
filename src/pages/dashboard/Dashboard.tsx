@@ -21,7 +21,6 @@ const Microphone = () => {
 
   const elRef = React.useRef<HTMLCanvasElement>(null);
   const divRef = React.useRef<HTMLDivElement>(null);
-  const timer = React.useRef(0);
 
   const theme = useTheme();
   const [width, height] = useSize(divRef);
@@ -41,9 +40,10 @@ const Microphone = () => {
     source.connect(analyser);
 
     let renderData: Array<{ value: number; time: number }> = [];
+    let timer = 0;
 
     const draw = () => {
-      timer.current = requestAnimationFrame(draw);
+      timer = requestAnimationFrame(draw);
 
       analyser.getByteTimeDomainData(dataArray);
 
@@ -86,7 +86,7 @@ const Microphone = () => {
     draw();
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      cancelAnimationFrame(timer);
       source.disconnect();
       audioContext.close();
       analyser.disconnect();
@@ -147,7 +147,6 @@ const Sinewave = () => {
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
-  const timer = React.useRef(0);
 
   const theme = useTheme();
   const [width, height] = useSize(divRef);
@@ -183,8 +182,9 @@ const Sinewave = () => {
     const bufferLength = analyser.fftSize;
     const dataArray = new Uint8Array(bufferLength);
 
+    let timer = 0;
     const draw = function () {
-      timer.current = requestAnimationFrame(draw);
+      timer = requestAnimationFrame(draw);
 
       const canvasWidth = canvas.width;
       const canvasHeight = canvas.height;
@@ -229,7 +229,7 @@ const Sinewave = () => {
     biquadFilter.connect(gainNode);
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      cancelAnimationFrame(timer);
       audioCtx.close();
       analyser.disconnect();
       gainNode.disconnect();
@@ -266,7 +266,6 @@ const Frequencybars = () => {
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
-  const timer = React.useRef(0);
 
   const theme = useTheme();
   const [width, height] = useSize(divRef);
@@ -301,8 +300,9 @@ const Frequencybars = () => {
     const bufferLengthAlt = analyser.frequencyBinCount;
     const dataArrayAlt = new Uint8Array(bufferLengthAlt);
 
+    let timer = 0;
     const drawAlt = () => {
-      timer.current = requestAnimationFrame(drawAlt);
+      timer = requestAnimationFrame(drawAlt);
 
       const canvasWidth = canvas.width;
       const canvasHeight = canvas.height;
@@ -342,7 +342,7 @@ const Frequencybars = () => {
     biquadFilter.connect(gainNode);
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      cancelAnimationFrame(timer);
       audioCtx.close();
       analyser.disconnect();
       gainNode.disconnect();
@@ -404,7 +404,6 @@ const SvgCard = () => {
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const seed = React.useRef(1);
-  const timer = React.useRef(0);
 
   const [width, height] = useSize(divRef);
   const theme = useTheme();
@@ -420,8 +419,9 @@ const SvgCard = () => {
   }, []);
 
   React.useEffect(() => {
+    let timer = 0;
     const draw = () => {
-      timer.current = requestAnimationFrame(draw);
+      timer = requestAnimationFrame(draw);
 
       setRenderNodes((p) => {
         const val = [
@@ -434,7 +434,7 @@ const SvgCard = () => {
     draw();
 
     return () => {
-      cancelAnimationFrame(timer.current);
+      cancelAnimationFrame(timer);
     };
   }, [width, height]);
 
