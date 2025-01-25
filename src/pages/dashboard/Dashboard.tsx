@@ -449,7 +449,6 @@ const SvgCard = () => {
             viewBox={`0 0 ${width} ${height}`}
             xmlns="http://www.w3.org/2000/svg"
             style={{
-              backgroundColor: theme.palette.background.paper,
               position: "absolute",
               insetInlineStart: 0,
               insetBlockStart: 0,
