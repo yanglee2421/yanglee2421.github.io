@@ -116,11 +116,16 @@ const modeToHasSelector = (mode: Mode, isDark: boolean) => {
 export const MuiProvider = (props: React.PropsWithChildren) => {
   const isDark = useIsDark();
   const mode = useLocaleStore((s) => s.mode);
-  const theme = modeToHasSelector(mode, isDark) ? darkTheme : lightTheme;
+  const hasDarkSelector = modeToHasSelector(mode, isDark);
+  const theme = hasDarkSelector ? darkTheme : lightTheme;
   const params = useParams();
+  const themeColor = hasDarkSelector
+    ? theme.palette.background.default
+    : theme.palette.primary.main;
 
   return (
     <MuiThemeProvider theme={theme}>
+      <meta name="theme-color" content={themeColor} />
       <LocalizationProvider
         dateAdapter={AdapterDayjs}
         adapterLocale={params.lang}
