@@ -160,6 +160,7 @@ type FormValues = z.infer<typeof schema>;
 
 export const Calculator = () => {
   const formId = React.useId();
+  const datalistId = React.useId();
 
   const set = useDbStore((s) => s.set);
   const params = useParams();
@@ -197,6 +198,12 @@ export const Calculator = () => {
 
   return (
     <Card>
+      <datalist id={datalistId}>
+        <option value="Subsidy"></option>
+        <option value="Train ticket"></option>
+        <option value="Accommodation"></option>
+        <option value="Taxi"></option>
+      </datalist>
       <CardHeader title="Calculator" />
       <CardContent>
         <form
@@ -235,7 +242,6 @@ export const Calculator = () => {
               const startVal = form.watch(`invoices.${idx}.start`);
               const endVal = form.watch(`invoices.${idx}.end`);
               const isOutsideVal = form.watch(`invoices.${idx}.isOutside`);
-
               const isSubsidy = typeVal === "subsidy";
 
               return (
@@ -260,8 +266,6 @@ export const Calculator = () => {
                         </IconButton>
                       )}
                     </Box>
-                  </Grid2>
-                  <Grid2 size={12}>
                     <Controller
                       control={form.control}
                       name={`invoices.${idx}.type`}
@@ -407,6 +411,7 @@ export const Calculator = () => {
                           helperText={fieldState.error?.message}
                           label="Staff"
                           fullWidth
+                          placeholder="Split by '@'"
                         />
                       )}
                     />
@@ -424,7 +429,13 @@ export const Calculator = () => {
                           helperText={fieldState.error?.message}
                           label="Note"
                           fullWidth
-                          multiline
+                          multiline={false}
+                          slotProps={{
+                            htmlInput: {
+                              list: datalistId,
+                              autoComplete: "off",
+                            },
+                          }}
                         />
                       )}
                     />
