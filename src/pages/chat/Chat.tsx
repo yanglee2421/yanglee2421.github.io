@@ -142,7 +142,9 @@ export const Chat = () => {
         <CardContent>
           {msgList.map((msg) => (
             <Box key={msg.id}>
-              <Avatar>{msg.role}</Avatar>
+              <Avatar variant="rounded">
+                {msg.role.charAt(0).toLocaleUpperCase()}
+              </Avatar>
               <MemoMessageContent text={msg.content} />
             </Box>
           ))}
