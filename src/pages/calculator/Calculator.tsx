@@ -1,4 +1,9 @@
-import { AddOutlined, CloseOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  CloseOutlined,
+  RestoreOutlined,
+  SaveOutlined,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -447,10 +452,10 @@ export const Calculator = () => {
         </form>
       </CardContent>
       <CardActions>
-        <Button type={"submit"} form={formId} variant="contained">
+        <Button type={"submit"} form={formId} startIcon={<SaveOutlined />}>
           Save
         </Button>
-        <Button type={"reset"} form={formId} variant="outlined">
+        <Button type={"reset"} form={formId} startIcon={<RestoreOutlined />}>
           Reset
         </Button>
         <Button
@@ -466,7 +471,6 @@ export const Calculator = () => {
               isOutside: true,
             });
           }}
-          variant="outlined"
         >
           Add
         </Button>

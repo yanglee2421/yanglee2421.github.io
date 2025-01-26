@@ -194,7 +194,7 @@ const header = (
 
 const footer = (
   <>
-    &copy; {FULL_YEAR} by{" "}
+    &copy;{FULL_YEAR} by{" "}
     <Link href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
       yanglee2421
     </Link>
