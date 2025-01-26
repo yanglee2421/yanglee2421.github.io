@@ -1,0 +1,11 @@
+{
+  "recommendations": [
+    "denoland.vscode-deno",
+    "dbaeumer.vscode-eslint",
+    "esbenp.prettier-vscode",
+    "prisma.prisma",
+    "bradlc.vscode-tailwindcss",
+    "vscode-icons-team.vscode-icons",
+    "vue.volar",
+  ]
+}
