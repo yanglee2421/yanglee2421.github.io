@@ -201,14 +201,21 @@ const SortableDnd = () => {
   );
 };
 
+const ChildEffect = () => {
+  useTestEffect("child");
+  return null;
+};
+
 const Counter = () => {
   const [count, setCount] = React.useState(0);
 
-  useTestEffect();
+  useTestEffect("parent");
+  useTestEffect("parent 2");
 
   return (
     <Button onClick={() => setCount((prev) => prev + 1)} variant="contained">
       {count}
+      <ChildEffect />
     </Button>
   );
 };
