@@ -13,7 +13,10 @@ import {
   ListItemText,
   Stack,
   TextField,
+  Box,
+  alpha,
 } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import React from "react";
 import { Camera } from "@/components/shared/Camera";
 import { Slider } from "./Slider";
@@ -36,6 +39,9 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { DragIndicatorOutlined } from "@mui/icons-material";
 import { timeout } from "@yotulee/run";
+import bg from "@/assets/images/justHer.jpg";
+
+const bgImgHref = new URL(bg, import.meta.url).href;
 
 const WebSocketCard = () => {
   const [data, setData] = React.useState("");
@@ -51,17 +57,25 @@ const WebSocketCard = () => {
       ref.current.addEventListener("open", () => {}, {
         signal: controller.signal,
       });
-      ref.current.addEventListener("close", async () => {
-        await timeout(200);
-        connect();
-      }, {
-        signal: controller.signal,
-      });
-      ref.current.addEventListener("message", (e) => {
-        setData(String(e.data));
-      }, {
-        signal: controller.signal,
-      });
+      ref.current.addEventListener(
+        "close",
+        async () => {
+          await timeout(200);
+          connect();
+        },
+        {
+          signal: controller.signal,
+        }
+      );
+      ref.current.addEventListener(
+        "message",
+        (e) => {
+          setData(String(e.data));
+        },
+        {
+          signal: controller.signal,
+        }
+      );
       ref.current.addEventListener("error", () => {}, {
         signal: controller.signal,
       });
@@ -78,10 +92,7 @@ const WebSocketCard = () => {
 
   return (
     <Card>
-      <CardHeader
-        title="WebSocket"
-        subheader={data || "Placeholder"}
-      />
+      <CardHeader title="WebSocket" subheader={data || "Placeholder"} />
       <CardContent>
         <Grid2 container spacing={6}>
           <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
@@ -120,13 +131,13 @@ const SortableItem = (props: SortableItemProps) => {
         transform: CSS.Transform.toString(sort.transform),
       }}
       sx={{
-        boxShadow: (t) => sort.isDragging ? t.shadows[1] : t.shadows[0],
+        boxShadow: (t) => (sort.isDragging ? t.shadows[1] : t.shadows[0]),
         backgroundColor: (t) =>
           sort.isDragging ? t.palette.background.paper : void 0,
         borderRadius: (t) =>
           sort.isDragging ? t.shape.borderRadius / 2 : void 0,
         position: "relative",
-        zIndex: (t) => sort.isDragging ? t.zIndex.speedDial : void 0,
+        zIndex: (t) => (sort.isDragging ? t.zIndex.speedDial : void 0),
       }}
       secondaryAction={
         <ListItemIcon
@@ -152,7 +163,7 @@ const SortableDnd = () => {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    }),
+    })
   );
 
   return (
@@ -230,7 +241,7 @@ export const Lab = () => {
       0,
       0,
       cvs.width,
-      cvs.height,
+      cvs.height
     );
 
     const link = document.createElement("a");
@@ -243,6 +254,54 @@ export const Lab = () => {
   return (
     <>
       <Stack spacing={6}>
+        <Box
+          sx={{
+            position: "relative",
+            overflow: "hidden",
+            borderRadius(theme) {
+              return theme.shape.borderRadius + "px";
+            },
+          }}
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 1,
+
+              backgroundImage: `url(${bgImgHref})`,
+              backgroundPosition: "50%",
+              backgroundSize: "150%",
+
+              filter: "blur(15px)",
+            }}
+          />
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              zIndex: 2,
+
+              backgroundColor: alpha(grey[700], 0.4),
+            }}
+          />
+          <Box
+            sx={{
+              position: "relative",
+              zIndex: 3,
+
+              display: "flex",
+              alignItems: "center",
+
+              height: 320,
+
+              padding: 4,
+            }}
+          >
+            <img src={bgImgHref} width={192} height={108} />
+          </Box>
+        </Box>
+
         <Card>
           <CardHeader title="Slider" />
           <CardContent>
