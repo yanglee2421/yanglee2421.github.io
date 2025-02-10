@@ -64,23 +64,31 @@ const Microphone = () => {
       renderData = renderData.slice(-canvasWidth);
 
       canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-      canvasCtx.strokeStyle = theme.palette.primary.main;
-      canvasCtx.lineWidth = 2;
-      canvasCtx.beginPath();
 
       renderData.forEach((i, idx) => {
         const y = canvasHeight - Math.floor((i.value * canvasHeight) / 128);
-        if (!idx) {
-          canvasCtx.moveTo(0, y);
+        let prevX = 0;
+        let prevY = 0;
 
+        const drawLine = () => {
+          canvasCtx.beginPath();
+          canvasCtx.moveTo(prevX, prevY);
+          canvasCtx.lineTo(idx, y);
+          canvasCtx.lineWidth = 2;
+          canvasCtx.strokeStyle = theme.palette.primary.main;
+          canvasCtx.stroke();
+        };
+
+        if (!idx) {
+          drawLine();
           return;
         }
 
-        canvasCtx.lineTo(idx + 1, y);
+        prevX = idx - 1;
+        const prev = renderData[prevX];
+        prevY = canvasHeight - Math.floor((prev.value * canvasHeight) / 128);
+        drawLine();
       });
-
-      canvasCtx.stroke();
-      canvasCtx.closePath();
     };
 
     draw();
