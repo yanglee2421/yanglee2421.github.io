@@ -77,6 +77,7 @@ const Microphone = () => {
           canvasCtx.lineWidth = 2;
           canvasCtx.strokeStyle = theme.palette.primary.main;
           canvasCtx.stroke();
+          canvasCtx.closePath();
         };
 
         if (!idx) {
