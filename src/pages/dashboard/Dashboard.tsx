@@ -66,8 +66,6 @@ const Microphone = () => {
 
       renderData = renderData.slice(-canvasWidth);
 
-      canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-
       const drawLine = (prevX: number, prevY: number, x: number, y: number) => {
         canvasCtx.beginPath();
         canvasCtx.moveTo(prevX, prevY);
@@ -77,6 +75,30 @@ const Microphone = () => {
         canvasCtx.stroke();
         canvasCtx.closePath();
       };
+
+      const drawAxis = () => {
+        canvasCtx.beginPath();
+        canvasCtx.moveTo(0, 0);
+        canvasCtx.lineTo(0, canvasHeight);
+        canvasCtx.lineTo(canvasWidth, canvasHeight);
+        canvasCtx.lineWidth = 1;
+        canvasCtx.strokeStyle = theme.palette.divider;
+        canvasCtx.stroke();
+        canvasCtx.closePath();
+      };
+
+      const drawText = () => {
+        canvasCtx.beginPath();
+        canvasCtx.font = `12px serif`;
+        canvasCtx.fillStyle = theme.palette.text.secondary;
+        canvasCtx.textBaseline = "top";
+        canvasCtx.fillText("hallo!", 6, 0, canvasWidth);
+        canvasCtx.closePath();
+      };
+
+      canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
+      drawAxis();
+      drawText();
 
       for (let idx = 1; idx < renderData.length; idx++) {
         const prevX = idx - 1;
@@ -97,7 +119,12 @@ const Microphone = () => {
       audioContext.close();
       analyser.disconnect();
     };
-  }, [audio, theme.palette.primary.main]);
+  }, [
+    audio,
+    theme.palette.primary.main,
+    theme.palette.divider,
+    theme.palette.text.secondary,
+  ]);
 
   return (
     <Card>
