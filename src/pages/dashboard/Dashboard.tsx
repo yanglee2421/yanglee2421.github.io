@@ -16,6 +16,9 @@ import { useSize } from "@/hooks/dom/useSize";
 
 const streamPro = navigator.mediaDevices.getUserMedia({ audio: true });
 
+const getY = (val: number, max: number, height: number) =>
+  Math.floor(height - (val / max) * height);
+
 const Microphone = () => {
   const audio = React.use(streamPro);
 
@@ -66,7 +69,7 @@ const Microphone = () => {
       canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
 
       renderData.forEach((i, idx) => {
-        const y = canvasHeight - Math.floor((i.value * canvasHeight) / 128);
+        const y = getY(i.value, 128, canvasHeight);
         let prevX = 0;
         let prevY = 0;
 
@@ -87,7 +90,7 @@ const Microphone = () => {
 
         prevX = idx - 1;
         const prev = renderData[prevX];
-        prevY = canvasHeight - Math.floor((prev.value * canvasHeight) / 128);
+        prevY = getY(prev.value, 128, canvasHeight);
         drawLine();
       });
     };
@@ -435,7 +438,7 @@ const SvgCard = () => {
       setRenderNodes((p) => {
         const val = [
           ...p,
-          { x: performance.now(), y: height - (seed.current * height) / 700 },
+          { x: performance.now(), y: getY(seed.current, 700, height) },
         ];
         return val.slice(-width);
       });
