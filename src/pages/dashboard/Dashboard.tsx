@@ -13,6 +13,58 @@ import {
 import React from "react";
 import { Translation } from "react-i18next";
 import { useSize } from "@/hooks/dom/useSize";
+import { minmax } from "@/utils/minmax";
+
+const drawLine = (
+  canvasCtx: CanvasRenderingContext2D,
+  prevX: number,
+  prevY: number,
+  x: number,
+  y: number,
+  lineWidth: number,
+  strokeStyle: string
+) => {
+  canvasCtx.beginPath();
+  canvasCtx.moveTo(prevX, prevY);
+  canvasCtx.lineTo(x, y);
+  canvasCtx.lineWidth = lineWidth;
+  canvasCtx.strokeStyle = strokeStyle;
+  canvasCtx.stroke();
+  canvasCtx.closePath();
+};
+
+const drawAxis = (
+  canvasCtx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
+  strokeStyle: string
+) => {
+  canvasCtx.beginPath();
+  canvasCtx.moveTo(0, 0);
+  canvasCtx.lineTo(0, canvasHeight);
+  canvasCtx.lineTo(canvasWidth, canvasHeight);
+  canvasCtx.lineWidth = 1;
+  canvasCtx.strokeStyle = strokeStyle;
+  canvasCtx.stroke();
+  canvasCtx.closePath();
+};
+
+const drawText = (
+  canvasCtx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  textSize: number,
+  strokeStyle: string,
+  canvasWidth?: number
+) => {
+  canvasCtx.beginPath();
+  canvasCtx.font = `${textSize}px serif`;
+  canvasCtx.fillStyle = strokeStyle;
+  canvasCtx.textBaseline = "top";
+  canvasCtx.fillText(text, x, y, canvasWidth);
+  canvasCtx.closePath();
+};
 
 const streamPro = navigator.mediaDevices.getUserMedia({ audio: true });
 
@@ -24,6 +76,7 @@ const Microphone = () => {
 
   const elRef = React.useRef<HTMLCanvasElement>(null);
   const divRef = React.useRef<HTMLDivElement>(null);
+  const cursorRef = React.useRef<null | number>(null);
 
   const theme = useTheme();
   const [width, height] = useSize(divRef);
@@ -66,39 +119,9 @@ const Microphone = () => {
 
       renderData = renderData.slice(-canvasWidth);
 
-      const drawLine = (prevX: number, prevY: number, x: number, y: number) => {
-        canvasCtx.beginPath();
-        canvasCtx.moveTo(prevX, prevY);
-        canvasCtx.lineTo(x, y);
-        canvasCtx.lineWidth = 2;
-        canvasCtx.strokeStyle = theme.palette.primary.main;
-        canvasCtx.stroke();
-        canvasCtx.closePath();
-      };
-
-      const drawAxis = () => {
-        canvasCtx.beginPath();
-        canvasCtx.moveTo(0, 0);
-        canvasCtx.lineTo(0, canvasHeight);
-        canvasCtx.lineTo(canvasWidth, canvasHeight);
-        canvasCtx.lineWidth = 1;
-        canvasCtx.strokeStyle = theme.palette.divider;
-        canvasCtx.stroke();
-        canvasCtx.closePath();
-      };
-
-      const drawText = () => {
-        canvasCtx.beginPath();
-        canvasCtx.font = `12px serif`;
-        canvasCtx.fillStyle = theme.palette.text.secondary;
-        canvasCtx.textBaseline = "top";
-        canvasCtx.fillText("hallo!", 6, 0, canvasWidth);
-        canvasCtx.closePath();
-      };
-
       canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-      drawAxis();
-      drawText();
+      drawAxis(canvasCtx, canvasWidth, canvasHeight, theme.palette.divider);
+      drawText(canvasCtx, "hallo", 6, 0, 12, theme.palette.text.secondary);
 
       for (let idx = 1; idx < renderData.length; idx++) {
         const prevX = idx - 1;
@@ -107,8 +130,33 @@ const Microphone = () => {
         const i = renderData[idx];
         const y = getY(i.value, 128, canvasHeight);
 
-        drawLine(prevX, prevY, idx, y);
+        drawLine(
+          canvasCtx,
+          prevX,
+          prevY,
+          idx,
+          y,
+          2,
+          theme.palette.primary.main
+        );
       }
+
+      const cursor = cursorRef.current;
+
+      if (typeof cursor !== "number") return;
+
+      const x = Math.floor(minmax(cursor, { min: 0, max: canvasWidth }));
+      const val = renderData[x]?.value || 0;
+
+      drawLine(canvasCtx, x, 0, x, canvasHeight, 1, theme.palette.error.main);
+      drawText(
+        canvasCtx,
+        "volume: " + val,
+        x + 6,
+        Math.floor(canvasHeight / 4),
+        12,
+        theme.palette.error.main
+      );
     };
 
     draw();
@@ -124,6 +172,7 @@ const Microphone = () => {
     theme.palette.primary.main,
     theme.palette.divider,
     theme.palette.text.secondary,
+    theme.palette.error.main,
   ]);
 
   return (
@@ -131,7 +180,28 @@ const Microphone = () => {
       <CardHeader title="Microphone" />
       <CardContent>
         <Box ref={divRef} sx={{ height: 256 }}>
-          <canvas ref={elRef} width={width} height={height}></canvas>
+          <canvas
+            ref={elRef}
+            width={width}
+            height={height}
+            onPointerDown={(e) => {
+              e.currentTarget.setPointerCapture(e.pointerId);
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                cursorRef.current =
+                  e.clientX - e.currentTarget.getBoundingClientRect().left;
+              }
+            }}
+            onPointerMove={(e) => {
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                cursorRef.current =
+                  e.clientX - e.currentTarget.getBoundingClientRect().left;
+              }
+            }}
+            onPointerUp={(e) => {
+              e.currentTarget.releasePointerCapture(e.pointerId);
+              cursorRef.current = null;
+            }}
+          ></canvas>
         </Box>
       </CardContent>
     </Card>
