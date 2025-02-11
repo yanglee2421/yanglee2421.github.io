@@ -201,6 +201,7 @@ const Microphone = () => {
               e.currentTarget.releasePointerCapture(e.pointerId);
               cursorRef.current = null;
             }}
+            style={{ touchAction: "none" }}
           ></canvas>
         </Box>
       </CardContent>
