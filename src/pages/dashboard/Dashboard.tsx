@@ -13,14 +13,70 @@ import {
 import React from "react";
 import { Translation } from "react-i18next";
 import { useSize } from "@/hooks/dom/useSize";
+import { minmax } from "@/utils/minmax";
+
+const drawLine = (
+  canvasCtx: CanvasRenderingContext2D,
+  prevX: number,
+  prevY: number,
+  x: number,
+  y: number,
+  lineWidth: number,
+  strokeStyle: string
+) => {
+  canvasCtx.beginPath();
+  canvasCtx.moveTo(prevX, prevY);
+  canvasCtx.lineTo(x, y);
+  canvasCtx.lineWidth = lineWidth;
+  canvasCtx.strokeStyle = strokeStyle;
+  canvasCtx.stroke();
+  canvasCtx.closePath();
+};
+
+const drawAxis = (
+  canvasCtx: CanvasRenderingContext2D,
+  canvasWidth: number,
+  canvasHeight: number,
+  strokeStyle: string
+) => {
+  canvasCtx.beginPath();
+  canvasCtx.moveTo(0, 0);
+  canvasCtx.lineTo(0, canvasHeight);
+  canvasCtx.lineTo(canvasWidth, canvasHeight);
+  canvasCtx.lineWidth = 1;
+  canvasCtx.strokeStyle = strokeStyle;
+  canvasCtx.stroke();
+  canvasCtx.closePath();
+};
+
+const drawText = (
+  canvasCtx: CanvasRenderingContext2D,
+  text: string,
+  x: number,
+  y: number,
+  textSize: number,
+  strokeStyle: string,
+  canvasWidth?: number
+) => {
+  canvasCtx.beginPath();
+  canvasCtx.font = `${textSize}px serif`;
+  canvasCtx.fillStyle = strokeStyle;
+  canvasCtx.textBaseline = "top";
+  canvasCtx.fillText(text, x, y, canvasWidth);
+  canvasCtx.closePath();
+};
 
 const streamPro = navigator.mediaDevices.getUserMedia({ audio: true });
+
+const getY = (val: number, max: number, height: number) =>
+  Math.floor(height - (val / max) * height);
 
 const Microphone = () => {
   const audio = React.use(streamPro);
 
   const elRef = React.useRef<HTMLCanvasElement>(null);
   const divRef = React.useRef<HTMLDivElement>(null);
+  const cursorRef = React.useRef<null | number>(null);
 
   const theme = useTheme();
   const [width, height] = useSize(divRef);
@@ -64,23 +120,43 @@ const Microphone = () => {
       renderData = renderData.slice(-canvasWidth);
 
       canvasCtx.clearRect(0, 0, canvasWidth, canvasHeight);
-      canvasCtx.strokeStyle = theme.palette.primary.main;
-      canvasCtx.lineWidth = 2;
-      canvasCtx.beginPath();
+      drawAxis(canvasCtx, canvasWidth, canvasHeight, theme.palette.divider);
+      drawText(canvasCtx, "hallo", 6, 0, 12, theme.palette.text.secondary);
 
-      renderData.forEach((i, idx) => {
-        const y = canvasHeight - Math.floor((i.value * canvasHeight) / 128);
-        if (!idx) {
-          canvasCtx.moveTo(0, y);
+      for (let idx = 1; idx < renderData.length; idx++) {
+        const prevX = idx - 1;
+        const prev = renderData[prevX];
+        const prevY = getY(prev.value, 128, canvasHeight);
+        const i = renderData[idx];
+        const y = getY(i.value, 128, canvasHeight);
 
-          return;
-        }
+        drawLine(
+          canvasCtx,
+          prevX,
+          prevY,
+          idx,
+          y,
+          2,
+          theme.palette.primary.main
+        );
+      }
 
-        canvasCtx.lineTo(idx + 1, y);
-      });
+      const cursor = cursorRef.current;
 
-      canvasCtx.stroke();
-      canvasCtx.closePath();
+      if (typeof cursor !== "number") return;
+
+      const x = Math.floor(minmax(cursor, { min: 0, max: canvasWidth }));
+      const val = renderData[x]?.value || 0;
+
+      drawLine(canvasCtx, x, 0, x, canvasHeight, 1, theme.palette.error.main);
+      drawText(
+        canvasCtx,
+        "volume: " + val,
+        x + 6,
+        Math.floor(canvasHeight / 4),
+        12,
+        theme.palette.error.main
+      );
     };
 
     draw();
@@ -91,14 +167,41 @@ const Microphone = () => {
       audioContext.close();
       analyser.disconnect();
     };
-  }, [audio, theme.palette.primary.main]);
+  }, [
+    audio,
+    theme.palette.primary.main,
+    theme.palette.divider,
+    theme.palette.text.secondary,
+    theme.palette.error.main,
+  ]);
 
   return (
     <Card>
       <CardHeader title="Microphone" />
       <CardContent>
         <Box ref={divRef} sx={{ height: 256 }}>
-          <canvas ref={elRef} width={width} height={height}></canvas>
+          <canvas
+            ref={elRef}
+            width={width}
+            height={height}
+            onPointerDown={(e) => {
+              e.currentTarget.setPointerCapture(e.pointerId);
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                cursorRef.current =
+                  e.clientX - e.currentTarget.getBoundingClientRect().left;
+              }
+            }}
+            onPointerMove={(e) => {
+              if (e.currentTarget.hasPointerCapture(e.pointerId)) {
+                cursorRef.current =
+                  e.clientX - e.currentTarget.getBoundingClientRect().left;
+              }
+            }}
+            onPointerUp={(e) => {
+              e.currentTarget.releasePointerCapture(e.pointerId);
+              cursorRef.current = null;
+            }}
+          ></canvas>
         </Box>
       </CardContent>
     </Card>
@@ -426,7 +529,7 @@ const SvgCard = () => {
       setRenderNodes((p) => {
         const val = [
           ...p,
-          { x: performance.now(), y: height - (seed.current * height) / 700 },
+          { x: performance.now(), y: getY(seed.current, 700, height) },
         ];
         return val.slice(-width);
       });

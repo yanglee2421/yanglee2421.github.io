@@ -1,27 +1,27 @@
 import React from "react";
 
-export const useTestEffect = () => {
+export const useTestEffect = (name = "") => {
   React.useEffect(() => {
-    console.log("useTestEffect");
+    console.log("useTestEffect", name);
 
     return () => {
-      console.log("useTestEffect cleanup");
+      console.log("useTestEffect cleanup", name);
     };
   });
 
   React.useInsertionEffect(() => {
-    console.log("useTestEffect insertion");
+    console.log("useTestEffect insertion", name);
 
     return () => {
-      console.log("useTestEffect insertion cleanup");
+      console.log("useTestEffect insertion cleanup", name);
     };
   });
 
   React.useLayoutEffect(() => {
-    console.log("useTestEffect layout");
+    console.log("useTestEffect layout", name);
 
     return () => {
-      console.log("useTestEffect layout cleanup");
+      console.log("useTestEffect layout cleanup", name);
     };
   });
 };
