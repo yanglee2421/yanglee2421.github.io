@@ -43,7 +43,7 @@ export class Particles {
   constructor(
     private readonly canvas: HTMLCanvasElement,
     particleNum = 100,
-    private lineMax = 100,
+    private lineMax = 100
   ) {
     for (let i = 0; i < particleNum; i++) {
       this.#arr.push(new Particle(this.canvas));
@@ -92,7 +92,7 @@ export class Particles {
   #controller = new AbortController();
   bindEvent() {
     this.#controller = new AbortController();
-    const { signal } = this.#controller;
+
     this.canvas.addEventListener(
       "mouseover",
       ({ offsetX, offsetY }) => {
@@ -104,7 +104,7 @@ export class Particles {
         this.#one.yv = 0;
         this.#arr.push(this.#one);
       },
-      { signal },
+      this.#controller
     );
     this.canvas.addEventListener(
       "mousemove",
@@ -113,7 +113,7 @@ export class Particles {
         this.#one.x = offsetX;
         this.#one.y = offsetY;
       },
-      { signal },
+      this.#controller
     );
     this.canvas.addEventListener(
       "mouseout",
@@ -124,7 +124,7 @@ export class Particles {
           this.#one = null;
         }
       },
-      { signal },
+      this.#controller
     );
   }
   abortEvent() {
