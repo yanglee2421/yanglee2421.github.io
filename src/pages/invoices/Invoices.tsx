@@ -1,4 +1,8 @@
-import { CloseOutlined, OutputOutlined } from "@mui/icons-material";
+import {
+  AddOutlined,
+  CloseOutlined,
+  OutputOutlined,
+} from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -6,6 +10,7 @@ import {
   CardContent,
   CardHeader,
   Checkbox,
+  Divider,
   Grid2,
   IconButton,
   Table,
@@ -29,7 +34,7 @@ import {
 import dayjs from "dayjs";
 import * as mathjs from "mathjs";
 import React from "react";
-import { useSearchParams } from "react-router";
+import { Link, useSearchParams } from "react-router";
 import { type Invoice, useDbStore } from "@/hooks/store/useDbStore";
 
 const columnHelper = createColumnHelper<Invoice>();
@@ -288,65 +293,79 @@ const InvoiceTable = () => {
               }}
             />
           </Grid2>
-          <Grid2 size={{ xs: 12 }}>
-            <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
-              <Button
-                onClick={() => {
-                  const rows = table
-                    .getSelectedRowModel()
-                    .flatRows.map((i) => i.original);
-
-                  setSearch((s) => {
-                    const n = new URLSearchParams(s);
-                    n.set("ids", rows.map((i) => i.id).join("@"));
-                    return n;
-                  });
-                }}
-                variant="contained"
-                disabled={!table.getSelectedRowModel().flatRows.length}
-              >
-                View
-              </Button>
-              <Button
-                disabled={!table.getSelectedRowModel().flatRows.length}
-                startIcon={<OutputOutlined />}
-                variant="outlined"
-                href={encodeURI(
-                  "data:text/csv;charset=utf-8," +
-                    [
-                      table
-                        .getVisibleFlatColumns()
-                        .filter((column) => column.accessorFn)
-                        .map((column) => column.id)
-                        .join(","),
-                      ...table.getSelectedRowModel().rows.map((row) =>
-                        table
-                          .getVisibleFlatColumns()
-                          .filter((column) => column.accessorFn)
-                          .map((column) => {
-                            const val = row.getValue(column.id);
-
-                            if (Array.isArray(val)) {
-                              return val.join("@");
-                            }
-
-                            if (column.id === "date") {
-                              return new Date(Number(val)).toLocaleDateString();
-                            }
-
-                            return val;
-                          })
-                          .join(",")
-                      ),
-                    ].join("\n")
-                )}
-                download={new Date().toLocaleString() + ".csv"}
-              >
-                Output
-              </Button>
-            </Box>
-          </Grid2>
         </Grid2>
+      </CardContent>
+      <Divider />
+      <CardContent>
+        <Box
+          sx={{
+            display: "flex",
+            flexWrap: "wrap",
+            gap: 2,
+            flexDirection: { xs: "column", sm: "row" },
+          }}
+        >
+          <Button
+            onClick={() => {
+              const rows = table
+                .getSelectedRowModel()
+                .flatRows.map((i) => i.original);
+
+              setSearch((s) => {
+                const n = new URLSearchParams(s);
+                n.set("ids", rows.map((i) => i.id).join("@"));
+                return n;
+              });
+            }}
+            variant="contained"
+            disabled={!table.getSelectedRowModel().flatRows.length}
+          >
+            View
+          </Button>
+          <Button
+            disabled={!table.getSelectedRowModel().flatRows.length}
+            startIcon={<OutputOutlined />}
+            variant="outlined"
+            href={encodeURI(
+              "data:text/csv;charset=utf-8," +
+                [
+                  table
+                    .getVisibleFlatColumns()
+                    .filter((column) => column.accessorFn)
+                    .map((column) => column.id)
+                    .join(","),
+                  ...table.getSelectedRowModel().rows.map((row) =>
+                    table
+                      .getVisibleFlatColumns()
+                      .filter((column) => column.accessorFn)
+                      .map((column) => {
+                        const val = row.getValue(column.id);
+
+                        if (Array.isArray(val)) {
+                          return val.join("@");
+                        }
+
+                        if (column.id === "date") {
+                          return new Date(Number(val)).toLocaleDateString();
+                        }
+
+                        return val;
+                      })
+                      .join(",")
+                  ),
+                ].join("\n")
+            )}
+            download={new Date().toLocaleString() + ".csv"}
+          >
+            Output
+          </Button>
+          <Box sx={{ marginInlineEnd: "auto" }} />
+          <Link to="/calculator">
+            <Button startIcon={<AddOutlined />} variant="outlined" fullWidth>
+              Add
+            </Button>
+          </Link>
+        </Box>
       </CardContent>
       <TableContainer>
         <Table>
