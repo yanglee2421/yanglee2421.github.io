@@ -16,11 +16,13 @@ import {
   FormLabel,
   Grid2,
   IconButton,
-  Switch,
-  Tab,
-  Tabs,
+  ToggleButtonGroup,
   TextField,
   TextFieldProps,
+  ToggleButton,
+  Typography,
+  RadioGroup,
+  Radio,
 } from "@mui/material";
 import { zodResolver } from "@hookform/resolvers/zod";
 import React from "react";
@@ -31,11 +33,6 @@ import { useDbStore } from "@/hooks/store/useDbStore";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import * as mathjs from "mathjs";
-
-type NumberFieldProps = Omit<TextFieldProps, "value" | "onChange"> & {
-  value: number;
-  onChange(val: number): void;
-};
 
 const renderVal = (
   focused: boolean,
@@ -61,52 +58,9 @@ const valToFocusVal = (val: number) => {
   return val;
 };
 
-const getDate = (hour = 0, minutes = 0, seconds = 0, millisecond = 0) => {
-  const date = new Date();
-  date.setHours(hour);
-  date.setMinutes(minutes);
-  date.setSeconds(seconds);
-  date.setMilliseconds(millisecond);
-  return date;
-};
-
-const calculatorSubsidy = (start: Date, end: Date, isOutside: boolean) => {
-  const base = isOutside ? 100 : 50;
-  const startVal = new Date(start);
-  const endVal = new Date(end);
-
-  startVal.setHours(0);
-  startVal.setMinutes(0);
-  startVal.setSeconds(0);
-  startVal.setMilliseconds(0);
-  endVal.setHours(23);
-  endVal.setMinutes(59);
-  endVal.setSeconds(59);
-  endVal.setMilliseconds(1000);
-
-  return mathjs
-    .multiply(
-      mathjs.divide(
-        mathjs.subtract(
-          mathjs.bignumber(endVal.getTime()),
-          mathjs.bignumber(startVal.getTime())
-        ),
-        mathjs.bignumber(1000 * 60 * 60 * 24)
-      ),
-      mathjs.bignumber(base)
-    )
-    .toString();
-};
-
-const calculatorAmount = (
-  start: Date,
-  end: Date,
-  isOutside: boolean,
-  enableDate: boolean,
-  amount: number
-) => {
-  if (!enableDate) return amount;
-  return calculatorSubsidy(start, end, isOutside);
+type NumberFieldProps = Omit<TextFieldProps, "value" | "onChange"> & {
+  value: number;
+  onChange(val: number): void;
 };
 
 const NumberField = (props: NumberFieldProps) => {
@@ -136,15 +90,52 @@ const NumberField = (props: NumberFieldProps) => {
   );
 };
 
+const getDate = () => {
+  return dayjs(new Date()).startOf("day").toISOString();
+};
+
+const calculatorSubsidy = (
+  start: string,
+  end: string,
+  subsidyPerDay: string
+) => {
+  const startVal = dayjs(start).startOf("day").valueOf();
+  const endVal = dayjs(end).endOf("day").valueOf();
+
+  return mathjs
+    .multiply(
+      mathjs.divide(
+        mathjs.subtract(
+          mathjs.sum(mathjs.bignumber(endVal), mathjs.bignumber(1)),
+          mathjs.bignumber(startVal)
+        ),
+        mathjs.bignumber(1000 * 60 * 60 * 24)
+      ),
+      mathjs.bignumber(subsidyPerDay)
+    )
+    .toString();
+};
+
+const calculatorAmount = (
+  start: string,
+  end: string,
+  subsidyPerDay: string,
+  enableDate: boolean,
+  amount: number
+) => {
+  if (!enableDate) return amount;
+  return calculatorSubsidy(start, end, subsidyPerDay);
+};
+
 const schema = z.object({
   invoices: z
     .object({
       amount: z.number().or(z.nan()),
       staff: z.string().min(1),
       note: z.string(),
-      start: z.date(),
-      end: z.date(),
-      isOutside: z.boolean(),
+      start: z.string(),
+      end: z.string(),
+      subsidyPerDay: z.string(),
       type: z.enum(["invoice", "subsidy"] as const),
     })
     .refine(
@@ -190,7 +181,7 @@ export const Calculator = () => {
           note: "",
           start: getDate(),
           end: getDate(),
-          isOutside: true,
+          subsidyPerDay: "100",
           type: "invoice",
         },
       ],
@@ -200,6 +191,209 @@ export const Calculator = () => {
   });
 
   const fields = useFieldArray({ control: form.control, name: "invoices" });
+
+  const renderInvoice = (idx: number) => {
+    return (
+      <>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Controller
+            control={form.control}
+            name={`invoices.${idx}.amount`}
+            render={({ field, fieldState }) => (
+              <NumberField
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                label="Amount"
+                fullWidth
+                slotProps={{
+                  htmlInput: { inputMode: "numeric" },
+                }}
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Controller
+            control={form.control}
+            name={`invoices.${idx}.staff`}
+            render={({ field, fieldState }) => (
+              <TextField
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                label="Staff"
+                fullWidth
+                placeholder="Split by '@'"
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Controller
+            control={form.control}
+            name={`invoices.${idx}.note`}
+            render={({ field, fieldState }) => (
+              <TextField
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                label="Note"
+                fullWidth
+                multiline={false}
+                slotProps={{
+                  htmlInput: {
+                    list: datalistId,
+                    autoComplete: "off",
+                  },
+                }}
+              />
+            )}
+          />
+        </Grid2>
+      </>
+    );
+  };
+
+  const renderSubsidy = (idx: number) => {
+    const startVal = form.watch(`invoices.${idx}.start`);
+    const endVal = form.watch(`invoices.${idx}.end`);
+    const subsidyPerDay = form.watch(`invoices.${idx}.subsidyPerDay`);
+
+    return (
+      <>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Controller
+            key={`invoices.${idx}.start`}
+            control={form.control}
+            name={`invoices.${idx}.start`}
+            render={({ field }) => (
+              <DatePicker
+                value={dayjs(field.value)}
+                onChange={(val) => {
+                  if (!val) return;
+                  field.onChange(val.startOf("day").toISOString());
+                }}
+                maxDate={dayjs(endVal)}
+                slotProps={{
+                  textField: { fullWidth: true, label: "Start Date" },
+                }}
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Controller
+            key={`invoices.${idx}.end`}
+            control={form.control}
+            name={`invoices.${idx}.end`}
+            render={({ field }) => (
+              <DatePicker
+                value={dayjs(field.value)}
+                onChange={(val) => {
+                  if (!val) return;
+                  field.onChange(val.startOf("day").toISOString());
+                }}
+                minDate={dayjs(startVal)}
+                slotProps={{
+                  textField: { fullWidth: true, label: "End Date" },
+                }}
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Controller
+            control={form.control}
+            name={`invoices.${idx}.amount`}
+            render={({ field, fieldState }) => (
+              <NumberField
+                value={+calculatorSubsidy(startVal, endVal, subsidyPerDay)}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                label="Amount"
+                fullWidth
+                slotProps={{
+                  input: { readOnly: true },
+                  htmlInput: { inputMode: "numeric" },
+                }}
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Controller
+            control={form.control}
+            name={`invoices.${idx}.staff`}
+            render={({ field, fieldState }) => (
+              <TextField
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                label="Staff"
+                fullWidth
+                placeholder="Split by '@'"
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 size={{ xs: 12, md: 8 }}>
+          <Controller
+            control={form.control}
+            name={`invoices.${idx}.note`}
+            render={({ field, fieldState }) => (
+              <TextField
+                value={field.value}
+                onChange={field.onChange}
+                onBlur={field.onBlur}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                label="Note"
+                fullWidth
+                multiline={false}
+                slotProps={{
+                  htmlInput: {
+                    list: datalistId,
+                    autoComplete: "off",
+                  },
+                }}
+              />
+            )}
+          />
+        </Grid2>
+        <Grid2 size={{ xs: 12 }}>
+          <FormLabel>Subsidy per day</FormLabel>
+          <Controller
+            control={form.control}
+            name={`invoices.${idx}.subsidyPerDay`}
+            render={({ field }) => (
+              <RadioGroup
+                value={field.value}
+                onChange={(e, val) => {
+                  void e;
+                  field.onChange(val);
+                }}
+                row
+              >
+                <FormControlLabel label="100" control={<Radio value="100" />} />
+                <FormControlLabel label="50" control={<Radio value="50" />} />
+              </RadioGroup>
+            )}
+          />
+        </Grid2>
+      </>
+    );
+  };
 
   return (
     <Card>
@@ -227,7 +421,7 @@ export const Calculator = () => {
                     amount: +calculatorAmount(
                       i.start,
                       i.end,
-                      i.isOutside,
+                      i.subsidyPerDay,
                       i.type === "subsidy",
                       i.amount
                     ),
@@ -241,12 +435,9 @@ export const Calculator = () => {
           onReset={() => form.reset()}
           noValidate
         >
-          <Grid2 container spacing={6}>
+          <Grid2 container spacing={4}>
             {fields.fields.map((f, idx) => {
               const typeVal = form.watch(`invoices.${idx}.type`);
-              const startVal = form.watch(`invoices.${idx}.start`);
-              const endVal = form.watch(`invoices.${idx}.end`);
-              const isOutsideVal = form.watch(`invoices.${idx}.isOutside`);
               const isSubsidy = typeVal === "subsidy";
 
               return (
@@ -259,7 +450,7 @@ export const Calculator = () => {
                   <Grid2 size={{ xs: 12 }}>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <FormLabel sx={{ color: (t) => t.palette.primary.main }}>
-                        #{idx + 1}
+                        <Typography variant="h6">#{idx + 1}</Typography>
                       </FormLabel>
                       {!!idx && (
                         <IconButton
@@ -271,180 +462,27 @@ export const Calculator = () => {
                         </IconButton>
                       )}
                     </Box>
+                  </Grid2>
+                  <Grid2 size={12}>
                     <Controller
                       control={form.control}
                       name={`invoices.${idx}.type`}
                       render={({ field }) => (
-                        <Tabs
+                        <ToggleButtonGroup
                           value={field.value}
                           onChange={(e, val) => {
                             field.onChange(val);
                             void e;
                           }}
+                          exclusive
                         >
-                          <Tab label="Invoice" value="invoice" />
-                          <Tab label="Subsidy" value="subsidy" />
-                        </Tabs>
+                          <ToggleButton value="invoice">Invoice</ToggleButton>
+                          <ToggleButton value="subsidy">Subsidy</ToggleButton>
+                        </ToggleButtonGroup>
                       )}
                     />
                   </Grid2>
-                  {isSubsidy && (
-                    <>
-                      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-                        <Controller
-                          control={form.control}
-                          name={`invoices.${idx}.start`}
-                          render={({ field }) => (
-                            <DatePicker
-                              value={dayjs(field.value)}
-                              onChange={(val) => {
-                                if (!val) return;
-                                field.onChange(
-                                  val
-                                    .hour(0)
-                                    .minute(0)
-                                    .second(0)
-                                    .millisecond(0)
-                                    .toDate()
-                                );
-                              }}
-                              maxDate={dayjs(endVal)}
-                              slotProps={{
-                                textField: { fullWidth: true },
-                              }}
-                            />
-                          )}
-                        />
-                      </Grid2>
-                      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-                        <Controller
-                          control={form.control}
-                          name={`invoices.${idx}.end`}
-                          render={({ field }) => (
-                            <DatePicker
-                              value={dayjs(field.value)}
-                              onChange={(val) => {
-                                if (!val) return;
-                                field.onChange(
-                                  val
-                                    .hour(0)
-                                    .minute(0)
-                                    .second(0)
-                                    .millisecond(0)
-                                    .toDate()
-                                );
-                              }}
-                              minDate={dayjs(startVal)}
-                              slotProps={{
-                                textField: { fullWidth: true },
-                              }}
-                            />
-                          )}
-                        />
-                      </Grid2>
-                      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-                        <Box
-                          sx={{
-                            display: "flex",
-                            alignItems: "center",
-                            height: "100%",
-                          }}
-                        >
-                          <Controller
-                            control={form.control}
-                            name={`invoices.${idx}.isOutside`}
-                            render={({ field }) => (
-                              <FormControlLabel
-                                label="Outside"
-                                control={
-                                  <Switch
-                                    checked={field.value}
-                                    onChange={(e, checked) => {
-                                      void e;
-                                      field.onChange(checked);
-                                    }}
-                                  />
-                                }
-                              />
-                            )}
-                          />
-                        </Box>
-                      </Grid2>
-                    </>
-                  )}
-                  <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-                    <Controller
-                      control={form.control}
-                      name={`invoices.${idx}.amount`}
-                      render={({ field, fieldState }) => (
-                        <NumberField
-                          value={
-                            isSubsidy
-                              ? +calculatorSubsidy(
-                                  startVal,
-                                  endVal,
-                                  isOutsideVal
-                                )
-                              : field.value
-                          }
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                          error={!!fieldState.error}
-                          helperText={fieldState.error?.message}
-                          label="Amount"
-                          fullWidth
-                          slotProps={{
-                            input: {
-                              readOnly: isSubsidy,
-                            },
-                            htmlInput: { inputMode: "numeric" },
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-                    <Controller
-                      control={form.control}
-                      name={`invoices.${idx}.staff`}
-                      render={({ field, fieldState }) => (
-                        <TextField
-                          value={field.value}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                          error={!!fieldState.error}
-                          helperText={fieldState.error?.message}
-                          label="Staff"
-                          fullWidth
-                          placeholder="Split by '@'"
-                        />
-                      )}
-                    />
-                  </Grid2>
-                  <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-                    <Controller
-                      control={form.control}
-                      name={`invoices.${idx}.note`}
-                      render={({ field, fieldState }) => (
-                        <TextField
-                          value={field.value}
-                          onChange={field.onChange}
-                          onBlur={field.onBlur}
-                          error={!!fieldState.error}
-                          helperText={fieldState.error?.message}
-                          label="Note"
-                          fullWidth
-                          multiline={false}
-                          slotProps={{
-                            htmlInput: {
-                              list: datalistId,
-                              autoComplete: "off",
-                            },
-                          }}
-                        />
-                      )}
-                    />
-                  </Grid2>
+                  {isSubsidy ? renderSubsidy(idx) : renderInvoice(idx)}
                 </React.Fragment>
               );
             })}
@@ -468,7 +506,7 @@ export const Calculator = () => {
               type: "invoice",
               start: getDate(),
               end: getDate(),
-              isOutside: true,
+              subsidyPerDay: "100",
             });
           }}
         >

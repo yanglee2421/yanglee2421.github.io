@@ -12,8 +12,8 @@ import {
   Grid2,
   IconButton,
   MenuItem,
-  Stack,
   Switch,
+  Tab,
   Table,
   TableBody,
   TableCell,
@@ -21,6 +21,7 @@ import {
   TableHead,
   TablePagination,
   TableRow,
+  Tabs,
   TextField,
   Typography,
 } from "@mui/material";
@@ -77,7 +78,7 @@ const columns = [
             useDbStore.setState((d) => {
               d.staffs.splice(
                 d.staffs.findIndex((i) => i.id === row.original.id),
-                1,
+                1
               );
             });
           }}
@@ -102,6 +103,8 @@ const checkBool = (bool: boolean, search: string) => {
 };
 
 export const Staff = () => {
+  const [activeTab, setActiveTab] = React.useState("list");
+
   const [search, setSearch] = useSearchParams({
     name: "",
     alias: "",
@@ -117,11 +120,13 @@ export const Staff = () => {
 
   const data = React.useMemo(
     () =>
-      staff.filter((i) =>
-        checkText(i.name, nameSearch) && checkText(i.alias, aliasSearch) &&
-        checkBool(i.enable, enableSearch)
+      staff.filter(
+        (i) =>
+          checkText(i.name, nameSearch) &&
+          checkText(i.alias, aliasSearch) &&
+          checkBool(i.enable, enableSearch)
       ),
-    [staff, nameSearch, aliasSearch, enableSearch],
+    [staff, nameSearch, aliasSearch, enableSearch]
   );
 
   const [name, setName] = React.useState(nameSearch);
@@ -182,9 +187,7 @@ export const Staff = () => {
     return table.getRowModel().rows.map((r) => (
       <TableRow key={r.id}>
         {r.getVisibleCells().map((c) => (
-          <TableCell
-            key={c.id}
-          >
+          <TableCell key={c.id}>
             {c.getIsPlaceholder() ||
               flexRender(c.column.columnDef.cell, c.getContext())}
           </TableCell>
@@ -201,10 +204,9 @@ export const Staff = () => {
     resolver: zodResolver(schema),
   });
 
-  return (
-    <Stack spacing={6}>
-      <Card>
-        <CardHeader title="Staff" />
+  const renderList = () => {
+    return (
+      <>
         <CardContent>
           <Grid2 container spacing={6}>
             <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
@@ -244,10 +246,7 @@ export const Staff = () => {
               {table.getHeaderGroups().map((hg) => (
                 <TableRow key={hg.id}>
                   {hg.headers.map((h) => (
-                    <TableCell
-                      key={h.id}
-                      sx={{ textTransform: "uppercase" }}
-                    >
+                    <TableCell key={h.id} sx={{ textTransform: "uppercase" }}>
                       {h.isPlaceholder ||
                         flexRender(h.column.columnDef.header, h.getContext())}
                     </TableCell>
@@ -272,9 +271,13 @@ export const Staff = () => {
           }}
           count={table.getRowCount()}
         />
-      </Card>
-      <Card>
-        <CardHeader title="Add Staff" />
+      </>
+    );
+  };
+
+  const renderAdd = () => {
+    return (
+      <>
         <CardContent>
           <form
             id={formId}
@@ -295,7 +298,8 @@ export const Staff = () => {
                     alias: data.alias.trim(),
                   });
                 });
-              }, console.error)()}
+              }, console.error)()
+            }
             noValidate
             onReset={() => form.reset()}
           >
@@ -334,24 +338,40 @@ export const Staff = () => {
           </form>
         </CardContent>
         <CardActions>
-          <Button
-            type="submit"
-            form={formId}
-            startIcon={<AddOutlined />}
-            variant="contained"
-          >
+          <Button type="submit" form={formId} startIcon={<AddOutlined />}>
             Add
           </Button>
-          <Button
-            type="reset"
-            form={formId}
-            startIcon={<RestoreOutlined />}
-            variant="outlined"
-          >
+          <Button type="reset" form={formId} startIcon={<RestoreOutlined />}>
             Reset
           </Button>
         </CardActions>
-      </Card>
-    </Stack>
+      </>
+    );
+  };
+
+  const renderTabContent = () => {
+    if (activeTab === "list") {
+      return renderList();
+    }
+
+    if (activeTab === "add") {
+      return renderAdd();
+    }
+    return null;
+  };
+
+  return (
+    <Card>
+      <CardHeader title="Staff" />
+      <Tabs
+        value={activeTab}
+        onChange={(_, v) => setActiveTab(v)}
+        sx={{ borderBottom: (t) => `1px solid ${t.palette.divider}` }}
+      >
+        <Tab label="List" value={"list"} />
+        <Tab label="Add" value="add" />
+      </Tabs>
+      {renderTabContent()}
+    </Card>
   );
 };
