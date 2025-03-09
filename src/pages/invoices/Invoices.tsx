@@ -331,7 +331,7 @@ const InvoiceTable = () => {
                             }
 
                             if (column.id === "date") {
-                              return new Date(String(val)).toLocaleDateString();
+                              return new Date(Number(val)).toLocaleDateString();
                             }
 
                             return val;
