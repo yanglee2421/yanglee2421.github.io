@@ -13,5 +13,5 @@ export const useIsDark = () =>
     },
 
     () => mediaQuery.matches,
-    () => false,
+    () => false
   );

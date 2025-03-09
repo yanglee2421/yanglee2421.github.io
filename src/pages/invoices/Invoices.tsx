@@ -70,10 +70,9 @@ const columns = [
   }),
 ];
 
-const cellPaddingMap = new Map<string, "checkbox" | "none" | "normal">([[
-  "selection",
-  "checkbox",
-]]);
+const cellPaddingMap = new Map<string, "checkbox" | "none" | "normal">([
+  ["selection", "checkbox"],
+]);
 
 const checkDate = (day: string | null, time: number) => {
   if (!day) return true;
@@ -113,15 +112,19 @@ const ResultPanel = () => {
   allStaffs.forEach((s) => {
     map.set(
       s,
-      rows.filter((i) => i.staff.includes(s)).reduce((r, i) => {
-        return mathjs.add(
-          mathjs.divide(
-            mathjs.bignumber(i.amount),
-            mathjs.bignumber(i.staff.length),
-          ),
-          mathjs.bignumber(r),
-        ).toString();
-      }, "0"),
+      rows
+        .filter((i) => i.staff.includes(s))
+        .reduce((r, i) => {
+          return mathjs
+            .add(
+              mathjs.divide(
+                mathjs.bignumber(i.amount),
+                mathjs.bignumber(i.staff.length)
+              ),
+              mathjs.bignumber(r)
+            )
+            .toString();
+        }, "0")
     );
   });
 
@@ -179,9 +182,11 @@ const InvoiceTable = () => {
   const [note, setNote] = React.useState(noteSearch);
 
   const data = React.useMemo(() => {
-    return invoices.filter((i) =>
-      checkDate(dateSearch, i.date) && checkStaff(staffSearch, i.staff) &&
-      checkText(noteSearch, i.note)
+    return invoices.filter(
+      (i) =>
+        checkDate(dateSearch, i.date) &&
+        checkStaff(staffSearch, i.staff) &&
+        checkText(noteSearch, i.note)
     );
   }, [dateSearch, staffSearch, invoices, noteSearch]);
 
@@ -239,10 +244,7 @@ const InvoiceTable = () => {
     return table.getRowModel().rows.map((r) => (
       <TableRow key={r.id}>
         {r.getVisibleCells().map((c) => (
-          <TableCell
-            key={c.id}
-            padding={cellPaddingMap.get(c.column.id)}
-          >
+          <TableCell key={c.id} padding={cellPaddingMap.get(c.column.id)}>
             {c.getIsPlaceholder() ||
               flexRender(c.column.columnDef.cell, c.getContext())}
           </TableCell>
@@ -290,9 +292,9 @@ const InvoiceTable = () => {
             <Box sx={{ display: "flex", flexWrap: "wrap", gap: 2 }}>
               <Button
                 onClick={() => {
-                  const rows = table.getSelectedRowModel().flatRows.map((i) =>
-                    i.original
-                  );
+                  const rows = table
+                    .getSelectedRowModel()
+                    .flatRows.map((i) => i.original);
 
                   setSearch((s) => {
                     const n = new URLSearchParams(s);
@@ -328,11 +330,15 @@ const InvoiceTable = () => {
                               return val.join("@");
                             }
 
+                            if (column.id === "date") {
+                              return new Date(String(val)).toLocaleDateString();
+                            }
+
                             return val;
                           })
                           .join(",")
                       ),
-                    ].join("\n"),
+                    ].join("\n")
                 )}
                 download={new Date().toLocaleString() + ".csv"}
               >
@@ -360,9 +366,7 @@ const InvoiceTable = () => {
               </TableRow>
             ))}
           </TableHead>
-          <TableBody>
-            {renderBody()}
-          </TableBody>
+          <TableBody>{renderBody()}</TableBody>
         </Table>
       </TableContainer>
       <TablePagination

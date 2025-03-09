@@ -54,31 +54,23 @@ const WebSocketCard = () => {
     const connect = () => {
       ref.current = new WebSocket("ws://localhost:8080");
 
-      ref.current.addEventListener("open", () => {}, {
-        signal: controller.signal,
-      });
+      ref.current.addEventListener("open", () => {}, controller);
       ref.current.addEventListener(
         "close",
         async () => {
           await timeout(200);
           connect();
         },
-        {
-          signal: controller.signal,
-        }
+        controller
       );
       ref.current.addEventListener(
         "message",
         (e) => {
           setData(String(e.data));
         },
-        {
-          signal: controller.signal,
-        }
+        controller
       );
-      ref.current.addEventListener("error", () => {}, {
-        signal: controller.signal,
-      });
+      ref.current.addEventListener("error", () => {}, controller);
     };
 
     connect();
