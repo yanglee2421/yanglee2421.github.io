@@ -36,6 +36,7 @@ import {
   ScienceOutlined,
   SportsEsportsOutlined,
   WalletOutlined,
+  QrCodeOutlined,
 } from "@mui/icons-material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 import { MuiProvider } from "@/components/mui";
@@ -237,6 +238,11 @@ const list = [
     label: "Minesweeper",
     icon: <SportsEsportsOutlined />,
   },
+  {
+    to: "/qrcode",
+    label: "qrcode",
+    icon: <QrCodeOutlined />,
+  },
   { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
   {
     to: "/lab",
@@ -434,6 +440,11 @@ const routes: RouteObject[] = [
             id: "handbook",
             path: "handbook",
             lazy: () => import("@/pages/handbook/component"),
+          },
+          {
+            id: "qrcode",
+            path: "qrcode",
+            lazy: () => import("@/pages/qrcode/route"),
           },
         ],
       },
