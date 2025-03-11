@@ -30,7 +30,7 @@ type StoreActions = {
     nextStateOrUpdater:
       | StoreState
       | Partial<StoreState>
-      | ((state: WritableDraft<StoreState>) => void),
+      | ((state: WritableDraft<StoreState>) => void)
   ): void;
 };
 
@@ -38,24 +38,22 @@ type Store = StoreState & StoreActions;
 
 export const useDbStore = create<Store>()(
   persist(
-    immer(
-      (set) => ({
-        set,
-        invoices: [],
-        staffs: [],
-      }),
-    ),
+    immer((set) => ({
+      set,
+      invoices: [],
+      staffs: [],
+    })),
     {
       name: "useDbStore",
       storage: createJSONStorage(() => localforage),
       version: 2,
-    },
-  ),
+    }
+  )
 );
 
 export const useLocaleStoreHasHydrated = () =>
   React.useSyncExternalStore(
     (onStateChange) => useDbStore.persist.onFinishHydration(onStateChange),
     () => useDbStore.persist.hasHydrated(),
-    () => false,
+    () => false
   );

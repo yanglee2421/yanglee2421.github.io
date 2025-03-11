@@ -27,14 +27,12 @@ type LocaleStore = LocaleStoreState & LocaleStoreActions;
 
 export const useLocaleStore = create<LocaleStore>()(
   persist(
-    immer(
-      (update) => ({
-        mode: DEFAULT_MODE,
-        fallbackLang: FALLBACK_LANG,
+    immer((update) => ({
+      mode: DEFAULT_MODE,
+      fallbackLang: FALLBACK_LANG,
 
-        update,
-      }),
-    ),
+      update,
+    })),
     {
       name: "useLocaleStore",
       storage: createJSONStorage(() => window.localStorage),

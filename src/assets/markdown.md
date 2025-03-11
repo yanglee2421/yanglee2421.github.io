@@ -13,3 +13,9 @@
 
 1. Child
 2. Parent
+
+## Code
+
+```ts
+export const HelloWorld = () => {};
+```
