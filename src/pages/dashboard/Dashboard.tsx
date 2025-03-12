@@ -1,5 +1,7 @@
 import { StopOutlined } from "@mui/icons-material";
 import {
+  Alert,
+  AlertTitle,
   Box,
   Button,
   Card,
@@ -14,6 +16,7 @@ import React from "react";
 import { Translation } from "react-i18next";
 import { useSize } from "@/hooks/dom/useSize";
 import { minmax } from "@/utils/minmax";
+import { ErrorBoundary } from "react-error-boundary";
 
 const drawLine = (
   canvasCtx: CanvasRenderingContext2D,
@@ -22,7 +25,7 @@ const drawLine = (
   x: number,
   y: number,
   lineWidth: number,
-  strokeStyle: string
+  strokeStyle: string,
 ) => {
   canvasCtx.beginPath();
   canvasCtx.moveTo(prevX, prevY);
@@ -37,7 +40,7 @@ const drawAxis = (
   canvasCtx: CanvasRenderingContext2D,
   canvasWidth: number,
   canvasHeight: number,
-  strokeStyle: string
+  strokeStyle: string,
 ) => {
   canvasCtx.beginPath();
   canvasCtx.moveTo(0, 0);
@@ -56,7 +59,7 @@ const drawText = (
   y: number,
   textSize: number,
   strokeStyle: string,
-  canvasWidth?: number
+  canvasWidth?: number,
 ) => {
   canvasCtx.beginPath();
   canvasCtx.font = `${textSize}px serif`;
@@ -137,7 +140,7 @@ const Microphone = () => {
           idx,
           y,
           2,
-          theme.palette.primary.main
+          theme.palette.primary.main,
         );
       }
 
@@ -155,7 +158,7 @@ const Microphone = () => {
         x + 6,
         Math.floor(canvasHeight / 4),
         12,
-        theme.palette.error.main
+        theme.palette.error.main,
       );
     };
 
@@ -426,7 +429,7 @@ const Frequencybars = () => {
           x,
           canvasHeight - barHeight / 2,
           barWidth,
-          barHeight / 2
+          barHeight / 2,
         );
 
         x += barWidth + 1;
@@ -608,21 +611,40 @@ export function Dashboard() {
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
         </Typography>
       </Grid2>
-      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-        <Microphone />
-      </Grid2>
-      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-        <Sinewave />
-      </Grid2>
-      <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
-        <Frequencybars />
-      </Grid2>
-      <Grid2 size={{ xs: 12, sm: 6 }}>
-        <ControlCard />
-      </Grid2>
-      <Grid2 size={{ xs: 12, sm: 6 }}>
-        <SvgCard />
-      </Grid2>
+      <ErrorBoundary
+        fallbackRender={(props) => (
+          <Grid2 size={{ xs: 12 }}>
+            <Alert severity="error">
+              <AlertTitle>Error</AlertTitle>
+              <Typography>{props.error.message}</Typography>
+              <Button
+                color="error"
+                variant="contained"
+                onClick={props.resetErrorBoundary}
+                sx={{ mt: 2 }}
+              >
+                Retry
+              </Button>
+            </Alert>
+          </Grid2>
+        )}
+      >
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Microphone />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Sinewave />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Frequencybars />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
+          <ControlCard />
+        </Grid2>
+        <Grid2 size={{ xs: 12, sm: 6 }}>
+          <SvgCard />
+        </Grid2>
+      </ErrorBoundary>
     </Grid2>
   );
 }

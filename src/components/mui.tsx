@@ -157,6 +157,11 @@ export const MuiProvider = (props: React.PropsWithChildren) => {
               transform: "rotate(360deg)",
             },
           },
+          "code,kbd,pre,samp": {
+            fontFamily:
+              "ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace",
+            fontSize: "1.25rem",
+          },
         }}
       />
     </MuiThemeProvider>
