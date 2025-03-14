@@ -19,22 +19,17 @@ type MessageContentProps = {
 };
 
 const MessageContent = (props: MessageContentProps) => {
-  const [msg, setMsg] = React.useState("");
-
-  React.useEffect(() => {
-    if (msg === props.text) return;
-    if (!props.text.startsWith(msg)) return;
-
-    const timer = setTimeout(() => {
-      setMsg((p) => props.text.slice(0, p.length + 1));
-    }, 4);
-
-    return () => {
-      clearTimeout(timer);
-    };
-  }, [msg, props.text]);
-
-  return <Markdown code={msg} />;
+  return (
+    <Box
+      sx={{
+        "& pre.shiki": {
+          whiteSpace: "pre-wrap",
+        },
+      }}
+    >
+      <Markdown code={props.text} />
+    </Box>
+  );
 };
 
 const MemoMessageContent = React.memo(MessageContent);
