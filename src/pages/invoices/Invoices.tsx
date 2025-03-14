@@ -124,12 +124,12 @@ const ResultPanel = () => {
             .add(
               mathjs.divide(
                 mathjs.bignumber(i.amount),
-                mathjs.bignumber(i.staff.length)
+                mathjs.bignumber(i.staff.length),
               ),
-              mathjs.bignumber(r)
+              mathjs.bignumber(r),
             )
             .toString();
-        }, "0")
+        }, "0"),
     );
   });
 
@@ -171,6 +171,9 @@ const ResultPanel = () => {
 };
 
 const InvoiceTable = () => {
+  // eslint-disable-next-line
+  "use no memo";
+
   const invoices = useDbStore((s) => s.invoices);
   const [search, setSearch] = useSearchParams({
     date: "",
@@ -191,7 +194,7 @@ const InvoiceTable = () => {
       (i) =>
         checkDate(dateSearch, i.date) &&
         checkStaff(staffSearch, i.staff) &&
-        checkText(noteSearch, i.note)
+        checkText(noteSearch, i.note),
     );
   }, [dateSearch, staffSearch, invoices, noteSearch]);
 
@@ -351,9 +354,9 @@ const InvoiceTable = () => {
 
                         return val;
                       })
-                      .join(",")
+                      .join(","),
                   ),
-                ].join("\n")
+                ].join("\n"),
             )}
             download={new Date().toLocaleString() + ".csv"}
           >
