@@ -78,7 +78,7 @@ const columns = [
             useDbStore.setState((d) => {
               d.staffs.splice(
                 d.staffs.findIndex((i) => i.id === row.original.id),
-                1
+                1,
               );
             });
           }}
@@ -103,6 +103,7 @@ const checkBool = (bool: boolean, search: string) => {
 };
 
 export const Staff = () => {
+  "use no memo";
   const [activeTab, setActiveTab] = React.useState("list");
 
   const [search, setSearch] = useSearchParams({
@@ -124,9 +125,9 @@ export const Staff = () => {
         (i) =>
           checkText(i.name, nameSearch) &&
           checkText(i.alias, aliasSearch) &&
-          checkBool(i.enable, enableSearch)
+          checkBool(i.enable, enableSearch),
       ),
-    [staff, nameSearch, aliasSearch, enableSearch]
+    [staff, nameSearch, aliasSearch, enableSearch],
   );
 
   const [name, setName] = React.useState(nameSearch);

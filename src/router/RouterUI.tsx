@@ -283,7 +283,7 @@ const LinkWrapper = styled("div")(({ theme }) => ({
     color: theme.palette.primary.main,
     backgroundColor: alpha(
       theme.palette.primary.main,
-      theme.palette.action.activatedOpacity
+      theme.palette.action.activatedOpacity,
     ),
   },
 }));
@@ -330,7 +330,9 @@ const AuthRoute = () => {
       }}
     >
       <ParticlesUI preset="bubbles" />
-      <Outlet />
+      <Box sx={{ position: "relative", zIndex: 1 }}>
+        <Outlet />
+      </Box>
     </AuthLayout>
   );
 };
