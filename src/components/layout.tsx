@@ -50,6 +50,9 @@ const AuthContainer = styled("div")(({ theme }) => ({
   flexDirection: "column",
 
   minBlockSize: "100dvh",
+  "&:has([role=fixed])": {
+    blockSize: "100dvh",
+  },
 
   paddingBlockStart: theme.spacing(HEADER_SIZE_XS),
   [theme.breakpoints.up("sm")]: {
@@ -280,7 +283,7 @@ export const GuestLayout = (props: React.PropsWithChildren) => {
         IMAGE_SIZE / 2 - ICON_SIZE / 2,
         IMAGE_SIZE / 2 - ICON_SIZE / 2,
         IMAGE_SIZE,
-        IMAGE_SIZE
+        IMAGE_SIZE,
       );
 
       img.remove();

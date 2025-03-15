@@ -131,7 +131,8 @@ export const Chat = () => {
   };
 
   return (
-    <Box>
+    <Box sx={{ height: "100%", position: "relative", zIndex: 1 }}>
+      <div role="fixed"></div>
       <Card>
         <CardHeader title="Chat" />
         <CardContent>
