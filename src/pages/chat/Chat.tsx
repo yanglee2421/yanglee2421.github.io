@@ -131,58 +131,10 @@ export const Chat = () => {
   };
 
   return (
-    <Box sx={{ height: "100%", position: "relative", zIndex: 1 }}>
-      <div role="fixed"></div>
-      <Card>
-        <CardHeader title="Chat" />
-        <CardContent>
-          {msgList.map((msg) => (
-            <Box key={msg.id}>
-              <Avatar variant="rounded">
-                {msg.role.charAt(0).toLocaleUpperCase()}
-              </Avatar>
-              <MemoMessageContent text={msg.content} />
-            </Box>
-          ))}
-        </CardContent>
-        <CardActions>
-          <Box sx={{ width: "100%" }}>
-            <form onSubmit={handleSubmit}>
-              <InputBase
-                value={contentVal}
-                onChange={(e) => setContentVal(e.target.value)}
-                name="content"
-                fullWidth
-                multiline
-                placeholder="Ask me something"
-              />
-              <Box sx={{ display: "flex" }}>
-                <IconButton
-                  type="button"
-                  sx={(theme) => ({
-                    backgroundColor: theme.palette.action.hover,
-                    "&:hover": {
-                      backgroundColor: theme.palette.action.selected,
-                    },
-                  })}
-                >
-                  <AddOutlined />
-                </IconButton>
-                <Box sx={{ marginInlineStart: "auto" }}></Box>
-                <Sender
-                  onAbortClick={() => {
-                    controller.current?.abort();
-                    setMsgList((d) => {
-                      d.splice(-1, 1);
-                    });
-                  }}
-                />
-              </Box>
-            </form>
-          </Box>
-        </CardActions>
-      </Card>
-    </Box>
+    <Box
+      data-contentfixed
+      sx={{ height: "100%", position: "relative", zIndex: 1 }}
+    ></Box>
   );
 };
 
@@ -193,24 +145,4 @@ const getContent = (data: string) => {
   } catch {
     return "";
   }
-};
-
-type SenderProps = {
-  onAbortClick(): void;
-};
-
-const Sender = (props: SenderProps) => {
-  const fs = useFormStatus();
-
-  return (
-    <IconButton
-      onClick={() => {
-        if (!fs.pending) return;
-        props.onAbortClick();
-      }}
-      type={fs.pending ? "button" : "submit"}
-    >
-      {fs.pending ? <StopOutlined /> : <SendOutlined />}
-    </IconButton>
-  );
 };

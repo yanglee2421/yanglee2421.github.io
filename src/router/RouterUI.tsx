@@ -4,7 +4,6 @@ import {
   createBrowserRouter,
   createHashRouter,
   Navigate,
-  NavLink,
   Outlet,
   RouteObject,
   RouterProvider,
@@ -14,74 +13,15 @@ import {
   useParams,
 } from "react-router";
 import { useTranslation } from "react-i18next";
-import {
-  alpha,
-  Box,
-  Icon,
-  IconButton,
-  Link,
-  styled,
-  Typography,
-} from "@mui/material";
-import {
-  CalculateOutlined,
-  CalendarMonthOutlined,
-  CalendarTodayOutlined,
-  ChatOutlined,
-  ChevronRightOutlined,
-  DashboardOutlined,
-  GitHub,
-  HandshakeOutlined,
-  PeopleOutlineOutlined,
-  ScienceOutlined,
-  SportsEsportsOutlined,
-  WalletOutlined,
-  QrCodeOutlined,
-} from "@mui/icons-material";
+import { Icon, Link, Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 import { MuiProvider } from "@/components/mui";
 import { Materio } from "@/components/svg/Materio";
-import { LangToggle } from "@/components/shared/LangToggle";
-import { UserDropdown } from "@/components/shared/UserDropdonw";
-import { ModeToggle } from "@/components/shared/ModeToggle";
 import * as consts from "@/lib/constants";
 import { NavigateToHome, NavigateToLogin } from "@/components/navigate";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { QueryProvider } from "@/components/query";
-import { type Container as ParticlesContainer } from "@tsparticles/engine";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
-import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
-import { loadBigCirclesPreset } from "@tsparticles/preset-big-circles";
-import { loadSlim } from "@tsparticles/slim";
 import { AuthLayout, GuestLayout } from "@/components/layout";
-
-const snowPro = initParticlesEngine(async (engine) => {
-  await loadBubblesPreset(engine);
-  await loadBigCirclesPreset(engine);
-  await loadSlim(engine);
-});
-
-const particlesLoaded = async (container?: ParticlesContainer) => {
-  console.log(container);
-};
-
-type ParticlesUIProps = {
-  preset: string;
-};
-
-export const ParticlesUI = (props: ParticlesUIProps) => {
-  React.use(snowPro);
-
-  return (
-    <Particles
-      options={{
-        preset: props.preset,
-        background: { opacity: 0 },
-      }}
-      particlesLoaded={particlesLoaded}
-    />
-  );
-};
 
 const LANGS = new Set(["en", "zh"]);
 const FALLBACK_LANG = "en";
@@ -181,18 +121,6 @@ const logo = (
   </>
 );
 
-const header = (
-  <>
-    <Box sx={{ marginInlineStart: "auto" }}></Box>
-    <LangToggle />
-    <ModeToggle />
-    <IconButton href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
-      <GitHub />
-    </IconButton>
-    <UserDropdown />
-  </>
-);
-
 const footer = (
   <>
     &copy;{FULL_YEAR} by{" "}
@@ -201,110 +129,6 @@ const footer = (
     </Link>
   </>
 );
-
-const list = [
-  {
-    to: "/dashboard",
-    label: "Dashboard",
-    icon: <DashboardOutlined />,
-  },
-  {
-    to: "/calendar",
-    label: "Calendar",
-    icon: <CalendarTodayOutlined />,
-  },
-  {
-    to: "/calculator",
-    label: "Calculator",
-    icon: <CalculateOutlined />,
-  },
-  {
-    to: "/invoices",
-    label: "Invoices",
-    icon: <WalletOutlined />,
-  },
-  {
-    to: "/staff",
-    label: "Staff",
-    icon: <PeopleOutlineOutlined />,
-  },
-  {
-    to: "/overtime",
-    label: "Overtime",
-    icon: <CalendarMonthOutlined />,
-  },
-  {
-    to: "/minesweeper",
-    label: "Minesweeper",
-    icon: <SportsEsportsOutlined />,
-  },
-  {
-    to: "/qrcode",
-    label: "qrcode",
-    icon: <QrCodeOutlined />,
-  },
-  { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
-  {
-    to: "/lab",
-    label: "Lab",
-    icon: <ScienceOutlined />,
-  },
-  {
-    to: "/handbook",
-    label: "Handbook",
-    icon: <HandshakeOutlined />,
-  },
-];
-
-const LinkWrapper = styled("div")(({ theme }) => ({
-  display: "flex",
-  flexDirection: "column",
-  gap: theme.spacing(2),
-
-  "& a": {
-    textDecoration: "none",
-    color: theme.palette.text.primary,
-
-    display: "flex",
-    gap: theme.spacing(3),
-    alignItem: "center",
-
-    padding: theme.spacing(5),
-
-    [theme.breakpoints.up("sm")]: {
-      paddingInline: theme.spacing(3),
-      paddingBlock: theme.spacing(3),
-    },
-  },
-  "& a:hover": {
-    backgroundColor: theme.palette.action.hover,
-  },
-  "& a[aria-current=page]": {
-    color: theme.palette.primary.main,
-    backgroundColor: alpha(
-      theme.palette.primary.main,
-      theme.palette.action.activatedOpacity,
-    ),
-  },
-}));
-
-const NavMenu = () => {
-  const params = useParams();
-
-  return (
-    <LinkWrapper>
-      {list.map((i) => (
-        <NavLink key={i.to} to={`/${params.lang + i.to}`} end>
-          {i.icon}
-          <Typography variant="body1" component="span">
-            {i.label}
-          </Typography>
-          <ChevronRightOutlined sx={{ marginInlineStart: "auto" }} />
-        </NavLink>
-      ))}
-    </LinkWrapper>
-  );
-};
 
 const AuthWrapper = (props: React.PropsWithChildren) =>
   useCurrentUser() ? props.children : <NavigateToLogin />;
@@ -320,19 +144,12 @@ const AuthRoute = () => {
 
   return (
     <AuthLayout
-      aside={<NavMenu />}
-      header={header}
-      footer={footer}
-      logo={logo}
       showMenuInMobile={showMenuInMobile}
       onShowMenuInMobileChange={() => {
         update((prev) => (prev === location.key ? "" : location.key));
       }}
     >
-      <ParticlesUI preset="bubbles" />
-      <Box sx={{ position: "relative", zIndex: 1 }}>
-        <Outlet />
-      </Box>
+      <Outlet />
     </AuthLayout>
   );
 };

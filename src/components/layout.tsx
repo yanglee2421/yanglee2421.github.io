@@ -2,7 +2,6 @@ import {
   alpha,
   AppBar,
   Box,
-  Container,
   IconButton,
   Stack,
   styled,
@@ -46,12 +45,16 @@ const AuthAside = styled("aside")(({ theme }) => ({
   borderInlineEnd: `1px solid ${theme.palette.divider}`,
 }));
 
-const AuthContainer = styled("div")(({ theme }) => ({
+const AuthContent = styled("div")(({ theme }) => ({
+  display: "flex",
   flexDirection: "column",
 
   minBlockSize: "100dvh",
-  "&:has([role=fixed])": {
+  "&:has([data-contentfixed=true])": {
     blockSize: "100dvh",
+  },
+  "&:where([aria-hidden=true])": {
+    display: "none",
   },
 
   paddingBlockStart: theme.spacing(HEADER_SIZE_XS),
@@ -63,31 +66,7 @@ const AuthContainer = styled("div")(({ theme }) => ({
   },
 }));
 
-const AuthMainWrapper = styled("div")(({ theme }) => ({
-  flexGrow: 1,
-
-  paddingBlock: theme.spacing(2),
-
-  [theme.breakpoints.up("sm")]: {
-    paddingInline: theme.spacing(3),
-    paddingBlock: theme.spacing(6),
-  },
-}));
-
-const AuthFooterWrapper = styled("div")(({ theme }) => ({
-  paddingBlock: theme.spacing(1.75),
-
-  [theme.breakpoints.up("sm")]: {
-    paddingInline: theme.spacing(3),
-    paddingBlock: theme.spacing(3.75),
-  },
-}));
-
 type AuthLayoutProps = React.PropsWithChildren<{
-  aside?: React.ReactNode;
-  footer?: React.ReactNode;
-  logo?: React.ReactNode;
-  header?: React.ReactNode;
   showMenuInMobile?: boolean;
   onShowMenuInMobileChange?(): void;
 }>;
@@ -136,22 +115,9 @@ export const AuthLayout = (props: AuthLayoutProps) => {
       >
         <AuthAside>{props.aside}</AuthAside>
       </AuthAsideWrapper>
-      <AuthContainer
-        sx={{
-          display: props.showMenuInMobile ? "none" : "flex",
-        }}
-      >
-        <AuthMainWrapper>
-          <main>
-            <Container>{props.children}</Container>
-          </main>
-        </AuthMainWrapper>
-        <AuthFooterWrapper>
-          <footer>
-            <Container>{props.footer}</Container>
-          </footer>
-        </AuthFooterWrapper>
-      </AuthContainer>
+      <AuthContent aria-hidden={props.showMenuInMobile}>
+        {props.children}
+      </AuthContent>
     </>
   );
 };
