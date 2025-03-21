@@ -92,7 +92,7 @@ export const Chat = () => {
   const sendRequest = async () => {
     controller.current = new AbortController();
 
-    const res = await fetch("/v1/chat/completions", {
+    const res = await fetch("/v1/chat/completions1", {
       signal: controller.current?.signal,
       method: "POST",
       body: JSON.stringify({
@@ -121,6 +121,7 @@ export const Chat = () => {
       },
     });
 
+    if (!res.ok) throw new Error("Failed to connect to the server");
     const reader = res.body?.getReader();
     if (!reader) throw new Error("No reader");
 
@@ -172,6 +173,8 @@ export const Chat = () => {
 
     setLoading(true);
     await sendRequest().catch(() => {
+      console.log("Failed to connect to the server");
+
       setMsgList((d) => {
         const last = d[d.length - 1];
         if (!last) return;
