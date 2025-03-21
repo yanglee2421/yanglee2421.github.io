@@ -31,11 +31,21 @@ type Message = {
   time: number;
 };
 
+const getContent = (data: string) => {
+  try {
+    const json = JSON.parse(data.replace("data: ", ""));
+    return json.choices[0].delta.content;
+  } catch {
+    return "";
+  }
+};
+
 export const Chat = () => {
   const [question, setQuestion] = React.useState("");
 
   const controller = React.useRef<AbortController | null>(null);
   const scrollRef = React.useRef<HTMLDivElement>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
 
   const [msgList, setMsgList] = useImmer<Message[]>([]);
 
@@ -76,6 +86,8 @@ export const Chat = () => {
     e.preventDefault();
     e.stopPropagation();
 
+    if (!question) return;
+
     controller.current = new AbortController();
 
     const last = {
@@ -85,6 +97,7 @@ export const Chat = () => {
       content: question,
     };
 
+    setQuestion("");
     setMsgList((d) => {
       d.push(last);
     });
@@ -100,7 +113,7 @@ export const Chat = () => {
             role: i.role,
             content: i.content,
           }))
-          .concat([last]),
+          .concat(last),
         stream: true,
         tools: [
           {
@@ -160,7 +173,7 @@ export const Chat = () => {
           </Box>
         ))}
       </Box>
-      <form onSubmit={handleSubmit}>
+      <form ref={formRef} onSubmit={handleSubmit}>
         <TextField
           value={question}
           onChange={(e) => setQuestion(e.target.value)}
@@ -168,6 +181,13 @@ export const Chat = () => {
           multiline
           fullWidth
           onFocus={handleScrollToBottom}
+          onKeyDown={(e) => {
+            if (e.key !== "Enter") return;
+            if (e.ctrlKey) return;
+
+            formRef.current?.requestSubmit();
+            e.preventDefault();
+          }}
           slotProps={{
             input: {
               endAdornment: (
@@ -191,13 +211,4 @@ export const Chat = () => {
       </form>
     </Box>
   );
-};
-
-const getContent = (data: string) => {
-  try {
-    const json = JSON.parse(data.replace("data: ", ""));
-    return json.choices[0].delta.content;
-  } catch {
-    return "";
-  }
 };
