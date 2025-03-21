@@ -11,6 +11,9 @@ import {
 import { CloseOutlined, MenuOutlined } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router";
 import React from "react";
+import { AuthHeader } from "./AuthHeader";
+import { NavMenu } from "./NavMenu";
+import { Logo as AppLogo } from "./Logo";
 
 const HEADER_SIZE_XS = 14;
 const HEADER_SIZE_SM = 16;
@@ -95,7 +98,7 @@ export const AuthLayout = (props: AuthLayoutProps) => {
               color: "inherit",
             }}
           >
-            {props.logo}
+            <AppLogo />
           </Box>
 
           <IconButton
@@ -105,7 +108,7 @@ export const AuthLayout = (props: AuthLayoutProps) => {
             {props.showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
           </IconButton>
 
-          {props.header}
+          <AuthHeader />
         </Toolbar>
       </AppBar>
       <AuthAsideWrapper
@@ -113,7 +116,9 @@ export const AuthLayout = (props: AuthLayoutProps) => {
           maxInlineSize: props.showMenuInMobile ? "none" : 0,
         }}
       >
-        <AuthAside>{props.aside}</AuthAside>
+        <AuthAside>
+          <NavMenu />
+        </AuthAside>
       </AuthAsideWrapper>
       <AuthContent aria-hidden={props.showMenuInMobile}>
         {props.children}
