@@ -1,16 +1,12 @@
-import { AddOutlined, SendOutlined, StopOutlined } from "@mui/icons-material";
+import { SendOutlined } from "@mui/icons-material";
 import {
-  Avatar,
   Box,
-  Card,
-  CardActions,
-  CardContent,
-  CardHeader,
-  IconButton,
-  InputBase,
+  Button,
+  CircularProgress,
+  Container,
+  TextField,
 } from "@mui/material";
 import React from "react";
-import { useFormStatus } from "react-dom";
 import { useImmer } from "use-immer";
 import { Markdown } from "@/components/markdown";
 
@@ -41,41 +37,63 @@ type Message = {
   time: number;
 };
 
+const getContent = (data: string) => {
+  try {
+    const json = JSON.parse(data.replace("data: ", ""));
+    return json.choices[0].delta.content;
+  } catch {
+    return "";
+  }
+};
+
 export const Chat = () => {
-  const [contentVal, setContentVal] = React.useState("");
+  const [question, setQuestion] = React.useState("");
+  const [loading, setLoading] = React.useState(false);
 
   const controller = React.useRef<AbortController | null>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
+  const chatLogRef = React.useRef<HTMLDivElement>(null);
 
   const [msgList, setMsgList] = useImmer<Message[]>([]);
 
-  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
-    e.preventDefault();
-    e.stopPropagation();
-
-    controller.current = new AbortController();
-    const fd = new FormData(e.currentTarget);
-    const question = fd.get("content") as string;
-
-    const last = {
-      id: crypto.randomUUID(),
-      time: Date.now(),
-      role: "user",
-      content: question,
-    };
-
-    setMsgList((d) => {
-      d.push(last);
-      d.push({
-        id: crypto.randomUUID(),
-        time: Date.now(),
-        role: "assistant",
-        content: "",
-      });
+  const handleScrollToBottom = React.useCallback(() => {
+    chatLogRef.current?.scrollIntoView({
+      behavior: "smooth",
+      block: "end",
     });
-    setContentVal("");
+  }, []);
+
+  React.useEffect(() => {
+    handleScrollToBottom();
+  }, [handleScrollToBottom]);
+
+  const updateChatLog = (buf: string) => {
+    setMsgList((d) => {
+      const last = d[d.length - 1];
+      if (!last) return;
+
+      if (last.role === "assistant") {
+        last.content = buf
+          .split("data:")
+          .map((i) => getContent(i))
+          .filter(Boolean)
+          .join("");
+      } else {
+        d.push({
+          id: crypto.randomUUID(),
+          time: Date.now(),
+          role: "assistant",
+          content: "",
+        });
+      }
+    });
+  };
+
+  const sendRequest = async () => {
+    controller.current = new AbortController();
 
     const res = await fetch("/v1/chat/completions", {
-      signal: controller.current.signal,
+      signal: controller.current?.signal,
       method: "POST",
       body: JSON.stringify({
         model: "4.0Ultra",
@@ -84,13 +102,16 @@ export const Chat = () => {
             role: i.role,
             content: i.content,
           }))
-          .concat([last]),
+          .concat({
+            role: "user",
+            content: question,
+          }),
         stream: true,
         tools: [
           {
             type: "web_search",
             web_search: {
-              enable: false,
+              enable: true,
             },
           },
         ],
@@ -101,115 +122,155 @@ export const Chat = () => {
     });
 
     const reader = res.body?.getReader();
-
-    if (!reader) {
-      return;
-    }
+    if (!reader) throw new Error("No reader");
 
     const decoder = new TextDecoder();
     let buf = "";
 
     while (true) {
       const { done, value } = await reader.read();
-      if (done) {
-        break;
-      }
+      if (done) break;
 
-      const decocded = decoder.decode(value, { stream: true });
-      buf += decocded;
+      buf += decoder.decode(value, { stream: true });
+      updateChatLog(buf);
+    }
 
+    buf += decoder.decode();
+    updateChatLog(buf);
+  };
+
+  const handleSubmit = async (e: React.SyntheticEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    e.stopPropagation();
+
+    if (!question) return;
+
+    setQuestion("");
+    setMsgList((d) => {
+      d.push({
+        id: crypto.randomUUID(),
+        time: Date.now(),
+        role: "user",
+        content: question,
+      });
+      d.push({
+        id: crypto.randomUUID(),
+        time: Date.now(),
+        role: "assistant",
+        content: "Loading...",
+      });
+    });
+
+    requestAnimationFrame(() => {
+      chatLogRef.current?.lastElementChild?.previousElementSibling?.scrollIntoView(
+        {
+          behavior: "smooth",
+          block: "start",
+        },
+      );
+    });
+
+    setLoading(true);
+    await sendRequest().catch(() => {
       setMsgList((d) => {
         const last = d[d.length - 1];
         if (!last) return;
-        last.content = buf
-          .split("data:")
-          .map((i) => getContent(i))
-          .filter(Boolean)
-          .join("");
+        if (last.role === "assistant") {
+          last.content = "Failed to connect to the server";
+        }
       });
-    }
+    });
+    setLoading(false);
   };
 
   return (
-    <Box>
-      <Card>
-        <CardHeader title="Chat" />
-        <CardContent>
-          {msgList.map((msg) => (
-            <Box key={msg.id}>
-              <Avatar variant="rounded">
-                {msg.role.charAt(0).toLocaleUpperCase()}
-              </Avatar>
-              <MemoMessageContent text={msg.content} />
+    <Box
+      data-contentfixed
+      sx={{
+        height: "100%",
+        position: "relative",
+        zIndex: 1,
+        display: "flex",
+        flexDirection: "column",
+        padding: 5,
+      }}
+    >
+      <Box
+        sx={{
+          flex: 1,
+          minBlockSize: 0,
+          overflowY: "auto",
+          scrollbarColor: (t) => t.palette.action.disabled + " transparent",
+        }}
+      >
+        <Container
+          ref={chatLogRef}
+          maxWidth="md"
+          sx={{
+            "&::before,&::after": {
+              content: '""',
+              display: "table",
+              clear: "both",
+            },
+          }}
+        >
+          {msgList.map((i) => (
+            <Box
+              key={i.id}
+              sx={{
+                "&:last-child": {
+                  minBlockSize: "calc(100dvh - 200px)",
+                },
+              }}
+            >
+              <MemoMessageContent text={i.content} />
             </Box>
           ))}
-        </CardContent>
-        <CardActions>
-          <Box sx={{ width: "100%" }}>
-            <form onSubmit={handleSubmit}>
-              <InputBase
-                value={contentVal}
-                onChange={(e) => setContentVal(e.target.value)}
-                name="content"
-                fullWidth
-                multiline
-                placeholder="Ask me something"
-              />
-              <Box sx={{ display: "flex" }}>
-                <IconButton
-                  type="button"
-                  sx={(theme) => ({
-                    backgroundColor: theme.palette.action.hover,
-                    "&:hover": {
-                      backgroundColor: theme.palette.action.selected,
-                    },
-                  })}
-                >
-                  <AddOutlined />
-                </IconButton>
-                <Box sx={{ marginInlineStart: "auto" }}></Box>
-                <Sender
-                  onAbortClick={() => {
-                    controller.current?.abort();
-                    setMsgList((d) => {
-                      d.splice(-1, 1);
-                    });
-                  }}
-                />
-              </Box>
-            </form>
-          </Box>
-        </CardActions>
-      </Card>
+        </Container>
+      </Box>
+      <form ref={formRef} onSubmit={handleSubmit}>
+        <Container maxWidth="md">
+          <TextField
+            value={question}
+            onChange={(e) => setQuestion(e.target.value)}
+            placeholder="Ask me anything"
+            multiline
+            fullWidth
+            onFocus={handleScrollToBottom}
+            onKeyDown={(e) => {
+              if (e.key !== "Enter") return;
+              if (e.ctrlKey) return;
+
+              formRef.current?.requestSubmit();
+              e.preventDefault();
+            }}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <Button
+                    variant="contained"
+                    endIcon={
+                      loading ? (
+                        <CircularProgress size={16} color="inherit" />
+                      ) : (
+                        <SendOutlined
+                          sx={{
+                            transform: "rotate(-45deg)",
+                          }}
+                        />
+                      )
+                    }
+                    type="submit"
+                    disabled={loading}
+                  >
+                    Send
+                  </Button>
+                ),
+              },
+            }}
+          />
+        </Container>
+      </form>
     </Box>
-  );
-};
-
-const getContent = (data: string) => {
-  try {
-    const json = JSON.parse(data.replace("data: ", ""));
-    return json.choices[0].delta.content;
-  } catch {
-    return "";
-  }
-};
-
-type SenderProps = {
-  onAbortClick(): void;
-};
-
-const Sender = (props: SenderProps) => {
-  const fs = useFormStatus();
-
-  return (
-    <IconButton
-      onClick={() => {
-        if (!fs.pending) return;
-        props.onAbortClick();
-      }}
-      type={fs.pending ? "button" : "submit"}
-    >
-      {fs.pending ? <StopOutlined /> : <SendOutlined />}
-    </IconButton>
   );
 };

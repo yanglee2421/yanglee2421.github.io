@@ -2,7 +2,6 @@ import {
   alpha,
   AppBar,
   Box,
-  Container,
   IconButton,
   Stack,
   styled,
@@ -12,6 +11,9 @@ import {
 import { CloseOutlined, MenuOutlined } from "@mui/icons-material";
 import { Link as RouterLink } from "react-router";
 import React from "react";
+import { AuthHeader } from "./AuthHeader";
+import { NavMenu } from "./NavMenu";
+import { Logo as AppLogo } from "./Logo";
 
 const HEADER_SIZE_XS = 14;
 const HEADER_SIZE_SM = 16;
@@ -46,10 +48,17 @@ const AuthAside = styled("aside")(({ theme }) => ({
   borderInlineEnd: `1px solid ${theme.palette.divider}`,
 }));
 
-const AuthContainer = styled("div")(({ theme }) => ({
+const AuthContent = styled("div")(({ theme }) => ({
+  display: "flex",
   flexDirection: "column",
 
   minBlockSize: "100dvh",
+  "&:has([data-contentfixed=true])": {
+    blockSize: "100dvh",
+  },
+  "&:where([aria-hidden=true])": {
+    display: "none",
+  },
 
   paddingBlockStart: theme.spacing(HEADER_SIZE_XS),
   [theme.breakpoints.up("sm")]: {
@@ -60,31 +69,7 @@ const AuthContainer = styled("div")(({ theme }) => ({
   },
 }));
 
-const AuthMainWrapper = styled("div")(({ theme }) => ({
-  flexGrow: 1,
-
-  paddingBlock: theme.spacing(2),
-
-  [theme.breakpoints.up("sm")]: {
-    paddingInline: theme.spacing(3),
-    paddingBlock: theme.spacing(6),
-  },
-}));
-
-const AuthFooterWrapper = styled("div")(({ theme }) => ({
-  paddingBlock: theme.spacing(1.75),
-
-  [theme.breakpoints.up("sm")]: {
-    paddingInline: theme.spacing(3),
-    paddingBlock: theme.spacing(3.75),
-  },
-}));
-
 type AuthLayoutProps = React.PropsWithChildren<{
-  aside?: React.ReactNode;
-  footer?: React.ReactNode;
-  logo?: React.ReactNode;
-  header?: React.ReactNode;
   showMenuInMobile?: boolean;
   onShowMenuInMobileChange?(): void;
 }>;
@@ -113,7 +98,7 @@ export const AuthLayout = (props: AuthLayoutProps) => {
               color: "inherit",
             }}
           >
-            {props.logo}
+            <AppLogo />
           </Box>
 
           <IconButton
@@ -123,7 +108,7 @@ export const AuthLayout = (props: AuthLayoutProps) => {
             {props.showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
           </IconButton>
 
-          {props.header}
+          <AuthHeader />
         </Toolbar>
       </AppBar>
       <AuthAsideWrapper
@@ -131,24 +116,13 @@ export const AuthLayout = (props: AuthLayoutProps) => {
           maxInlineSize: props.showMenuInMobile ? "none" : 0,
         }}
       >
-        <AuthAside>{props.aside}</AuthAside>
+        <AuthAside>
+          <NavMenu />
+        </AuthAside>
       </AuthAsideWrapper>
-      <AuthContainer
-        sx={{
-          display: props.showMenuInMobile ? "none" : "flex",
-        }}
-      >
-        <AuthMainWrapper>
-          <main>
-            <Container>{props.children}</Container>
-          </main>
-        </AuthMainWrapper>
-        <AuthFooterWrapper>
-          <footer>
-            <Container>{props.footer}</Container>
-          </footer>
-        </AuthFooterWrapper>
-      </AuthContainer>
+      <AuthContent aria-hidden={props.showMenuInMobile}>
+        {props.children}
+      </AuthContent>
     </>
   );
 };
@@ -280,7 +254,7 @@ export const GuestLayout = (props: React.PropsWithChildren) => {
         IMAGE_SIZE / 2 - ICON_SIZE / 2,
         IMAGE_SIZE / 2 - ICON_SIZE / 2,
         IMAGE_SIZE,
-        IMAGE_SIZE
+        IMAGE_SIZE,
       );
 
       img.remove();
