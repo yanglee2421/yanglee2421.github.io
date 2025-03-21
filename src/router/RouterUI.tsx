@@ -1,4 +1,3 @@
-import NProgress from "nprogress";
 import React from "react";
 import {
   createBrowserRouter,
@@ -9,19 +8,16 @@ import {
   RouterProvider,
   ScrollRestoration,
   useLocation,
-  useNavigation,
   useParams,
 } from "react-router";
 import { useTranslation } from "react-i18next";
-import { Icon, Link, Typography } from "@mui/material";
 import { useLocaleStore } from "@/hooks/store/useLocaleStore";
 import { MuiProvider } from "@/components/mui";
-import { Materio } from "@/components/svg/Materio";
-import * as consts from "@/lib/constants";
 import { NavigateToHome, NavigateToLogin } from "@/components/navigate";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { QueryProvider } from "@/components/query";
 import { AuthLayout, GuestLayout } from "@/components/layout";
+import { NprogressBar } from "@/components/NprogressBar";
 
 const LANGS = new Set(["en", "zh"]);
 const FALLBACK_LANG = "en";
@@ -67,24 +63,6 @@ const LangWrapper = (props: React.PropsWithChildren) => {
   return props.children;
 };
 
-const NprogressBar = () => {
-  const navigation = useNavigation();
-
-  React.useEffect(() => {
-    switch (navigation.state) {
-      case "submitting":
-      case "loading":
-        NProgress.start();
-        break;
-      case "idle":
-      default:
-        NProgress.done();
-    }
-  }, [navigation.state]);
-
-  return null;
-};
-
 const RootRoute = () => {
   return (
     <QueryProvider>
@@ -98,37 +76,6 @@ const RootRoute = () => {
     </QueryProvider>
   );
 };
-
-const FULL_YEAR = new Date().getFullYear();
-
-const logo = (
-  <>
-    <Icon fontSize="large" color="primary">
-      <Materio fontSize="inherit" />
-    </Icon>
-    <Typography
-      component={"span"}
-      variant="h6"
-      sx={{
-        fontSize: (t) => t.spacing(5),
-        fontWeight: 600,
-        textTransform: "uppercase",
-        color: (t) => t.palette.text.primary,
-      }}
-    >
-      github io
-    </Typography>
-  </>
-);
-
-const footer = (
-  <>
-    &copy;{FULL_YEAR} by{" "}
-    <Link href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
-      yanglee2421
-    </Link>
-  </>
-);
 
 const AuthWrapper = (props: React.PropsWithChildren) =>
   useCurrentUser() ? props.children : <NavigateToLogin />;
