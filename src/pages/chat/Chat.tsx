@@ -116,7 +116,7 @@ export const Chat = () => {
   const [question, setQuestion] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 
-  const controller = React.useRef<AbortController | null>(null);
+  const controller = React.useRef<AbortController>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
   const chatLogRef = React.useRef<HTMLDivElement>(null);
 
