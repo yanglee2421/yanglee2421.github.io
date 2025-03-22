@@ -1,14 +1,19 @@
 import { SendOutlined } from "@mui/icons-material";
 import {
+  Alert,
+  AlertTitle,
   Box,
   Button,
   CircularProgress,
   Container,
+  Paper,
   TextField,
 } from "@mui/material";
 import React from "react";
 import { useImmer } from "use-immer";
 import { Markdown } from "@/components/markdown";
+
+const MemoMarkdown = React.memo(Markdown);
 
 type MessageContentProps = {
   text: string;
@@ -23,18 +28,79 @@ const MessageContent = (props: MessageContentProps) => {
         },
       }}
     >
-      <Markdown code={props.text} />
+      <MemoMarkdown code={props.text} />
     </Box>
   );
 };
 
 const MemoMessageContent = React.memo(MessageContent);
 
+type ChatLogItemProps = {
+  i: Message;
+  enableScroll?: boolean;
+};
+
+const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
+  const questionRef = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    if (!enableScroll) return;
+
+    const timer = requestAnimationFrame(() => {
+      questionRef.current?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+
+    return () => {
+      cancelAnimationFrame(timer);
+    };
+  }, [enableScroll]);
+
+  const renderAnswer = () => {
+    if (i.error) {
+      return (
+        <Alert severity="error" variant="filled">
+          <AlertTitle>Error</AlertTitle>
+          {i.error}
+        </Alert>
+      );
+    }
+
+    return <MemoMessageContent text={i.answer} />;
+  };
+
+  return (
+    <>
+      <Box
+        ref={questionRef}
+        sx={{ display: "flex", justifyContent: "flex-end" }}
+      >
+        <Paper sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}>
+          {i.question}
+        </Paper>
+      </Box>
+      <Box
+        sx={{
+          "&:last-child": {
+            minBlockSize: "calc(100dvh - 200px)",
+          },
+        }}
+      >
+        {renderAnswer()}
+      </Box>
+    </>
+  );
+};
+
+const MemoChatLogItem = React.memo(ChatLogItem);
+
 type Message = {
   id: string;
-  role: string;
-  content: string;
-  time: number;
+  question: string;
+  answer: string;
+  error?: React.ReactNode;
 };
 
 const getContent = (data: string) => {
@@ -68,40 +134,33 @@ export const Chat = () => {
   }, [handleScrollToBottom]);
 
   const updateChatLog = (buf: string) => {
+    const content = buf
+      .split("data:")
+      .map((i) => getContent(i))
+      .filter(Boolean)
+      .join("");
+
     setMsgList((d) => {
       const last = d[d.length - 1];
       if (!last) return;
 
-      if (last.role === "assistant") {
-        last.content = buf
-          .split("data:")
-          .map((i) => getContent(i))
-          .filter(Boolean)
-          .join("");
-      } else {
-        d.push({
-          id: crypto.randomUUID(),
-          time: Date.now(),
-          role: "assistant",
-          content: "",
-        });
-      }
+      last.answer = content;
     });
   };
 
   const sendRequest = async () => {
     controller.current = new AbortController();
 
-    const res = await fetch("/v1/chat/completions1", {
+    const res = await fetch("/v1/chat/completions", {
       signal: controller.current?.signal,
       method: "POST",
       body: JSON.stringify({
         model: "4.0Ultra",
         messages: msgList
-          .map((i) => ({
-            role: i.role,
-            content: i.content,
-          }))
+          .flatMap((i) => [
+            { role: "user", content: i.question },
+            { role: "assistant", content: i.answer },
+          ])
           .concat({
             role: "user",
             content: question,
@@ -150,40 +209,55 @@ export const Chat = () => {
     setMsgList((d) => {
       d.push({
         id: crypto.randomUUID(),
-        time: Date.now(),
-        role: "user",
-        content: question,
+        question: question,
+        answer: "Loading...",
       });
-      d.push({
-        id: crypto.randomUUID(),
-        time: Date.now(),
-        role: "assistant",
-        content: "Loading...",
-      });
-    });
-
-    requestAnimationFrame(() => {
-      chatLogRef.current?.lastElementChild?.previousElementSibling?.scrollIntoView(
-        {
-          behavior: "smooth",
-          block: "start",
-        },
-      );
     });
 
     setLoading(true);
-    await sendRequest().catch(() => {
-      console.log("Failed to connect to the server");
+    await sendRequest().catch((error) => {
+      console.warn(error);
 
       setMsgList((d) => {
         const last = d[d.length - 1];
         if (!last) return;
-        if (last.role === "assistant") {
-          last.content = "Failed to connect to the server";
-        }
+        last.error = error.message || "Failed to connect to the server";
       });
     });
     setLoading(false);
+  };
+
+  const renderSendButton = () => {
+    if (loading) {
+      return (
+        <Button
+          variant="contained"
+          endIcon={<CircularProgress size={16} color="inherit" />}
+          type="button"
+          onClick={() => {
+            controller.current?.abort();
+          }}
+        >
+          Send
+        </Button>
+      );
+    }
+
+    return (
+      <Button
+        variant="contained"
+        endIcon={
+          <SendOutlined
+            sx={{
+              transform: "rotate(-45deg)",
+            }}
+          />
+        }
+        type="submit"
+      >
+        Send
+      </Button>
+    );
   };
 
   return (
@@ -215,19 +289,17 @@ export const Chat = () => {
               display: "table",
               clear: "both",
             },
+            "&>*+*": {
+              marginTop: 2,
+            },
           }}
         >
-          {msgList.map((i) => (
-            <Box
+          {msgList.map((i, idx) => (
+            <MemoChatLogItem
               key={i.id}
-              sx={{
-                "&:last-child": {
-                  minBlockSize: "calc(100dvh - 200px)",
-                },
-              }}
-            >
-              <MemoMessageContent text={i.content} />
-            </Box>
+              i={i}
+              enableScroll={Object.is(idx + 1, msgList.length)}
+            />
           ))}
         </Container>
       </Box>
@@ -249,26 +321,7 @@ export const Chat = () => {
             }}
             slotProps={{
               input: {
-                endAdornment: (
-                  <Button
-                    variant="contained"
-                    endIcon={
-                      loading ? (
-                        <CircularProgress size={16} color="inherit" />
-                      ) : (
-                        <SendOutlined
-                          sx={{
-                            transform: "rotate(-45deg)",
-                          }}
-                        />
-                      )
-                    }
-                    type="submit"
-                    disabled={loading}
-                  >
-                    Send
-                  </Button>
-                ),
+                endAdornment: renderSendButton(),
               },
             }}
           />
