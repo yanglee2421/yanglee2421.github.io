@@ -54,6 +54,7 @@
     "immer": "^10.1.1",
     "localforage": "^1.10.0",
     "mathjs": "^14.3.1",
+    "notistack": "^3.0.2",
     "nprogress": "^0.2.0",
     "qrcode.react": "^4.2.0",
     "react": "^19.0.0",

@@ -40,6 +40,20 @@ import { CSS } from "@dnd-kit/utilities";
 import { DragIndicatorOutlined } from "@mui/icons-material";
 import { timeout } from "@yotulee/run";
 import bg from "@/assets/images/justHer.jpg";
+import { useSnackbar } from "notistack";
+
+const ToastCard = () => {
+  const toast = useSnackbar();
+  return (
+    <Button
+      onClick={() => {
+        toast.enqueueSnackbar("test", { variant: "success" });
+      }}
+    >
+      test
+    </Button>
+  );
+};
 
 const bgImgHref = new URL(bg, import.meta.url).href;
 
@@ -61,14 +75,14 @@ const WebSocketCard = () => {
           await timeout(200);
           connect();
         },
-        controller
+        controller,
       );
       ref.current.addEventListener(
         "message",
         (e) => {
           setData(String(e.data));
         },
-        controller
+        controller,
       );
       ref.current.addEventListener("error", () => {}, controller);
     };
@@ -155,7 +169,7 @@ const SortableDnd = () => {
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
-    })
+    }),
   );
 
   return (
@@ -240,7 +254,7 @@ export const Lab = () => {
       0,
       0,
       cvs.width,
-      cvs.height
+      cvs.height,
     );
 
     const link = document.createElement("a");
@@ -253,6 +267,7 @@ export const Lab = () => {
   return (
     <>
       <Stack spacing={6}>
+        <ToastCard />
         <Box
           sx={{
             position: "relative",

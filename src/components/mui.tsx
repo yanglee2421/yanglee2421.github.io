@@ -12,6 +12,7 @@ import { type Mode, useLocaleStore } from "@/hooks/store/useLocaleStore";
 import "dayjs/locale/zh";
 import "dayjs/locale/en";
 import { useParams } from "react-router";
+import { SnackbarProvider } from "notistack";
 
 const WHITE = "#fff";
 
@@ -130,9 +131,19 @@ export const MuiProvider = (props: React.PropsWithChildren) => {
         dateAdapter={AdapterDayjs}
         adapterLocale={params.lang}
       >
-        {props.children}
+        <SnackbarProvider
+          anchorOrigin={{
+            vertical: "top",
+            horizontal: "center",
+          }}
+          autoHideDuration={1000 * 6}
+          maxSnack={3}
+        >
+          {props.children}
+        </SnackbarProvider>
       </LocalizationProvider>
       <CssBaseline />
+
       <GlobalStyles
         styles={{
           "#nprogress": {
