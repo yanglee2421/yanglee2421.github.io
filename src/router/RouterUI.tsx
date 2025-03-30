@@ -84,18 +84,8 @@ const GuestWrapper = (props: React.PropsWithChildren) =>
   useCurrentUser() ? <NavigateToHome /> : props.children;
 
 const AuthRoute = () => {
-  const [key, update] = React.useState("");
-
-  const location = useLocation();
-  const showMenuInMobile = Object.is(key, location.key);
-
   return (
-    <AuthLayout
-      showMenuInMobile={showMenuInMobile}
-      onShowMenuInMobileChange={() => {
-        update((prev) => (prev === location.key ? "" : location.key));
-      }}
-    >
+    <AuthLayout>
       <Outlet />
     </AuthLayout>
   );

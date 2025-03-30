@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseOutlined, MenuOutlined } from "@mui/icons-material";
-import { Link as RouterLink } from "react-router";
+import { Link as RouterLink, useLocation } from "react-router";
 import React from "react";
 import { AuthHeader } from "./AuthHeader";
 import { NavMenu } from "./NavMenu";
@@ -19,64 +19,77 @@ const HEADER_SIZE_XS = 14;
 const HEADER_SIZE_SM = 16;
 const ASIDE_SIZE = 72;
 
+const AuthLayoutWrapper = styled("div")(({ theme }) => ({
+  [theme.breakpoints.down("sm")]: {
+    "&:where([data-showmenu=false]) > [role=menu]": {
+      display: "none",
+    },
+    "&:where([data-showmenu=true]) > [role=main]": {
+      display: "none",
+    },
+  },
+}));
+
 const AuthAsideWrapper = styled("div")(({ theme }) => ({
   position: "fixed",
   zIndex: theme.zIndex.appBar - 1,
   insetInlineStart: 0,
   insetBlockStart: 0,
-
   inlineSize: "100dvw",
   blockSize: "100dvh",
-
+  overflow: "hidden",
+  backgroundColor: theme.palette.background.default,
   paddingBlockStart: theme.spacing(HEADER_SIZE_XS),
   [theme.breakpoints.up("sm")]: {
     maxInlineSize: theme.spacing(ASIDE_SIZE),
-
     paddingBlockStart: theme.spacing(HEADER_SIZE_SM),
   },
-
-  overflow: "hidden",
-
-  backgroundColor: theme.palette.background.default,
 }));
 
 const AuthAside = styled("aside")(({ theme }) => ({
+  inlineSize: "100%",
   blockSize: "100%",
-
   overflowX: "visible",
   overflowY: "auto",
   borderInlineEnd: `1px solid ${theme.palette.divider}`,
 }));
 
-const AuthContent = styled("div")(({ theme }) => ({
+const AuthContentWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-
   minBlockSize: "100dvh",
-  "&:has([data-contentfixed=true])": {
-    blockSize: "100dvh",
-  },
-  "&:where([aria-hidden=true])": {
-    display: "none",
-  },
-
   paddingBlockStart: theme.spacing(HEADER_SIZE_XS),
   [theme.breakpoints.up("sm")]: {
-    display: "flex",
-
     paddingInlineStart: theme.spacing(ASIDE_SIZE),
     paddingBlockStart: theme.spacing(HEADER_SIZE_SM),
   },
+  "&:has([data-contentfixed=true])": {
+    blockSize: "100dvh",
+  },
 }));
 
-type AuthLayoutProps = React.PropsWithChildren<{
-  showMenuInMobile?: boolean;
-  onShowMenuInMobileChange?(): void;
-}>;
+const AuthMain = styled("main")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  flex: 1,
+  inlineSize: "100%",
+  minBlockSize: 0,
+  padding: theme.spacing(4),
+  "&:has([data-contentfixed=true])": {
+    blockSize: "100%",
+  },
+}));
+
+type AuthLayoutProps = React.PropsWithChildren;
 
 export const AuthLayout = (props: AuthLayoutProps) => {
+  const [key, update] = React.useState("");
+
+  const location = useLocation();
+  const showMenuInMobile = Object.is(key, location.key);
+
   return (
-    <>
+    <AuthLayoutWrapper data-showmenu={showMenuInMobile}>
       <AppBar
         elevation={0}
         sx={(theme) => ({
@@ -102,28 +115,24 @@ export const AuthLayout = (props: AuthLayoutProps) => {
           </Box>
 
           <IconButton
-            onClick={props.onShowMenuInMobileChange}
+            onClick={() => update((prev) => (prev ? "" : location.key))}
             sx={{ display: { sm: "none" } }}
           >
-            {props.showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
+            {showMenuInMobile ? <CloseOutlined /> : <MenuOutlined />}
           </IconButton>
 
           <AuthHeader />
         </Toolbar>
       </AppBar>
-      <AuthAsideWrapper
-        sx={{
-          maxInlineSize: props.showMenuInMobile ? "none" : 0,
-        }}
-      >
+      <AuthAsideWrapper role="menu">
         <AuthAside>
           <NavMenu />
         </AuthAside>
       </AuthAsideWrapper>
-      <AuthContent aria-hidden={props.showMenuInMobile}>
-        {props.children}
-      </AuthContent>
-    </>
+      <AuthContentWrapper role="main">
+        <AuthMain>{props.children}</AuthMain>
+      </AuthContentWrapper>
+    </AuthLayoutWrapper>
   );
 };
 
@@ -232,13 +241,9 @@ export const GuestLayout = (props: React.PropsWithChildren) => {
     img.src = url;
     img.onload = () => {
       URL.revokeObjectURL(url);
-
       const cvs = cvsRef.current;
-
       if (!cvs) return;
-
       const ctx = cvs.getContext("2d");
-
       if (!ctx) return;
 
       cvs.width = IMAGE_SIZE;

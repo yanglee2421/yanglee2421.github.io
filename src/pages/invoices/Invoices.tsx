@@ -11,7 +11,7 @@ import {
   CardHeader,
   Checkbox,
   Divider,
-  Grid2,
+  Grid,
   IconButton,
   Table,
   TableBody,
@@ -265,24 +265,24 @@ const InvoiceTable = () => {
     <Card>
       <CardHeader title="Invoice" />
       <CardContent>
-        <Grid2 container spacing={6}>
-          <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid container spacing={6}>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
               value={staff}
               onChange={(e) => setStaff(e.target.value)}
               fullWidth
               label="Staff"
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <TextField
               value={note}
               onChange={(e) => setNote(e.target.value)}
               fullWidth
               label="Note"
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <DatePicker
               value={date ? dayjs(Number.parseInt(date)) : null}
               onChange={(e) => {
@@ -295,8 +295,8 @@ const InvoiceTable = () => {
                 field: { clearable: true },
               }}
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </CardContent>
       <Divider />
       <CardContent>

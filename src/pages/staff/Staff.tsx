@@ -9,7 +9,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  Grid2,
+  Grid,
   IconButton,
   MenuItem,
   Switch,
@@ -209,24 +209,24 @@ export const Staff = () => {
     return (
       <>
         <CardContent>
-          <Grid2 container spacing={6}>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+          <Grid container spacing={6}>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <TextField
                 value={name}
                 onChange={(e) => setName(e.target.value)}
                 label="Name"
                 fullWidth
               />
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <TextField
                 value={alias}
                 onChange={(e) => setAlias(e.target.value)}
                 fullWidth
                 label="Alias"
               />
-            </Grid2>
-            <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <TextField
                 value={enable}
                 onChange={(e) => setEnable(e.target.value)}
@@ -238,8 +238,8 @@ export const Staff = () => {
                 <MenuItem value="true">Enabled</MenuItem>
                 <MenuItem value="false">Disabled</MenuItem>
               </TextField>
-            </Grid2>
-          </Grid2>
+            </Grid>
+          </Grid>
         </CardContent>
         <TableContainer>
           <Table>
@@ -304,8 +304,8 @@ export const Staff = () => {
             noValidate
             onReset={() => form.reset()}
           >
-            <Grid2 container spacing={6}>
-              <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+            <Grid container spacing={6}>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <Controller
                   control={form.control}
                   name="name"
@@ -319,8 +319,8 @@ export const Staff = () => {
                     />
                   )}
                 />
-              </Grid2>
-              <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+              </Grid>
+              <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <Controller
                   control={form.control}
                   name="alias"
@@ -334,8 +334,8 @@ export const Staff = () => {
                     />
                   )}
                 />
-              </Grid2>
-            </Grid2>
+              </Grid>
+            </Grid>
           </form>
         </CardContent>
         <CardActions>

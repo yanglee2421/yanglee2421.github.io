@@ -269,7 +269,6 @@ export const Chat = () => {
         zIndex: 1,
         display: "flex",
         flexDirection: "column",
-        padding: 5,
       }}
     >
       <Box
@@ -303,8 +302,8 @@ export const Chat = () => {
           ))}
         </Container>
       </Box>
-      <form ref={formRef} onSubmit={handleSubmit}>
-        <Container maxWidth="md">
+      <Container maxWidth="md">
+        <form ref={formRef} onSubmit={handleSubmit}>
           <TextField
             value={question}
             onChange={(e) => setQuestion(e.target.value)}
@@ -325,8 +324,8 @@ export const Chat = () => {
               },
             }}
           />
-        </Container>
-      </form>
+        </form>
+      </Container>
     </Box>
   );
 };

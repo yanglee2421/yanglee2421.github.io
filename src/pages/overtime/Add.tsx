@@ -12,7 +12,7 @@ import {
   DialogActions,
   DialogContent,
   DialogTitle,
-  Grid2,
+  Grid,
   TextField,
 } from "@mui/material";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
@@ -84,8 +84,8 @@ export function Add() {
             }, console.error)}
             onReset={handleClose}
           >
-            <Grid2 container spacing={6} sx={{ mt: 2 }}>
-              <Grid2 size={{ xs: 12 }}>
+            <Grid container spacing={6} sx={{ mt: 2 }}>
+              <Grid size={{ xs: 12 }}>
                 <Controller
                   control={form.control}
                   name="date"
@@ -107,8 +107,8 @@ export function Add() {
                     />
                   )}
                 />
-              </Grid2>
-              <Grid2 size={{ xs: 12 }}>
+              </Grid>
+              <Grid size={{ xs: 12 }}>
                 <Controller
                   control={form.control}
                   name="hours"
@@ -116,7 +116,8 @@ export function Add() {
                     <TextField
                       value={field.value}
                       onChange={(e) =>
-                        field.onChange(Number.parseInt(e.target.value) || 0)}
+                        field.onChange(Number.parseInt(e.target.value) || 0)
+                      }
                       onBlur={field.onBlur}
                       error={!!fieldState.error}
                       helperText={fieldState.error?.message}
@@ -125,16 +126,20 @@ export function Add() {
                     />
                   )}
                 />
-              </Grid2>
-            </Grid2>
+              </Grid>
+            </Grid>
           </form>
         </DialogContent>
         <DialogActions>
           <Button
             form={formId}
-            startIcon={add.isPending
-              ? <RotateRightOutlined className="animate-spin" />
-              : <PlusOneOutlined />}
+            startIcon={
+              add.isPending ? (
+                <RotateRightOutlined className="animate-spin" />
+              ) : (
+                <PlusOneOutlined />
+              )
+            }
             disabled={add.isPending}
             type="submit"
             variant="contained"

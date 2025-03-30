@@ -5,7 +5,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  Grid2,
+  Grid,
   List,
   ListItem,
   ListItemAvatar,
@@ -100,15 +100,15 @@ const WebSocketCard = () => {
     <Card>
       <CardHeader title="WebSocket" subheader={data || "Placeholder"} />
       <CardContent>
-        <Grid2 container spacing={6}>
-          <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+        <Grid container spacing={6}>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <TextField
               value={input}
               onChange={(e) => setInput(e.target.value)}
               fullWidth
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </CardContent>
       <CardActions>
         <Button
