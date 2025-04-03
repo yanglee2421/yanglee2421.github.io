@@ -9,7 +9,7 @@ import {
   useTheme,
 } from "@mui/material";
 import { CloseOutlined, MenuOutlined } from "@mui/icons-material";
-import { Link as RouterLink, useLocation } from "react-router";
+import { Outlet, Link as RouterLink, useLocation } from "react-router";
 import React from "react";
 import { AuthHeader } from "./AuthHeader";
 import { NavMenu } from "./NavMenu";
@@ -80,9 +80,7 @@ const AuthMain = styled("main")(({ theme }) => ({
   },
 }));
 
-type AuthLayoutProps = React.PropsWithChildren;
-
-export const AuthLayout = (props: AuthLayoutProps) => {
+export const AuthLayout = () => {
   const [key, update] = React.useState("");
 
   const location = useLocation();
@@ -130,13 +128,15 @@ export const AuthLayout = (props: AuthLayoutProps) => {
         </AuthAside>
       </AuthAsideWrapper>
       <AuthContentWrapper role="main">
-        <AuthMain>{props.children}</AuthMain>
+        <AuthMain>
+          <Outlet />
+        </AuthMain>
       </AuthContentWrapper>
     </AuthLayoutWrapper>
   );
 };
 
-export const BlankLayout = (props: React.PropsWithChildren) => {
+export const BlankLayout = () => {
   return (
     <Box
       sx={{
@@ -146,7 +146,9 @@ export const BlankLayout = (props: React.PropsWithChildren) => {
         },
       }}
     >
-      <Stack spacing={6}>{props.children}</Stack>
+      <Stack spacing={6}>
+        <Outlet />
+      </Stack>
     </Box>
   );
 };
@@ -222,7 +224,7 @@ const Logo = (props: React.SVGProps<SVGSVGElement> & { bgcolor: string }) => {
   );
 };
 
-export const GuestLayout = (props: React.PropsWithChildren) => {
+export const GuestLayout = () => {
   const id = React.useId();
   const cvsRef = React.useRef<HTMLCanvasElement>(null);
   const theme = useTheme();
@@ -307,7 +309,9 @@ export const GuestLayout = (props: React.PropsWithChildren) => {
           )
         }
       </GuestAside>
-      <GuestMain>{props.children}</GuestMain>
+      <GuestMain>
+        <Outlet />
+      </GuestMain>
     </>
   );
 };

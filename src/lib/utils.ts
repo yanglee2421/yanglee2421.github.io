@@ -1,3 +1,5 @@
+import { FALLBACK_LANG, LANGS } from "./constants";
+
 export function onAnimationFrame(cb: () => void) {
   let animate = 0;
 
@@ -30,4 +32,16 @@ export const modeToIsDark = (
     default:
       return inDark;
   }
+};
+
+export const getMatchedLang = (path = "", state: string) => {
+  if (LANGS.has(path)) {
+    return path;
+  }
+
+  if (LANGS.has(state)) {
+    return state;
+  }
+
+  return FALLBACK_LANG;
 };

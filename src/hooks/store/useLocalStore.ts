@@ -3,29 +3,27 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import { type WritableDraft } from "immer";
 import React from "react";
-
-const FALLBACK_LANG = "en";
-const DEFAULT_MODE = "system";
+import { DEFAULT_MODE, FALLBACK_LANG } from "@/lib/constants";
 
 export type Mode = "light" | "dark" | "system";
 
-type LocaleStoreState = {
+type State = {
   fallbackLang: string;
   mode: Mode;
 };
 
-type LocaleStoreActions = {
+type Actions = {
   update(
     nextStateOrUpdater:
-      | LocaleStoreState
-      | Partial<LocaleStoreState>
-      | ((state: WritableDraft<LocaleStoreState>) => void),
+      | State
+      | Partial<State>
+      | ((state: WritableDraft<State>) => void),
   ): void;
 };
 
-type LocaleStore = LocaleStoreState & LocaleStoreActions;
+type Store = State & Actions;
 
-export const useLocaleStore = create<LocaleStore>()(
+export const useLocalStore = create<Store>()(
   persist(
     immer((update) => ({
       mode: DEFAULT_MODE,
@@ -34,15 +32,15 @@ export const useLocaleStore = create<LocaleStore>()(
       update,
     })),
     {
-      name: "useLocaleStore",
+      name: "useLocalStore",
       storage: createJSONStorage(() => window.localStorage),
     },
   ),
 );
 
-export const useLocaleStoreHasHydrated = () =>
+export const useLocalStoreHasHydrated = () =>
   React.useSyncExternalStore(
-    (onStateChange) => useLocaleStore.persist.onFinishHydration(onStateChange),
-    () => useLocaleStore.persist.hasHydrated(),
+    (onStateChange) => useLocalStore.persist.onFinishHydration(onStateChange),
+    () => useLocalStore.persist.hasHydrated(),
     () => false,
   );

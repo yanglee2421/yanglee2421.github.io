@@ -8,10 +8,10 @@ import {
 import React from "react";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { type Mode, useLocaleStore } from "@/hooks/store/useLocaleStore";
+import { type Mode, useLocalStore } from "@/hooks/store/useLocalStore";
 import "dayjs/locale/zh";
 import "dayjs/locale/en";
-import { useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import { SnackbarProvider } from "notistack";
 
 const WHITE = "#fff";
@@ -116,10 +116,10 @@ const modeToHasSelector = (mode: Mode, isDark: boolean) => {
 
 export const MuiProvider = (props: React.PropsWithChildren) => {
   const isDark = useIsDark();
-  const mode = useLocaleStore((s) => s.mode);
+  const mode = useLocalStore((s) => s.mode);
   const hasDarkSelector = modeToHasSelector(mode, isDark);
   const theme = hasDarkSelector ? darkTheme : lightTheme;
-  const params = useParams();
+  const [, i18n] = useTranslation();
   const themeColor = hasDarkSelector
     ? theme.palette.background.default
     : theme.palette.primary.main;
@@ -129,7 +129,7 @@ export const MuiProvider = (props: React.PropsWithChildren) => {
       <meta name="theme-color" content={themeColor} />
       <LocalizationProvider
         dateAdapter={AdapterDayjs}
-        adapterLocale={params.lang}
+        adapterLocale={i18n.language}
       >
         <SnackbarProvider
           anchorOrigin={{

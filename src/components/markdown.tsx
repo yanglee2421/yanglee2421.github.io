@@ -9,7 +9,7 @@ import rehypeShikiFromHighlighter, {
 } from "@shikijs/rehype/core";
 import { hightlighter } from "@/lib/hightlighter";
 import { useIsDark } from "@/hooks/dom/useIsDark";
-import { useLocaleStore } from "@/hooks/store/useLocaleStore";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { modeToIsDark } from "@/lib/utils";
 
 type MarkdownProps = {
@@ -20,7 +20,7 @@ export const Markdown = (props: MarkdownProps) => {
   const hightlighterCore = React.use(hightlighter);
 
   const isDarkMode = useIsDark();
-  const mode = useLocaleStore((s) => s.mode);
+  const mode = useLocalStore((s) => s.mode);
 
   const isDark = modeToIsDark(mode, isDarkMode);
   const options: RehypeShikiCoreOptions = {

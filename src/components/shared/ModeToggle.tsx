@@ -11,11 +11,11 @@ import {
   DesktopWindowsOutlined,
   LightModeOutlined,
 } from "@mui/icons-material";
-import { Mode, useLocaleStore } from "@/hooks/store/useLocaleStore";
+import { Mode, useLocalStore } from "@/hooks/store/useLocalStore";
 
 export function ModeToggle() {
-  const mode = useLocaleStore((s) => s.mode);
-  const updateMode = useLocaleStore((s) => s.update);
+  const mode = useLocalStore((s) => s.mode);
+  const updateMode = useLocalStore((s) => s.update);
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const handleClose = () => {

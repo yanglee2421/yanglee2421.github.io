@@ -30,7 +30,7 @@ type StoreActions = {
     nextStateOrUpdater:
       | StoreState
       | Partial<StoreState>
-      | ((state: WritableDraft<StoreState>) => void)
+      | ((state: WritableDraft<StoreState>) => void),
   ): void;
 };
 
@@ -47,13 +47,13 @@ export const useDbStore = create<Store>()(
       name: "useDbStore",
       storage: createJSONStorage(() => localforage),
       version: 2,
-    }
-  )
+    },
+  ),
 );
 
-export const useLocaleStoreHasHydrated = () =>
+export const useDbStoreHasHydrated = () =>
   React.useSyncExternalStore(
     (onStateChange) => useDbStore.persist.onFinishHydration(onStateChange),
     () => useDbStore.persist.hasHydrated(),
-    () => false
+    () => false,
   );
