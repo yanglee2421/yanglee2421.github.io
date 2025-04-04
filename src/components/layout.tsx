@@ -14,10 +14,7 @@ import React from "react";
 import { AuthHeader } from "./AuthHeader";
 import { NavMenu } from "./NavMenu";
 import { Logo as AppLogo } from "./Logo";
-
-const HEADER_SIZE_XS = 14;
-const HEADER_SIZE_SM = 16;
-const ASIDE_SIZE = 72;
+import { HEADER_SIZE_XS, HEADER_SIZE_SM, ASIDE_SIZE } from "@/lib/constants";
 
 const AuthLayoutWrapper = styled("div")(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {

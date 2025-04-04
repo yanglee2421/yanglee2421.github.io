@@ -1,7 +1,5 @@
 import { Navigate, useLocation, useSearchParams } from "react-router";
-
-const HOME_PATH = "/";
-const LOGIN_PATH = "/login";
+import { HOME_PATH, LOGIN_PATH } from "@/lib/constants";
 
 export const NavigateToHome = () => {
   const [searchParams] = useSearchParams();
