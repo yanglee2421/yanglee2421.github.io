@@ -1,9 +1,6 @@
 import { RouterUI } from "@/router/RouterUI";
 import { useLocalStoreHasHydrated } from "@/hooks/store/useLocalStore";
 import { useDbStoreHasHydrated } from "./hooks/store/useDbStore";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { queryClient } from "@/lib/constants";
 import { Loading } from "./components/loading";
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import {
@@ -20,6 +17,7 @@ import "dayjs/locale/zh";
 import "dayjs/locale/en";
 import { useTranslation } from "react-i18next";
 import { SnackbarProvider } from "notistack";
+import { QueryProvider } from "./components/query";
 
 const WHITE = "#fff";
 
@@ -171,15 +169,6 @@ const MuiProvider = (props: React.PropsWithChildren) => {
         }}
       />
     </ThemeProvider>
-  );
-};
-
-const QueryProvider = (props: React.PropsWithChildren) => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      {props.children}
-      <ReactQueryDevtools buttonPosition="bottom-left" />
-    </QueryClientProvider>
   );
 };
 

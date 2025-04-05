@@ -1,6 +1,5 @@
 import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
-import { QueryClient } from "@tanstack/react-query";
 
 export const GITHUB_URL =
   "https://github.com/yanglee2421/yanglee2421.github.io";
@@ -13,26 +12,6 @@ export const HEADER_SIZE_XS = 14;
 export const HEADER_SIZE_SM = 16;
 export const ASIDE_SIZE = 72;
 export const FULL_YEAR = new Date().getFullYear();
-
-export const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      staleTime: 1000 * 60,
-      gcTime: 1000 * 60 * 2,
-
-      refetchOnMount: true,
-      refetchOnReconnect: true,
-      refetchOnWindowFocus: true,
-
-      retry: 1,
-      retryDelay(attemptIndex) {
-        return Math.min(1000 * 2 ** attemptIndex, 1000 * 8);
-      },
-
-      experimental_prefetchInRender: true,
-    },
-  },
-});
 
 export const hightlighter = createHighlighterCore({
   themes: [
