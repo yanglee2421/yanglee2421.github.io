@@ -733,7 +733,7 @@ const routes: RouteObject[] = [
                   {
                     id: "overtime",
                     path: "overtime",
-                    lazy: async () => import("@/pages/overtime/component"),
+                    lazy: () => import("@/pages/overtime/component"),
                   },
                   {
                     id: "minesweeper",
