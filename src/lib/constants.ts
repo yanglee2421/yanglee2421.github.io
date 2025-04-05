@@ -2,7 +2,8 @@ import { createHighlighterCore } from "shiki/core";
 import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 import { QueryClient } from "@tanstack/react-query";
 
-export const GITHUB_URL = "https://github.com/yanglee2421";
+export const GITHUB_URL =
+  "https://github.com/yanglee2421/yanglee2421.github.io";
 export const FALLBACK_LANG = "en";
 export const DEFAULT_MODE = "system";
 export const LANGS = new Set(["en", "zh"]);
