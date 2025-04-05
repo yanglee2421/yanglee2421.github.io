@@ -7,7 +7,7 @@ import rehypeRaw from "rehype-raw";
 import rehypeShikiFromHighlighter, {
   RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
-import { hightlighter } from "@/lib/hightlighter";
+import { hightlighter } from "@/lib/constants";
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { modeToIsDark } from "@/lib/utils";

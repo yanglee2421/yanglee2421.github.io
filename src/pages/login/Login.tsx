@@ -1,6 +1,6 @@
 import { LangToggle } from "@/components/shared/LangToggle";
 import { ModeToggle } from "@/components/shared/ModeToggle";
-import { SignInWithGithub, SignInWithGoogle } from "@/components/sign";
+import { SignInWithGithub, SignInWithGoogle } from "@/pages/login/sign";
 import { GitHub } from "@mui/icons-material";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import * as consts from "@/lib/constants";

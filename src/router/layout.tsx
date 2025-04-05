@@ -3,18 +3,149 @@ import {
   AppBar,
   Box,
   IconButton,
+  Link,
   Stack,
   styled,
   Toolbar,
+  Typography,
   useTheme,
 } from "@mui/material";
-import { CloseOutlined, MenuOutlined } from "@mui/icons-material";
-import { Outlet, Link as RouterLink, useLocation } from "react-router";
+import {
+  CloseOutlined,
+  MenuOutlined,
+  CalculateOutlined,
+  CalendarMonthOutlined,
+  CalendarTodayOutlined,
+  ChatOutlined,
+  ChevronRightOutlined,
+  DashboardOutlined,
+  HandshakeOutlined,
+  PeopleOutlineOutlined,
+  ScienceOutlined,
+  SportsEsportsOutlined,
+  WalletOutlined,
+  QrCodeOutlined,
+  GitHub,
+} from "@mui/icons-material";
+import {
+  NavLink,
+  Outlet,
+  Link as RouterLink,
+  useLocation,
+  useParams,
+} from "react-router";
 import React from "react";
-import { AuthHeader } from "./AuthHeader";
-import { NavMenu } from "./NavMenu";
-import { Logo as AppLogo } from "./Logo";
-import { HEADER_SIZE_XS, HEADER_SIZE_SM, ASIDE_SIZE } from "@/lib/constants";
+import { Logo as AppLogo } from "../components/Logo";
+import * as consts from "@/lib/constants";
+import { LangToggle } from "@/components/shared/LangToggle";
+import { ModeToggle } from "@/components/shared/ModeToggle";
+import { UserDropdown } from "@/components/shared/UserDropdonw";
+
+const LinkWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(2),
+
+  "& a": {
+    textDecoration: "none",
+    color: theme.palette.text.primary,
+
+    display: "flex",
+    gap: theme.spacing(3),
+    alignItem: "center",
+
+    padding: theme.spacing(5),
+
+    [theme.breakpoints.up("sm")]: {
+      paddingInline: theme.spacing(3),
+      paddingBlock: theme.spacing(3),
+    },
+  },
+  "& a:hover": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "& a[aria-current=page]": {
+    color: theme.palette.primary.main,
+    backgroundColor: alpha(
+      theme.palette.primary.main,
+      theme.palette.action.activatedOpacity,
+    ),
+  },
+}));
+
+const list = [
+  {
+    to: "/dashboard",
+    label: "Dashboard",
+    icon: <DashboardOutlined />,
+  },
+  {
+    to: "/calendar",
+    label: "Calendar",
+    icon: <CalendarTodayOutlined />,
+  },
+  {
+    to: "/calculator",
+    label: "Calculator",
+    icon: <CalculateOutlined />,
+  },
+  {
+    to: "/invoices",
+    label: "Invoices",
+    icon: <WalletOutlined />,
+  },
+  {
+    to: "/staff",
+    label: "Staff",
+    icon: <PeopleOutlineOutlined />,
+  },
+  {
+    to: "/overtime",
+    label: "Overtime",
+    icon: <CalendarMonthOutlined />,
+  },
+  {
+    to: "/minesweeper",
+    label: "Minesweeper",
+    icon: <SportsEsportsOutlined />,
+  },
+  {
+    to: "/qrcode",
+    label: "qrcode",
+    icon: <QrCodeOutlined />,
+  },
+  { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
+  {
+    to: "/lab",
+    label: "Lab",
+    icon: <ScienceOutlined />,
+  },
+  {
+    to: "/handbook",
+    label: "Handbook",
+    icon: <HandshakeOutlined />,
+  },
+];
+
+export const NavMenu = () => {
+  const params = useParams();
+
+  return (
+    <LinkWrapper>
+      {list.map((i) => (
+        <NavLink key={i.to} to={`/${params.lang + i.to}`} end>
+          {i.icon}
+          <Typography variant="body1" component="span">
+            {i.label}
+          </Typography>
+          <ChevronRightOutlined sx={{ marginInlineStart: "auto" }} />
+        </NavLink>
+      ))}
+    </LinkWrapper>
+  );
+};
+
+NavMenu.list = list;
 
 const AuthLayoutWrapper = styled("div")(({ theme }) => ({
   [theme.breakpoints.down("sm")]: {
@@ -36,10 +167,10 @@ const AuthAsideWrapper = styled("div")(({ theme }) => ({
   blockSize: "100dvh",
   overflow: "hidden",
   backgroundColor: theme.palette.background.default,
-  paddingBlockStart: theme.spacing(HEADER_SIZE_XS),
+  paddingBlockStart: theme.spacing(consts.HEADER_SIZE_XS),
   [theme.breakpoints.up("sm")]: {
-    maxInlineSize: theme.spacing(ASIDE_SIZE),
-    paddingBlockStart: theme.spacing(HEADER_SIZE_SM),
+    maxInlineSize: theme.spacing(consts.ASIDE_SIZE),
+    paddingBlockStart: theme.spacing(consts.HEADER_SIZE_SM),
   },
 }));
 
@@ -55,10 +186,10 @@ const AuthContentWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
   minBlockSize: "100dvh",
-  paddingBlockStart: theme.spacing(HEADER_SIZE_XS),
+  paddingBlockStart: theme.spacing(consts.HEADER_SIZE_XS),
   [theme.breakpoints.up("sm")]: {
-    paddingInlineStart: theme.spacing(ASIDE_SIZE),
-    paddingBlockStart: theme.spacing(HEADER_SIZE_SM),
+    paddingInlineStart: theme.spacing(consts.ASIDE_SIZE),
+    paddingBlockStart: theme.spacing(consts.HEADER_SIZE_SM),
   },
   "&:has([data-contentfixed=true])": {
     blockSize: "100dvh",
@@ -76,6 +207,31 @@ const AuthMain = styled("main")(({ theme }) => ({
     blockSize: "100%",
   },
 }));
+
+const AuthHeader = () => {
+  return (
+    <>
+      <Box sx={{ marginInlineStart: "auto" }}></Box>
+      <LangToggle />
+      <ModeToggle />
+      <IconButton href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
+        <GitHub />
+      </IconButton>
+      <UserDropdown />
+    </>
+  );
+};
+
+export const AuthFooter = () => {
+  return (
+    <>
+      &copy;{consts.FULL_YEAR} by{" "}
+      <Link href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
+        yanglee2421
+      </Link>
+    </>
+  );
+};
 
 export const AuthLayout = () => {
   const [key, update] = React.useState("");
