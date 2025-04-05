@@ -59,7 +59,7 @@ const renderBadgeContent = (date: Date, start?: Date, end?: Date) => {
   return (time - minTime) / (1000 * 60 * 60 * 24) + 1;
 };
 
-export function Calendar() {
+export const Component = () => {
   const [selectedTime, setSelectedTime] = React.useState(() =>
     dayjs(new Date().toDateString()),
   );
@@ -184,4 +184,4 @@ export function Calendar() {
       </TableContainer>
     </Card>
   );
-}
+};

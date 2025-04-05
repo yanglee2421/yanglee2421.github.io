@@ -1,5 +1,5 @@
 import { NavLink } from "react-router";
 
-export function NotFound() {
+export const Component = () => {
   return <NavLink to={"/"}>Take me home</NavLink>;
-}
+};

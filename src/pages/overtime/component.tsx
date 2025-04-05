@@ -37,7 +37,7 @@ import {
 import classNames from "classnames";
 import { Add } from "./Add";
 
-export function Overtime() {
+export const Component = () => {
   // eslint-disable-next-line
   "use no memo";
 
@@ -140,7 +140,7 @@ export function Overtime() {
       </div>
     )
   );
-}
+};
 
 const columnHelper =
   createColumnHelper<QueryDocumentSnapshot<DocumentData, DocumentData>>();

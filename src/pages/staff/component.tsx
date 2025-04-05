@@ -102,7 +102,7 @@ const checkBool = (bool: boolean, search: string) => {
   return bool.toString().toLowerCase() === search.toLowerCase();
 };
 
-export const Staff = () => {
+export const Component = () => {
   "use no memo";
   const [activeTab, setActiveTab] = React.useState("list");
 

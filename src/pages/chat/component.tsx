@@ -112,7 +112,7 @@ const getContent = (data: string) => {
   }
 };
 
-export const Chat = () => {
+export const Component = () => {
   const [question, setQuestion] = React.useState("");
   const [loading, setLoading] = React.useState(false);
 

@@ -94,82 +94,6 @@ const checkText = (search: string | null, target: string) => {
   return target.toLowerCase().includes(search.toLowerCase());
 };
 
-export const Invoices = () => {
-  const [searchParams] = useSearchParams();
-
-  const ids = searchParams.get("ids");
-
-  if (!ids) {
-    return <InvoiceTable />;
-  }
-
-  return <ResultPanel />;
-};
-
-const ResultPanel = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const ids = searchParams.get("ids")?.split("@") || [];
-  const invoices = useDbStore((s) => s.invoices);
-  const rows = invoices.filter((i) => ids.includes(i.id + ""));
-  const allStaffs = [...new Set(rows.flatMap((i) => i.staff))];
-  const map = new Map<string, string>();
-
-  allStaffs.forEach((s) => {
-    map.set(
-      s,
-      rows
-        .filter((i) => i.staff.includes(s))
-        .reduce((r, i) => {
-          return mathjs
-            .add(
-              mathjs.divide(
-                mathjs.bignumber(i.amount),
-                mathjs.bignumber(i.staff.length),
-              ),
-              mathjs.bignumber(r),
-            )
-            .toString();
-        }, "0"),
-    );
-  });
-
-  return (
-    <Card>
-      <CardHeader
-        title="Result"
-        action={
-          <IconButton
-            onClick={() => {
-              setSearchParams((p) => {
-                const n = new URLSearchParams(p);
-                n.delete("ids");
-                return n;
-              });
-            }}
-            color="error"
-          >
-            <CloseOutlined />
-          </IconButton>
-        }
-      />
-      <Table>
-        <TableHead>
-          <TableCell>STAFF</TableCell>
-          <TableCell>AMOUNT</TableCell>
-        </TableHead>
-        <TableBody>
-          {[...map.entries()].map((i) => (
-            <TableRow key={i[0]}>
-              <TableCell>{i[0]}</TableCell>
-              <TableCell>{i[1]}</TableCell>
-            </TableRow>
-          ))}
-        </TableBody>
-      </Table>
-    </Card>
-  );
-};
-
 const InvoiceTable = () => {
   // eslint-disable-next-line
   "use no memo";
@@ -407,4 +331,80 @@ const InvoiceTable = () => {
       />
     </Card>
   );
+};
+
+const ResultPanel = () => {
+  const [searchParams, setSearchParams] = useSearchParams();
+  const ids = searchParams.get("ids")?.split("@") || [];
+  const invoices = useDbStore((s) => s.invoices);
+  const rows = invoices.filter((i) => ids.includes(i.id + ""));
+  const allStaffs = [...new Set(rows.flatMap((i) => i.staff))];
+  const map = new Map<string, string>();
+
+  allStaffs.forEach((s) => {
+    map.set(
+      s,
+      rows
+        .filter((i) => i.staff.includes(s))
+        .reduce((r, i) => {
+          return mathjs
+            .add(
+              mathjs.divide(
+                mathjs.bignumber(i.amount),
+                mathjs.bignumber(i.staff.length),
+              ),
+              mathjs.bignumber(r),
+            )
+            .toString();
+        }, "0"),
+    );
+  });
+
+  return (
+    <Card>
+      <CardHeader
+        title="Result"
+        action={
+          <IconButton
+            onClick={() => {
+              setSearchParams((p) => {
+                const n = new URLSearchParams(p);
+                n.delete("ids");
+                return n;
+              });
+            }}
+            color="error"
+          >
+            <CloseOutlined />
+          </IconButton>
+        }
+      />
+      <Table>
+        <TableHead>
+          <TableCell>STAFF</TableCell>
+          <TableCell>AMOUNT</TableCell>
+        </TableHead>
+        <TableBody>
+          {[...map.entries()].map((i) => (
+            <TableRow key={i[0]}>
+              <TableCell>{i[0]}</TableCell>
+              <TableCell>{i[1]}</TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
+    </Card>
+  );
+};
+
+export const Component = () => {
+  const [searchParams] = useSearchParams();
+
+  const ids = searchParams.get("ids");
+
+  if (!ids) {
+    return <InvoiceTable />;
+  }
+
+  return <ResultPanel />;
 };

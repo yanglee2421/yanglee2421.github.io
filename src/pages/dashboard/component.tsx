@@ -600,7 +600,7 @@ const SvgCard = () => {
   );
 };
 
-export function Dashboard() {
+export const Component = () => {
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
@@ -647,4 +647,4 @@ export function Dashboard() {
       </ErrorBoundary>
     </Grid>
   );
-}
+};

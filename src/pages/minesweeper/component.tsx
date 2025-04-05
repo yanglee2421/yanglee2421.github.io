@@ -212,7 +212,7 @@ const reducer = ({ game }: ReducerState, args?: ReducerArgs) => ({
   game: args ? new MinesweeperGame(...args) : game,
 });
 
-export const Minesweeper = () => {
+export const Component = () => {
   const handleTimeStart = () => {
     console.log("started");
   };

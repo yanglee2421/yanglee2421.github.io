@@ -692,7 +692,7 @@ const routes: RouteObject[] = [
             id: "404",
             path: "*",
             lazy() {
-              return import("@/pages/not-fount/route");
+              return import("@/pages/not-fount/component");
             },
           },
           {
@@ -706,7 +706,7 @@ const routes: RouteObject[] = [
                   {
                     id: "login",
                     path: "login",
-                    lazy: () => import("@/pages/login/route"),
+                    lazy: () => import("@/pages/login/component"),
                   },
                 ],
               },
@@ -723,52 +723,52 @@ const routes: RouteObject[] = [
                   {
                     id: "home",
                     index: true,
-                    lazy: () => import("@/pages/home/route"),
+                    lazy: () => import("@/pages/home/component"),
                   },
                   {
                     id: "dashboard",
                     path: "dashboard",
-                    lazy: () => import("@/pages/dashboard/route"),
+                    lazy: () => import("@/pages/dashboard/component"),
                   },
                   {
                     id: "overtime",
                     path: "overtime",
-                    lazy: async () => import("@/pages/overtime/route"),
+                    lazy: async () => import("@/pages/overtime/component"),
                   },
                   {
                     id: "minesweeper",
                     path: "minesweeper",
-                    lazy: () => import("@/pages/minesweeper/route"),
+                    lazy: () => import("@/pages/minesweeper/component"),
                   },
                   {
                     id: "lab",
                     path: "lab",
-                    lazy: () => import("@/pages/lab/route"),
+                    lazy: () => import("@/pages/lab/component"),
                   },
                   {
                     id: "calendar",
                     path: "calendar",
-                    lazy: () => import("@/pages/calendar/Component"),
+                    lazy: () => import("@/pages/calendar/component"),
                   },
                   {
                     id: "calculator",
                     path: "calculator",
-                    lazy: () => import("@/pages/calculator/route"),
+                    lazy: () => import("@/pages/calculator/component"),
                   },
                   {
                     id: "invoices",
                     path: "invoices",
-                    lazy: () => import("@/pages/invoices/route"),
+                    lazy: () => import("@/pages/invoices/component"),
                   },
                   {
                     id: "staff",
                     path: "staff",
-                    lazy: () => import("@/pages/staff/route"),
+                    lazy: () => import("@/pages/staff/component"),
                   },
                   {
                     id: "chat",
                     path: "chat",
-                    lazy: () => import("@/pages/chat/route"),
+                    lazy: () => import("@/pages/chat/component"),
                   },
                   {
                     id: "handbook",
@@ -778,7 +778,7 @@ const routes: RouteObject[] = [
                   {
                     id: "qrcode",
                     path: "qrcode",
-                    lazy: () => import("@/pages/qrcode/route"),
+                    lazy: () => import("@/pages/qrcode/component"),
                   },
                 ],
               },

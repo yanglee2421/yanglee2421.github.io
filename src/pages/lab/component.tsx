@@ -226,7 +226,7 @@ const Counter = () => {
   );
 };
 
-export const Lab = () => {
+export const Component = () => {
   const id = React.useId();
 
   const handleCutImage = () => {

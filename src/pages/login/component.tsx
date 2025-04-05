@@ -5,7 +5,7 @@ import { GitHub } from "@mui/icons-material";
 import { Box, IconButton, Stack, Typography } from "@mui/material";
 import * as consts from "@/lib/constants";
 
-export function Login() {
+export const Component = () => {
   return (
     <Box
       sx={{
@@ -41,4 +41,4 @@ export function Login() {
       </Stack>
     </Box>
   );
-}
+};

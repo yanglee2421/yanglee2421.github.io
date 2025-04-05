@@ -154,7 +154,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export const Calculator = () => {
+export const Component = () => {
   const formId = React.useId();
   const datalistId = React.useId();
 
