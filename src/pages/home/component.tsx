@@ -2,7 +2,7 @@ import readme from "@/assets/markdown.md?raw";
 import { Markdown } from "@/components/markdown";
 import { Box } from "@mui/material";
 
-export function Component() {
+export const Component = () => {
   return (
     <Box
       sx={{
@@ -14,4 +14,4 @@ export function Component() {
       <Markdown code={readme} />
     </Box>
   );
-}
+};

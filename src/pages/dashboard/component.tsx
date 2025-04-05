@@ -8,14 +8,14 @@ import {
   CardActions,
   CardContent,
   CardHeader,
-  Grid2,
+  Grid,
   Typography,
   useTheme,
 } from "@mui/material";
 import React from "react";
 import { Translation } from "react-i18next";
 import { useSize } from "@/hooks/dom/useSize";
-import { minmax } from "@/utils/minmax";
+import { minmax } from "@/lib/utils";
 import { ErrorBoundary } from "react-error-boundary";
 
 const drawLine = (
@@ -600,20 +600,20 @@ const SvgCard = () => {
   );
 };
 
-export function Dashboard() {
+export const Component = () => {
   return (
-    <Grid2 container spacing={6}>
-      <Grid2 size={{ xs: 12 }}>
+    <Grid container spacing={6}>
+      <Grid size={{ xs: 12 }}>
         <Typography variant="h4">
           <Translation ns="/dashboard">{(t) => t("Dashboard")}</Translation>
         </Typography>
         <Typography color="secondary">
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
         </Typography>
-      </Grid2>
+      </Grid>
       <ErrorBoundary
         fallbackRender={(props) => (
-          <Grid2 size={{ xs: 12 }}>
+          <Grid size={{ xs: 12 }}>
             <Alert severity="error">
               <AlertTitle>Error</AlertTitle>
               <Typography>{props.error.message}</Typography>
@@ -626,25 +626,25 @@ export function Dashboard() {
                 Retry
               </Button>
             </Alert>
-          </Grid2>
+          </Grid>
         )}
       >
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Microphone />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Sinewave />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Frequencybars />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <ControlCard />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6 }}>
           <SvgCard />
-        </Grid2>
+        </Grid>
       </ErrorBoundary>
-    </Grid2>
+    </Grid>
   );
-}
+};

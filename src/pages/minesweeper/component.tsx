@@ -6,7 +6,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Grid2,
+  Grid,
   IconButton,
   MenuItem,
   TextField,
@@ -27,7 +27,7 @@ import {
 } from "@mui/material/colors";
 import React from "react";
 import { useSize } from "@/hooks/dom/useSize";
-import { MinesweeperGame } from "@/lib/MinesweeperGame";
+import { MinesweeperGame } from "./MinesweeperGame";
 
 const map = new Map<number, string>();
 
@@ -212,7 +212,7 @@ const reducer = ({ game }: ReducerState, args?: ReducerArgs) => ({
   game: args ? new MinesweeperGame(...args) : game,
 });
 
-export const Minesweeper = () => {
+export const Component = () => {
   const handleTimeStart = () => {
     console.log("started");
   };
@@ -227,8 +227,9 @@ export const Minesweeper = () => {
   return (
     <Card
       sx={{
-        maxWidth: (t) => ({ maxWidth: t.breakpoints.values.sm }),
+        maxInlineSize: (t) => t.breakpoints.values.sm,
         marginInline: "auto",
+        inlineSize: "100%",
       }}
     >
       <CardHeader
@@ -267,8 +268,8 @@ export const Minesweeper = () => {
         }
       />
       <CardContent>
-        <Grid2 container spacing={6}>
-          <Grid2 size={{ xs: 12 }}>
+        <Grid container spacing={6}>
+          <Grid size={{ xs: 12 }}>
             <TextField
               value={`${game.columns},${game.rows},${game.bombNums}`}
               onChange={(e) => {
@@ -294,8 +295,8 @@ export const Minesweeper = () => {
               <MenuItem value="9,9,10">Normal</MenuItem>
               <MenuItem value="10,10,16">Hard</MenuItem>
             </TextField>
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </CardContent>
       <Box
         sx={() => ({

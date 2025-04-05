@@ -8,7 +8,7 @@ import {
   Card,
   CardContent,
   CardHeader,
-  Grid2,
+  Grid,
   IconButton,
   Table,
   TableBody,
@@ -24,16 +24,26 @@ import {
 import { chunk, minmax } from "@yotulee/run";
 import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
 import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
-import { timeToCalendar } from "@/utils/timeToCalendar";
+
+const dayInterval = 1000 * 60 * 60 * 24;
+
+const timeToCalendar = (time: number) => {
+  const monthStartTime = new Date(time).setDate(1);
+  const monthStartIndex = new Date(monthStartTime).getDay();
+  const calendarStartTime = monthStartTime - monthStartIndex * dayInterval;
+  const calendar = [];
+
+  for (let i = 0; i < 42; i++) {
+    calendar.push(calendarStartTime + i * dayInterval);
+  }
+
+  return calendar;
+};
 
 const inRange = (num: number, min: number, max: number) =>
   Object.is(num, minmax(num, { min, max }));
 
-const renderBadgeContent = (
-  date: Date,
-  start?: Date,
-  end?: Date,
-) => {
+const renderBadgeContent = (date: Date, start?: Date, end?: Date) => {
   if (!start) {
     return;
   }
@@ -49,13 +59,13 @@ const renderBadgeContent = (
   return (time - minTime) / (1000 * 60 * 60 * 24) + 1;
 };
 
-export function Calendar() {
-  const [selectedTime, setSelectedTime] = React.useState(
-    () => dayjs(new Date().toDateString()),
+export const Component = () => {
+  const [selectedTime, setSelectedTime] = React.useState(() =>
+    dayjs(new Date().toDateString()),
   );
   const { i18n } = useTranslation();
-  const calendar = timeToCalendar(selectedTime.toDate().getTime()).map((i) =>
-    new Date(i)
+  const calendar = timeToCalendar(selectedTime.toDate().getTime()).map(
+    (i) => new Date(i),
   );
   const [startDate, setStartDate] = React.useState<dayjs.Dayjs | null>(null);
   const [endDate, setEndDate] = React.useState<dayjs.Dayjs | null>(null);
@@ -98,8 +108,8 @@ export function Calendar() {
         }
       />
       <CardContent>
-        <Grid2 container spacing={6}>
-          <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+        <Grid container spacing={6}>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <DatePicker
               value={selectedTime}
               onChange={(e) => {
@@ -112,8 +122,8 @@ export function Calendar() {
               }}
               views={["month", "year"]}
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <DatePicker
               value={startDate}
               onChange={setStartDate}
@@ -123,8 +133,8 @@ export function Calendar() {
                 field: { clearable: true },
               }}
             />
-          </Grid2>
-          <Grid2 size={{ xs: 12, md: 6, lg: 4 }}>
+          </Grid>
+          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <DatePicker
               value={endDate}
               onChange={setEndDate}
@@ -134,8 +144,8 @@ export function Calendar() {
                 field: { clearable: true },
               }}
             />
-          </Grid2>
-        </Grid2>
+          </Grid>
+        </Grid>
       </CardContent>
       <TableContainer>
         <Table>
@@ -151,30 +161,27 @@ export function Calendar() {
             </TableRow>
           </TableHead>
           <TableBody>
-            {chunk(calendar, 7)
-              .map((row, idx) => (
-                <TableRow key={idx}>
-                  {row.map((cell) => (
-                    <TableCell key={cell.toLocaleDateString()}>
-                      <Badge
-                        badgeContent={renderBadgeContent(
-                          cell,
-                          startDate?.toDate(),
-                          endDate?.toDate(),
-                        )}
-                        color="primary"
-                      >
-                        <IconButton size="small">
-                          {cell.getDate()}
-                        </IconButton>
-                      </Badge>
-                    </TableCell>
-                  ))}
-                </TableRow>
-              ))}
+            {chunk(calendar, 7).map((row, idx) => (
+              <TableRow key={idx}>
+                {row.map((cell) => (
+                  <TableCell key={cell.toLocaleDateString()}>
+                    <Badge
+                      badgeContent={renderBadgeContent(
+                        cell,
+                        startDate?.toDate(),
+                        endDate?.toDate(),
+                      )}
+                      color="primary"
+                    >
+                      <IconButton size="small">{cell.getDate()}</IconButton>
+                    </Badge>
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
           </TableBody>
         </Table>
       </TableContainer>
     </Card>
   );
-}
+};

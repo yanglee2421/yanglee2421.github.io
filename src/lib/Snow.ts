@@ -1,4 +1,4 @@
-import { GetRandom } from "./GetRandom";
+import { GetRandom } from "@/lib/utils";
 
 const getXV = new GetRandom(-0.5, 0.5);
 const getYV = new GetRandom(1, 3);

@@ -14,7 +14,7 @@ import {
   Divider,
   FormControlLabel,
   FormLabel,
-  Grid2,
+  Grid,
   IconButton,
   ToggleButtonGroup,
   TextField,
@@ -37,7 +37,7 @@ import * as mathjs from "mathjs";
 const renderVal = (
   focused: boolean,
   focusVal: number | string,
-  value: number
+  value: number,
 ) => {
   if (focused) {
     return focusVal;
@@ -97,7 +97,7 @@ const getDate = () => {
 const calculatorSubsidy = (
   start: string,
   end: string,
-  subsidyPerDay: string
+  subsidyPerDay: string,
 ) => {
   const startVal = dayjs(start).startOf("day").valueOf();
   const endVal = dayjs(end).endOf("day").valueOf();
@@ -107,11 +107,11 @@ const calculatorSubsidy = (
       mathjs.divide(
         mathjs.subtract(
           mathjs.sum(mathjs.bignumber(endVal), mathjs.bignumber(1)),
-          mathjs.bignumber(startVal)
+          mathjs.bignumber(startVal),
         ),
-        mathjs.bignumber(1000 * 60 * 60 * 24)
+        mathjs.bignumber(1000 * 60 * 60 * 24),
       ),
-      mathjs.bignumber(subsidyPerDay)
+      mathjs.bignumber(subsidyPerDay),
     )
     .toString();
 };
@@ -121,7 +121,7 @@ const calculatorAmount = (
   end: string,
   subsidyPerDay: string,
   enableDate: boolean,
-  amount: number
+  amount: number,
 ) => {
   if (!enableDate) return amount;
   return calculatorSubsidy(start, end, subsidyPerDay);
@@ -146,7 +146,7 @@ const schema = z.object({
 
         return true;
       },
-      { message: "must be a number", path: ["amount"] }
+      { message: "must be a number", path: ["amount"] },
     )
     .array()
     .min(1),
@@ -154,7 +154,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export const Calculator = () => {
+export const Component = () => {
   const formId = React.useId();
   const datalistId = React.useId();
 
@@ -195,7 +195,7 @@ export const Calculator = () => {
   const renderInvoice = (idx: number) => {
     return (
       <>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Controller
             control={form.control}
             name={`invoices.${idx}.amount`}
@@ -214,8 +214,8 @@ export const Calculator = () => {
               />
             )}
           />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Controller
             control={form.control}
             name={`invoices.${idx}.staff`}
@@ -232,8 +232,8 @@ export const Calculator = () => {
               />
             )}
           />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Controller
             control={form.control}
             name={`invoices.${idx}.note`}
@@ -256,7 +256,7 @@ export const Calculator = () => {
               />
             )}
           />
-        </Grid2>
+        </Grid>
       </>
     );
   };
@@ -268,7 +268,7 @@ export const Calculator = () => {
 
     return (
       <>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Controller
             key={`invoices.${idx}.start`}
             control={form.control}
@@ -287,8 +287,8 @@ export const Calculator = () => {
               />
             )}
           />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Controller
             key={`invoices.${idx}.end`}
             control={form.control}
@@ -307,8 +307,8 @@ export const Calculator = () => {
               />
             )}
           />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Controller
             control={form.control}
             name={`invoices.${idx}.amount`}
@@ -328,8 +328,8 @@ export const Calculator = () => {
               />
             )}
           />
-        </Grid2>
-        <Grid2 size={{ xs: 12, sm: 6, md: 4 }}>
+        </Grid>
+        <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Controller
             control={form.control}
             name={`invoices.${idx}.staff`}
@@ -346,8 +346,8 @@ export const Calculator = () => {
               />
             )}
           />
-        </Grid2>
-        <Grid2 size={{ xs: 12, md: 8 }}>
+        </Grid>
+        <Grid size={{ xs: 12, md: 8 }}>
           <Controller
             control={form.control}
             name={`invoices.${idx}.note`}
@@ -370,8 +370,8 @@ export const Calculator = () => {
               />
             )}
           />
-        </Grid2>
-        <Grid2 size={{ xs: 12 }}>
+        </Grid>
+        <Grid size={{ xs: 12 }}>
           <FormLabel>Subsidy per day</FormLabel>
           <Controller
             control={form.control}
@@ -390,7 +390,7 @@ export const Calculator = () => {
               </RadioGroup>
             )}
           />
-        </Grid2>
+        </Grid>
       </>
     );
   };
@@ -423,7 +423,7 @@ export const Calculator = () => {
                       i.end,
                       i.subsidyPerDay,
                       i.type === "subsidy",
-                      i.amount
+                      i.amount,
                     ),
                   });
                 });
@@ -435,7 +435,7 @@ export const Calculator = () => {
           onReset={() => form.reset()}
           noValidate
         >
-          <Grid2 container spacing={4}>
+          <Grid container spacing={4}>
             {fields.fields.map((f, idx) => {
               const typeVal = form.watch(`invoices.${idx}.type`);
               const isSubsidy = typeVal === "subsidy";
@@ -443,11 +443,11 @@ export const Calculator = () => {
               return (
                 <React.Fragment key={f.id}>
                   {!!idx && (
-                    <Grid2 size={{ xs: 12 }}>
+                    <Grid size={{ xs: 12 }}>
                       <Divider />
-                    </Grid2>
+                    </Grid>
                   )}
-                  <Grid2 size={{ xs: 12 }}>
+                  <Grid size={{ xs: 12 }}>
                     <Box sx={{ display: "flex", alignItems: "center" }}>
                       <FormLabel sx={{ color: (t) => t.palette.primary.main }}>
                         <Typography variant="h6">#{idx + 1}</Typography>
@@ -462,8 +462,8 @@ export const Calculator = () => {
                         </IconButton>
                       )}
                     </Box>
-                  </Grid2>
-                  <Grid2 size={12}>
+                  </Grid>
+                  <Grid size={12}>
                     <Controller
                       control={form.control}
                       name={`invoices.${idx}.type`}
@@ -481,12 +481,12 @@ export const Calculator = () => {
                         </ToggleButtonGroup>
                       )}
                     />
-                  </Grid2>
+                  </Grid>
                   {isSubsidy ? renderSubsidy(idx) : renderInvoice(idx)}
                 </React.Fragment>
               );
             })}
-          </Grid2>
+          </Grid>
         </form>
       </CardContent>
       <CardActions>
