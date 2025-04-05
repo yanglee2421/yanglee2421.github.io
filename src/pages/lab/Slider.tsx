@@ -1,5 +1,5 @@
 import React from "react";
-import { minmax } from "@/utils/minmax";
+import { minmax } from "@/lib/utils";
 import { alpha, styled } from "@mui/material";
 
 export const Slider = () => {
@@ -22,7 +22,8 @@ export const Slider = () => {
           evt.currentTarget.style.left =
             minmax(evt.clientX - elClientRect.left, {
               min: 0,
-              max: elClientRect.width -
+              max:
+                elClientRect.width -
                 evt.currentTarget.getBoundingClientRect().width,
             }) + "px";
         }}

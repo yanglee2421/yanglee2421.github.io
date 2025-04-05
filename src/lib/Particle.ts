@@ -1,4 +1,4 @@
-import { GetRandom } from "./GetRandom";
+import { GetRandom } from "@/lib/utils";
 
 const getVelocity = new GetRandom(-1, 1);
 const getRadius = new GetRandom(2, 4);
@@ -43,7 +43,7 @@ export class Particles {
   constructor(
     private readonly canvas: HTMLCanvasElement,
     particleNum = 100,
-    private lineMax = 100
+    private lineMax = 100,
   ) {
     for (let i = 0; i < particleNum; i++) {
       this.#arr.push(new Particle(this.canvas));
@@ -104,7 +104,7 @@ export class Particles {
         this.#one.yv = 0;
         this.#arr.push(this.#one);
       },
-      this.#controller
+      this.#controller,
     );
     this.canvas.addEventListener(
       "mousemove",
@@ -113,7 +113,7 @@ export class Particles {
         this.#one.x = offsetX;
         this.#one.y = offsetY;
       },
-      this.#controller
+      this.#controller,
     );
     this.canvas.addEventListener(
       "mouseout",
@@ -124,7 +124,7 @@ export class Particles {
           this.#one = null;
         }
       },
-      this.#controller
+      this.#controller,
     );
   }
   abortEvent() {

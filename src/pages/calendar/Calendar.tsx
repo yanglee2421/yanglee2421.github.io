@@ -24,7 +24,21 @@ import {
 import { chunk, minmax } from "@yotulee/run";
 import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
 import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
-import { timeToCalendar } from "@/utils/timeToCalendar";
+
+const dayInterval = 1000 * 60 * 60 * 24;
+
+const timeToCalendar = (time: number) => {
+  const monthStartTime = new Date(time).setDate(1);
+  const monthStartIndex = new Date(monthStartTime).getDay();
+  const calendarStartTime = monthStartTime - monthStartIndex * dayInterval;
+  const calendar = [];
+
+  for (let i = 0; i < 42; i++) {
+    calendar.push(calendarStartTime + i * dayInterval);
+  }
+
+  return calendar;
+};
 
 const inRange = (num: number, min: number, max: number) =>
   Object.is(num, minmax(num, { min, max }));

@@ -15,7 +15,7 @@ import {
 import React from "react";
 import { Translation } from "react-i18next";
 import { useSize } from "@/hooks/dom/useSize";
-import { minmax } from "@/utils/minmax";
+import { minmax } from "@/lib/utils";
 import { ErrorBoundary } from "react-error-boundary";
 
 const drawLine = (

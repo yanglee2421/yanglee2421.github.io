@@ -1,4 +1,12 @@
-export function toLink(str: unknown, msg = "") {
+const reg =
+  /^(?<prefix>.*)(?<link>https?:\/\/.+\.\w{2,3}(:\d{2,5})?(\/\w+)*)(?<suffix>.*)$/gis;
+
+type StringToLinkProps = {
+  str: string;
+  msg?: string;
+};
+
+export const StringToLink = ({ str, msg = "" }: StringToLinkProps) => {
   if (typeof str !== "string") {
     return msg;
   }
@@ -7,10 +15,7 @@ export function toLink(str: unknown, msg = "") {
     return msg;
   }
 
-  const groups =
-    /^(?<prefix>.*)(?<link>https?:\/\/.+\.\w{2,3}(:\d{2,5})?(\/\w+)*)(?<suffix>.*)$/gis.exec(
-      str,
-    )?.groups;
+  const groups = reg.exec(str)?.groups;
 
   if (!groups) {
     return msg;
@@ -26,4 +31,4 @@ export function toLink(str: unknown, msg = "") {
       </a>
     ),
   });
-}
+};

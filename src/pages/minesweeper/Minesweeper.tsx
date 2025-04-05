@@ -27,7 +27,7 @@ import {
 } from "@mui/material/colors";
 import React from "react";
 import { useSize } from "@/hooks/dom/useSize";
-import { MinesweeperGame } from "@/lib/MinesweeperGame";
+import { MinesweeperGame } from "./MinesweeperGame";
 
 const map = new Map<number, string>();
 
