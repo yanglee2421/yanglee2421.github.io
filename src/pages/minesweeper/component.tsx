@@ -28,6 +28,7 @@ import {
 import React from "react";
 import { useSize } from "@/hooks/dom/useSize";
 import { MinesweeperGame } from "./MinesweeperGame";
+import { log } from "@/lib/utils";
 
 const map = new Map<number, string>();
 
@@ -214,11 +215,11 @@ const reducer = ({ game }: ReducerState, args?: ReducerArgs) => ({
 
 export const Component = () => {
   const handleTimeStart = () => {
-    console.log("started");
+    log("started");
   };
 
   const handleTimeEnd = () => {
-    console.log("end");
+    log("end");
   };
 
   const [{ game }, dispatch] = React.useReducer(reducer, null, () => ({
