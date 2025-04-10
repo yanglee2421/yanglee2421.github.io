@@ -32,6 +32,7 @@ import {
   Link as MuiLink,
 } from "@mui/material";
 import {
+  AppsOutlined,
   CalculateOutlined,
   CalendarMonthOutlined,
   CalendarTodayOutlined,
@@ -148,6 +149,11 @@ const list = [
     to: "/handbook",
     label: "Handbook",
     icon: <HandshakeOutlined />,
+  },
+  {
+    to: "/app",
+    label: "App",
+    icon: <AppsOutlined />,
   },
 ];
 
@@ -313,20 +319,7 @@ const AuthLayout = () => {
   );
 };
 
-const BlankLayout = () => {
-  return (
-    <Box
-      sx={{
-        padding: 6,
-        backgroundColor(t) {
-          return t.palette.grey[300];
-        },
-      }}
-    >
-      <Outlet />
-    </Box>
-  );
-};
+const BlankLayout = () => <Outlet />;
 
 const IMAGE_SIZE = 1024;
 const ICON_SIZE = (IMAGE_SIZE * 1) / 2;
@@ -787,7 +780,13 @@ const routes: RouteObject[] = [
           {
             id: "blank_layout",
             Component: BlankLayout,
-            children: [],
+            children: [
+              {
+                id: "app",
+                path: "app",
+                lazy: () => import("@/pages/app/component"),
+              },
+            ],
           },
         ],
       },
