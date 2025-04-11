@@ -23,7 +23,6 @@ import {
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
-import { produce } from "immer";
 import openai from "openai";
 
 const MemoMarkdown = React.memo(Markdown);
@@ -49,7 +48,7 @@ const MessageContent = (props: MessageContentProps) => {
 const MemoMessageContent = React.memo(MessageContent);
 
 type ChatLogItemProps = {
-  i: Message;
+  i: ChatLog;
   enableScroll?: boolean;
 };
 
@@ -72,12 +71,20 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
   }, [enableScroll]);
 
   const renderAnswer = () => {
-    if (i.error) {
+    if (i.status === "error") {
       return (
         <Alert severity="error" variant="filled">
           <AlertTitle>Error</AlertTitle>
-          {i.error}
+          {i.answer}
         </Alert>
+      );
+    }
+
+    if (!i.answer) {
+      return (
+        <Box sx={{ padding: 3 }}>
+          <CircularProgress size={16} color="inherit" />
+        </Box>
       );
     }
 
@@ -132,91 +139,55 @@ const client = new openai.OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-type Message = {
+type ChatStatus = "pending" | "success" | "error";
+
+type ChatLog = {
   id: string;
   question: string;
   answer: string;
-  error?: React.ReactNode;
+  time: string;
+  status: ChatStatus;
 };
 
-class ChatAPI {
-  isFetching = false;
-  log: Message[] = [];
-  controller: AbortController | null = null;
-  listeners = new Set<() => void>();
+const initChatLog = () => new Map<string, ChatLog>();
 
-  async fetch() {
-    if (!this.log.length)
-      throw new Error("No last log found, please ask a question first.");
-
-    const stream = await client.chat.completions.create({
-      messages: this.log
-        .flatMap((i) => [
-          { role: "user" as const, content: i.question },
-          { role: "assistant" as const, content: i.answer },
-        ])
-        .slice(0, -1),
-      stream: true,
-      model: "4.0Ultra",
-    });
-    this.controller = stream.controller;
-
-    for await (const chunk of stream) {
-      chunk.choices.forEach((choice) => {
-        if (!choice.delta.content) return;
-        this.log = produce(this.log, (draft) => {
-          draft[draft.length - 1].answer += choice.delta.content;
-        });
-        this.emit();
-      });
-    }
-  }
-  abort() {
-    this.controller?.abort();
-    this.controller = null;
-  }
-  subscribe(callback: () => void) {
-    this.listeners.add(callback);
-
-    return () => {
-      this.listeners.delete(callback);
-    };
-  }
-  emit() {
-    this.listeners.forEach((callback) => callback());
-  }
-  async ask(question: string) {
-    this.log = produce(this.log, (draft) => {
-      draft.push({
-        id: Date.now().toString(),
-        question,
-        answer: "",
-        error: void 0,
-      });
-    });
-    this.isFetching = true;
-    this.emit();
-    await this.fetch().catch((error) => {
-      this.log = produce(this.log, (draft) => {
-        draft[draft.length - 1].error =
-          error.message || "Failed to connect to the server";
-      });
-    });
-    this.isFetching = false;
-    this.emit();
-  }
-}
-
-type ChatAPIState = {
-  chat: ChatAPI;
+type SendParams = {
+  id: string;
+  question: string;
 };
 
-const chatReducer = (chat: ChatAPIState) => ({ ...chat });
-const initChat = () => ({ chat: new ChatAPI() });
+const send = ({ id, question }: SendParams, map: Map<string, ChatLog>) => {
+  const chatLog: ChatLog = {
+    id,
+    question,
+    answer: "",
+    time: new Date().toLocaleString(),
+    status: "pending",
+  };
+
+  return new Map(map).set(chatLog.id, chatLog);
+};
+
+type UpdateParams = {
+  id: string;
+  answer: string;
+  status?: ChatStatus;
+};
+
+const update = (
+  { id, answer, status = "pending" }: UpdateParams,
+  map: Map<string, ChatLog>,
+) => {
+  const chatLog = map.get(id);
+  if (!chatLog) return map;
+  return new Map(map).set(id, { ...chatLog, answer, status });
+};
 
 const CopilotChat = () => {
-  const [{ chat }, dispatch] = React.useReducer(chatReducer, null, initChat);
+  const [chatLog, setChatLog] = React.useState(initChatLog);
+  const [isFetching, setIsFetching] = React.useState(false);
 
+  const controllerRef = React.useRef<AbortController | null>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
   const chatLogRef = React.useRef<HTMLDivElement>(null);
 
@@ -231,16 +202,64 @@ const CopilotChat = () => {
   }, []);
 
   React.useEffect(handleScrollToBottom, [handleScrollToBottom]);
-  React.useEffect(() => chat.subscribe(dispatch), [chat, dispatch]);
 
-  const handleChatAbort = () => chat.abort();
+  const logs = [...chatLog.values()];
+
+  type Message = {
+    role: "user" | "assistant" | "system";
+    content: string;
+  };
+
+  const requestChat = async (id: string, messages: Message[]) => {
+    const stream = await client.chat.completions.create({
+      messages,
+      stream: true,
+      model: "4.0Ultra",
+    });
+
+    controllerRef.current = stream.controller;
+    let answer = "";
+
+    for await (const chunk of stream) {
+      chunk.choices.forEach((choice) => {
+        if (!choice.delta.content) return;
+        answer += choice.delta.content;
+        setChatLog((prev) => update({ answer, id }, prev));
+      });
+    }
+
+    setChatLog((prev) => update({ answer, id, status: "success" }, prev));
+  };
+
   const handleSubmit = chatForm.handleSubmit(async (data) => {
+    const question = data.question.trim();
+    const id = crypto.randomUUID();
+
     chatForm.reset();
-    await chat.ask(data.question);
+    setChatLog((prev) => send({ id, question }, prev));
+    setIsFetching(true);
+
+    await requestChat(
+      id,
+      logs
+        .flatMap((i) => [
+          { role: "user" as const, content: i.question },
+          { role: "assistant" as const, content: i.answer },
+        ])
+        .concat({ role: "user", content: question }),
+    ).catch((e) => {
+      setChatLog((prev) =>
+        update({ id, answer: e.message, status: "error" }, prev),
+      );
+    });
+
+    setIsFetching(false);
   }, warn);
 
+  const handleChatAbort = () => controllerRef.current?.abort();
+
   const renderSendButton = () => {
-    if (chat.isFetching) {
+    if (isFetching) {
       return (
         <Button
           variant="contained"
@@ -296,11 +315,11 @@ const CopilotChat = () => {
           },
         }}
       >
-        {chat.log.map((i, idx) => (
+        {logs.map((i, idx) => (
           <MemoChatLogItem
             key={i.id}
             i={i}
-            enableScroll={Object.is(idx + 1, chat.log.length)}
+            enableScroll={Object.is(idx + 1, logs.length)}
           />
         ))}
       </Box>
