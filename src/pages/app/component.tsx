@@ -6,14 +6,15 @@ import {
   MoreHorizOutlined,
   SearchOutlined,
   SendOutlined,
+  StopOutlined,
 } from "@mui/icons-material";
 import {
   Alert,
   AlertTitle,
   alpha,
   Box,
-  Button,
   CircularProgress,
+  Fab,
   IconButton,
   InputAdornment,
   Paper,
@@ -187,9 +188,12 @@ const update = (
   return new Map(map).set(id, { ...chatLog, answer, status });
 };
 
+type SendButtonStatus = "idle" | "loading" | "streaming";
+
 const CopilotChat = () => {
   const [chatLog, setChatLog] = React.useState(initChatLog);
-  const [isFetching, setIsFetching] = React.useState(false);
+  const [sendButtonStatus, setSendButtonStatus] =
+    React.useState<SendButtonStatus>("idle");
 
   const controllerRef = React.useRef<AbortController | null>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -219,9 +223,11 @@ const CopilotChat = () => {
       messages,
       stream: true,
       model: "4.0Ultra",
+      web_search_options: { search_context_size: "high" },
     });
 
     controllerRef.current = stream.controller;
+    setSendButtonStatus("streaming");
     let answer = "";
 
     for await (const chunk of stream) {
@@ -241,7 +247,7 @@ const CopilotChat = () => {
 
     chatForm.reset();
     setChatLog((prev) => send({ id, question }, prev));
-    setIsFetching(true);
+    setSendButtonStatus("loading");
 
     await requestChat(
       id,
@@ -257,40 +263,56 @@ const CopilotChat = () => {
       );
     });
 
-    setIsFetching(false);
+    setSendButtonStatus("idle");
   }, warn);
 
-  const handleChatAbort = () => controllerRef.current?.abort();
+  const handleChatAbort = (e: React.SyntheticEvent) => {
+    /*
+     * Solution 2:
+     * A button with type=submit can prevent form submission by preventing the default event behavior,
+     * which is more performant compared to Solution 1 because there's no DOM replacement
+     */
+    e.preventDefault();
+    controllerRef.current?.abort();
+  };
 
   const renderSendButton = () => {
-    if (isFetching) {
-      return (
-        <Button
-          variant="contained"
-          endIcon={<CircularProgress size={16} color="inherit" />}
-          type="button"
-          onClick={handleChatAbort}
-        >
-          Cancel
-        </Button>
-      );
+    switch (sendButtonStatus) {
+      case "loading":
+        return (
+          <Fab type="button" size="small" disabled>
+            <CircularProgress size={20} color="inherit" />
+          </Fab>
+        );
+      case "streaming":
+        return (
+          <Fab
+            /*
+             * Solution 1:
+             * When onClick event changes the button's type from button to submit, the form would be submitted.
+             * But when using a key prop, the onClick event replaces the entire DOM node instead of just
+             * updating the type, so the form won't be submitted.
+             */
+            // key={"stop"}
+            type="button"
+            onClick={handleChatAbort}
+            size="small"
+            color="error"
+          >
+            <StopOutlined fontSize="small" />
+          </Fab>
+        );
+      case "idle":
+      default:
+        return (
+          <Fab type="submit" size="small" color="primary">
+            <SendOutlined
+              sx={{ transform: "rotate(-90deg)" }}
+              fontSize="small"
+            />
+          </Fab>
+        );
     }
-
-    return (
-      <Button
-        variant="contained"
-        endIcon={
-          <SendOutlined
-            sx={{
-              transform: "rotate(-45deg)",
-            }}
-          />
-        }
-        type="submit"
-      >
-        Send
-      </Button>
-    );
   };
 
   return (
@@ -328,7 +350,13 @@ const CopilotChat = () => {
         ))}
       </Box>
       <Box sx={{ padding: 3, paddingBlockStart: 0 }}>
-        <form ref={formRef} onSubmit={handleSubmit}>
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          onReset={() => chatForm.reset()}
+          noValidate
+          autoComplete="off"
+        >
           <Controller
             control={chatForm.control}
             name="question"
@@ -340,10 +368,15 @@ const CopilotChat = () => {
                 fullWidth
                 slotProps={{
                   input: {
-                    endAdornment: renderSendButton(),
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {renderSendButton()}
+                      </InputAdornment>
+                    ),
                   },
                   htmlInput: {
                     autoFocus: true,
+                    autoComplete: "off",
                   },
                 }}
               />
