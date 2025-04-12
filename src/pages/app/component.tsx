@@ -82,7 +82,7 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
     switch (i.status) {
       case "loading":
         return (
-          <Box>
+          <Box sx={{ marginBlock: 2 }}>
             <Skeleton />
             <Skeleton animation="wave" />
             <Skeleton animation={false} />
@@ -90,10 +90,12 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
         );
       case "error":
         return (
-          <Alert severity="error" variant="filled">
-            <AlertTitle>Error</AlertTitle>
-            {i.answer}
-          </Alert>
+          <Box sx={{ marginBlock: 2 }}>
+            <Alert severity="error" variant="filled">
+              <AlertTitle>Error</AlertTitle>
+              {i.answer}
+            </Alert>
+          </Box>
         );
       case "pending":
       case "success":
@@ -248,6 +250,8 @@ const CopilotChat = () => {
   };
 
   const handleSubmit = chatForm.handleSubmit(async (data) => {
+    if (sendButtonStatus !== "idle") return;
+
     const question = data.question.trim();
     const id = crypto.randomUUID();
 
