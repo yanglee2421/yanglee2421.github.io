@@ -21,9 +21,21 @@ import {
   NavigateBeforeOutlined,
   NavigateNextOutlined,
 } from "@mui/icons-material";
-import { chunk, minmax } from "@yotulee/run";
 import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
 import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
+
+const minmax = (num: number, { min, max }: { min: number; max: number }) =>
+  Math.min(Math.max(num, min), max);
+
+const chunk = <T,>(arr: T[], size: number) => {
+  const chunkedArr: T[][] = [];
+
+  for (let i = 0; i < arr.length; i += size) {
+    chunkedArr.push(arr.slice(i, i + size));
+  }
+
+  return chunkedArr;
+};
 
 const dayInterval = 1000 * 60 * 60 * 24;
 
@@ -59,19 +71,21 @@ const renderBadgeContent = (date: Date, start?: Date, end?: Date) => {
   return (time - minTime) / (1000 * 60 * 60 * 24) + 1;
 };
 
+const initSelectedTime = () => dayjs(new Date().toDateString());
+
 export const Component = () => {
-  const [selectedTime, setSelectedTime] = React.useState(() =>
-    dayjs(new Date().toDateString()),
-  );
+  const [endDate, setEndDate] = React.useState<dayjs.Dayjs | null>(null);
+  const [startDate, setStartDate] = React.useState<dayjs.Dayjs | null>(null);
+  const [selectedTime, setSelectedTime] = React.useState(initSelectedTime);
+
+  const params = useParams();
   const { i18n } = useTranslation();
+  const date = useLocaleDate(params.lang);
+  const time = useLocaleTime(params.lang);
+
   const calendar = timeToCalendar(selectedTime.toDate().getTime()).map(
     (i) => new Date(i),
   );
-  const [startDate, setStartDate] = React.useState<dayjs.Dayjs | null>(null);
-  const [endDate, setEndDate] = React.useState<dayjs.Dayjs | null>(null);
-  const params = useParams();
-  const date = useLocaleDate(params.lang);
-  const time = useLocaleTime(params.lang);
 
   return (
     <Card>

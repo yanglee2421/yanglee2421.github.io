@@ -44,7 +44,6 @@
     "@tsparticles/preset-stars": "^3.2.0",
     "@tsparticles/react": "^3.0.0",
     "@tsparticles/slim": "^3.8.1",
-    "@yotulee/run": "npm:@jsr/yotulee__run@^0.0.7",
     "axios": "^1.8.4",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",

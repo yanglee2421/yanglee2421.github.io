@@ -89,9 +89,6 @@ importers:
       '@tsparticles/slim':
         specifier: ^3.8.1
         version: 3.8.1
-      '@yotulee/run':
-        specifier: npm:@jsr/yotulee__run@^0.0.7
-        version: '@jsr/yotulee__run@0.0.7'
       axios:
         specifier: ^1.8.4
         version: 1.8.4
@@ -888,9 +885,6 @@ packages:
 
   '@jridgewell/trace-mapping@0.3.25':
     resolution: {integrity: sha512-vNk6aEwybGtawWmy/PzwnGDOjCkLWSD2wqvjGGAgOAwCGWySYXfYoxt00IJkTF+8Lb57DwOb3Aa0o9CApepiYQ==}
-
-  '@jsr/yotulee__run@0.0.7':
-    resolution: {integrity: sha512-dfCjUP49GJBxVwvQDRJCZoDqn1Q29rkxVw7PmOoOwSgD4J6Fv0SV8CNZ3TBNgk2yZWNSFiMwBySb6xeV8sl/oQ==, tarball: https://npm.jsr.io/~/11/@jsr/yotulee__run/0.0.7.tgz}
 
   '@mui/core-downloads-tracker@7.0.2':
     resolution: {integrity: sha512-TfeFU9TgN1N06hyb/pV/63FfO34nijZRMqgHk0TJ3gkl4Fbd+wZ73+ZtOd7jag6hMmzO9HSrBc6Vdn591nhkAg==}
@@ -4016,8 +4010,6 @@ snapshots:
     dependencies:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.0
-
-  '@jsr/yotulee__run@0.0.7': {}
 
   '@mui/core-downloads-tracker@7.0.2': {}
 
