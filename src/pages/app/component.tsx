@@ -40,6 +40,12 @@ const MessageContent = (props: MessageContentProps) => {
         "& pre.shiki": {
           whiteSpace: "pre-wrap",
         },
+
+        "&::before,&::after": {
+          content: '""',
+          display: "table",
+          clear: "both",
+        },
       }}
     >
       <MemoMarkdown code={props.text} />
@@ -98,18 +104,18 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
 
   return (
     <>
-      <Box
-        ref={questionRef}
-        sx={{ display: "flex", justifyContent: "flex-end" }}
-      >
-        <Paper sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}>
+      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+        <Paper
+          ref={questionRef}
+          sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}
+        >
           {i.question}
         </Paper>
       </Box>
       <Box
         sx={{
           "&:last-child": {
-            minBlockSize: "calc(100dvh - 200px)",
+            minBlockSize: "100dvh",
           },
         }}
       >
@@ -330,25 +336,18 @@ const CopilotChat = () => {
           flex: 1,
           overflowY: "auto",
           scrollbarColor: `${theme.palette.divider} transparent`,
-
-          display: "flex",
-          flexDirection: "column",
-          gap: 2,
-
-          "&::before,&::after": {
-            content: '""',
-            display: "table",
-            clear: "both",
-          },
         }}
       >
-        {logs.map((i, idx) => (
-          <MemoChatLogItem
-            key={i.id}
-            i={i}
-            enableScroll={Object.is(idx + 1, logs.length)}
-          />
-        ))}
+        <div>
+          {logs.map((i, idx) => (
+            <MemoChatLogItem
+              key={i.id}
+              i={i}
+              enableScroll={Object.is(idx + 1, logs.length)}
+            />
+          ))}
+        </div>
+        <div ref={chatLogRef} />
       </Box>
       <form
         ref={formRef}
@@ -365,6 +364,7 @@ const CopilotChat = () => {
               {...field}
               error={!!fieldState.error}
               helperText={fieldState.error?.message}
+              onFocus={handleScrollToBottom}
               fullWidth
               slotProps={{
                 input: {
