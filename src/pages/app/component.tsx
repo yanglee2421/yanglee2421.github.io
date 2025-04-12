@@ -331,13 +331,14 @@ const CopilotChat = () => {
           overflowY: "auto",
           scrollbarColor: `${theme.palette.divider} transparent`,
 
+          display: "flex",
+          flexDirection: "column",
+          gap: 2,
+
           "&::before,&::after": {
             content: '""',
             display: "table",
             clear: "both",
-          },
-          "&>*+*": {
-            marginTop: 2,
           },
         }}
       >
