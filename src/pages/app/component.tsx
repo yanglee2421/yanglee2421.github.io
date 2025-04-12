@@ -17,6 +17,7 @@ import {
   IconButton,
   InputAdornment,
   Paper,
+  Skeleton,
   TextField,
   useTheme,
 } from "@mui/material";
@@ -71,24 +72,27 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
   }, [enableScroll]);
 
   const renderAnswer = () => {
-    if (i.status === "error") {
-      return (
-        <Alert severity="error" variant="filled">
-          <AlertTitle>Error</AlertTitle>
-          {i.answer}
-        </Alert>
-      );
+    switch (i.status) {
+      case "loading":
+        return (
+          <Box>
+            <Skeleton />
+            <Skeleton animation="wave" />
+            <Skeleton animation={false} />
+          </Box>
+        );
+      case "error":
+        return (
+          <Alert severity="error" variant="filled">
+            <AlertTitle>Error</AlertTitle>
+            {i.answer}
+          </Alert>
+        );
+      case "pending":
+      case "success":
+      default:
+        return <MemoMessageContent text={i.answer} />;
     }
-
-    if (!i.answer) {
-      return (
-        <Box sx={{ padding: 3 }}>
-          <CircularProgress size={16} color="inherit" />
-        </Box>
-      );
-    }
-
-    return <MemoMessageContent text={i.answer} />;
   };
 
   return (
@@ -139,7 +143,7 @@ const client = new openai.OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-type ChatStatus = "pending" | "success" | "error";
+type ChatStatus = "pending" | "success" | "error" | "loading";
 
 type ChatLog = {
   id: string;
@@ -162,7 +166,7 @@ const send = ({ id, question }: SendParams, map: Map<string, ChatLog>) => {
     question,
     answer: "",
     time: new Date().toLocaleString(),
-    status: "pending",
+    status: "loading",
   };
 
   return new Map(map).set(chatLog.id, chatLog);
