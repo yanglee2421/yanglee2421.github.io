@@ -7,12 +7,12 @@ embeddedLanguageFormatting: "auto"
 endOfLine: "lf"
 experimentalOperatorPosition: "end"
 experimentalTernaries: false
-filepath: null
+# filepath: null
 htmlWhitespaceSensitivity: "css"
 insertPragma: false
 jsxSingleQuote: false
 objectWrap: "preserve"
-parser: null
+# parser: null
 plugins: []
 printWidth: 80
 proseWrap: "preserve"
