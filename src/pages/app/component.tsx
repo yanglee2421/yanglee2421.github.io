@@ -322,6 +322,7 @@ const CopilotChat = () => {
         flexDirection: "column",
 
         blockSize: "100%",
+        padding: 3,
       }}
     >
       <Box
@@ -329,7 +330,6 @@ const CopilotChat = () => {
           flex: 1,
           overflowY: "auto",
           scrollbarColor: `${theme.palette.divider} transparent`,
-          padding: 3,
 
           "&::before,&::after": {
             content: '""',
@@ -349,41 +349,39 @@ const CopilotChat = () => {
           />
         ))}
       </Box>
-      <Box sx={{ padding: 3, paddingBlockStart: 0 }}>
-        <form
-          ref={formRef}
-          onSubmit={handleSubmit}
-          onReset={() => chatForm.reset()}
-          noValidate
-          autoComplete="off"
-        >
-          <Controller
-            control={chatForm.control}
-            name="question"
-            render={({ field, fieldState }) => (
-              <TextField
-                {...field}
-                error={!!fieldState.error}
-                helperText={fieldState.error?.message}
-                fullWidth
-                slotProps={{
-                  input: {
-                    endAdornment: (
-                      <InputAdornment position="end">
-                        {renderSendButton()}
-                      </InputAdornment>
-                    ),
-                  },
-                  htmlInput: {
-                    autoFocus: true,
-                    autoComplete: "off",
-                  },
-                }}
-              />
-            )}
-          />
-        </form>
-      </Box>
+      <form
+        ref={formRef}
+        onSubmit={handleSubmit}
+        onReset={() => chatForm.reset()}
+        noValidate
+        autoComplete="off"
+      >
+        <Controller
+          control={chatForm.control}
+          name="question"
+          render={({ field, fieldState }) => (
+            <TextField
+              {...field}
+              error={!!fieldState.error}
+              helperText={fieldState.error?.message}
+              fullWidth
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      {renderSendButton()}
+                    </InputAdornment>
+                  ),
+                },
+                htmlInput: {
+                  autoFocus: true,
+                  autoComplete: "off",
+                },
+              }}
+            />
+          )}
+        />
+      </form>
     </Box>
   );
 };
