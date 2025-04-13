@@ -3,9 +3,11 @@ import { warn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   MenuOutlined,
-  MoreHorizOutlined,
+  PushPin,
+  PushPinOutlined,
   SearchOutlined,
   SendOutlined,
+  SmartToyOutlined,
   StopOutlined,
 } from "@mui/icons-material";
 import {
@@ -394,11 +396,13 @@ const CopilotChat = () => {
 export const Component = () => {
   const [openMenu, setOpenMenu] = React.useState(false);
   const [openChat, setOpenChat] = React.useState(false);
+  const [alwaysOnTop, setAlwaysOnTop] = React.useState(false);
 
   const theme = useTheme();
 
   const handleMenuToggle = () => setOpenMenu((prev) => !prev);
   const handleChatToggle = () => setOpenChat((prev) => !prev);
+  const handleAlwaysOnTopToggle = () => setAlwaysOnTop((prev) => !prev);
 
   return (
     <Box
@@ -445,8 +449,11 @@ export const Component = () => {
           />
         </Box>
         <Box>
+          <IconButton onClick={handleAlwaysOnTopToggle}>
+            {alwaysOnTop ? <PushPin /> : <PushPinOutlined />}
+          </IconButton>
           <IconButton onClick={handleChatToggle}>
-            <MoreHorizOutlined />
+            <SmartToyOutlined />
           </IconButton>
         </Box>
       </Box>
