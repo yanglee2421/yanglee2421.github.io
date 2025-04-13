@@ -26,6 +26,7 @@ import {
   Paper,
   Skeleton,
   TextField,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import React from "react";
@@ -49,7 +50,7 @@ const MarkdownContent = (props: MarkdownContentProps) => {
         },
       }}
     >
-      <MemoMarkdown code={props.text} />
+      <Markdown code={props.text} />
     </Box>
   );
 };
@@ -87,10 +88,6 @@ const ChatLogItem = ({ question, answer, ref }: ChatLogItemProps) => {
   );
 };
 
-const MemoMarkdown = React.memo(Markdown);
-const MemoMarkdownContent = React.memo(MarkdownContent);
-const MemoChatLogItem = React.memo(ChatLogItem);
-
 const schema = z.object({
   question: z.string().min(1, "Please enter a question"),
 });
@@ -102,7 +99,6 @@ const useChatForm = () =>
     defaultValues: {
       question: "",
     },
-
     resolver: zodResolver(schema),
   });
 
@@ -165,6 +161,7 @@ type Message = {
 
 const useScrollToBottom = () => {
   const chatLogRef = React.useRef<HTMLDivElement>(null);
+
   const handleScrollToBottom = React.useCallback(() => {
     chatLogRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -193,7 +190,7 @@ const useScrollToView = () => {
     setId("");
   }, [id]);
 
-  return [setId, scrollRef] as const;
+  return [scrollRef, setId] as const;
 };
 
 const CopilotChat = () => {
@@ -206,7 +203,7 @@ const CopilotChat = () => {
 
   const theme = useTheme();
   const chatForm = useChatForm();
-  const [setScrollId, scrollRef] = useScrollToView();
+  const [scrollRef, setScrollId] = useScrollToView();
   const [chatLogRef, handleScrollToBottom] = useScrollToBottom();
   const snackbar = useSnackbar();
 
@@ -351,7 +348,7 @@ const CopilotChat = () => {
       case "success":
         return (
           <>
-            <MemoMarkdownContent text={i.answer} />
+            <MarkdownContent text={i.answer} />
             <p>
               <IconButton
                 onClick={async () => {
@@ -381,7 +378,7 @@ const CopilotChat = () => {
           </>
         );
       case "pending":
-        return <MemoMarkdownContent text={i.answer} />;
+        return <MarkdownContent text={i.answer} />;
       default:
         return null;
     }
@@ -412,7 +409,7 @@ const CopilotChat = () => {
           }}
         >
           {logs.map((i) => (
-            <MemoChatLogItem
+            <ChatLogItem
               key={i.id}
               question={i.question}
               answer={renderAnswer(i)}
@@ -468,18 +465,189 @@ const CopilotChat = () => {
   );
 };
 
+const Menu = () => {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        borderInlineEnd: `1px solid ${theme.palette.divider}`,
+
+        overflow: "hidden",
+      }}
+    ></Box>
+  );
+};
+
+const Content = () => {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        overflowX: "auto",
+        overflowY: "auto",
+        scrollbarColor: `${theme.palette.divider} transparent`,
+        backgroundColor: theme.palette.background.paper,
+      }}
+    >
+      <Box sx={{ padding: 3 }}>
+        <span>
+          Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt quam
+          aperiam doloribus vero accusamus tempora. Nesciunt similique error
+          aspernatur, repudiandae id voluptatibus quod eligendi minima
+          laudantium consequatur nostrum molestiae totam! Consequatur iure
+          perspiciatis autem in nesciunt! Debitis inventore pariatur cupiditate
+          accusamus illum excepturi quas recusandae dolorum repellat voluptatum
+          amet facilis aliquam odit aspernatur maiores, mollitia molestias, quam
+          harum unde praesentium. Eos corrupti soluta nam adipisci. Dolore
+          laboriosam necessitatibus earum molestias asperiores esse debitis
+          cumque alias deleniti beatae sapiente eos itaque sequi, rerum et
+          impedit, deserunt nobis, iure ipsa est! Officiis. Dolorem deleniti ex
+          blanditiis in ducimus! Maiores debitis nihil explicabo, consequuntur
+          aperiam quod perferendis assumenda quasi suscipit fuga delectus
+          similique dignissimos, cumque expedita. Vero dolor, maiores quisquam
+          reiciendis doloribus consectetur. Delectus atque architecto ea nisi
+          quaerat unde quod soluta aliquam? Ipsum, voluptate ab repellendus modi
+          asperiores quo nobis repellat quod beatae alias nesciunt temporibus
+          non iusto? Harum magni eos cum. Odit quam itaque saepe, ipsam mollitia
+          cupiditate illo porro, similique qui tempora minima ad obcaecati
+          incidunt. Distinctio perspiciatis quia, iure nisi harum ut quo
+          quisquam ipsum ipsam? Incidunt, repellendus voluptatem. Dolorem
+          incidunt reprehenderit consequuntur tempore in alias molestiae beatae
+          esse unde ab? Nemo iure officiis labore possimus neque facilis modi,
+          iusto assumenda sit soluta. Omnis consequuntur expedita aliquam nulla
+          eum. Accusantium quis minima, quidem voluptatum sequi placeat modi
+          doloribus adipisci ipsum quos pariatur similique amet itaque dolor
+          ipsa minus numquam reiciendis id qui officia, vel excepturi?
+          Repellendus harum ducimus delectus! At, error! Iste soluta, aut alias
+          reprehenderit officiis praesentium ab ipsam asperiores. Perferendis
+          consequatur, facere, enim error fuga fugiat recusandae nisi neque
+          assumenda omnis voluptates optio facilis aut dolorem sequi? Vitae eum
+          reiciendis nobis ipsum saepe officiis atque eius maiores aliquam?
+          Cumque, unde neque suscipit quasi officia fuga, iusto asperiores eos
+          ea facere, nihil ducimus! Voluptatum, tenetur aspernatur? Expedita,
+          officia.
+        </span>
+        <Box width={2000} height={2000}></Box>
+      </Box>
+    </Box>
+  );
+};
+
+type ActivePanel = "menu" | "chat" | "content";
+
 export const Component = () => {
   const [openMenu, setOpenMenu] = React.useState(false);
   const [openChat, setOpenChat] = React.useState(false);
   const [alwaysOnTop, setAlwaysOnTop] = React.useState(false);
   const [leftResizeActive, setLeftResizeActive] = React.useState(false);
   const [rightResizeActive, setRightResizeActive] = React.useState(false);
+  const [lastActivePanel, setLastActivePanel] =
+    React.useState<ActivePanel>("content");
 
   const theme = useTheme();
+  const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
-  const handleMenuToggle = () => setOpenMenu((prev) => !prev);
-  const handleChatToggle = () => setOpenChat((prev) => !prev);
   const handleAlwaysOnTopToggle = () => setAlwaysOnTop((prev) => !prev);
+  const handleMenuToggle = () => {
+    setOpenMenu((prev) => !prev);
+    setLastActivePanel((prev) => (prev === "menu" ? "content" : "menu"));
+  };
+  const handleChatToggle = () => {
+    setOpenChat((prev) => !prev);
+    setLastActivePanel((prev) => (prev === "chat" ? "content" : "chat"));
+  };
+
+  const renderPanelGroupInSmallScreen = () => {
+    switch (lastActivePanel) {
+      case "menu":
+        return (
+          <PanelGroup direction="horizontal" autoSaveId="resize">
+            <Panel id="menu" order={1}>
+              <Menu />
+            </Panel>
+          </PanelGroup>
+        );
+      case "chat":
+        return (
+          <PanelGroup direction="horizontal" autoSaveId="resize">
+            <Panel id="chat" order={3}>
+              <CopilotChat />
+            </Panel>
+          </PanelGroup>
+        );
+      case "content":
+      default:
+        return (
+          <PanelGroup direction="horizontal" autoSaveId="resize">
+            <Panel id="content" order={2}>
+              <Content />
+            </Panel>
+          </PanelGroup>
+        );
+    }
+  };
+
+  const renderPanelGroup = () => {
+    if (isSmallScreen) {
+      return renderPanelGroupInSmallScreen();
+    }
+
+    return (
+      <PanelGroup direction="horizontal" autoSaveId="resize">
+        {openMenu && (
+          <>
+            <Panel
+              minSize={20}
+              maxSize={50}
+              defaultSize={20}
+              id="menu"
+              order={1}
+            >
+              <Menu />
+            </Panel>
+            <PanelResizeHandle
+              style={{
+                width: leftResizeActive ? 2 : 1,
+                backgroundColor: leftResizeActive
+                  ? theme.palette.primary.main
+                  : theme.palette.divider,
+              }}
+              onDragging={setLeftResizeActive}
+            />
+          </>
+        )}
+        <Panel id="content" order={2}>
+          <Content />
+        </Panel>
+        {openChat && (
+          <>
+            <PanelResizeHandle
+              style={{
+                width: rightResizeActive ? 2 : 1,
+                backgroundColor: rightResizeActive
+                  ? theme.palette.primary.main
+                  : theme.palette.divider,
+              }}
+              onDragging={setRightResizeActive}
+            />
+            <Panel
+              minSize={20}
+              maxSize={50}
+              defaultSize={30}
+              id="chat"
+              order={3}
+            >
+              <CopilotChat />
+            </Panel>
+          </>
+        )}
+      </PanelGroup>
+    );
+  };
 
   return (
     <Box
@@ -534,117 +702,7 @@ export const Component = () => {
           </IconButton>
         </Box>
       </Box>
-      <Box sx={{ flex: 1, minBlockSize: 0 }}>
-        <PanelGroup direction="horizontal" autoSaveId="resize">
-          {openMenu && (
-            <>
-              <Panel
-                minSize={20}
-                maxSize={50}
-                defaultSize={20}
-                id="menu"
-                order={1}
-              >
-                <Box
-                  sx={{
-                    borderInlineEnd: `1px solid ${theme.palette.divider}`,
-                    width: 384,
-                    overflow: "hidden",
-                  }}
-                ></Box>
-              </Panel>
-              <PanelResizeHandle
-                style={{
-                  width: leftResizeActive ? 2 : 1,
-                  backgroundColor: leftResizeActive
-                    ? theme.palette.primary.main
-                    : theme.palette.divider,
-                }}
-                onDragging={setLeftResizeActive}
-              />
-            </>
-          )}
-          <Panel id="content" order={2}>
-            <Box
-              sx={{
-                width: "100%",
-                height: "100%",
-                overflowX: "auto",
-                overflowY: "auto",
-                scrollbarColor: `${theme.palette.divider} transparent`,
-                backgroundColor: theme.palette.background.paper,
-              }}
-            >
-              <Box sx={{ padding: 3 }}>
-                <Box width={2000} height={2000}></Box>
-                <span>
-                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
-                  Incidunt quam aperiam doloribus vero accusamus tempora.
-                  Nesciunt similique error aspernatur, repudiandae id
-                  voluptatibus quod eligendi minima laudantium consequatur
-                  nostrum molestiae totam! Consequatur iure perspiciatis autem
-                  in nesciunt! Debitis inventore pariatur cupiditate accusamus
-                  illum excepturi quas recusandae dolorum repellat voluptatum
-                  amet facilis aliquam odit aspernatur maiores, mollitia
-                  molestias, quam harum unde praesentium. Eos corrupti soluta
-                  nam adipisci. Dolore laboriosam necessitatibus earum molestias
-                  asperiores esse debitis cumque alias deleniti beatae sapiente
-                  eos itaque sequi, rerum et impedit, deserunt nobis, iure ipsa
-                  est! Officiis. Dolorem deleniti ex blanditiis in ducimus!
-                  Maiores debitis nihil explicabo, consequuntur aperiam quod
-                  perferendis assumenda quasi suscipit fuga delectus similique
-                  dignissimos, cumque expedita. Vero dolor, maiores quisquam
-                  reiciendis doloribus consectetur. Delectus atque architecto ea
-                  nisi quaerat unde quod soluta aliquam? Ipsum, voluptate ab
-                  repellendus modi asperiores quo nobis repellat quod beatae
-                  alias nesciunt temporibus non iusto? Harum magni eos cum. Odit
-                  quam itaque saepe, ipsam mollitia cupiditate illo porro,
-                  similique qui tempora minima ad obcaecati incidunt. Distinctio
-                  perspiciatis quia, iure nisi harum ut quo quisquam ipsum
-                  ipsam? Incidunt, repellendus voluptatem. Dolorem incidunt
-                  reprehenderit consequuntur tempore in alias molestiae beatae
-                  esse unde ab? Nemo iure officiis labore possimus neque facilis
-                  modi, iusto assumenda sit soluta. Omnis consequuntur expedita
-                  aliquam nulla eum. Accusantium quis minima, quidem voluptatum
-                  sequi placeat modi doloribus adipisci ipsum quos pariatur
-                  similique amet itaque dolor ipsa minus numquam reiciendis id
-                  qui officia, vel excepturi? Repellendus harum ducimus
-                  delectus! At, error! Iste soluta, aut alias reprehenderit
-                  officiis praesentium ab ipsam asperiores. Perferendis
-                  consequatur, facere, enim error fuga fugiat recusandae nisi
-                  neque assumenda omnis voluptates optio facilis aut dolorem
-                  sequi? Vitae eum reiciendis nobis ipsum saepe officiis atque
-                  eius maiores aliquam? Cumque, unde neque suscipit quasi
-                  officia fuga, iusto asperiores eos ea facere, nihil ducimus!
-                  Voluptatum, tenetur aspernatur? Expedita, officia.
-                </span>
-              </Box>
-            </Box>
-          </Panel>
-          {openChat && (
-            <>
-              <PanelResizeHandle
-                style={{
-                  width: rightResizeActive ? 2 : 1,
-                  backgroundColor: rightResizeActive
-                    ? theme.palette.primary.main
-                    : theme.palette.divider,
-                }}
-                onDragging={setRightResizeActive}
-              />
-              <Panel
-                minSize={20}
-                maxSize={50}
-                defaultSize={30}
-                id="chat"
-                order={3}
-              >
-                <CopilotChat />
-              </Panel>
-            </>
-          )}
-        </PanelGroup>
-      </Box>
+      <Box sx={{ flex: 1, minBlockSize: 0 }}>{renderPanelGroup()}</Box>
     </Box>
   );
 };
