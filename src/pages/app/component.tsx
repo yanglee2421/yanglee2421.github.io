@@ -38,6 +38,7 @@ type MessageContentProps = {
 const MessageContent = (props: MessageContentProps) => {
   return (
     <Box
+      component={"article"}
       sx={{
         "& pre.shiki": {
           whiteSpace: "pre-wrap",
@@ -84,20 +85,18 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
     switch (i.status) {
       case "loading":
         return (
-          <Box sx={{ marginBlock: 2 }}>
+          <div>
             <Skeleton />
             <Skeleton animation="wave" />
             <Skeleton animation={false} />
-          </Box>
+          </div>
         );
       case "error":
         return (
-          <Box sx={{ marginBlock: 2 }}>
-            <Alert severity="error" variant="filled">
-              <AlertTitle>Error</AlertTitle>
-              {i.answer}
-            </Alert>
-          </Box>
+          <Alert severity="error" variant="filled">
+            <AlertTitle>Error</AlertTitle>
+            {i.answer}
+          </Alert>
         );
       case "pending":
       case "success":
@@ -108,11 +107,18 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
 
   return (
     <>
-      <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
-        <Paper
-          ref={questionRef}
-          sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}
-        >
+      <Box
+        ref={questionRef}
+        sx={{
+          display: "flex",
+          justifyContent: "flex-end",
+          paddingBlockStart: 3,
+          "&:first-child": {
+            paddingBlockStart: 0,
+          },
+        }}
+      >
+        <Paper sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}>
           {i.question}
         </Paper>
       </Box>
@@ -334,7 +340,6 @@ const CopilotChat = () => {
         flexDirection: "column",
 
         blockSize: "100%",
-        padding: 3,
       }}
     >
       <Box
@@ -344,7 +349,11 @@ const CopilotChat = () => {
           scrollbarColor: `${theme.palette.divider} transparent`,
         }}
       >
-        <div>
+        <Box
+          sx={{
+            padding: 3,
+          }}
+        >
           {logs.map((i, idx) => (
             <MemoChatLogItem
               key={i.id}
@@ -352,43 +361,45 @@ const CopilotChat = () => {
               enableScroll={Object.is(idx + 1, logs.length)}
             />
           ))}
-        </div>
+        </Box>
         <div ref={chatLogRef} />
       </Box>
-      <form
-        ref={formRef}
-        onSubmit={handleSubmit}
-        onReset={() => chatForm.reset()}
-        noValidate
-        autoComplete="off"
-      >
-        <Controller
-          control={chatForm.control}
-          name="question"
-          render={({ field, fieldState }) => (
-            <TextField
-              {...field}
-              error={!!fieldState.error}
-              helperText={fieldState.error?.message}
-              onFocus={handleScrollToBottom}
-              fullWidth
-              slotProps={{
-                input: {
-                  endAdornment: (
-                    <InputAdornment position="end">
-                      {renderSendButton()}
-                    </InputAdornment>
-                  ),
-                },
-                htmlInput: {
-                  autoFocus: true,
-                  autoComplete: "off",
-                },
-              }}
-            />
-          )}
-        />
-      </form>
+      <Box sx={{ padding: 3, paddingBlockStart: 0 }}>
+        <form
+          ref={formRef}
+          onSubmit={handleSubmit}
+          onReset={() => chatForm.reset()}
+          noValidate
+          autoComplete="off"
+        >
+          <Controller
+            control={chatForm.control}
+            name="question"
+            render={({ field, fieldState }) => (
+              <TextField
+                {...field}
+                error={!!fieldState.error}
+                helperText={fieldState.error?.message}
+                onFocus={handleScrollToBottom}
+                fullWidth
+                slotProps={{
+                  input: {
+                    endAdornment: (
+                      <InputAdornment position="end">
+                        {renderSendButton()}
+                      </InputAdornment>
+                    ),
+                  },
+                  htmlInput: {
+                    autoFocus: true,
+                    autoComplete: "off",
+                  },
+                }}
+              />
+            )}
+          />
+        </form>
+      </Box>
     </Box>
   );
 };
