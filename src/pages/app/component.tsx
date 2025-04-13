@@ -2,6 +2,8 @@ import { Markdown } from "@/components/markdown";
 import { warn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
+  AutorenewOutlined,
+  ContentCopyOutlined,
   MenuOutlined,
   PushPin,
   PushPinOutlined,
@@ -9,6 +11,8 @@ import {
   SendOutlined,
   SmartToyOutlined,
   StopOutlined,
+  ThumbDownOutlined,
+  ThumbUpOutlined,
 } from "@mui/icons-material";
 import {
   Alert,
@@ -28,14 +32,13 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import openai from "openai";
+import { useSnackbar } from "notistack";
 
-const MemoMarkdown = React.memo(Markdown);
-
-type MessageContentProps = {
+type MarkdownContentProps = {
   text: string;
 };
 
-const MessageContent = (props: MessageContentProps) => {
+const MarkdownContent = (props: MarkdownContentProps) => {
   return (
     <Box
       component={"article"}
@@ -50,66 +53,24 @@ const MessageContent = (props: MessageContentProps) => {
   );
 };
 
-const MemoMessageContent = React.memo(MessageContent);
-
 type ChatLogItemProps = {
-  i: ChatLog;
-  enableScroll?: boolean;
+  question: string;
+  answer: React.ReactNode;
+  ref: React.Ref<HTMLDivElement>;
 };
 
-const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
-  const scrollRef = React.useRef<HTMLDivElement>(null);
-
-  React.useEffect(() => {
-    if (!enableScroll) return;
-
-    const timer = requestAnimationFrame(() => {
-      scrollRef.current?.scrollIntoView({
-        behavior: "smooth",
-        block: "start",
-      });
-    });
-
-    return () => {
-      cancelAnimationFrame(timer);
-    };
-  }, [enableScroll]);
-
-  const renderAnswer = () => {
-    switch (i.status) {
-      case "loading":
-        return (
-          <div>
-            <Skeleton />
-            <Skeleton animation="wave" />
-            <Skeleton animation={false} />
-          </div>
-        );
-      case "error":
-        return (
-          <Alert severity="error" variant="filled">
-            <AlertTitle>Error</AlertTitle>
-            {i.answer}
-          </Alert>
-        );
-      case "pending":
-      case "success":
-      default:
-        return <MemoMessageContent text={i.answer} />;
-    }
-  };
-
+const ChatLogItem = ({ question, answer, ref }: ChatLogItemProps) => {
   return (
     <>
       <Box
-        ref={scrollRef}
+        ref={ref}
         sx={{
           display: "flex",
           justifyContent: "flex-end",
         }}
       >
         <Paper sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}>
-          {i.question}
+          {question}
         </Paper>
       </Box>
       <Box
@@ -119,12 +80,14 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
           },
         }}
       >
-        {renderAnswer()}
+        {answer}
       </Box>
     </>
   );
 };
 
+const MemoMarkdown = React.memo(Markdown);
+const MemoMarkdownContent = React.memo(MarkdownContent);
 const MemoChatLogItem = React.memo(ChatLogItem);
 
 const schema = z.object({
@@ -156,6 +119,7 @@ type ChatLog = {
   id: string;
   question: string;
   answer: string;
+  messages: Message[];
   time: string;
   status: ChatStatus;
 };
@@ -165,15 +129,15 @@ const initChatLog = () => new Map<string, ChatLog>();
 type SendParams = {
   id: string;
   question: string;
-};
+  messages: Message[];
+} & Partial<ChatLog>;
 
-const send = ({ id, question }: SendParams, map: Map<string, ChatLog>) => {
+const insert = (param: SendParams, map: Map<string, ChatLog>) => {
   const chatLog: ChatLog = {
-    id,
-    question,
     answer: "",
     time: new Date().toLocaleString(),
     status: "loading",
+    ...param,
   };
 
   return new Map(map).set(chatLog.id, chatLog);
@@ -181,33 +145,23 @@ const send = ({ id, question }: SendParams, map: Map<string, ChatLog>) => {
 
 type UpdateParams = {
   id: string;
-  answer: string;
-  status?: ChatStatus;
-};
+} & Partial<ChatLog>;
 
-const update = (
-  { id, answer, status = "pending" }: UpdateParams,
-  map: Map<string, ChatLog>,
-) => {
-  const chatLog = map.get(id);
+const update = (param: UpdateParams, map: Map<string, ChatLog>) => {
+  const chatLog = map.get(param.id);
   if (!chatLog) return map;
-  return new Map(map).set(id, { ...chatLog, answer, status });
+  return new Map(map).set(param.id, { ...chatLog, ...param });
 };
 
 type SendButtonStatus = "idle" | "loading" | "streaming";
 
-const CopilotChat = () => {
-  const [chatLog, setChatLog] = React.useState(initChatLog);
-  const [sendButtonStatus, setSendButtonStatus] =
-    React.useState<SendButtonStatus>("idle");
+type Message = {
+  role: "user" | "assistant" | "system";
+  content: string;
+};
 
-  const controllerRef = React.useRef<AbortController | null>(null);
-  const formRef = React.useRef<HTMLFormElement>(null);
+const useScrollToBottom = () => {
   const chatLogRef = React.useRef<HTMLDivElement>(null);
-
-  const theme = useTheme();
-  const chatForm = useChatForm();
-
   const handleScrollToBottom = React.useCallback(() => {
     chatLogRef.current?.scrollIntoView({
       behavior: "smooth",
@@ -217,12 +171,43 @@ const CopilotChat = () => {
 
   React.useEffect(handleScrollToBottom, [handleScrollToBottom]);
 
-  const logs = [...chatLog.values()];
+  return [chatLogRef, handleScrollToBottom] as const;
+};
 
-  type Message = {
-    role: "user" | "assistant" | "system";
-    content: string;
-  };
+const useScrollToView = () => {
+  const [id, setId] = React.useState("");
+
+  const scrollRef = React.useRef<Map<string, HTMLDivElement>>(new Map());
+
+  React.useEffect(() => {
+    if (!id) return;
+    const element = scrollRef.current.get(id);
+    if (!element) return;
+    element.scrollIntoView({
+      behavior: "smooth",
+      block: "start",
+    });
+    setId("");
+  }, [id]);
+
+  return [setId, scrollRef] as const;
+};
+
+const CopilotChat = () => {
+  const [chatLog, setChatLog] = React.useState(initChatLog);
+  const [sendButtonStatus, setSendButtonStatus] =
+    React.useState<SendButtonStatus>("idle");
+
+  const controllerRef = React.useRef<AbortController | null>(null);
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const theme = useTheme();
+  const chatForm = useChatForm();
+  const [setScrollId, scrollRef] = useScrollToView();
+  const [chatLogRef, handleScrollToBottom] = useScrollToBottom();
+  const snackbar = useSnackbar();
+
+  const logs = [...chatLog.values()];
 
   const requestChat = async (id: string, messages: Message[]) => {
     const stream = await client.chat.completions.create({
@@ -240,38 +225,47 @@ const CopilotChat = () => {
       chunk.choices.forEach((choice) => {
         if (!choice.delta.content) return;
         answer += choice.delta.content;
-        setChatLog((prev) => update({ answer, id }, prev));
+        setChatLog((prev) => update({ answer, id, status: "pending" }, prev));
       });
     }
 
     setChatLog((prev) => update({ answer, id, status: "success" }, prev));
   };
 
-  const handleSubmit = chatForm.handleSubmit(async (data) => {
-    if (sendButtonStatus !== "idle") return;
-
-    const question = data.question.trim();
-    const id = crypto.randomUUID();
-
-    chatForm.reset();
-    setChatLog((prev) => send({ id, question }, prev));
+  const runChat = async (id: string, messages: Message[]) => {
     setSendButtonStatus("loading");
 
-    await requestChat(
-      id,
-      logs
-        .flatMap((i) => [
-          { role: "user" as const, content: i.question },
-          { role: "assistant" as const, content: i.answer },
-        ])
-        .concat({ role: "user", content: question }),
-    ).catch((e) => {
+    await requestChat(id, messages).catch((e) => {
       setChatLog((prev) =>
         update({ id, answer: e.message, status: "error" }, prev),
       );
     });
 
     setSendButtonStatus("idle");
+  };
+
+  const runRetry = async (log: ChatLog) => {
+    setScrollId(log.id);
+    setChatLog((prev) => update({ id: log.id, status: "loading" }, prev));
+    await runChat(log.id, log.messages);
+  };
+
+  const handleSubmit = chatForm.handleSubmit(async (data) => {
+    if (sendButtonStatus !== "idle") return;
+
+    const id = crypto.randomUUID();
+    const question = data.question.trim();
+    const messages = logs
+      .flatMap((i) => [
+        { role: "user" as const, content: i.question },
+        { role: "assistant" as const, content: i.answer },
+      ])
+      .concat({ role: "user", content: question });
+
+    chatForm.reset();
+    setScrollId(id);
+    setChatLog((prev) => insert({ id, question, messages }, prev));
+    await runChat(id, messages);
   }, warn);
 
   const handleChatAbort = (e: React.SyntheticEvent) => {
@@ -323,6 +317,73 @@ const CopilotChat = () => {
     }
   };
 
+  const renderAnswer = (i: ChatLog) => {
+    switch (i.status) {
+      case "loading":
+        return (
+          <div>
+            <Skeleton />
+            <Skeleton animation="wave" />
+            <Skeleton animation={false} />
+          </div>
+        );
+      case "error":
+        return (
+          <>
+            <Alert severity="error" variant="filled">
+              <AlertTitle>Error</AlertTitle>
+              {i.answer}
+            </Alert>
+            <p>
+              <IconButton
+                size="small"
+                onClick={() => runRetry(i)}
+                disabled={sendButtonStatus !== "idle"}
+              >
+                <AutorenewOutlined />
+              </IconButton>
+            </p>
+          </>
+        );
+      case "success":
+        return (
+          <>
+            <MemoMarkdownContent text={i.answer} />
+            <p>
+              <IconButton
+                onClick={async () => {
+                  await navigator.clipboard.writeText(i.answer);
+                  snackbar.enqueueSnackbar("Copied Successfully", {
+                    variant: "success",
+                  });
+                }}
+                size="small"
+              >
+                <ContentCopyOutlined />
+              </IconButton>
+              <IconButton size="small">
+                <ThumbUpOutlined />
+              </IconButton>
+              <IconButton size="small">
+                <ThumbDownOutlined />
+              </IconButton>
+              <IconButton
+                size="small"
+                onClick={() => runRetry(i)}
+                disabled={sendButtonStatus !== "idle"}
+              >
+                <AutorenewOutlined />
+              </IconButton>
+            </p>
+          </>
+        );
+      case "pending":
+        return <MemoMarkdownContent text={i.answer} />;
+      default:
+        return null;
+    }
+  };
+
   return (
     <Box
       sx={{
@@ -347,11 +408,18 @@ const CopilotChat = () => {
             },
           }}
         >
-          {logs.map((i, idx) => (
+          {logs.map((i) => (
             <MemoChatLogItem
               key={i.id}
-              i={i}
-              enableScroll={Object.is(idx + 1, logs.length)}
+              question={i.question}
+              answer={renderAnswer(i)}
+              ref={(el) => {
+                if (!el) return;
+                scrollRef.current.set(i.id, el);
+                return () => {
+                  scrollRef.current.delete(i.id);
+                };
+              }}
             />
           ))}
         </Box>
