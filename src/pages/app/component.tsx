@@ -124,15 +124,17 @@ type ChatLog = {
   status: ChatStatus;
 };
 
-const initChatLog = () => new Map<string, ChatLog>();
+type ChatLogMap = Map<string, ChatLog>;
 
-type SendParams = {
+const initChatLog = (): ChatLogMap => new Map();
+
+type InsertParams = {
   id: string;
   question: string;
   messages: Message[];
 } & Partial<ChatLog>;
 
-const insert = (param: SendParams, map: Map<string, ChatLog>) => {
+const insert = (param: InsertParams, map: ChatLogMap) => {
   const chatLog: ChatLog = {
     answer: "",
     time: new Date().toLocaleString(),
@@ -147,7 +149,7 @@ type UpdateParams = {
   id: string;
 } & Partial<ChatLog>;
 
-const update = (param: UpdateParams, map: Map<string, ChatLog>) => {
+const update = (param: UpdateParams, map: ChatLogMap) => {
   const chatLog = map.get(param.id);
   if (!chatLog) return map;
   return new Map(map).set(param.id, { ...chatLog, ...param });
@@ -402,7 +404,7 @@ const CopilotChat = () => {
       >
         <Box
           sx={{
-            paddingInline: 3,
+            padding: 3,
             "&>*+*": {
               marginBlockStart: 3,
             },
