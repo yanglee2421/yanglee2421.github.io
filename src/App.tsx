@@ -1,9 +1,6 @@
 import { RouterUI } from "@/router/RouterUI";
 import { useLocalStoreHasHydrated } from "@/hooks/store/useLocalStore";
 import { useDbStoreHasHydrated } from "./hooks/store/useDbStore";
-import { QueryClientProvider } from "@tanstack/react-query";
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
-import { queryClient } from "@/lib/constants";
 import { Loading } from "./components/loading";
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import {
@@ -20,6 +17,7 @@ import "dayjs/locale/zh";
 import "dayjs/locale/en";
 import { useTranslation } from "react-i18next";
 import { SnackbarProvider } from "notistack";
+import { QueryProvider } from "./components/query";
 
 const WHITE = "#fff";
 
@@ -111,22 +109,23 @@ const darkTheme = createTheme({
 
 const modeToHasSelector = (mode: Mode, isDark: boolean) => {
   switch (mode) {
-    case "system":
-      return isDark;
-
     case "dark":
       return true;
     case "light":
       return false;
+    case "system":
+    default:
+      return isDark;
   }
 };
 
 const MuiProvider = (props: React.PropsWithChildren) => {
   const isDark = useIsDark();
+  const [, i18n] = useTranslation();
   const mode = useLocalStore((s) => s.mode);
+
   const hasDarkSelector = modeToHasSelector(mode, isDark);
   const theme = hasDarkSelector ? darkTheme : lightTheme;
-  const [, i18n] = useTranslation();
   const themeColor = hasDarkSelector
     ? theme.palette.background.default
     : theme.palette.primary.main;
@@ -171,15 +170,6 @@ const MuiProvider = (props: React.PropsWithChildren) => {
         }}
       />
     </ThemeProvider>
-  );
-};
-
-const QueryProvider = (props: React.PropsWithChildren) => {
-  return (
-    <QueryClientProvider client={queryClient}>
-      {props.children}
-      <ReactQueryDevtools buttonPosition="bottom-left" />
-    </QueryClientProvider>
   );
 };
 

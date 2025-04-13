@@ -33,6 +33,7 @@ import { useDbStore } from "@/hooks/store/useDbStore";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import * as mathjs from "mathjs";
+import { error } from "@/lib/utils";
 
 const renderVal = (
   focused: boolean,
@@ -430,7 +431,7 @@ export const Component = () => {
               });
 
               await navigate("/" + params.lang + "/invoices");
-            }, console.error)()
+            }, error)()
           }
           onReset={() => form.reset()}
           noValidate

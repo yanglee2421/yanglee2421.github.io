@@ -38,6 +38,7 @@ import { Controller, useForm } from "react-hook-form";
 import { useSearchParams } from "react-router";
 import { z } from "zod";
 import { Staff as StaffType, useDbStore } from "@/hooks/store/useDbStore";
+import { warn } from "@/lib/utils";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -299,7 +300,7 @@ export const Component = () => {
                     alias: data.alias.trim(),
                   });
                 });
-              }, console.error)()
+              }, warn)()
             }
             noValidate
             onReset={() => form.reset()}

@@ -22,6 +22,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
+import { error } from "@/lib/utils";
 
 const schema = z.object({
   hours: z.number().int(),
@@ -81,7 +82,7 @@ export function Add() {
             id={formId}
             onSubmit={form.handleSubmit(async (data) => {
               await add.mutateAsync(data);
-            }, console.error)}
+            }, error)}
             onReset={handleClose}
           >
             <Grid container spacing={6} sx={{ mt: 2 }}>

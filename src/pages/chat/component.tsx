@@ -12,6 +12,7 @@ import {
 import React from "react";
 import { useImmer } from "use-immer";
 import { Markdown } from "@/components/markdown";
+import { warn } from "@/lib/utils";
 
 const MemoMarkdown = React.memo(Markdown);
 
@@ -216,7 +217,7 @@ export const Component = () => {
 
     setLoading(true);
     await sendRequest().catch((error) => {
-      console.warn(error);
+      warn(error);
 
       setMsgList((d) => {
         const last = d[d.length - 1];

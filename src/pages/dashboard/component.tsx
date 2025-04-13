@@ -1,7 +1,5 @@
 import { StopOutlined } from "@mui/icons-material";
 import {
-  Alert,
-  AlertTitle,
   Box,
   Button,
   Card,
@@ -16,7 +14,6 @@ import React from "react";
 import { Translation } from "react-i18next";
 import { useSize } from "@/hooks/dom/useSize";
 import { minmax } from "@/lib/utils";
-import { ErrorBoundary } from "react-error-boundary";
 
 const drawLine = (
   canvasCtx: CanvasRenderingContext2D,
@@ -69,13 +66,15 @@ const drawText = (
   canvasCtx.closePath();
 };
 
-const streamPro = navigator.mediaDevices.getUserMedia({ audio: true });
-
 const getY = (val: number, max: number, height: number) =>
   Math.floor(height - (val / max) * height);
 
-const Microphone = () => {
-  const audio = React.use(streamPro);
+type MicrophoneProps = {
+  stream: Promise<MediaStream>;
+};
+
+const Microphone = (props: MicrophoneProps) => {
+  const audio = React.use(props.stream);
 
   const elRef = React.useRef<HTMLCanvasElement>(null);
   const divRef = React.useRef<HTMLDivElement>(null);
@@ -249,8 +248,12 @@ const createEchoDelayEffect = (audioContext: AudioContext) => {
   };
 };
 
-const Sinewave = () => {
-  const stream = React.use(streamPro);
+type SinewaveProps = {
+  stream: Promise<MediaStream>;
+};
+
+const Sinewave = (props: SinewaveProps) => {
+  const stream = React.use(props.stream);
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
@@ -368,8 +371,12 @@ const Sinewave = () => {
   );
 };
 
-const Frequencybars = () => {
-  const stream = React.use(streamPro);
+type FrequencybarsProps = {
+  stream: Promise<MediaStream>;
+};
+
+const Frequencybars = (props: FrequencybarsProps) => {
+  const stream = React.use(props.stream);
 
   const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
@@ -481,20 +488,31 @@ const Frequencybars = () => {
   );
 };
 
-const ControlCard = () => {
-  const stream = React.use(streamPro);
+type ControlCardProps = {
+  onStop: () => void;
+  onStart: () => void;
+};
 
+const ControlCard = (props: ControlCardProps) => {
   return (
     <Card>
       <CardHeader title="Control" />
       <CardActions>
         <Button
           startIcon={<StopOutlined />}
-          onClick={() => stream.getAudioTracks().forEach((i) => i.stop())}
+          onClick={props.onStop}
           variant="contained"
           color="error"
         >
           Stop
+        </Button>
+        <Button
+          startIcon={<StopOutlined />}
+          onClick={props.onStart}
+          variant="contained"
+          color="success"
+        >
+          Start
         </Button>
       </CardActions>
     </Card>
@@ -600,7 +618,11 @@ const SvgCard = () => {
   );
 };
 
+const initStream = () => navigator.mediaDevices.getUserMedia({ audio: true });
+
 export const Component = () => {
+  const [stream, setStream] = React.useState(initStream);
+
   return (
     <Grid container spacing={6}>
       <Grid size={{ xs: 12 }}>
@@ -611,40 +633,32 @@ export const Component = () => {
           Lorem ipsum dolor sit amet consectetur adipisicing elit.
         </Typography>
       </Grid>
-      <ErrorBoundary
-        fallbackRender={(props) => (
-          <Grid size={{ xs: 12 }}>
-            <Alert severity="error">
-              <AlertTitle>Error</AlertTitle>
-              <Typography>{props.error.message}</Typography>
-              <Button
-                color="error"
-                variant="contained"
-                onClick={props.resetErrorBoundary}
-                sx={{ mt: 2 }}
-              >
-                Retry
-              </Button>
-            </Alert>
-          </Grid>
-        )}
-      >
+
+      <React.Suspense>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Microphone />
+          <Microphone stream={stream} />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Sinewave />
+          <Sinewave stream={stream} />
         </Grid>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-          <Frequencybars />
+          <Frequencybars stream={stream} />
         </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <ControlCard />
-        </Grid>
-        <Grid size={{ xs: 12, sm: 6 }}>
-          <SvgCard />
-        </Grid>
-      </ErrorBoundary>
+      </React.Suspense>
+      <Grid size={{ xs: 12, sm: 6 }}>
+        <ControlCard
+          onStop={async () => {
+            const audio = await stream;
+            audio.getTracks().forEach((track) => track.stop());
+          }}
+          onStart={() => {
+            setStream(navigator.mediaDevices.getUserMedia({ audio: true }));
+          }}
+        />
+      </Grid>
+      <Grid size={{ xs: 12, sm: 6 }}>
+        <SvgCard />
+      </Grid>
     </Grid>
   );
 };

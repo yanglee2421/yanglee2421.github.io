@@ -264,3 +264,21 @@ type Falsey = null | undefined | false | "" | 0 | 0n;
 export const compact = <TData>(list: Array<TData | Falsey>) => {
   return list.filter(Boolean) as TData;
 };
+
+export const log: typeof console.log = (...args) => {
+  if (import.meta.env.DEV) {
+    console.log(...args);
+  }
+};
+
+export const warn: typeof console.warn = (...args) => {
+  if (import.meta.env.DEV) {
+    console.warn(...args);
+  }
+};
+
+export const error: typeof console.error = (...args) => {
+  if (import.meta.env.DEV) {
+    console.error(...args);
+  }
+};

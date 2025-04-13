@@ -38,7 +38,6 @@ import {
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { DragIndicatorOutlined } from "@mui/icons-material";
-import { timeout } from "@yotulee/run";
 import bg from "@/assets/images/justHer.jpg";
 import { useSnackbar } from "notistack";
 
@@ -72,7 +71,6 @@ const WebSocketCard = () => {
       ref.current.addEventListener(
         "close",
         async () => {
-          await timeout(200);
           connect();
         },
         controller,
