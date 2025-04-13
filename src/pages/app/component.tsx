@@ -43,12 +43,6 @@ const MessageContent = (props: MessageContentProps) => {
         "& pre.shiki": {
           whiteSpace: "pre-wrap",
         },
-
-        "&::before,&::after": {
-          content: '""',
-          display: "table",
-          clear: "both",
-        },
       }}
     >
       <MemoMarkdown code={props.text} />
@@ -64,13 +58,13 @@ type ChatLogItemProps = {
 };
 
 const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
-  const questionRef = React.useRef<HTMLDivElement>(null);
+  const scrollRef = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
     if (!enableScroll) return;
 
     const timer = requestAnimationFrame(() => {
-      questionRef.current?.scrollIntoView({
+      scrollRef.current?.scrollIntoView({
         behavior: "smooth",
         block: "start",
       });
@@ -108,14 +102,10 @@ const ChatLogItem = ({ i, enableScroll }: ChatLogItemProps) => {
   return (
     <>
       <Box
-        ref={questionRef}
+        ref={scrollRef}
         sx={{
           display: "flex",
           justifyContent: "flex-end",
-          paddingBlockStart: 3,
-          "&:first-child": {
-            paddingBlockStart: 0,
-          },
         }}
       >
         <Paper sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}>
@@ -351,7 +341,10 @@ const CopilotChat = () => {
       >
         <Box
           sx={{
-            padding: 3,
+            paddingInline: 3,
+            "&>*+*": {
+              marginBlockStart: 3,
+            },
           }}
         >
           {logs.map((i, idx) => (
