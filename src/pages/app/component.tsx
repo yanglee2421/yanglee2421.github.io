@@ -33,6 +33,7 @@ import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import openai from "openai";
 import { useSnackbar } from "notistack";
+import { PanelResizeHandle, PanelGroup, Panel } from "react-resizable-panels";
 
 type MarkdownContentProps = {
   text: string;
@@ -471,6 +472,8 @@ export const Component = () => {
   const [openMenu, setOpenMenu] = React.useState(false);
   const [openChat, setOpenChat] = React.useState(false);
   const [alwaysOnTop, setAlwaysOnTop] = React.useState(false);
+  const [leftResizeActive, setLeftResizeActive] = React.useState(false);
+  const [rightResizeActive, setRightResizeActive] = React.useState(false);
 
   const theme = useTheme();
 
@@ -531,86 +534,116 @@ export const Component = () => {
           </IconButton>
         </Box>
       </Box>
-      <Box
-        sx={{
-          flex: 1,
-          overflow: "hidden",
-
-          display: "flex",
-          flexDirection: "row",
-        }}
-      >
-        {openMenu && (
-          <Box
-            sx={{
-              borderInlineEnd: `1px solid ${theme.palette.divider}`,
-              width: 384,
-              overflow: "hidden",
-            }}
-          ></Box>
-        )}
-        <Box
-          sx={{
-            flex: 1,
-            overflowX: "auto",
-            overflowY: "auto",
-            scrollbarColor: `${theme.palette.divider} transparent`,
-            backgroundColor: theme.palette.background.paper,
-
-            padding: 3,
-          }}
-        >
-          <Box width={2000} height={2000}></Box>
-          <span>
-            Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt
-            quam aperiam doloribus vero accusamus tempora. Nesciunt similique
-            error aspernatur, repudiandae id voluptatibus quod eligendi minima
-            laudantium consequatur nostrum molestiae totam! Consequatur iure
-            perspiciatis autem in nesciunt! Debitis inventore pariatur
-            cupiditate accusamus illum excepturi quas recusandae dolorum
-            repellat voluptatum amet facilis aliquam odit aspernatur maiores,
-            mollitia molestias, quam harum unde praesentium. Eos corrupti soluta
-            nam adipisci. Dolore laboriosam necessitatibus earum molestias
-            asperiores esse debitis cumque alias deleniti beatae sapiente eos
-            itaque sequi, rerum et impedit, deserunt nobis, iure ipsa est!
-            Officiis. Dolorem deleniti ex blanditiis in ducimus! Maiores debitis
-            nihil explicabo, consequuntur aperiam quod perferendis assumenda
-            quasi suscipit fuga delectus similique dignissimos, cumque expedita.
-            Vero dolor, maiores quisquam reiciendis doloribus consectetur.
-            Delectus atque architecto ea nisi quaerat unde quod soluta aliquam?
-            Ipsum, voluptate ab repellendus modi asperiores quo nobis repellat
-            quod beatae alias nesciunt temporibus non iusto? Harum magni eos
-            cum. Odit quam itaque saepe, ipsam mollitia cupiditate illo porro,
-            similique qui tempora minima ad obcaecati incidunt. Distinctio
-            perspiciatis quia, iure nisi harum ut quo quisquam ipsum ipsam?
-            Incidunt, repellendus voluptatem. Dolorem incidunt reprehenderit
-            consequuntur tempore in alias molestiae beatae esse unde ab? Nemo
-            iure officiis labore possimus neque facilis modi, iusto assumenda
-            sit soluta. Omnis consequuntur expedita aliquam nulla eum.
-            Accusantium quis minima, quidem voluptatum sequi placeat modi
-            doloribus adipisci ipsum quos pariatur similique amet itaque dolor
-            ipsa minus numquam reiciendis id qui officia, vel excepturi?
-            Repellendus harum ducimus delectus! At, error! Iste soluta, aut
-            alias reprehenderit officiis praesentium ab ipsam asperiores.
-            Perferendis consequatur, facere, enim error fuga fugiat recusandae
-            nisi neque assumenda omnis voluptates optio facilis aut dolorem
-            sequi? Vitae eum reiciendis nobis ipsum saepe officiis atque eius
-            maiores aliquam? Cumque, unde neque suscipit quasi officia fuga,
-            iusto asperiores eos ea facere, nihil ducimus! Voluptatum, tenetur
-            aspernatur? Expedita, officia.
-          </span>
-        </Box>
-        {openChat && (
-          <Box
-            sx={{
-              borderInlineStart: `1px solid ${theme.palette.divider}`,
-              width: 384,
-              overflow: "hidden",
-            }}
-          >
-            <CopilotChat />
-          </Box>
-        )}
+      <Box sx={{ flex: 1, minBlockSize: 0 }}>
+        <PanelGroup direction="horizontal" autoSaveId="resize">
+          {openMenu && (
+            <>
+              <Panel
+                minSize={20}
+                maxSize={50}
+                defaultSize={20}
+                id="menu"
+                order={1}
+              >
+                <Box
+                  sx={{
+                    borderInlineEnd: `1px solid ${theme.palette.divider}`,
+                    width: 384,
+                    overflow: "hidden",
+                  }}
+                ></Box>
+              </Panel>
+              <PanelResizeHandle
+                style={{
+                  width: leftResizeActive ? 2 : 1,
+                  backgroundColor: leftResizeActive
+                    ? theme.palette.primary.main
+                    : theme.palette.divider,
+                }}
+                onDragging={setLeftResizeActive}
+              />
+            </>
+          )}
+          <Panel id="content" order={2}>
+            <Box
+              sx={{
+                width: "100%",
+                height: "100%",
+                overflowX: "auto",
+                overflowY: "auto",
+                scrollbarColor: `${theme.palette.divider} transparent`,
+                backgroundColor: theme.palette.background.paper,
+              }}
+            >
+              <Box sx={{ padding: 3 }}>
+                <Box width={2000} height={2000}></Box>
+                <span>
+                  Lorem ipsum dolor sit amet consectetur adipisicing elit.
+                  Incidunt quam aperiam doloribus vero accusamus tempora.
+                  Nesciunt similique error aspernatur, repudiandae id
+                  voluptatibus quod eligendi minima laudantium consequatur
+                  nostrum molestiae totam! Consequatur iure perspiciatis autem
+                  in nesciunt! Debitis inventore pariatur cupiditate accusamus
+                  illum excepturi quas recusandae dolorum repellat voluptatum
+                  amet facilis aliquam odit aspernatur maiores, mollitia
+                  molestias, quam harum unde praesentium. Eos corrupti soluta
+                  nam adipisci. Dolore laboriosam necessitatibus earum molestias
+                  asperiores esse debitis cumque alias deleniti beatae sapiente
+                  eos itaque sequi, rerum et impedit, deserunt nobis, iure ipsa
+                  est! Officiis. Dolorem deleniti ex blanditiis in ducimus!
+                  Maiores debitis nihil explicabo, consequuntur aperiam quod
+                  perferendis assumenda quasi suscipit fuga delectus similique
+                  dignissimos, cumque expedita. Vero dolor, maiores quisquam
+                  reiciendis doloribus consectetur. Delectus atque architecto ea
+                  nisi quaerat unde quod soluta aliquam? Ipsum, voluptate ab
+                  repellendus modi asperiores quo nobis repellat quod beatae
+                  alias nesciunt temporibus non iusto? Harum magni eos cum. Odit
+                  quam itaque saepe, ipsam mollitia cupiditate illo porro,
+                  similique qui tempora minima ad obcaecati incidunt. Distinctio
+                  perspiciatis quia, iure nisi harum ut quo quisquam ipsum
+                  ipsam? Incidunt, repellendus voluptatem. Dolorem incidunt
+                  reprehenderit consequuntur tempore in alias molestiae beatae
+                  esse unde ab? Nemo iure officiis labore possimus neque facilis
+                  modi, iusto assumenda sit soluta. Omnis consequuntur expedita
+                  aliquam nulla eum. Accusantium quis minima, quidem voluptatum
+                  sequi placeat modi doloribus adipisci ipsum quos pariatur
+                  similique amet itaque dolor ipsa minus numquam reiciendis id
+                  qui officia, vel excepturi? Repellendus harum ducimus
+                  delectus! At, error! Iste soluta, aut alias reprehenderit
+                  officiis praesentium ab ipsam asperiores. Perferendis
+                  consequatur, facere, enim error fuga fugiat recusandae nisi
+                  neque assumenda omnis voluptates optio facilis aut dolorem
+                  sequi? Vitae eum reiciendis nobis ipsum saepe officiis atque
+                  eius maiores aliquam? Cumque, unde neque suscipit quasi
+                  officia fuga, iusto asperiores eos ea facere, nihil ducimus!
+                  Voluptatum, tenetur aspernatur? Expedita, officia.
+                </span>
+              </Box>
+            </Box>
+          </Panel>
+          {openChat && (
+            <>
+              <PanelResizeHandle
+                style={{
+                  width: rightResizeActive ? 2 : 1,
+                  backgroundColor: rightResizeActive
+                    ? theme.palette.primary.main
+                    : theme.palette.divider,
+                }}
+                onDragging={setRightResizeActive}
+              />
+              <Panel
+                minSize={20}
+                maxSize={50}
+                defaultSize={30}
+                id="chat"
+                order={3}
+              >
+                <CopilotChat />
+              </Panel>
+            </>
+          )}
+        </PanelGroup>
       </Box>
     </Box>
   );
