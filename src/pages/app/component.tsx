@@ -644,8 +644,6 @@ export const Component = () => {
       sx={{
         display: "flex",
         flexDirection: "column",
-        inlineSize: "100dvw",
-        blockSize: "100dvh",
 
         position: "fixed",
         inset: 0,
