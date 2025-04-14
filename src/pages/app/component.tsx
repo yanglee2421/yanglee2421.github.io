@@ -21,6 +21,7 @@ import {
   Box,
   CircularProgress,
   Fab,
+  GlobalStyles,
   IconButton,
   InputAdornment,
   Paper,
@@ -645,9 +646,10 @@ export const Component = () => {
         display: "flex",
         flexDirection: "column",
 
-        position: "fixed",
-        inset: 0,
+        position: "relative",
         zIndex: 10,
+
+        blockSize: "100%",
       }}
     >
       <Box
@@ -692,6 +694,13 @@ export const Component = () => {
         </Box>
       </Box>
       <Box sx={{ flex: 1, minBlockSize: 0 }}>{renderPanelGroup()}</Box>
+      <GlobalStyles
+        styles={{
+          ":root,body,#root": {
+            blockSize: "100%",
+          },
+        }}
+      />
     </Box>
   );
 };
