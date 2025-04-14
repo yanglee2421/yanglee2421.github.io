@@ -23,6 +23,7 @@ import {
   TextField,
   InputAdornment,
   useTheme,
+  Typography,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import openai from "openai";
@@ -30,6 +31,11 @@ import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Markdown } from "@/components/markdown";
 import { z } from "zod";
+import {
+  useDbStore,
+  type ChatLog,
+  type Message,
+} from "@/hooks/store/useDbStore";
 
 type MarkdownContentProps = {
   text: string;
@@ -51,7 +57,7 @@ const MarkdownContent = (props: MarkdownContentProps) => {
 };
 
 type ChatLogItemProps = {
-  question: string;
+  question: React.ReactNode;
   answer: React.ReactNode;
   ref: React.Ref<HTMLDivElement>;
 };
@@ -66,9 +72,7 @@ const ChatLogItem = ({ question, answer, ref }: ChatLogItemProps) => {
           justifyContent: "flex-end",
         }}
       >
-        <Paper sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}>
-          {question}
-        </Paper>
+        {question}
       </Box>
       <Box
         sx={{
@@ -105,22 +109,7 @@ const client = new openai.OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-type ChatStatus = "pending" | "success" | "error" | "loading";
-
-type ChatLog = {
-  id: string;
-  question: string;
-  answer: string;
-  messages: Message[];
-  time: string;
-  status: ChatStatus;
-};
-
 type ChatLogMap = Map<string, ChatLog>;
-type ThumbMap = Map<string, boolean>;
-
-const initChatLog = (): ChatLogMap => new Map();
-const initThumbMap = (): ThumbMap => new Map();
 
 type InsertParams = {
   id: string;
@@ -130,9 +119,11 @@ type InsertParams = {
 
 const insert = (param: InsertParams, map: ChatLogMap) => {
   const chatLog: ChatLog = {
+    questionDate: new Date().toISOString(),
     answer: "",
-    time: new Date().toLocaleString(),
+    answerDate: null,
     status: "loading",
+    thumb: null,
     ...param,
   };
 
@@ -151,11 +142,6 @@ const update = (param: UpdateParams, map: ChatLogMap) => {
 
 type SendButtonStatus = "idle" | "loading" | "streaming";
 
-type Message = {
-  role: "user" | "assistant" | "system";
-  content: string;
-};
-
 const useScrollToBottom = () => {
   const chatLogRef = React.useRef<HTMLDivElement>(null);
 
@@ -168,7 +154,7 @@ const useScrollToBottom = () => {
 
   React.useEffect(handleScrollToBottom, [handleScrollToBottom]);
 
-  return [chatLogRef, handleScrollToBottom] as const;
+  return chatLogRef;
 };
 
 const useScrollToView = () => {
@@ -215,8 +201,6 @@ const useWindowInnerHeight = () =>
   );
 
 export const CopilotChat = () => {
-  const [chatLog, setChatLog] = React.useState(initChatLog);
-  const [thumbMap, setThumbMap] = React.useState(initThumbMap);
   const [sendButtonStatus, setSendButtonStatus] =
     React.useState<SendButtonStatus>("idle");
 
@@ -226,11 +210,18 @@ export const CopilotChat = () => {
   const theme = useTheme();
   const chatForm = useChatForm();
   const [scrollRef, setScrollId] = useScrollToView();
-  const [chatLogRef, handleScrollToBottom] = useScrollToBottom();
+  const chatLogRef = useScrollToBottom();
   const snackbar = useSnackbar();
   const isMobile = useMediaQuery("(any-pointer: coarse)");
   const windowInnerHeight = useWindowInnerHeight();
   const visualViewportHeight = useVisualViewportHeight();
+  const chatLogs = useDbStore((state) => state.chatLog);
+  const set = useDbStore((state) => state.set);
+
+  const setChatLog = (updater: (prev: ChatLogMap) => ChatLogMap) =>
+    set((state) => {
+      state.chatLog = [...updater(new Map(state.chatLog)).entries()];
+    });
 
   const getVirtualKeyboardHeight = () => {
     if (!isMobile) return 0;
@@ -240,7 +231,7 @@ export const CopilotChat = () => {
 
   const virtualKeyboardHeight = getVirtualKeyboardHeight();
   const isVirtualKeyboardVisible = !!virtualKeyboardHeight;
-  const logs = [...chatLog.values()];
+  const logs = chatLogs.map(([, i]) => i);
 
   const requestChat = async (id: string, messages: Message[]) => {
     const stream = await client.chat.completions.create({
@@ -262,7 +253,12 @@ export const CopilotChat = () => {
       });
     }
 
-    setChatLog((prev) => update({ answer, id, status: "success" }, prev));
+    setChatLog((prev) =>
+      update(
+        { answer, id, status: "success", answerDate: new Date().toISOString() },
+        prev,
+      ),
+    );
   };
 
   const runChat = async (id: string, messages: Message[]) => {
@@ -279,12 +275,9 @@ export const CopilotChat = () => {
 
   const runRetry = async (log: ChatLog) => {
     setScrollId(log.id);
-    setChatLog((prev) => update({ id: log.id, status: "loading" }, prev));
-    setThumbMap((prev) => {
-      const nextVal = new Map(prev);
-      nextVal.delete(log.id);
-      return nextVal;
-    });
+    setChatLog((prev) =>
+      update({ id: log.id, status: "loading", thumb: null }, prev),
+    );
     await runChat(log.id, log.messages);
   };
 
@@ -314,10 +307,6 @@ export const CopilotChat = () => {
      */
     e.preventDefault();
     controllerRef.current?.abort();
-  };
-
-  const handleFocus = () => {
-    handleScrollToBottom();
   };
 
   const renderSendButton = () => {
@@ -360,42 +349,41 @@ export const CopilotChat = () => {
   };
 
   const renderThumb = (i: ChatLog) => {
-    if (!thumbMap.has(i.id)) {
-      return (
-        <>
-          <IconButton
-            size="small"
-            onClick={() => setThumbMap((prev) => new Map(prev).set(i.id, true))}
-          >
-            <ThumbUpOutlined />
+    switch (i.thumb) {
+      case "up":
+        return (
+          <IconButton size="small" disabled>
+            <ThumbUp />
           </IconButton>
-          <IconButton
-            size="small"
-            onClick={() =>
-              setThumbMap((prev) => new Map(prev).set(i.id, false))
-            }
-          >
-            <ThumbDownOutlined />
+        );
+      case "down":
+        return (
+          <IconButton size="small" disabled>
+            <ThumbDown />
           </IconButton>
-        </>
-      );
+        );
+      default:
+        return (
+          <>
+            <IconButton
+              size="small"
+              onClick={() =>
+                setChatLog((prev) => update({ id: i.id, thumb: "up" }, prev))
+              }
+            >
+              <ThumbUpOutlined />
+            </IconButton>
+            <IconButton
+              size="small"
+              onClick={() =>
+                setChatLog((prev) => update({ id: i.id, thumb: "down" }, prev))
+              }
+            >
+              <ThumbDownOutlined />
+            </IconButton>
+          </>
+        );
     }
-
-    const isThumbUp = thumbMap.get(i.id);
-
-    if (isThumbUp) {
-      return (
-        <IconButton size="small" disabled>
-          <ThumbUp />
-        </IconButton>
-      );
-    }
-
-    return (
-      <IconButton size="small" disabled>
-        <ThumbDown />
-      </IconButton>
-    );
   };
 
   const renderAnswer = (i: ChatLog) => {
@@ -450,6 +438,9 @@ export const CopilotChat = () => {
               >
                 <AutorenewOutlined />
               </IconButton>
+              <Typography variant="caption" color="text.secondary">
+                {new Date(i.answerDate!).toLocaleTimeString()}
+              </Typography>
             </p>
           </>
         );
@@ -487,7 +478,18 @@ export const CopilotChat = () => {
           {logs.map((i) => (
             <ChatLogItem
               key={i.id}
-              question={i.question}
+              question={
+                <div>
+                  <Paper
+                    sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}
+                  >
+                    {i.question}
+                  </Paper>
+                  <Typography variant="caption" color="text.secondary">
+                    {new Date(i.questionDate).toLocaleTimeString()}
+                  </Typography>
+                </div>
+              }
               answer={renderAnswer(i)}
               ref={(el) => {
                 if (!el) return;
@@ -517,7 +519,6 @@ export const CopilotChat = () => {
                 {...field}
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
-                onFocus={handleFocus}
                 placeholder={`Height: ${virtualKeyboardHeight}px; Visible: ${isVirtualKeyboardVisible}`}
                 fullWidth
                 slotProps={{

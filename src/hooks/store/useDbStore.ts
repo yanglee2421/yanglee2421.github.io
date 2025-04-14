@@ -1,9 +1,27 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { type WritableDraft } from "immer";
 import React from "react";
 import localforage from "localforage";
+import type { WritableDraft } from "immer";
+
+export type Message = {
+  role: "user" | "assistant" | "system";
+  content: string;
+};
+
+export type ChatStatus = "pending" | "success" | "error" | "loading";
+
+export type ChatLog = {
+  id: string;
+  question: string;
+  questionDate: string;
+  messages: Message[];
+  answer: string;
+  answerDate: null | string;
+  status: ChatStatus;
+  thumb: "up" | "down" | null;
+};
 
 export type Invoice = {
   id: string;
@@ -20,21 +38,22 @@ export type Staff = {
   enable: boolean;
 };
 
-type StoreState = {
+type State = {
   invoices: Array<Invoice>;
   staffs: Staff[];
+  chatLog: [string, ChatLog][];
 };
 
-type StoreActions = {
+type Actions = {
   set(
     nextStateOrUpdater:
-      | StoreState
-      | Partial<StoreState>
-      | ((state: WritableDraft<StoreState>) => void),
+      | State
+      | Partial<State>
+      | ((state: WritableDraft<State>) => void),
   ): void;
 };
 
-type Store = StoreState & StoreActions;
+type Store = State & Actions;
 
 export const useDbStore = create<Store>()(
   persist(
@@ -42,6 +61,7 @@ export const useDbStore = create<Store>()(
       set,
       invoices: [],
       staffs: [],
+      chatLog: [],
     })),
     {
       name: "useDbStore",
