@@ -195,11 +195,34 @@ const useScrollToView = () => {
   return [scrollRef, setId] as const;
 };
 
+const useVisualViewportHeight = () =>
+  React.useSyncExternalStore(
+    (fn) => {
+      window.visualViewport?.addEventListener("resize", fn);
+      return () => {
+        window.visualViewport?.removeEventListener("resize", fn);
+      };
+    },
+    () => window.visualViewport?.height || 0,
+    () => 0,
+  );
+
+const useWindowInnerHeight = () =>
+  React.useSyncExternalStore(
+    (fn) => {
+      window.addEventListener("resize", fn);
+      return () => {
+        window.removeEventListener("resize", fn);
+      };
+    },
+    () => window.innerHeight,
+    () => 0,
+  );
+
 const CopilotChat = () => {
   const [chatLog, setChatLog] = React.useState(initChatLog);
   const [sendButtonStatus, setSendButtonStatus] =
     React.useState<SendButtonStatus>("idle");
-  const [heightInFocus, setHeightInFocus] = React.useState(0);
 
   const controllerRef = React.useRef<AbortController | null>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -211,12 +234,16 @@ const CopilotChat = () => {
   const snackbar = useSnackbar();
   const isMobile = useMediaQuery("(any-pointer: coarse)");
   const windowInnerHeight = useWindowInnerHeight();
+  const visualViewportHeight = useVisualViewportHeight();
 
-  const isVirtualKeyboardVisible = windowInnerHeight < heightInFocus;
-  const virtualKeyboardHeight = isMobile
-    ? Math.abs(heightInFocus - windowInnerHeight)
-    : 0;
+  const getVirtualKeyboardHeight = () => {
+    if (!isMobile) return 0;
 
+    return Math.abs(windowInnerHeight - Math.floor(visualViewportHeight));
+  };
+
+  const virtualKeyboardHeight = getVirtualKeyboardHeight();
+  const isVirtualKeyboardVisible = !!virtualKeyboardHeight;
   const logs = [...chatLog.values()];
 
   const requestChat = async (id: string, messages: Message[]) => {
@@ -286,6 +313,10 @@ const CopilotChat = () => {
      */
     e.preventDefault();
     controllerRef.current?.abort();
+  };
+
+  const handleFocus = () => {
+    handleScrollToBottom();
   };
 
   const renderSendButton = () => {
@@ -451,8 +482,7 @@ const CopilotChat = () => {
                 {...field}
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
-                onFocus={handleScrollToBottom}
-                onBlur={() => setHeightInFocus(window.innerHeight)}
+                onFocus={handleFocus}
                 placeholder={`Height: ${virtualKeyboardHeight}px; Visible: ${isVirtualKeyboardVisible}`}
                 fullWidth
                 slotProps={{
@@ -551,16 +581,6 @@ const Content = () => {
 };
 
 type ActivePanel = "menu" | "chat" | "content";
-
-const useWindowInnerHeight = () =>
-  React.useSyncExternalStore(
-    (onStateChange) => {
-      window.addEventListener("resize", onStateChange);
-      return () => window.removeEventListener("resize", onStateChange);
-    },
-    () => window.innerHeight,
-    () => 0,
-  );
 
 export const Component = () => {
   const [openMenu, setOpenMenu] = React.useState(false);
