@@ -35,6 +35,7 @@ import { z } from "zod";
 import openai from "openai";
 import { useSnackbar } from "notistack";
 import { PanelResizeHandle, PanelGroup, Panel } from "react-resizable-panels";
+import { DateTimePicker } from "@mui/x-date-pickers";
 
 type MarkdownContentProps = {
   text: string;
@@ -493,6 +494,7 @@ const Content = () => {
         backgroundColor: theme.palette.background.paper,
       }}
     >
+      <DateTimePicker />
       <Box sx={{ padding: 3 }}>
         <span>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt quam
@@ -600,13 +602,7 @@ export const Component = () => {
       <PanelGroup direction="horizontal" autoSaveId="resize">
         {openMenu && (
           <>
-            <Panel
-              minSize={20}
-              maxSize={50}
-              defaultSize={20}
-              id="menu"
-              order={1}
-            >
+            <Panel minSize={16} defaultSize={25} id="menu" order={1}>
               <Menu />
             </Panel>
             <PanelResizeHandle
@@ -634,13 +630,7 @@ export const Component = () => {
               }}
               onDragging={setRightResizeActive}
             />
-            <Panel
-              minSize={20}
-              maxSize={50}
-              defaultSize={30}
-              id="chat"
-              order={3}
-            >
+            <Panel minSize={20} defaultSize={30} id="chat" order={3}>
               <CopilotChat />
             </Panel>
           </>
@@ -657,7 +647,8 @@ export const Component = () => {
         inlineSize: "100dvw",
         blockSize: "100dvh",
 
-        position: "relative",
+        position: "fixed",
+        inset: 0,
         zIndex: 10,
       }}
     >
