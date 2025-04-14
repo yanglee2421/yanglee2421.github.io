@@ -19,6 +19,7 @@ import React from "react";
 import { PanelResizeHandle, PanelGroup, Panel } from "react-resizable-panels";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { CopilotChat } from "@/components/chat";
+import { NavMenu } from "@/components/nav";
 
 const Menu = () => {
   const theme = useTheme();
@@ -26,11 +27,15 @@ const Menu = () => {
   return (
     <Box
       sx={{
-        borderInlineEnd: `1px solid ${theme.palette.divider}`,
+        inlineSize: "100%",
+        blockSize: "100%",
 
-        overflow: "hidden",
+        overflowY: "auto",
+        scrollbarColor: `${theme.palette.divider} transparent`,
       }}
-    ></Box>
+    >
+      <NavMenu />
+    </Box>
   );
 };
 
@@ -48,8 +53,10 @@ const Content = () => {
         backgroundColor: theme.palette.background.paper,
       }}
     >
-      <DateTimePicker />
       <Box sx={{ padding: 3 }}>
+        <div>
+          <DateTimePicker />
+        </div>
         <span>
           Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt quam
           aperiam doloribus vero accusamus tempora. Nesciunt similique error
