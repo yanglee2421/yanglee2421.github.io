@@ -199,6 +199,7 @@ const CopilotChat = () => {
   const [chatLog, setChatLog] = React.useState(initChatLog);
   const [sendButtonStatus, setSendButtonStatus] =
     React.useState<SendButtonStatus>("idle");
+  const [heightInFocus, setHeightInFocus] = React.useState(0);
 
   const controllerRef = React.useRef<AbortController | null>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
@@ -208,6 +209,13 @@ const CopilotChat = () => {
   const [scrollRef, setScrollId] = useScrollToView();
   const [chatLogRef, handleScrollToBottom] = useScrollToBottom();
   const snackbar = useSnackbar();
+  const isMobile = useMediaQuery("(any-pointer: coarse)");
+  const windowInnerHeight = useWindowInnerHeight();
+
+  const isVirtualKeyboardVisible = windowInnerHeight < heightInFocus;
+  const virtualKeyboardHeight = isMobile
+    ? Math.abs(heightInFocus - windowInnerHeight)
+    : 0;
 
   const logs = [...chatLog.values()];
 
@@ -444,6 +452,8 @@ const CopilotChat = () => {
                 error={!!fieldState.error}
                 helperText={fieldState.error?.message}
                 onFocus={handleScrollToBottom}
+                onBlur={() => setHeightInFocus(window.innerHeight)}
+                placeholder={`Height: ${virtualKeyboardHeight}px; Visible: ${isVirtualKeyboardVisible}`}
                 fullWidth
                 slotProps={{
                   input: {
@@ -560,17 +570,9 @@ export const Component = () => {
   const [rightResizeActive, setRightResizeActive] = React.useState(false);
   const [lastActivePanel, setLastActivePanel] =
     React.useState<ActivePanel>("content");
-  const [heightInFocus, setHeightInFocus] = React.useState(0);
 
   const theme = useTheme();
-  const windowInnerHeight = useWindowInnerHeight();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
-  const isMobile = useMediaQuery("(any-pointer: coarse)");
-
-  const isVirtualKeyboardVisible = windowInnerHeight < heightInFocus;
-  const virtualKeyboardHeight = isMobile
-    ? Math.abs(heightInFocus - windowInnerHeight)
-    : 0;
 
   const handleAlwaysOnTopToggle = () => setAlwaysOnTop((prev) => !prev);
   const handleMenuToggle = () => {
@@ -691,8 +693,6 @@ export const Component = () => {
         <Box>
           <TextField
             size="small"
-            onFocus={() => setHeightInFocus(window.innerHeight)}
-            placeholder={`Virtual Keyboard Height: ${virtualKeyboardHeight}px; Virtual Keyboard Visible: ${isVirtualKeyboardVisible}`}
             slotProps={{
               input: {
                 startAdornment: (
