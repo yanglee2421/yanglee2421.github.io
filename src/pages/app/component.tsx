@@ -117,43 +117,37 @@ export const Component = () => {
     setLastActivePanel((prev) => (prev === "chat" ? "content" : "chat"));
   };
 
-  const renderPanelGroupInSmallScreen = () => {
+  const renderPanelInSmallScreen = () => {
     switch (lastActivePanel) {
       case "menu":
         return (
-          <PanelGroup direction="horizontal" autoSaveId="resize">
-            <Panel id="menu" order={1}>
-              <Menu />
-            </Panel>
-          </PanelGroup>
+          <Panel id="menu" order={1}>
+            <Menu />
+          </Panel>
         );
       case "chat":
         return (
-          <PanelGroup direction="horizontal" autoSaveId="resize">
-            <Panel id="chat" order={3}>
-              <CopilotChat />
-            </Panel>
-          </PanelGroup>
+          <Panel id="chat" order={3}>
+            <CopilotChat />
+          </Panel>
         );
       case "content":
       default:
         return (
-          <PanelGroup direction="horizontal" autoSaveId="resize">
-            <Panel id="content" order={2}>
-              <Content />
-            </Panel>
-          </PanelGroup>
+          <Panel id="content" order={2}>
+            <Content />
+          </Panel>
         );
     }
   };
 
-  const renderPanelGroup = () => {
+  const renderPanel = () => {
     if (isSmallScreen) {
-      return renderPanelGroupInSmallScreen();
+      return renderPanelInSmallScreen();
     }
 
     return (
-      <PanelGroup direction="horizontal" autoSaveId="resize">
+      <>
         {openMenu && (
           <>
             <Panel minSize={16} defaultSize={25} id="menu" order={1}>
@@ -189,7 +183,7 @@ export const Component = () => {
             </Panel>
           </>
         )}
-      </PanelGroup>
+      </>
     );
   };
 
@@ -246,7 +240,11 @@ export const Component = () => {
           </IconButton>
         </Box>
       </Box>
-      <Box sx={{ flex: 1, minBlockSize: 0 }}>{renderPanelGroup()}</Box>
+      <Box sx={{ flex: 1, minBlockSize: 0 }}>
+        <PanelGroup direction="horizontal" autoSaveId="resize">
+          {renderPanel()}
+        </PanelGroup>
+      </Box>
       <GlobalStyles
         styles={{
           ":root,body,#root": {

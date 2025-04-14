@@ -280,6 +280,11 @@ export const CopilotChat = () => {
   const runRetry = async (log: ChatLog) => {
     setScrollId(log.id);
     setChatLog((prev) => update({ id: log.id, status: "loading" }, prev));
+    setThumbMap((prev) => {
+      const nextVal = new Map(prev);
+      nextVal.delete(log.id);
+      return nextVal;
+    });
     await runChat(log.id, log.messages);
   };
 
