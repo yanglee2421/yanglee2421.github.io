@@ -29,11 +29,11 @@ import React from "react";
 import { Controller, useFieldArray, useForm } from "react-hook-form";
 import { useNavigate, useParams } from "react-router";
 import { z } from "zod";
-import { useDbStore } from "@/hooks/store/useDbStore";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import * as mathjs from "mathjs";
 import { error } from "@/lib/utils";
+import { db } from "@/lib/db";
 
 const renderVal = (
   focused: boolean,
@@ -155,25 +155,8 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export const Component = () => {
-  const formId = React.useId();
-  const datalistId = React.useId();
-
-  const set = useDbStore((s) => s.set);
-  const params = useParams();
-  const navigate = useNavigate();
-  const staffs = useDbStore((s) => s.staffs);
-  const staffMap = React.useMemo(() => {
-    const map = new Map<string, string>();
-
-    staffs.forEach((i) => {
-      map.set(i.alias, i.name);
-    });
-
-    return map;
-  }, [staffs]);
-
-  const form = useForm<FormValues>({
+const useAddForm = () =>
+  useForm<FormValues>({
     defaultValues: {
       invoices: [
         {
@@ -191,6 +174,13 @@ export const Component = () => {
     resolver: zodResolver(schema),
   });
 
+export const Component = () => {
+  const formId = React.useId();
+  const datalistId = React.useId();
+
+  const params = useParams();
+  const navigate = useNavigate();
+  const form = useAddForm();
   const fields = useFieldArray({ control: form.control, name: "invoices" });
 
   const renderInvoice = (idx: number) => {
@@ -410,25 +400,33 @@ export const Component = () => {
           id={formId}
           action={() =>
             form.handleSubmit(async (data) => {
-              set((d) => {
-                data.invoices.forEach((i) => {
-                  d.invoices.push({
-                    ...i,
-                    id: crypto.randomUUID(),
-                    staff: i.staff
-                      .split("@")
-                      .map((i) => staffMap.get(i.trim()) || i.trim()),
-                    date: Date.now(),
-                    amount: +calculatorAmount(
-                      i.start,
-                      i.end,
-                      i.subsidyPerDay,
-                      i.type === "subsidy",
-                      i.amount,
-                    ),
-                  });
+              for (const i of data.invoices) {
+                const staffs = await Promise.all(
+                  i.staff.split("@").map(async (s) => {
+                    const staff = await db.staffs
+                      .where("alias")
+                      .equals(s.trim())
+                      .first();
+                    if (!staff) {
+                      return s;
+                    }
+                    return staff.name;
+                  }),
+                );
+
+                db.invoices.add({
+                  staff: staffs,
+                  note: i.note,
+                  date: i.start,
+                  amount: +calculatorAmount(
+                    i.start,
+                    i.end,
+                    i.subsidyPerDay,
+                    i.type === "subsidy",
+                    i.amount,
+                  ),
                 });
-              });
+              }
 
               await navigate("/" + params.lang + "/invoices");
             }, error)()

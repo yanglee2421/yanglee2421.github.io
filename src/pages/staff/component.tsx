@@ -30,7 +30,6 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
@@ -84,36 +83,74 @@ const columns = [
   }),
 ];
 
+type SearchValue = {
+  name: string;
+  pageIndex: number;
+  pageSize: number;
+};
+
+const searchParamsToSearchValue = (searchParams: URLSearchParams) => {
+  const name = searchParams.get("name") || "";
+  const pageIndex = Number(searchParams.get("pageIndex") || "0");
+  const pageSize = Number(searchParams.get("pageSize") || "20");
+
+  return { name, pageIndex, pageSize };
+};
+
+const useAddForm = () =>
+  useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      alias: "",
+    },
+    resolver: zodResolver(schema),
+  });
+
+const useSearch = () =>
+  useSearchParams({
+    name: "",
+    pageIndex: "0",
+    pageSize: "20",
+  });
+
 export const Component = () => {
+  // eslint-disable-next-line
   "use no memo";
   const [activeTab, setActiveTab] = React.useState("list");
-
-  const [search, setSearch] = useSearchParams({ name: "" });
-
-  const nameSearch = search.get("name") || "";
-
-  const staff = useLiveQuery(
-    () => db.staffs.where("name").startsWith(nameSearch).toArray(),
-    [nameSearch],
+  const [searchValue, setSearchValue] = React.useState<SearchValue | null>(
+    null,
   );
 
-  const data = React.useMemo(() => staff || [], [staff]);
+  const form = useAddForm();
+  const [searchParams, setSearchParams] = useSearch();
 
-  const [name, setName] = React.useState(nameSearch);
+  const search = searchValue || searchParamsToSearchValue(searchParams);
+
+  const staff = useLiveQuery(async () => {
+    const count = await db.staffs.where("name").startsWith(search.name).count();
+    const rows = await db.staffs
+      .where("name")
+      .startsWith(search.name)
+      .offset(search.pageIndex * search.pageSize)
+      .limit(search.pageSize)
+      .toArray();
+
+    return { rows, count };
+  }, [search.name, search.pageIndex, search.pageSize]);
+
+  const data = React.useMemo(() => staff?.rows || [], [staff]);
 
   React.useEffect(() => {
-    setSearch((p) => {
+    setSearchParams((p) => {
       const n = new URLSearchParams(p);
 
-      if (name) {
-        n.set("name", name.trim());
-      } else {
-        n.delete("name");
-      }
+      n.set("name", search.name);
+      n.set("pageIndex", search.pageIndex.toString());
+      n.set("pageSize", search.pageSize.toString());
 
       return n;
     });
-  }, [name, setSearch]);
+  }, [setSearchParams, search.name, search.pageIndex, search.pageSize]);
 
   const formId = React.useId();
 
@@ -122,11 +159,8 @@ export const Component = () => {
     columns,
     data,
     getRowId: (r) => r.id.toString(),
-
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: { pageSize: 20 },
-    },
+    rowCount: staff?.count || 0,
+    manualPagination: true,
   });
 
   const renderBody = () => {
@@ -152,14 +186,6 @@ export const Component = () => {
     ));
   };
 
-  const form = useForm<FormValues>({
-    defaultValues: {
-      name: "",
-      alias: "",
-    },
-    resolver: zodResolver(schema),
-  });
-
   const renderList = () => {
     return (
       <>
@@ -167,8 +193,20 @@ export const Component = () => {
           <Grid container spacing={6}>
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <TextField
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={search.name}
+                onChange={(e) =>
+                  setSearchValue((prev) => {
+                    if (!prev) {
+                      return {
+                        name: e.target.value,
+                        pageIndex: search.pageIndex,
+                        pageSize: search.pageSize,
+                      };
+                    }
+
+                    return { ...prev, name: e.target.value };
+                  })
+                }
                 label="Name"
                 fullWidth
               />
@@ -192,17 +230,38 @@ export const Component = () => {
             <TableBody>{renderBody()}</TableBody>
           </Table>
         </TableContainer>
-
         <TablePagination
           component={"div"}
-          page={table.getState().pagination.pageIndex}
-          rowsPerPage={table.getState().pagination.pageSize}
+          page={search.pageIndex}
+          rowsPerPage={search.pageSize}
+          rowsPerPageOptions={[20, 50, 100]}
           onPageChange={(e, idx) => {
-            table.setPageIndex(idx);
             void e;
+
+            setSearchValue((prev) => {
+              if (!prev) {
+                return {
+                  name: search.name,
+                  pageIndex: idx,
+                  pageSize: search.pageSize,
+                };
+              }
+
+              return { ...prev, pageIndex: idx };
+            });
           }}
           onRowsPerPageChange={(e) => {
-            table.setPageSize(Number.parseInt(e.target.value));
+            setSearchValue((prev) => {
+              if (!prev) {
+                return {
+                  name: search.name,
+                  pageIndex: search.pageIndex,
+                  pageSize: Number(e.target.value),
+                };
+              }
+
+              return { ...prev, pageSize: Number(e.target.value) };
+            });
           }}
           count={table.getRowCount()}
         />

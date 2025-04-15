@@ -29,7 +29,9 @@ export type Invoice = {
   amount: number;
   staff: string[];
   note: string;
-  date: number;
+  // ISO 8601 date format
+  // e.g., "2023-10-01T12:00:00Z" or "2023-10-01"
+  date: string;
 };
 
 export type Staff = {
@@ -59,7 +61,7 @@ export const db = new Dexie("ChatDatabase") as Dexie & {
 };
 
 // Schema declaration:
-db.version(2).stores({
+db.version(3).stores({
   completions: "++id, name", // primary key "id" automatically generated
   messages:
     "++id, completionId, question, questionDate, answer, answerDate, status, thumb",
