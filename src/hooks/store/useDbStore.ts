@@ -5,24 +5,6 @@ import React from "react";
 import localforage from "localforage";
 import type { WritableDraft } from "immer";
 
-export type Message = {
-  role: "user" | "assistant" | "system";
-  content: string;
-};
-
-export type ChatStatus = "pending" | "success" | "error" | "loading";
-
-export type ChatLog = {
-  id: string;
-  question: string;
-  questionDate: string;
-  messages: Message[];
-  answer: string;
-  answerDate: null | string;
-  status: ChatStatus;
-  thumb: "up" | "down" | null;
-};
-
 export type Invoice = {
   id: string;
   amount: number;
@@ -41,7 +23,6 @@ export type Staff = {
 type State = {
   invoices: Array<Invoice>;
   staffs: Staff[];
-  chatLog: [string, ChatLog][];
 };
 
 type Actions = {
@@ -61,7 +42,6 @@ export const useDbStore = create<Store>()(
       set,
       invoices: [],
       staffs: [],
-      chatLog: [],
     })),
     {
       name: "useDbStore",

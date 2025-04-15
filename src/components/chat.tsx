@@ -31,11 +31,9 @@ import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Markdown } from "@/components/markdown";
 import { z } from "zod";
-import {
-  useDbStore,
-  type ChatLog,
-  type Message,
-} from "@/hooks/store/useDbStore";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db";
+import type { Message, MessageInAPI } from "@/lib/db";
 
 type MarkdownContentProps = {
   text: string;
@@ -109,37 +107,6 @@ const client = new openai.OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-type ChatLogMap = Map<string, ChatLog>;
-
-type InsertParams = {
-  id: string;
-  question: string;
-  messages: Message[];
-} & Partial<ChatLog>;
-
-const insert = (param: InsertParams, map: ChatLogMap) => {
-  const chatLog: ChatLog = {
-    questionDate: new Date().toISOString(),
-    answer: "",
-    answerDate: null,
-    status: "loading",
-    thumb: null,
-    ...param,
-  };
-
-  return new Map(map).set(chatLog.id, chatLog);
-};
-
-type UpdateParams = {
-  id: string;
-} & Partial<ChatLog>;
-
-const update = (param: UpdateParams, map: ChatLogMap) => {
-  const chatLog = map.get(param.id);
-  if (!chatLog) return map;
-  return new Map(map).set(param.id, { ...chatLog, ...param });
-};
-
 type SendButtonStatus = "idle" | "loading" | "streaming";
 
 const useScrollToBottom = () => {
@@ -158,9 +125,9 @@ const useScrollToBottom = () => {
 };
 
 const useScrollToView = () => {
-  const [id, setId] = React.useState("");
+  const [id, setId] = React.useState(0);
 
-  const scrollRef = React.useRef<Map<string, HTMLDivElement>>(new Map());
+  const scrollRef = React.useRef<Map<number, HTMLDivElement>>(new Map());
 
   React.useEffect(() => {
     if (!id) return;
@@ -170,7 +137,7 @@ const useScrollToView = () => {
       behavior: "smooth",
       block: "start",
     });
-    setId("");
+    setId(0);
   }, [id]);
 
   return [scrollRef, setId] as const;
@@ -215,13 +182,7 @@ export const CopilotChat = () => {
   const isMobile = useMediaQuery("(any-pointer: coarse)");
   const windowInnerHeight = useWindowInnerHeight();
   const visualViewportHeight = useVisualViewportHeight();
-  const chatLogs = useDbStore((state) => state.chatLog);
-  const set = useDbStore((state) => state.set);
-
-  const setChatLog = (updater: (prev: ChatLogMap) => ChatLogMap) =>
-    set((state) => {
-      state.chatLog = [...updater(new Map(state.chatLog)).entries()];
-    });
+  const chatLogs = useLiveQuery(() => db.messages.toArray());
 
   const getVirtualKeyboardHeight = () => {
     if (!isMobile) return 0;
@@ -231,9 +192,8 @@ export const CopilotChat = () => {
 
   const virtualKeyboardHeight = getVirtualKeyboardHeight();
   const isVirtualKeyboardVisible = !!virtualKeyboardHeight;
-  const logs = chatLogs.map(([, i]) => i);
 
-  const requestChat = async (id: string, messages: Message[]) => {
+  const requestChat = async (id: number, messages: MessageInAPI[]) => {
     const stream = await client.chat.completions.create({
       messages,
       stream: true,
@@ -246,56 +206,67 @@ export const CopilotChat = () => {
     let answer = "";
 
     for await (const chunk of stream) {
-      chunk.choices.forEach((choice) => {
+      for (const choice of chunk.choices) {
         if (!choice.delta.content) return;
         answer += choice.delta.content;
-        setChatLog((prev) => update({ answer, id, status: "pending" }, prev));
-      });
+        await db.messages.update(id, {
+          answer,
+          status: "pending",
+        });
+      }
     }
 
-    setChatLog((prev) =>
-      update(
-        { answer, id, status: "success", answerDate: new Date().toISOString() },
-        prev,
-      ),
-    );
+    await db.messages.update(id, {
+      answer,
+      status: "success",
+      answerDate: new Date().toISOString(),
+    });
   };
 
-  const runChat = async (id: string, messages: Message[]) => {
+  const runChat = async (id: number, messages: MessageInAPI[]) => {
     setSendButtonStatus("loading");
 
-    await requestChat(id, messages).catch((e) => {
-      setChatLog((prev) =>
-        update({ id, answer: e.message, status: "error" }, prev),
-      );
+    await requestChat(id, messages).catch(async (e) => {
+      await db.messages.update(id, {
+        answer: e.message,
+        status: "error",
+      });
     });
 
     setSendButtonStatus("idle");
   };
 
-  const runRetry = async (log: ChatLog) => {
+  const runRetry = async (log: Message) => {
     setScrollId(log.id);
-    setChatLog((prev) =>
-      update({ id: log.id, status: "loading", thumb: null }, prev),
-    );
+    await db.messages.update(log.id, { status: "loading", thumb: null });
     await runChat(log.id, log.messages);
   };
 
   const handleSubmit = chatForm.handleSubmit(async (data) => {
     if (sendButtonStatus !== "idle") return;
+    if (!chatLogs) return;
 
-    const id = crypto.randomUUID();
+    chatForm.reset();
     const question = data.question.trim();
-    const messages = logs
+    const messages = chatLogs
       .flatMap((i) => [
         { role: "user" as const, content: i.question },
         { role: "assistant" as const, content: i.answer },
       ])
       .concat({ role: "user", content: question });
 
-    chatForm.reset();
+    const id = await db.messages.add({
+      question,
+      questionDate: new Date().toISOString(),
+      messages,
+      answer: "",
+      answerDate: null,
+      status: "loading",
+      thumb: null,
+      completionId: 0,
+    });
+
     setScrollId(id);
-    setChatLog((prev) => insert({ id, question, messages }, prev));
     await runChat(id, messages);
   }, warn);
 
@@ -348,7 +319,7 @@ export const CopilotChat = () => {
     }
   };
 
-  const renderThumb = (i: ChatLog) => {
+  const renderThumb = (i: Message) => {
     switch (i.thumb) {
       case "up":
         return (
@@ -367,17 +338,21 @@ export const CopilotChat = () => {
           <>
             <IconButton
               size="small"
-              onClick={() =>
-                setChatLog((prev) => update({ id: i.id, thumb: "up" }, prev))
-              }
+              onClick={async () => {
+                await db.messages.update(i.id, {
+                  thumb: "up",
+                });
+              }}
             >
               <ThumbUpOutlined />
             </IconButton>
             <IconButton
               size="small"
-              onClick={() =>
-                setChatLog((prev) => update({ id: i.id, thumb: "down" }, prev))
-              }
+              onClick={async () => {
+                await db.messages.update(i.id, {
+                  thumb: "down",
+                });
+              }}
             >
               <ThumbDownOutlined />
             </IconButton>
@@ -386,7 +361,7 @@ export const CopilotChat = () => {
     }
   };
 
-  const renderAnswer = (i: ChatLog) => {
+  const renderAnswer = (i: Message) => {
     switch (i.status) {
       case "loading":
         return (
@@ -475,7 +450,7 @@ export const CopilotChat = () => {
             },
           }}
         >
-          {logs.map((i) => (
+          {chatLogs?.map((i) => (
             <ChatLogItem
               key={i.id}
               question={

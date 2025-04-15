@@ -5,6 +5,11 @@ export type Completion = {
   name: string;
 };
 
+export type MessageInAPI = {
+  role: "user" | "assistant" | "system";
+  content: string;
+};
+
 export type MessageStatus = "pending" | "success" | "error" | "loading";
 
 export type Message = {
@@ -12,14 +17,14 @@ export type Message = {
   completionId: number; // Foreign key to the Completion table
   question: string;
   questionDate: string;
-  messages: Message[];
+  messages: MessageInAPI[];
   answer: string;
   answerDate: null | string;
   status: MessageStatus;
   thumb: "up" | "down" | null;
 };
 
-export const db = new Dexie("FriendsDatabase") as Dexie & {
+export const db = new Dexie("ChatDatabase") as Dexie & {
   completions: EntityTable<
     Completion,
     "id" // primary key "id" (for the typings only)
