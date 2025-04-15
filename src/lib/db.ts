@@ -24,6 +24,21 @@ export type Message = {
   thumb: "up" | "down" | null;
 };
 
+export type Invoice = {
+  id: number;
+  amount: number;
+  staff: string[];
+  note: string;
+  date: number;
+};
+
+export type Staff = {
+  id: number;
+  name: string;
+  alias: string;
+  enable: boolean;
+};
+
 export const db = new Dexie("ChatDatabase") as Dexie & {
   completions: EntityTable<
     Completion,
@@ -33,11 +48,21 @@ export const db = new Dexie("ChatDatabase") as Dexie & {
     Message,
     "id" // primary key "id" (for the typings only)
   >;
+  invoices: EntityTable<
+    Invoice,
+    "id" // primary key "id" (for the typings only)
+  >;
+  staffs: EntityTable<
+    Staff,
+    "id" // primary key "id" (for the typings only)
+  >;
 };
 
 // Schema declaration:
-db.version(1).stores({
-  completions: "++id, name", // primary key "id" (for the runtime!)
+db.version(2).stores({
+  completions: "++id, name", // primary key "id" automatically generated
   messages:
-    "++id, completionId, question, questionDate, answer, answerDate, status, thumb", // primary key "id" (for the runtime!)
+    "++id, completionId, question, questionDate, answer, answerDate, status, thumb",
+  invoices: "++id, amount, staff, note, date",
+  staffs: "++id, name, &alias, enable", // field "alias" is unique
 });

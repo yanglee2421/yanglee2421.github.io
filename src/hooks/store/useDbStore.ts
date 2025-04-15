@@ -5,24 +5,8 @@ import React from "react";
 import localforage from "localforage";
 import type { WritableDraft } from "immer";
 
-export type Invoice = {
-  id: string;
-  amount: number;
-  staff: string[];
-  note: string;
-  date: number;
-};
-
-export type Staff = {
-  id: string;
-  name: string;
-  alias: string;
-  enable: boolean;
-};
-
 type State = {
-  invoices: Array<Invoice>;
-  staffs: Staff[];
+  name: string;
 };
 
 type Actions = {
@@ -40,13 +24,12 @@ export const useDbStore = create<Store>()(
   persist(
     immer((set) => ({
       set,
-      invoices: [],
-      staffs: [],
+      name: "default",
     })),
     {
       name: "useDbStore",
       storage: createJSONStorage(() => localforage),
-      version: 2,
+      version: 1,
     },
   ),
 );

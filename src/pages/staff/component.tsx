@@ -11,7 +11,7 @@ import {
   CardHeader,
   Grid,
   IconButton,
-  MenuItem,
+  Link,
   Switch,
   Tab,
   Table,
@@ -37,8 +37,9 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSearchParams } from "react-router";
 import { z } from "zod";
-import { Staff as StaffType, useDbStore } from "@/hooks/store/useDbStore";
+import { db, Staff as StaffType } from "@/lib/db";
 import { warn } from "@/lib/utils";
+import { useLiveQuery } from "dexie-react-hooks";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -50,7 +51,9 @@ type FormValues = z.infer<typeof schema>;
 const columnHelper = createColumnHelper<StaffType>();
 
 const columns = [
-  columnHelper.accessor("id", { cell: (r) => `#${r.getValue()}` }),
+  columnHelper.accessor("id", {
+    cell: (r) => <Link underline="none">#{r.getValue()}</Link>,
+  }),
   columnHelper.accessor("name", {}),
   columnHelper.accessor("alias", {}),
   columnHelper.accessor("enable", {
@@ -59,12 +62,7 @@ const columns = [
         checked={r.getValue()}
         onChange={(e, checked) => {
           void e;
-          useDbStore.setState((d) => {
-            const val = d.staffs.find((i) => i.id === r.row.original.id);
-            if (val) {
-              val.enable = checked;
-            }
-          });
+          db.staffs.update(r.row.original.id, { enable: checked });
         }}
       />
     ),
@@ -76,12 +74,7 @@ const columns = [
         <IconButton
           color="error"
           onClick={() => {
-            useDbStore.setState((d) => {
-              d.staffs.splice(
-                d.staffs.findIndex((i) => i.id === row.original.id),
-                1,
-              );
-            });
+            db.staffs.delete(row.original.id);
           }}
         >
           <DeleteOutlined />
@@ -91,49 +84,22 @@ const columns = [
   }),
 ];
 
-const checkText = (text: string, search: string) => {
-  if (!search) return true;
-
-  return text.toLowerCase().includes(search.toLowerCase());
-};
-
-const checkBool = (bool: boolean, search: string) => {
-  if (!search) return true;
-
-  return bool.toString().toLowerCase() === search.toLowerCase();
-};
-
 export const Component = () => {
   "use no memo";
   const [activeTab, setActiveTab] = React.useState("list");
 
-  const [search, setSearch] = useSearchParams({
-    name: "",
-    alias: "",
-    enable: "",
-  });
+  const [search, setSearch] = useSearchParams({ name: "" });
 
   const nameSearch = search.get("name") || "";
-  const aliasSearch = search.get("alias") || "";
-  const enableSearch = search.get("enable") || "";
 
-  const staff = useDbStore((s) => s.staffs);
-  const set = useDbStore((s) => s.set);
-
-  const data = React.useMemo(
-    () =>
-      staff.filter(
-        (i) =>
-          checkText(i.name, nameSearch) &&
-          checkText(i.alias, aliasSearch) &&
-          checkBool(i.enable, enableSearch),
-      ),
-    [staff, nameSearch, aliasSearch, enableSearch],
+  const staff = useLiveQuery(
+    () => db.staffs.where("name").startsWith(nameSearch).toArray(),
+    [nameSearch],
   );
 
+  const data = React.useMemo(() => staff || [], [staff]);
+
   const [name, setName] = React.useState(nameSearch);
-  const [alias, setAlias] = React.useState(aliasSearch);
-  const [enable, setEnable] = React.useState(enableSearch);
 
   React.useEffect(() => {
     setSearch((p) => {
@@ -145,21 +111,9 @@ export const Component = () => {
         n.delete("name");
       }
 
-      if (alias) {
-        n.set("alias", alias.trim());
-      } else {
-        n.delete("alias");
-      }
-
-      if (enable) {
-        n.set("enable", enable);
-      } else {
-        n.delete("enable");
-      }
-
       return n;
     });
-  }, [name, alias, enable, setSearch]);
+  }, [name, setSearch]);
 
   const formId = React.useId();
 
@@ -219,27 +173,6 @@ export const Component = () => {
                 fullWidth
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField
-                value={alias}
-                onChange={(e) => setAlias(e.target.value)}
-                fullWidth
-                label="Alias"
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField
-                value={enable}
-                onChange={(e) => setEnable(e.target.value)}
-                fullWidth
-                label="Enable"
-                select
-              >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="true">Enabled</MenuItem>
-                <MenuItem value="false">Disabled</MenuItem>
-              </TextField>
-            </Grid>
           </Grid>
         </CardContent>
         <TableContainer>
@@ -284,22 +217,13 @@ export const Component = () => {
           <form
             id={formId}
             action={() =>
-              form.handleSubmit((data) => {
-                set((d) => {
-                  const aliasSet = new Set(d.staffs.map((i) => i.alias));
-
-                  if (aliasSet.has(data.alias)) {
-                    form.setError("alias", { message: "duplicate alias!" });
-                    return;
-                  }
-
-                  d.staffs.push({
-                    id: crypto.randomUUID(),
-                    enable: true,
-                    name: data.name.trim(),
-                    alias: data.alias.trim(),
-                  });
+              form.handleSubmit(async (data) => {
+                await db.staffs.add({
+                  enable: true,
+                  name: data.name.trim(),
+                  alias: data.alias.trim(),
                 });
+                form.reset();
               }, warn)()
             }
             noValidate
