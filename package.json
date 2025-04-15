@@ -47,6 +47,8 @@
     "axios": "^1.8.4",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.13",
+    "dexie": "^4.0.11",
+    "dexie-react-hooks": "^1.1.7",
     "docx": "^9.3.0",
     "firebase": "^11.6.0",
     "i18next": "^24.2.3",
