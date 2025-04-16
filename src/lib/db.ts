@@ -14,7 +14,8 @@ export type MessageStatus = "pending" | "success" | "error" | "loading";
 
 export type Message = {
   id: number;
-  completionId: number; // Foreign key to the Completion table
+  // Foreign key to the Completion table
+  completionId: number;
   question: string;
   questionDate: string;
   messages: MessageInAPI[];
@@ -42,22 +43,10 @@ export type Staff = {
 };
 
 export const db = new Dexie("ChatDatabase") as Dexie & {
-  completions: EntityTable<
-    Completion,
-    "id" // primary key "id" (for the typings only)
-  >;
-  messages: EntityTable<
-    Message,
-    "id" // primary key "id" (for the typings only)
-  >;
-  invoices: EntityTable<
-    Invoice,
-    "id" // primary key "id" (for the typings only)
-  >;
-  staffs: EntityTable<
-    Staff,
-    "id" // primary key "id" (for the typings only)
-  >;
+  completions: EntityTable<Completion, "id">;
+  messages: EntityTable<Message, "id">;
+  invoices: EntityTable<Invoice, "id">;
+  staffs: EntityTable<Staff, "id">;
 };
 
 // Schema declaration:

@@ -9,6 +9,9 @@ import {
   ThumbDownOutlined,
   ThumbDown,
   ThumbUp,
+  MoreVertOutlined,
+  DeleteOutlined,
+  AddOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -24,6 +27,10 @@ import {
   InputAdornment,
   useTheme,
   Typography,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import openai from "openai";
@@ -34,6 +41,7 @@ import { z } from "zod";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import type { Message, MessageInAPI } from "@/lib/db";
+import { useDbStore } from "@/hooks/store/useDbStore";
 
 type MarkdownContentProps = {
   text: string;
@@ -168,6 +176,9 @@ const useWindowInnerHeight = () =>
   );
 
 export const CopilotChat = () => {
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(
+    null,
+  );
   const [sendButtonStatus, setSendButtonStatus] =
     React.useState<SendButtonStatus>("idle");
 
@@ -182,7 +193,17 @@ export const CopilotChat = () => {
   const isMobile = useMediaQuery("(any-pointer: coarse)");
   const windowInnerHeight = useWindowInnerHeight();
   const visualViewportHeight = useVisualViewportHeight();
-  const chatLogs = useLiveQuery(() => db.messages.toArray());
+  const activeCompletionId = useDbStore((state) => state.completionId);
+  const setDb = useDbStore((state) => state.set);
+  const completion = useLiveQuery(
+    () => db.completions.get(activeCompletionId),
+    [activeCompletionId],
+  );
+  const completions = useLiveQuery(() => db.completions.toArray(), []);
+  const chatLogs = useLiveQuery(async () => {
+    if (!completion?.id) return null;
+    return db.messages.where("completionId").equals(completion.id).toArray();
+  }, [completion?.id]);
 
   const getVirtualKeyboardHeight = () => {
     if (!isMobile) return 0;
@@ -193,7 +214,7 @@ export const CopilotChat = () => {
   const virtualKeyboardHeight = getVirtualKeyboardHeight();
   const isVirtualKeyboardVisible = !!virtualKeyboardHeight;
 
-  const requestChat = async (id: number, messages: MessageInAPI[]) => {
+  const runFetch = async (id: number, messages: MessageInAPI[]) => {
     const stream = await client.chat.completions.create({
       messages,
       stream: true,
@@ -226,7 +247,7 @@ export const CopilotChat = () => {
   const runChat = async (id: number, messages: MessageInAPI[]) => {
     setSendButtonStatus("loading");
 
-    await requestChat(id, messages).catch(async (e) => {
+    await runFetch(id, messages).catch(async (e) => {
       await db.messages.update(id, {
         answer: e.message,
         status: "error",
@@ -244,16 +265,39 @@ export const CopilotChat = () => {
 
   const handleSubmit = chatForm.handleSubmit(async (data) => {
     if (sendButtonStatus !== "idle") return;
-    if (!chatLogs) return;
 
     chatForm.reset();
+    let completionId = 0;
     const question = data.question.trim();
-    const messages = chatLogs
-      .flatMap((i) => [
+
+    // No completion
+    if (!completion) {
+      completionId = await db.completions.add({
+        name: question,
+      });
+      setDb((draft) => {
+        draft.completionId = completionId;
+      });
+
+      // Has completion but no messages
+    } else if (!chatLogs?.length) {
+      completionId = completion.id;
+      await db.completions.update(completion.id, {
+        name: question,
+      });
+
+      // Has completion and messages
+    } else {
+      completionId = completion.id;
+    }
+
+    const prevMessages =
+      chatLogs?.flatMap((i) => [
         { role: "user" as const, content: i.question },
         { role: "assistant" as const, content: i.answer },
-      ])
-      .concat({ role: "user", content: question });
+      ]) || [];
+
+    const messages = prevMessages.concat({ role: "user", content: question });
 
     const id = await db.messages.add({
       question,
@@ -263,7 +307,7 @@ export const CopilotChat = () => {
       answerDate: null,
       status: "loading",
       thumb: null,
-      completionId: 0,
+      completionId,
     });
 
     setScrollId(id);
@@ -279,6 +323,8 @@ export const CopilotChat = () => {
     e.preventDefault();
     controllerRef.current?.abort();
   };
+
+  const handleMenuClose = () => setMenuAnchorEl(null);
 
   const renderSendButton = () => {
     switch (sendButtonStatus) {
@@ -310,10 +356,7 @@ export const CopilotChat = () => {
       default:
         return (
           <Fab type="submit" size="small" color="primary">
-            <SendOutlined
-              sx={{ transform: "rotate(-90deg)" }}
-              fontSize="small"
-            />
+            <SendOutlined fontSize="small" />
           </Fab>
         );
     }
@@ -435,6 +478,65 @@ export const CopilotChat = () => {
         blockSize: "100%",
       }}
     >
+      <Box sx={{ display: "flex" }}>
+        <Box sx={{ flex: 1, minInlineSize: 0 }}>
+          <Typography variant="h6">{completion?.name}</Typography>
+          <Typography variant="subtitle1">#{completion?.id}</Typography>
+        </Box>
+        <IconButton onClick={(e) => setMenuAnchorEl(e.currentTarget)}>
+          <MoreVertOutlined />
+        </IconButton>
+        <Menu
+          open={!!menuAnchorEl}
+          onClose={handleMenuClose}
+          anchorEl={menuAnchorEl}
+        >
+          <MenuItem
+            onClick={async () => {
+              handleMenuClose();
+              const id = await db.completions.add({ name: "New completion" });
+              setDb((draft) => {
+                draft.completionId = id;
+              });
+            }}
+          >
+            <ListItemIcon>
+              <AddOutlined />
+            </ListItemIcon>
+            <ListItemText primary="Add completion" />
+          </MenuItem>
+          {completions?.map((i) => (
+            <MenuItem
+              key={i.id}
+              onClick={() => {
+                handleMenuClose();
+                setDb((draft) => {
+                  draft.completionId = i.id;
+                });
+              }}
+            >
+              {i.name}
+            </MenuItem>
+          ))}
+          {completion && (
+            <MenuItem
+              onClick={() => {
+                handleMenuClose();
+                db.completions.delete(completion.id);
+                db.messages
+                  .where("completionId")
+                  .equals(completion.id)
+                  .delete();
+              }}
+            >
+              <ListItemIcon>
+                <DeleteOutlined color="error" />
+              </ListItemIcon>
+              <ListItemText primary="Delete completion" />
+            </MenuItem>
+          )}
+        </Menu>
+      </Box>
       <Box
         sx={{
           flex: 1,

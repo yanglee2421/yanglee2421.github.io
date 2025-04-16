@@ -6,7 +6,7 @@ import localforage from "localforage";
 import type { WritableDraft } from "immer";
 
 type State = {
-  name: string;
+  completionId: number;
 };
 
 type Actions = {
@@ -24,7 +24,7 @@ export const useDbStore = create<Store>()(
   persist(
     immer((set) => ({
       set,
-      name: "default",
+      completionId: 0,
     })),
     {
       name: "useDbStore",
