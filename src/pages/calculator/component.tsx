@@ -400,22 +400,21 @@ export const Component = () => {
           id={formId}
           action={() =>
             form.handleSubmit(async (data) => {
-              for (const i of data.invoices) {
-                const staffs = await Promise.all(
-                  i.staff.split("@").map(async (s) => {
-                    const staff = await db.staffs
-                      .where("alias")
-                      .equals(s.trim())
-                      .first();
-                    if (!staff) {
-                      return s;
-                    }
-                    return staff.name;
-                  }),
-                );
+              const staffs = await db.staffs
+                .where("alias")
+                .anyOf(data.invoices.flatMap((i) => i.staff.split("@")))
+                .toArray();
+              const alias = staffs.filter((s) => s.enable);
+              const aliasMap = new Map(
+                alias.map((staff) => [staff.alias, staff]),
+              );
 
-                db.invoices.add({
-                  staff: staffs,
+              await db.invoices.bulkAdd(
+                data.invoices.map((i) => ({
+                  staff: i.staff.split("@").map((s) => {
+                    const staffName = s.trim();
+                    return aliasMap.get(staffName)?.name || staffName;
+                  }),
                   note: i.note,
                   date: i.start,
                   amount: +calculatorAmount(
@@ -425,8 +424,8 @@ export const Component = () => {
                     i.type === "subsidy",
                     i.amount,
                   ),
-                });
-              }
+                })),
+              );
 
               await navigate("/" + params.lang + "/invoices");
             }, error)()

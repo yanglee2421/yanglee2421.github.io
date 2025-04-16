@@ -36,9 +36,10 @@ import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSearchParams } from "react-router";
 import { z } from "zod";
-import { db, Staff as StaffType } from "@/lib/db";
+import { db } from "@/lib/db";
 import { warn } from "@/lib/utils";
 import { useLiveQuery } from "dexie-react-hooks";
+import type { Staff } from "@/lib/db";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -47,7 +48,7 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const columnHelper = createColumnHelper<StaffType>();
+const columnHelper = createColumnHelper<Staff>();
 
 const columns = [
   columnHelper.accessor("id", {
