@@ -25,7 +25,6 @@ import {
   IconButton,
   TextField,
   InputAdornment,
-  useTheme,
   Typography,
   Menu,
   MenuItem,
@@ -42,6 +41,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import type { Message, MessageInAPI } from "@/lib/db";
 import { useDbStore } from "@/hooks/store/useDbStore";
+import { ScrollView } from "./ui/ScrollView";
 
 type MarkdownContentProps = {
   text: string;
@@ -185,7 +185,6 @@ export const CopilotChat = () => {
   const controllerRef = React.useRef<AbortController | null>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const theme = useTheme();
   const chatForm = useChatForm();
   const [scrollRef, setScrollId] = useScrollToView();
   const chatLogRef = useScrollToBottom();
@@ -540,45 +539,49 @@ export const CopilotChat = () => {
       <Box
         sx={{
           flex: 1,
-          overflowY: "auto",
-          scrollbarColor: `${theme.palette.divider} transparent`,
+          minBlockSize: 0,
         }}
       >
-        <Box
-          sx={{
-            padding: 3,
-            "&>*+*": {
-              marginBlockStart: 3,
-            },
-          }}
-        >
-          {chatLogs?.map((i) => (
-            <ChatLogItem
-              key={i.id}
-              question={
-                <div>
-                  <Paper
-                    sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}
-                  >
-                    {i.question}
-                  </Paper>
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(i.questionDate).toLocaleTimeString()}
-                  </Typography>
-                </div>
-              }
-              answer={renderAnswer(i)}
-              ref={(el) => {
-                if (!el) return;
-                scrollRef.current.set(i.id, el);
-                return () => {
-                  scrollRef.current.delete(i.id);
-                };
-              }}
-            />
-          ))}
-        </Box>
-        <div ref={chatLogRef} />
+        <ScrollView>
+          <Box
+            sx={{
+              padding: 3,
+              "&>*+*": {
+                marginBlockStart: 3,
+              },
+            }}
+          >
+            {chatLogs?.map((i) => (
+              <ChatLogItem
+                key={i.id}
+                question={
+                  <div>
+                    <Paper
+                      sx={{
+                        padding: 3,
+                        bgcolor: (t) => t.palette.primary.main,
+                      }}
+                    >
+                      {i.question}
+                    </Paper>
+                    <Typography variant="caption" color="text.secondary">
+                      {new Date(i.questionDate).toLocaleTimeString()}
+                    </Typography>
+                  </div>
+                }
+                answer={renderAnswer(i)}
+                ref={(el) => {
+                  if (!el) return;
+                  scrollRef.current.set(i.id, el);
+                  return () => {
+                    scrollRef.current.delete(i.id);
+                  };
+                }}
+              />
+            ))}
+          </Box>
+          <div ref={chatLogRef} />
+        </ScrollView>
       </Box>
       <Box sx={{ padding: 3, paddingBlockStart: 0 }}>
         <form
