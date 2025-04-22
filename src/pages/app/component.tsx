@@ -8,7 +8,6 @@ import {
 import {
   alpha,
   Box,
-  GlobalStyles,
   IconButton,
   InputAdornment,
   TextField,
@@ -20,11 +19,11 @@ import { PanelResizeHandle, PanelGroup, Panel } from "react-resizable-panels";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { CopilotChat } from "@/components/chat";
 import { NavMenu } from "@/components/nav";
-import { ScrollView } from "@/components/ui/ScrollView";
+import { ScrollView } from "@/components/scrollbar";
 
 const Content = () => {
   return (
-    <Box sx={{ padding: 3 }}>
+    <Box sx={{ padding: 4 }}>
       <div>
         <DateTimePicker />
       </div>
@@ -164,7 +163,7 @@ export const Component = () => {
         position: "relative",
         zIndex: 10,
 
-        blockSize: "100%",
+        blockSize: "100dvh",
       }}
     >
       <Box
@@ -209,13 +208,6 @@ export const Component = () => {
         </Box>
       </Box>
       <Box sx={{ flex: 1, minBlockSize: 0 }}>{renderPanel()}</Box>
-      <GlobalStyles
-        styles={{
-          ":root,body,#root": {
-            blockSize: "100%",
-          },
-        }}
-      />
     </Box>
   );
 };

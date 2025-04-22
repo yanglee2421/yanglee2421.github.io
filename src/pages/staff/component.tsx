@@ -17,7 +17,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -40,6 +39,7 @@ import { db } from "@/lib/db";
 import { warn } from "@/lib/utils";
 import { useLiveQuery } from "dexie-react-hooks";
 import type { Staff } from "@/lib/db";
+import { ScrollView } from "@/components/scrollbar";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -214,7 +214,7 @@ export const Component = () => {
             </Grid>
           </Grid>
         </CardContent>
-        <TableContainer>
+        <ScrollView>
           <Table>
             <TableHead>
               {table.getHeaderGroups().map((hg) => (
@@ -230,7 +230,7 @@ export const Component = () => {
             </TableHead>
             <TableBody>{renderBody()}</TableBody>
           </Table>
-        </TableContainer>
+        </ScrollView>
         <TablePagination
           component={"div"}
           page={search.pageIndex}

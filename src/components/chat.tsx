@@ -30,6 +30,7 @@ import {
   MenuItem,
   ListItemIcon,
   ListItemText,
+  Divider,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import openai from "openai";
@@ -41,7 +42,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import type { Message, MessageInAPI } from "@/lib/db";
 import { useDbStore } from "@/hooks/store/useDbStore";
-import { ScrollView } from "./ui/ScrollView";
+import { ScrollView } from "./scrollbar";
 
 type MarkdownContentProps = {
   text: string;
@@ -477,9 +478,9 @@ export const CopilotChat = () => {
         blockSize: "100%",
       }}
     >
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", paddingInline: 3.5, paddingBlock: 1.5 }}>
         <Box sx={{ flex: 1, minInlineSize: 0 }}>
-          <Typography variant="h6">{completion?.name}</Typography>
+          <Typography variant="h6">Copilot Chat</Typography>
           <Typography variant="subtitle1">#{completion?.id}</Typography>
         </Box>
         <IconButton onClick={(e) => setMenuAnchorEl(e.currentTarget)}>
@@ -536,6 +537,7 @@ export const CopilotChat = () => {
           )}
         </Menu>
       </Box>
+      <Divider />
       <Box
         sx={{
           flex: 1,
