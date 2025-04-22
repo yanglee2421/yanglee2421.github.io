@@ -16,11 +16,9 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
-  TextField,
   Typography,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
@@ -28,14 +26,16 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import dayjs from "dayjs";
 import * as mathjs from "mathjs";
 import React from "react";
 import { Link, useSearchParams } from "react-router";
-import { type Invoice, useDbStore } from "@/hooks/store/useDbStore";
+import { db } from "@/lib/db";
+import type { Invoice } from "@/lib/db";
+import { useLiveQuery } from "dexie-react-hooks";
+import { ScrollView } from "@/components/scrollbar";
 
 const columnHelper = createColumnHelper<Invoice>();
 
@@ -79,87 +79,94 @@ const cellPaddingMap = new Map<string, "checkbox" | "none" | "normal">([
   ["selection", "checkbox"],
 ]);
 
-const checkDate = (day: string | null, time: number) => {
-  if (!day) return true;
-  return new Date(+day).toDateString() === new Date(time).toDateString();
+type SearchValue = {
+  startDate: string;
+  endDate: string;
+  pageIndex: number;
+  pageSize: number;
 };
 
-const checkStaff = (staff: string | null, staffs: string[]) => {
-  if (!staff) return true;
-  return staffs.join("").toLowerCase().includes(staff.toLowerCase());
-};
-
-const checkText = (search: string | null, target: string) => {
-  if (!search) return true;
-  return target.toLowerCase().includes(search.toLowerCase());
-};
-
-const InvoiceTable = () => {
-  // eslint-disable-next-line
-  "use no memo";
-
-  const invoices = useDbStore((s) => s.invoices);
-  const [search, setSearch] = useSearchParams({
-    date: "",
-    staff: "",
-    note: "",
+const useSearch = () =>
+  useSearchParams({
+    startDate: new Date().toISOString(),
+    endDate: new Date().toISOString(),
+    pageIndex: "0",
+    pageSize: "20",
   });
 
-  const dateSearch = search.get("date");
-  const staffSearch = search.get("staff");
-  const noteSearch = search.get("note");
+const searchParamsToSearchValue = (searchParams: URLSearchParams) => {
+  const startDate = searchParams.get("startDate") || "";
+  const endDate = searchParams.get("endDate") || "";
+  const pageIndex = parseInt(searchParams.get("pageIndex") || "0", 10);
+  const pageSize = parseInt(searchParams.get("pageSize") || "20", 10);
 
-  const [date, setDate] = React.useState(dateSearch);
-  const [staff, setStaff] = React.useState(staffSearch);
-  const [note, setNote] = React.useState(noteSearch);
+  return { startDate, endDate, pageIndex, pageSize };
+};
 
-  const data = React.useMemo(() => {
-    return invoices.filter(
-      (i) =>
-        checkDate(dateSearch, i.date) &&
-        checkStaff(staffSearch, i.staff) &&
-        checkText(noteSearch, i.note),
-    );
-  }, [dateSearch, staffSearch, invoices, noteSearch]);
+const renderDayjsValue = (value: string) => (value ? dayjs(value) : null);
+
+type InvoiceTableProps = {
+  onView: (rows: Invoice[]) => void;
+};
+
+const InvoiceTable = (props: InvoiceTableProps) => {
+  // eslint-disable-next-line
+  "use no memo";
+  const [searchValue, setSearchValue] = React.useState<SearchValue | null>(
+    null,
+  );
+
+  const [searchParams, setSearchParams] = useSearch();
+
+  const search = searchValue || searchParamsToSearchValue(searchParams);
+
+  const invoices = useLiveQuery(async () => {
+    const count = await db.invoices
+      .where("date")
+      .between(
+        dayjs(search.startDate).startOf("day").toISOString(),
+        dayjs(search.endDate).endOf("day").toISOString(),
+      )
+      .count();
+    const rows = await db.invoices
+      .where("date")
+      .between(
+        dayjs(search.startDate).startOf("day").toISOString(),
+        dayjs(search.endDate).endOf("day").toISOString(),
+      )
+      .toArray();
+    return { rows, count };
+  }, [search.startDate, search.endDate]);
+
+  const data = React.useMemo(() => invoices?.rows || [], [invoices]);
 
   React.useEffect(() => {
-    setSearch((p) => {
+    setSearchParams((p) => {
       const n = new URLSearchParams(p);
 
-      if (date) {
-        n.set("date", date.trim());
-      } else {
-        n.delete("date");
-      }
-
-      if (staff) {
-        n.set("staff", staff.trim());
-      } else {
-        n.delete("staff");
-      }
-
-      if (note) {
-        n.set("note", note.trim());
-      } else {
-        n.delete("note");
-      }
+      n.set("startDate", search.startDate || "");
+      n.set("endDate", search.endDate || "");
+      n.set("pageIndex", search.pageIndex.toString());
+      n.set("pageSize", search.pageSize.toString());
 
       return n;
     });
-  }, [date, staff, note, setSearch]);
+  }, [
+    setSearchParams,
+    search.startDate,
+    search.endDate,
+    search.pageIndex,
+    search.pageSize,
+  ]);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
     columns,
     data,
-    getRowId: (r) => r.id,
+    getRowId: (r) => r.id.toString(),
+    rowCount: invoices?.count || 0,
 
-    getPaginationRowModel: getPaginationRowModel(),
-    rowCount: data.length,
-
-    initialState: {
-      pagination: { pageSize: 20 },
-    },
+    manualPagination: true,
   });
 
   const renderBody = () => {
@@ -191,32 +198,54 @@ const InvoiceTable = () => {
       <CardContent>
         <Grid container spacing={6}>
           <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-            <TextField
-              value={staff}
-              onChange={(e) => setStaff(e.target.value)}
-              fullWidth
-              label="Staff"
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-            <TextField
-              value={note}
-              onChange={(e) => setNote(e.target.value)}
-              fullWidth
-              label="Note"
-            />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
             <DatePicker
-              value={date ? dayjs(Number.parseInt(date)) : null}
+              value={renderDayjsValue(search.startDate)}
               onChange={(e) => {
-                setDate(() => {
-                  return e?.toDate().getTime().toString() || "";
+                setSearchValue((prev) => {
+                  if (!prev) {
+                    return {
+                      startDate: e?.toISOString() || "",
+                      endDate: search.endDate,
+                      pageIndex: search.pageIndex,
+                      pageSize: search.pageSize,
+                    };
+                  }
+
+                  return {
+                    ...prev,
+                    startDate: e?.toISOString() || "",
+                  };
                 });
               }}
               slotProps={{
                 textField: { fullWidth: true, label: "Date" },
-                field: { clearable: true },
+                // field: { clearable: true },
+              }}
+            />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6, md: 4 }}>
+            <DatePicker
+              value={renderDayjsValue(search.endDate)}
+              onChange={(e) => {
+                setSearchValue((prev) => {
+                  if (!prev) {
+                    return {
+                      startDate: search.startDate,
+                      endDate: e?.endOf("day").toISOString() || "",
+                      pageIndex: search.pageIndex,
+                      pageSize: search.pageSize,
+                    };
+                  }
+
+                  return {
+                    ...prev,
+                    endDate: e?.endOf("day").toISOString() || "",
+                  };
+                });
+              }}
+              slotProps={{
+                textField: { fullWidth: true, label: "Date" },
+                // field: { clearable: true },
               }}
             />
           </Grid>
@@ -238,11 +267,7 @@ const InvoiceTable = () => {
                 .getSelectedRowModel()
                 .flatRows.map((i) => i.original);
 
-              setSearch((s) => {
-                const n = new URLSearchParams(s);
-                n.set("ids", rows.map((i) => i.id).join("@"));
-                return n;
-              });
+              props.onView(rows);
             }}
             variant="contained"
             disabled={!table.getSelectedRowModel().flatRows.length}
@@ -294,7 +319,7 @@ const InvoiceTable = () => {
           </Link>
         </Box>
       </CardContent>
-      <TableContainer>
+      <ScrollView>
         <Table>
           <TableHead>
             {table.getHeaderGroups().map((hg) => (
@@ -314,7 +339,7 @@ const InvoiceTable = () => {
           </TableHead>
           <TableBody>{renderBody()}</TableBody>
         </Table>
-      </TableContainer>
+      </ScrollView>
       <TablePagination
         component={"div"}
         count={table.getRowCount()}
@@ -333,19 +358,21 @@ const InvoiceTable = () => {
   );
 };
 
-const ResultPanel = () => {
-  const [searchParams, setSearchParams] = useSearchParams();
-  const ids = searchParams.get("ids")?.split("@") || [];
-  const invoices = useDbStore((s) => s.invoices);
-  const rows = invoices.filter((i) => ids.includes(i.id + ""));
-  const allStaffs = [...new Set(rows.flatMap((i) => i.staff))];
+type ResultPanelProps = {
+  rows: Invoice[];
+  onClose: () => void;
+};
+
+const ResultPanel = (props: ResultPanelProps) => {
+  const staffs = [...new Set(props.rows.flatMap((i) => i.staff))];
+
   const map = new Map<string, string>();
 
-  allStaffs.forEach((s) => {
+  staffs.forEach((staff) => {
     map.set(
-      s,
-      rows
-        .filter((i) => i.staff.includes(s))
+      staff,
+      props.rows
+        .filter((i) => i.staff.includes(staff))
         .reduce((r, i) => {
           return mathjs
             .add(
@@ -365,16 +392,7 @@ const ResultPanel = () => {
       <CardHeader
         title="Result"
         action={
-          <IconButton
-            onClick={() => {
-              setSearchParams((p) => {
-                const n = new URLSearchParams(p);
-                n.delete("ids");
-                return n;
-              });
-            }}
-            color="error"
-          >
+          <IconButton onClick={props.onClose} color="error">
             <CloseOutlined />
           </IconButton>
         }
@@ -398,13 +416,11 @@ const ResultPanel = () => {
 };
 
 export const Component = () => {
-  const [searchParams] = useSearchParams();
+  const [rows, setRows] = React.useState<Invoice[] | null>(null);
 
-  const ids = searchParams.get("ids");
-
-  if (!ids) {
-    return <InvoiceTable />;
+  if (!rows) {
+    return <InvoiceTable onView={setRows} />;
   }
 
-  return <ResultPanel />;
+  return <ResultPanel rows={rows} onClose={() => setRows(null)} />;
 };

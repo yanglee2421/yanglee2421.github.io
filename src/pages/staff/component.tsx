@@ -11,13 +11,12 @@ import {
   CardHeader,
   Grid,
   IconButton,
-  MenuItem,
+  Link,
   Switch,
   Tab,
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -30,15 +29,17 @@ import {
   createColumnHelper,
   flexRender,
   getCoreRowModel,
-  getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { useSearchParams } from "react-router";
 import { z } from "zod";
-import { Staff as StaffType, useDbStore } from "@/hooks/store/useDbStore";
+import { db } from "@/lib/db";
 import { warn } from "@/lib/utils";
+import { useLiveQuery } from "dexie-react-hooks";
+import type { Staff } from "@/lib/db";
+import { ScrollView } from "@/components/scrollbar";
 
 const schema = z.object({
   name: z.string().min(1),
@@ -47,10 +48,12 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const columnHelper = createColumnHelper<StaffType>();
+const columnHelper = createColumnHelper<Staff>();
 
 const columns = [
-  columnHelper.accessor("id", { cell: (r) => `#${r.getValue()}` }),
+  columnHelper.accessor("id", {
+    cell: (r) => <Link underline="none">#{r.getValue()}</Link>,
+  }),
   columnHelper.accessor("name", {}),
   columnHelper.accessor("alias", {}),
   columnHelper.accessor("enable", {
@@ -59,12 +62,7 @@ const columns = [
         checked={r.getValue()}
         onChange={(e, checked) => {
           void e;
-          useDbStore.setState((d) => {
-            const val = d.staffs.find((i) => i.id === r.row.original.id);
-            if (val) {
-              val.enable = checked;
-            }
-          });
+          db.staffs.update(r.row.original.id, { enable: checked });
         }}
       />
     ),
@@ -76,12 +74,7 @@ const columns = [
         <IconButton
           color="error"
           onClick={() => {
-            useDbStore.setState((d) => {
-              d.staffs.splice(
-                d.staffs.findIndex((i) => i.id === row.original.id),
-                1,
-              );
-            });
+            db.staffs.delete(row.original.id);
           }}
         >
           <DeleteOutlined />
@@ -91,75 +84,74 @@ const columns = [
   }),
 ];
 
-const checkText = (text: string, search: string) => {
-  if (!search) return true;
-
-  return text.toLowerCase().includes(search.toLowerCase());
+type SearchValue = {
+  name: string;
+  pageIndex: number;
+  pageSize: number;
 };
 
-const checkBool = (bool: boolean, search: string) => {
-  if (!search) return true;
+const searchParamsToSearchValue = (searchParams: URLSearchParams) => {
+  const name = searchParams.get("name") || "";
+  const pageIndex = Number(searchParams.get("pageIndex") || "0");
+  const pageSize = Number(searchParams.get("pageSize") || "20");
 
-  return bool.toString().toLowerCase() === search.toLowerCase();
+  return { name, pageIndex, pageSize };
 };
 
-export const Component = () => {
-  "use no memo";
-  const [activeTab, setActiveTab] = React.useState("list");
-
-  const [search, setSearch] = useSearchParams({
-    name: "",
-    alias: "",
-    enable: "",
+const useAddForm = () =>
+  useForm<FormValues>({
+    defaultValues: {
+      name: "",
+      alias: "",
+    },
+    resolver: zodResolver(schema),
   });
 
-  const nameSearch = search.get("name") || "";
-  const aliasSearch = search.get("alias") || "";
-  const enableSearch = search.get("enable") || "";
+const useSearch = () =>
+  useSearchParams({
+    name: "",
+    pageIndex: "0",
+    pageSize: "20",
+  });
 
-  const staff = useDbStore((s) => s.staffs);
-  const set = useDbStore((s) => s.set);
-
-  const data = React.useMemo(
-    () =>
-      staff.filter(
-        (i) =>
-          checkText(i.name, nameSearch) &&
-          checkText(i.alias, aliasSearch) &&
-          checkBool(i.enable, enableSearch),
-      ),
-    [staff, nameSearch, aliasSearch, enableSearch],
+export const Component = () => {
+  // eslint-disable-next-line
+  "use no memo";
+  const [activeTab, setActiveTab] = React.useState("list");
+  const [searchValue, setSearchValue] = React.useState<SearchValue | null>(
+    null,
   );
 
-  const [name, setName] = React.useState(nameSearch);
-  const [alias, setAlias] = React.useState(aliasSearch);
-  const [enable, setEnable] = React.useState(enableSearch);
+  const form = useAddForm();
+  const [searchParams, setSearchParams] = useSearch();
+
+  const search = searchValue || searchParamsToSearchValue(searchParams);
+
+  const staff = useLiveQuery(async () => {
+    const count = await db.staffs.where("name").startsWith(search.name).count();
+    const rows = await db.staffs
+      .where("name")
+      .startsWith(search.name)
+      .offset(search.pageIndex * search.pageSize)
+      .limit(search.pageSize)
+      .toArray();
+
+    return { rows, count };
+  }, [search.name, search.pageIndex, search.pageSize]);
+
+  const data = React.useMemo(() => staff?.rows || [], [staff]);
 
   React.useEffect(() => {
-    setSearch((p) => {
+    setSearchParams((p) => {
       const n = new URLSearchParams(p);
 
-      if (name) {
-        n.set("name", name.trim());
-      } else {
-        n.delete("name");
-      }
-
-      if (alias) {
-        n.set("alias", alias.trim());
-      } else {
-        n.delete("alias");
-      }
-
-      if (enable) {
-        n.set("enable", enable);
-      } else {
-        n.delete("enable");
-      }
+      n.set("name", search.name);
+      n.set("pageIndex", search.pageIndex.toString());
+      n.set("pageSize", search.pageSize.toString());
 
       return n;
     });
-  }, [name, alias, enable, setSearch]);
+  }, [setSearchParams, search.name, search.pageIndex, search.pageSize]);
 
   const formId = React.useId();
 
@@ -168,11 +160,8 @@ export const Component = () => {
     columns,
     data,
     getRowId: (r) => r.id.toString(),
-
-    getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: { pageSize: 20 },
-    },
+    rowCount: staff?.count || 0,
+    manualPagination: true,
   });
 
   const renderBody = () => {
@@ -198,14 +187,6 @@ export const Component = () => {
     ));
   };
 
-  const form = useForm<FormValues>({
-    defaultValues: {
-      name: "",
-      alias: "",
-    },
-    resolver: zodResolver(schema),
-  });
-
   const renderList = () => {
     return (
       <>
@@ -213,36 +194,27 @@ export const Component = () => {
           <Grid container spacing={6}>
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <TextField
-                value={name}
-                onChange={(e) => setName(e.target.value)}
+                value={search.name}
+                onChange={(e) =>
+                  setSearchValue((prev) => {
+                    if (!prev) {
+                      return {
+                        name: e.target.value,
+                        pageIndex: search.pageIndex,
+                        pageSize: search.pageSize,
+                      };
+                    }
+
+                    return { ...prev, name: e.target.value };
+                  })
+                }
                 label="Name"
                 fullWidth
               />
             </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField
-                value={alias}
-                onChange={(e) => setAlias(e.target.value)}
-                fullWidth
-                label="Alias"
-              />
-            </Grid>
-            <Grid size={{ xs: 12, sm: 6, md: 4 }}>
-              <TextField
-                value={enable}
-                onChange={(e) => setEnable(e.target.value)}
-                fullWidth
-                label="Enable"
-                select
-              >
-                <MenuItem value="">All</MenuItem>
-                <MenuItem value="true">Enabled</MenuItem>
-                <MenuItem value="false">Disabled</MenuItem>
-              </TextField>
-            </Grid>
           </Grid>
         </CardContent>
-        <TableContainer>
+        <ScrollView>
           <Table>
             <TableHead>
               {table.getHeaderGroups().map((hg) => (
@@ -258,18 +230,39 @@ export const Component = () => {
             </TableHead>
             <TableBody>{renderBody()}</TableBody>
           </Table>
-        </TableContainer>
-
+        </ScrollView>
         <TablePagination
           component={"div"}
-          page={table.getState().pagination.pageIndex}
-          rowsPerPage={table.getState().pagination.pageSize}
+          page={search.pageIndex}
+          rowsPerPage={search.pageSize}
+          rowsPerPageOptions={[20, 50, 100]}
           onPageChange={(e, idx) => {
-            table.setPageIndex(idx);
             void e;
+
+            setSearchValue((prev) => {
+              if (!prev) {
+                return {
+                  name: search.name,
+                  pageIndex: idx,
+                  pageSize: search.pageSize,
+                };
+              }
+
+              return { ...prev, pageIndex: idx };
+            });
           }}
           onRowsPerPageChange={(e) => {
-            table.setPageSize(Number.parseInt(e.target.value));
+            setSearchValue((prev) => {
+              if (!prev) {
+                return {
+                  name: search.name,
+                  pageIndex: search.pageIndex,
+                  pageSize: Number(e.target.value),
+                };
+              }
+
+              return { ...prev, pageSize: Number(e.target.value) };
+            });
           }}
           count={table.getRowCount()}
         />
@@ -284,22 +277,13 @@ export const Component = () => {
           <form
             id={formId}
             action={() =>
-              form.handleSubmit((data) => {
-                set((d) => {
-                  const aliasSet = new Set(d.staffs.map((i) => i.alias));
-
-                  if (aliasSet.has(data.alias)) {
-                    form.setError("alias", { message: "duplicate alias!" });
-                    return;
-                  }
-
-                  d.staffs.push({
-                    id: crypto.randomUUID(),
-                    enable: true,
-                    name: data.name.trim(),
-                    alias: data.alias.trim(),
-                  });
+              form.handleSubmit(async (data) => {
+                await db.staffs.add({
+                  enable: true,
+                  name: data.name.trim(),
+                  alias: data.alias.trim(),
                 });
+                form.reset();
               }, warn)()
             }
             noValidate

@@ -9,6 +9,9 @@ import {
   ThumbDownOutlined,
   ThumbDown,
   ThumbUp,
+  MoreVertOutlined,
+  DeleteOutlined,
+  AddOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -22,8 +25,12 @@ import {
   IconButton,
   TextField,
   InputAdornment,
-  useTheme,
   Typography,
+  Menu,
+  MenuItem,
+  ListItemIcon,
+  ListItemText,
+  Divider,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import openai from "openai";
@@ -31,11 +38,11 @@ import React from "react";
 import { useForm, Controller } from "react-hook-form";
 import { Markdown } from "@/components/markdown";
 import { z } from "zod";
-import {
-  useDbStore,
-  type ChatLog,
-  type Message,
-} from "@/hooks/store/useDbStore";
+import { useLiveQuery } from "dexie-react-hooks";
+import { db } from "@/lib/db";
+import type { Message, MessageInAPI } from "@/lib/db";
+import { useDbStore } from "@/hooks/store/useDbStore";
+import { ScrollView } from "./scrollbar";
 
 type MarkdownContentProps = {
   text: string;
@@ -109,37 +116,6 @@ const client = new openai.OpenAI({
   dangerouslyAllowBrowser: true,
 });
 
-type ChatLogMap = Map<string, ChatLog>;
-
-type InsertParams = {
-  id: string;
-  question: string;
-  messages: Message[];
-} & Partial<ChatLog>;
-
-const insert = (param: InsertParams, map: ChatLogMap) => {
-  const chatLog: ChatLog = {
-    questionDate: new Date().toISOString(),
-    answer: "",
-    answerDate: null,
-    status: "loading",
-    thumb: null,
-    ...param,
-  };
-
-  return new Map(map).set(chatLog.id, chatLog);
-};
-
-type UpdateParams = {
-  id: string;
-} & Partial<ChatLog>;
-
-const update = (param: UpdateParams, map: ChatLogMap) => {
-  const chatLog = map.get(param.id);
-  if (!chatLog) return map;
-  return new Map(map).set(param.id, { ...chatLog, ...param });
-};
-
 type SendButtonStatus = "idle" | "loading" | "streaming";
 
 const useScrollToBottom = () => {
@@ -158,9 +134,9 @@ const useScrollToBottom = () => {
 };
 
 const useScrollToView = () => {
-  const [id, setId] = React.useState("");
+  const [id, setId] = React.useState(0);
 
-  const scrollRef = React.useRef<Map<string, HTMLDivElement>>(new Map());
+  const scrollRef = React.useRef<Map<number, HTMLDivElement>>(new Map());
 
   React.useEffect(() => {
     if (!id) return;
@@ -170,7 +146,7 @@ const useScrollToView = () => {
       behavior: "smooth",
       block: "start",
     });
-    setId("");
+    setId(0);
   }, [id]);
 
   return [scrollRef, setId] as const;
@@ -201,13 +177,15 @@ const useWindowInnerHeight = () =>
   );
 
 export const CopilotChat = () => {
+  const [menuAnchorEl, setMenuAnchorEl] = React.useState<null | HTMLElement>(
+    null,
+  );
   const [sendButtonStatus, setSendButtonStatus] =
     React.useState<SendButtonStatus>("idle");
 
   const controllerRef = React.useRef<AbortController | null>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const theme = useTheme();
   const chatForm = useChatForm();
   const [scrollRef, setScrollId] = useScrollToView();
   const chatLogRef = useScrollToBottom();
@@ -215,13 +193,17 @@ export const CopilotChat = () => {
   const isMobile = useMediaQuery("(any-pointer: coarse)");
   const windowInnerHeight = useWindowInnerHeight();
   const visualViewportHeight = useVisualViewportHeight();
-  const chatLogs = useDbStore((state) => state.chatLog);
-  const set = useDbStore((state) => state.set);
-
-  const setChatLog = (updater: (prev: ChatLogMap) => ChatLogMap) =>
-    set((state) => {
-      state.chatLog = [...updater(new Map(state.chatLog)).entries()];
-    });
+  const activeCompletionId = useDbStore((state) => state.completionId);
+  const setDb = useDbStore((state) => state.set);
+  const completion = useLiveQuery(
+    () => db.completions.get(activeCompletionId),
+    [activeCompletionId],
+  );
+  const completions = useLiveQuery(() => db.completions.toArray(), []);
+  const chatLogs = useLiveQuery(async () => {
+    if (!completion?.id) return null;
+    return db.messages.where("completionId").equals(completion.id).toArray();
+  }, [completion?.id]);
 
   const getVirtualKeyboardHeight = () => {
     if (!isMobile) return 0;
@@ -231,9 +213,8 @@ export const CopilotChat = () => {
 
   const virtualKeyboardHeight = getVirtualKeyboardHeight();
   const isVirtualKeyboardVisible = !!virtualKeyboardHeight;
-  const logs = chatLogs.map(([, i]) => i);
 
-  const requestChat = async (id: string, messages: Message[]) => {
+  const runFetch = async (id: number, messages: MessageInAPI[]) => {
     const stream = await client.chat.completions.create({
       messages,
       stream: true,
@@ -246,56 +227,90 @@ export const CopilotChat = () => {
     let answer = "";
 
     for await (const chunk of stream) {
-      chunk.choices.forEach((choice) => {
+      for (const choice of chunk.choices) {
         if (!choice.delta.content) return;
         answer += choice.delta.content;
-        setChatLog((prev) => update({ answer, id, status: "pending" }, prev));
-      });
+        await db.messages.update(id, {
+          answer,
+          status: "pending",
+        });
+      }
     }
 
-    setChatLog((prev) =>
-      update(
-        { answer, id, status: "success", answerDate: new Date().toISOString() },
-        prev,
-      ),
-    );
+    await db.messages.update(id, {
+      answer,
+      status: "success",
+      answerDate: new Date().toISOString(),
+    });
   };
 
-  const runChat = async (id: string, messages: Message[]) => {
+  const runChat = async (id: number, messages: MessageInAPI[]) => {
     setSendButtonStatus("loading");
 
-    await requestChat(id, messages).catch((e) => {
-      setChatLog((prev) =>
-        update({ id, answer: e.message, status: "error" }, prev),
-      );
+    await runFetch(id, messages).catch(async (e) => {
+      await db.messages.update(id, {
+        answer: e.message,
+        status: "error",
+      });
     });
 
     setSendButtonStatus("idle");
   };
 
-  const runRetry = async (log: ChatLog) => {
+  const runRetry = async (log: Message) => {
     setScrollId(log.id);
-    setChatLog((prev) =>
-      update({ id: log.id, status: "loading", thumb: null }, prev),
-    );
+    await db.messages.update(log.id, { status: "loading", thumb: null });
     await runChat(log.id, log.messages);
   };
 
   const handleSubmit = chatForm.handleSubmit(async (data) => {
     if (sendButtonStatus !== "idle") return;
 
-    const id = crypto.randomUUID();
+    chatForm.reset();
+    let completionId = 0;
     const question = data.question.trim();
-    const messages = logs
-      .flatMap((i) => [
+
+    // No completion
+    if (!completion) {
+      completionId = await db.completions.add({
+        name: question,
+      });
+      setDb((draft) => {
+        draft.completionId = completionId;
+      });
+
+      // Has completion but no messages
+    } else if (!chatLogs?.length) {
+      completionId = completion.id;
+      await db.completions.update(completion.id, {
+        name: question,
+      });
+
+      // Has completion and messages
+    } else {
+      completionId = completion.id;
+    }
+
+    const prevMessages =
+      chatLogs?.flatMap((i) => [
         { role: "user" as const, content: i.question },
         { role: "assistant" as const, content: i.answer },
-      ])
-      .concat({ role: "user", content: question });
+      ]) || [];
 
-    chatForm.reset();
+    const messages = prevMessages.concat({ role: "user", content: question });
+
+    const id = await db.messages.add({
+      question,
+      questionDate: new Date().toISOString(),
+      messages,
+      answer: "",
+      answerDate: null,
+      status: "loading",
+      thumb: null,
+      completionId,
+    });
+
     setScrollId(id);
-    setChatLog((prev) => insert({ id, question, messages }, prev));
     await runChat(id, messages);
   }, warn);
 
@@ -308,6 +323,8 @@ export const CopilotChat = () => {
     e.preventDefault();
     controllerRef.current?.abort();
   };
+
+  const handleMenuClose = () => setMenuAnchorEl(null);
 
   const renderSendButton = () => {
     switch (sendButtonStatus) {
@@ -339,16 +356,13 @@ export const CopilotChat = () => {
       default:
         return (
           <Fab type="submit" size="small" color="primary">
-            <SendOutlined
-              sx={{ transform: "rotate(-90deg)" }}
-              fontSize="small"
-            />
+            <SendOutlined fontSize="small" />
           </Fab>
         );
     }
   };
 
-  const renderThumb = (i: ChatLog) => {
+  const renderThumb = (i: Message) => {
     switch (i.thumb) {
       case "up":
         return (
@@ -367,17 +381,21 @@ export const CopilotChat = () => {
           <>
             <IconButton
               size="small"
-              onClick={() =>
-                setChatLog((prev) => update({ id: i.id, thumb: "up" }, prev))
-              }
+              onClick={async () => {
+                await db.messages.update(i.id, {
+                  thumb: "up",
+                });
+              }}
             >
               <ThumbUpOutlined />
             </IconButton>
             <IconButton
               size="small"
-              onClick={() =>
-                setChatLog((prev) => update({ id: i.id, thumb: "down" }, prev))
-              }
+              onClick={async () => {
+                await db.messages.update(i.id, {
+                  thumb: "down",
+                });
+              }}
             >
               <ThumbDownOutlined />
             </IconButton>
@@ -386,7 +404,7 @@ export const CopilotChat = () => {
     }
   };
 
-  const renderAnswer = (i: ChatLog) => {
+  const renderAnswer = (i: Message) => {
     switch (i.status) {
       case "loading":
         return (
@@ -460,48 +478,112 @@ export const CopilotChat = () => {
         blockSize: "100%",
       }}
     >
+      <Box sx={{ display: "flex", paddingInline: 3.5, paddingBlock: 1.5 }}>
+        <Box sx={{ flex: 1, minInlineSize: 0 }}>
+          <Typography variant="h6">Copilot Chat</Typography>
+          <Typography variant="subtitle1">#{completion?.id}</Typography>
+        </Box>
+        <IconButton onClick={(e) => setMenuAnchorEl(e.currentTarget)}>
+          <MoreVertOutlined />
+        </IconButton>
+        <Menu
+          open={!!menuAnchorEl}
+          onClose={handleMenuClose}
+          anchorEl={menuAnchorEl}
+        >
+          <MenuItem
+            onClick={async () => {
+              handleMenuClose();
+              const id = await db.completions.add({ name: "New completion" });
+              setDb((draft) => {
+                draft.completionId = id;
+              });
+            }}
+          >
+            <ListItemIcon>
+              <AddOutlined />
+            </ListItemIcon>
+            <ListItemText primary="Add completion" />
+          </MenuItem>
+          {completions?.map((i) => (
+            <MenuItem
+              key={i.id}
+              onClick={() => {
+                handleMenuClose();
+                setDb((draft) => {
+                  draft.completionId = i.id;
+                });
+              }}
+            >
+              {i.name}
+            </MenuItem>
+          ))}
+          {completion && (
+            <MenuItem
+              onClick={() => {
+                handleMenuClose();
+                db.completions.delete(completion.id);
+                db.messages
+                  .where("completionId")
+                  .equals(completion.id)
+                  .delete();
+              }}
+            >
+              <ListItemIcon>
+                <DeleteOutlined color="error" />
+              </ListItemIcon>
+              <ListItemText primary="Delete completion" />
+            </MenuItem>
+          )}
+        </Menu>
+      </Box>
+      <Divider />
       <Box
         sx={{
           flex: 1,
-          overflowY: "auto",
-          scrollbarColor: `${theme.palette.divider} transparent`,
+          minBlockSize: 0,
         }}
       >
-        <Box
-          sx={{
-            padding: 3,
-            "&>*+*": {
-              marginBlockStart: 3,
-            },
-          }}
-        >
-          {logs.map((i) => (
-            <ChatLogItem
-              key={i.id}
-              question={
-                <div>
-                  <Paper
-                    sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}
-                  >
-                    {i.question}
-                  </Paper>
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(i.questionDate).toLocaleTimeString()}
-                  </Typography>
-                </div>
-              }
-              answer={renderAnswer(i)}
-              ref={(el) => {
-                if (!el) return;
-                scrollRef.current.set(i.id, el);
-                return () => {
-                  scrollRef.current.delete(i.id);
-                };
-              }}
-            />
-          ))}
-        </Box>
-        <div ref={chatLogRef} />
+        <ScrollView>
+          <Box
+            sx={{
+              padding: 3,
+              "&>*+*": {
+                marginBlockStart: 3,
+              },
+            }}
+          >
+            {chatLogs?.map((i) => (
+              <ChatLogItem
+                key={i.id}
+                question={
+                  <div>
+                    <Paper
+                      sx={{
+                        padding: 3,
+                        bgcolor: (t) => t.palette.primary.main,
+                      }}
+                    >
+                      {i.question}
+                    </Paper>
+                    <Typography variant="caption" color="text.secondary">
+                      {new Date(i.questionDate).toLocaleTimeString()}
+                    </Typography>
+                  </div>
+                }
+                answer={renderAnswer(i)}
+                ref={(el) => {
+                  if (!el) return;
+                  scrollRef.current.set(i.id, el);
+                  return () => {
+                    scrollRef.current.delete(i.id);
+                  };
+                }}
+              />
+            ))}
+          </Box>
+          <div ref={chatLogRef} />
+        </ScrollView>
       </Box>
       <Box sx={{ padding: 3, paddingBlockStart: 0 }}>
         <form

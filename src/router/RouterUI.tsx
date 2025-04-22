@@ -52,8 +52,10 @@ import { LangToggle } from "@/components/shared/LangToggle";
 import { Logo as AppLogo } from "@/components/Logo";
 import * as consts from "@/lib/constants";
 import { NavMenu } from "@/components/nav";
+import { ScrollView } from "@/components/scrollbar";
 
 const AuthLayoutWrapper = styled("div")(({ theme }) => ({
+  blockSize: "100dvh",
   [theme.breakpoints.down("sm")]: {
     "&:where([data-showmenu=false]) > [role=menu]": {
       display: "none",
@@ -83,8 +85,6 @@ const AuthAsideWrapper = styled("div")(({ theme }) => ({
 const AuthAside = styled("aside")(({ theme }) => ({
   inlineSize: "100%",
   blockSize: "100%",
-  overflowX: "visible",
-  overflowY: "auto",
   borderInlineEnd: `1px solid ${theme.palette.divider}`,
 }));
 
@@ -181,16 +181,20 @@ const AuthLayout = () => {
           <AuthHeader />
         </Toolbar>
       </AppBar>
-      <AuthAsideWrapper role="menu">
-        <AuthAside>
-          <NavMenu />
-        </AuthAside>
-      </AuthAsideWrapper>
-      <AuthContentWrapper role="main">
-        <AuthMain>
-          <Outlet />
-        </AuthMain>
-      </AuthContentWrapper>
+      <ScrollView>
+        <AuthAsideWrapper role="menu">
+          <AuthAside>
+            <ScrollView>
+              <NavMenu />
+            </ScrollView>
+          </AuthAside>
+        </AuthAsideWrapper>
+        <AuthContentWrapper role="main">
+          <AuthMain>
+            <Outlet />
+          </AuthMain>
+        </AuthContentWrapper>
+      </ScrollView>
     </AuthLayoutWrapper>
   );
 };
@@ -440,7 +444,7 @@ const renderError = (error: unknown) => {
         <AlertTitle>{error.status}</AlertTitle>
         <Typography>{error.statusText}</Typography>
         <Link to="/">
-          <Button startIcon={<HomeOutlined />}>返回首页</Button>
+          <Button startIcon={<HomeOutlined />}>Take me to home</Button>
         </Link>
       </Alert>
     );
@@ -449,12 +453,12 @@ const renderError = (error: unknown) => {
   if (error instanceof Error) {
     return (
       <Alert severity="error" variant="outlined">
-        <AlertTitle>错误</AlertTitle>
+        <AlertTitle>Error</AlertTitle>
         <Typography>{error.message}</Typography>
         <Typography variant="body2">{error.stack}</Typography>
         <Link to="/">
           <Button startIcon={<HomeOutlined />} color="error">
-            返回首页
+            Take me to home
           </Button>
         </Link>
       </Alert>
@@ -463,11 +467,11 @@ const renderError = (error: unknown) => {
 
   return (
     <Alert severity="error" variant="outlined">
-      <AlertTitle>错误</AlertTitle>
-      <Typography>未知错误，请联系服务人员</Typography>
+      <AlertTitle>Error</AlertTitle>
+      <Typography>Unknown error please contact support</Typography>
       <Link to="/">
         <Button startIcon={<HomeOutlined />} color="error">
-          返回首页
+          Take me to home
         </Button>
       </Link>
     </Alert>

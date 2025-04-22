@@ -13,7 +13,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TableRow,
 } from "@mui/material";
@@ -23,6 +22,7 @@ import {
 } from "@mui/icons-material";
 import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
 import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
+import { ScrollView } from "@/components/scrollbar";
 
 const minmax = (num: number, { min, max }: { min: number; max: number }) =>
   Math.min(Math.max(num, min), max);
@@ -161,7 +161,7 @@ export const Component = () => {
           </Grid>
         </Grid>
       </CardContent>
-      <TableContainer>
+      <ScrollView>
         <Table>
           <TableHead>
             <TableRow>
@@ -195,7 +195,7 @@ export const Component = () => {
             ))}
           </TableBody>
         </Table>
-      </TableContainer>
+      </ScrollView>
     </Card>
   );
 };
