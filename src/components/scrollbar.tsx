@@ -50,14 +50,20 @@ const StyledCorner = styled(ScrollAreaCorner)(() => ({
 
 type ScrollViewProps = React.PropsWithChildren<{
   ref?: React.Ref<HTMLDivElement>;
+  slotProps?: {
+    viewport?: React.ComponentProps<typeof StyledScrollViewport>;
+  };
 }>;
 
 export const ScrollView = (props: ScrollViewProps) => {
-  const { ref } = props;
+  const { ref, slotProps = {} } = props;
+  const { viewport } = slotProps;
 
   return (
     <StyledScrollArea ref={ref}>
-      <StyledScrollViewport>{props.children}</StyledScrollViewport>
+      <StyledScrollViewport {...viewport}>
+        {props.children}
+      </StyledScrollViewport>
       <StyledScrollbar orientation="horizontal">
         <StyledThumb />
       </StyledScrollbar>

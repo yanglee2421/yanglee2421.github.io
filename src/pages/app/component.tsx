@@ -21,23 +21,15 @@ import { CopilotChat } from "@/components/chat";
 import { NavMenu } from "@/components/nav";
 import { ScrollView } from "@/components/scrollbar";
 
-type ContentProps = {
-  ref?: React.Ref<HTMLDivElement>;
-};
-
-const Content = ({ ref }: ContentProps) => {
+const Content = () => {
   return (
-    <div ref={ref}>
-      <ScrollView>
-        <Box sx={{ padding: 4 }}>
-          <div>
-            <DateTimePicker />
-          </div>
-          <iframe src="https://bilibili.com" width={700} height={700}></iframe>
-          <Box width={2000} height={2000}></Box>
-        </Box>
-      </ScrollView>
-    </div>
+    <Box sx={{ padding: 4 }}>
+      <div>
+        <DateTimePicker />
+      </div>
+      <iframe src="https://bilibili.com" width={700} height={700}></iframe>
+      <Box width={2000} height={2000}></Box>
+    </Box>
   );
 };
 
@@ -52,12 +44,45 @@ export const Component = () => {
   const [lastActivePanel, setLastActivePanel] =
     React.useState<ActivePanel>("content");
 
-  const frameRef = React.useRef<HTMLDivElement>(null);
-  const cursorRef = React.useRef<HTMLDivElement>(null);
-  const contentRef = React.useRef<HTMLDivElement>(null);
-
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
+
+  const getShowMenu = () => {
+    if (!isSmallScreen) {
+      return openMenu;
+    }
+
+    return lastActivePanel === "menu";
+  };
+
+  const getShowChat = () => {
+    if (!isSmallScreen) {
+      return openChat;
+    }
+
+    return lastActivePanel === "chat";
+  };
+
+  const getShowContent = () => {
+    if (!isSmallScreen) {
+      return true;
+    }
+
+    return lastActivePanel === "content";
+  };
+
+  const getDisableYScroll = () => {
+    if (isSmallScreen) {
+      return showChat;
+    }
+
+    return true;
+  };
+
+  const showMenu = getShowMenu();
+  const showChat = getShowChat();
+  const showContent = getShowContent();
+  const disableYScroll = getDisableYScroll();
 
   const handleAlwaysOnTopToggle = () => setAlwaysOnTop((prev) => !prev);
   const handleMenuToggle = () => {
@@ -69,124 +94,12 @@ export const Component = () => {
     setLastActivePanel((prev) => (prev === "chat" ? "content" : "chat"));
   };
 
-  React.useEffect(() => {
-    let timer = 0;
-    const fn = () => {
-      timer = requestAnimationFrame(fn);
-      const cursor = cursorRef.current;
-      const frame = frameRef.current!;
-      const content = contentRef.current!;
-
-      if (!cursor) {
-        frame.style.display = "none";
-        return;
-      }
-
-      content.style.width = cursor.getBoundingClientRect().width + "px";
-      content.style.height = cursor.getBoundingClientRect().height + "px";
-      frame.style.display = "block";
-      frame.style.left = cursor.getBoundingClientRect().left + "px";
-      frame.style.top = cursor.getBoundingClientRect().top + "px";
-    };
-
-    fn();
-
-    return () => {
-      cancelAnimationFrame(timer);
-    };
-  }, []);
-
-  const renderPanelInSmallScreen = () => {
-    switch (lastActivePanel) {
-      case "menu":
-        return <NavMenu />;
-      case "chat":
-        return <CopilotChat />;
-      case "content":
-      default:
-        return (
-          <Box
-            ref={cursorRef}
-            sx={{ inlineSize: "100%", blockSize: "100%" }}
-          ></Box>
-        );
-    }
-  };
-
-  const renderPanel = () => {
-    if (isSmallScreen) {
-      return renderPanelInSmallScreen();
-    }
-
-    return (
-      <PanelGroup direction="horizontal" autoSaveId="resize">
-        {openMenu && (
-          <>
-            <Panel minSize={16} defaultSize={25} id="menu" order={1}>
-              <ScrollView>
-                <NavMenu />
-              </ScrollView>
-            </Panel>
-            <PanelResizeHandle
-              style={{
-                width: leftResizeActive ? 2 : 1,
-                backgroundColor: leftResizeActive
-                  ? theme.palette.primary.main
-                  : theme.palette.divider,
-              }}
-              onDragging={setLeftResizeActive}
-            />
-          </>
-        )}
-        <Panel id="content" order={2}>
-          <Box
-            ref={cursorRef}
-            sx={{ inlineSize: "100%", blockSize: "100%" }}
-          ></Box>
-        </Panel>
-        {openChat && (
-          <>
-            <PanelResizeHandle
-              style={{
-                width: rightResizeActive ? 2 : 1,
-                backgroundColor: rightResizeActive
-                  ? theme.palette.primary.main
-                  : theme.palette.divider,
-              }}
-              onDragging={setRightResizeActive}
-            />
-            <Panel minSize={20} defaultSize={30} id="chat" order={3}>
-              <CopilotChat />
-            </Panel>
-          </>
-        )}
-      </PanelGroup>
-    );
-  };
-
   return (
     <Box
       sx={{
-        display: "flex",
-        flexDirection: "column",
-
-        position: "relative",
-        zIndex: 10,
-
         blockSize: "100dvh",
       }}
     >
-      <Box
-        ref={frameRef}
-        sx={{
-          position: "fixed",
-          zIndex: 10,
-          inlineSize: "100%",
-          blockSize: 0,
-        }}
-      >
-        <Content ref={contentRef} />
-      </Box>
       <Box
         sx={{
           display: "flex",
@@ -198,6 +111,10 @@ export const Component = () => {
           backdropFilter: "blur(8px)",
 
           padding: 2,
+
+          position: "fixed",
+          zIndex: theme.zIndex.appBar,
+          inlineSize: "100%",
         }}
       >
         <Box>
@@ -228,7 +145,87 @@ export const Component = () => {
           </IconButton>
         </Box>
       </Box>
-      <Box sx={{ flex: 1, minBlockSize: 0 }}>{renderPanel()}</Box>
+      <ScrollView
+        slotProps={
+          disableYScroll
+            ? {
+                viewport: {
+                  sx: {
+                    "&>div[style]": {
+                      display: "block !important",
+                      blockSize: "100%",
+                    },
+                  },
+                },
+              }
+            : void 0
+        }
+      >
+        <Box
+          sx={{
+            paddingBlockStart: "57px",
+            blockSize: "100%",
+          }}
+        >
+          <PanelGroup direction="horizontal" autoSaveId="resize">
+            <Panel
+              minSize={16}
+              defaultSize={25}
+              id="menu"
+              order={1}
+              style={{
+                display: showMenu ? "block" : "none",
+              }}
+            >
+              <ScrollView>
+                <NavMenu />
+              </ScrollView>
+            </Panel>
+            <PanelResizeHandle
+              style={{
+                width: leftResizeActive ? 2 : 1,
+                backgroundColor: leftResizeActive
+                  ? theme.palette.primary.main
+                  : theme.palette.divider,
+                display: showMenu ? "block" : "none",
+              }}
+              onDragging={setLeftResizeActive}
+            />
+            <Panel
+              id="content"
+              order={2}
+              style={{ display: showContent ? "block" : "none" }}
+            >
+              <Box sx={{ inlineSize: "100%", blockSize: "100%" }}>
+                <ScrollView>
+                  <Content />
+                </ScrollView>
+              </Box>
+            </Panel>
+            <PanelResizeHandle
+              style={{
+                width: rightResizeActive ? 2 : 1,
+                backgroundColor: rightResizeActive
+                  ? theme.palette.primary.main
+                  : theme.palette.divider,
+                display: showChat ? "block" : "none",
+              }}
+              onDragging={setRightResizeActive}
+            />
+            <Panel
+              minSize={20}
+              defaultSize={30}
+              id="chat"
+              order={3}
+              style={{
+                display: showChat ? "block" : "none",
+              }}
+            >
+              <CopilotChat />
+            </Panel>
+          </PanelGroup>
+        </Box>
+      </ScrollView>
     </Box>
   );
 };
