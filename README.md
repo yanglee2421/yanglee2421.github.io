@@ -69,14 +69,15 @@ const element = <User {...userProps} />;
 const element = <User />;
 ```
 
-This behavior is different from regular JavaScript objects where using `{...null}` would throw an error:
+This behavior comes from the ES2018 specification, which allows the spread operator to work with `null` and `undefined` without throwing errors. However, this behavior does not apply to array spread operators `[...null]`, which will throw an error.
 
 ```js
-// This would throw an error: TypeError: Cannot convert undefined or null to object
+// In environments before ES2018, this would throw:
+// TypeError: Cannot convert undefined or null to object
 const obj = { ...null };
 ```
 
-React specially handles this case to allow components to flexibly accept potentially empty prop objects.
+With modern JavaScript engines supporting ES2018+, both regular object spreads and JSX spreads safely handle null and undefined values.
 
 ## Conditional Rendering
 
@@ -197,3 +198,17 @@ function App() {
   );
 }
 ```
+
+## Additional Notes
+
+### Logical `&&` Operator in Conditional Rendering
+
+- The logical `&&` operator in JSX short-circuits: if the left-hand side is `false`, the right-hand side will not be evaluated or rendered.
+
+### `dangerouslySetInnerHTML`
+
+- While React DOM escapes embedded values to prevent XSS attacks, using `dangerouslySetInnerHTML` bypasses this protection. Developers must ensure the safety of the content manually.
+
+### Fragment Syntax
+
+- The short syntax `<>...</>` does not support attributes like `key`. Use the long syntax `<React.Fragment>` if attributes are needed.
