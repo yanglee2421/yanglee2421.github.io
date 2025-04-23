@@ -653,6 +653,11 @@ const routes: RouteObject[] = [
                     path: "qrcode",
                     lazy: () => import("@/pages/qrcode/component"),
                   },
+                  {
+                    id: "scrollbar",
+                    path: "scrollbar",
+                    lazy: () => import("@/pages/scrollbar/component"),
+                  },
                 ],
               },
             ],
