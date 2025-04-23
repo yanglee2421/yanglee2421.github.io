@@ -21,50 +21,23 @@ import { CopilotChat } from "@/components/chat";
 import { NavMenu } from "@/components/nav";
 import { ScrollView } from "@/components/scrollbar";
 
-const Content = () => {
+type ContentProps = {
+  ref?: React.Ref<HTMLDivElement>;
+};
+
+const Content = ({ ref }: ContentProps) => {
   return (
-    <Box sx={{ padding: 4 }}>
-      <div>
-        <DateTimePicker />
-      </div>
-      <span>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Incidunt quam
-        aperiam doloribus vero accusamus tempora. Nesciunt similique error
-        aspernatur, repudiandae id voluptatibus quod eligendi minima laudantium
-        consequatur nostrum molestiae totam! Consequatur iure perspiciatis autem
-        in nesciunt! Debitis inventore pariatur cupiditate accusamus illum
-        excepturi quas recusandae dolorum repellat voluptatum amet facilis
-        aliquam odit aspernatur maiores, mollitia molestias, quam harum unde
-        praesentium. Eos corrupti soluta nam adipisci. Dolore laboriosam
-        necessitatibus earum molestias asperiores esse debitis cumque alias
-        deleniti beatae sapiente eos itaque sequi, rerum et impedit, deserunt
-        nobis, iure ipsa est! Officiis. Dolorem deleniti ex blanditiis in
-        ducimus! Maiores debitis nihil explicabo, consequuntur aperiam quod
-        perferendis assumenda quasi suscipit fuga delectus similique
-        dignissimos, cumque expedita. Vero dolor, maiores quisquam reiciendis
-        doloribus consectetur. Delectus atque architecto ea nisi quaerat unde
-        quod soluta aliquam? Ipsum, voluptate ab repellendus modi asperiores quo
-        nobis repellat quod beatae alias nesciunt temporibus non iusto? Harum
-        magni eos cum. Odit quam itaque saepe, ipsam mollitia cupiditate illo
-        porro, similique qui tempora minima ad obcaecati incidunt. Distinctio
-        perspiciatis quia, iure nisi harum ut quo quisquam ipsum ipsam?
-        Incidunt, repellendus voluptatem. Dolorem incidunt reprehenderit
-        consequuntur tempore in alias molestiae beatae esse unde ab? Nemo iure
-        officiis labore possimus neque facilis modi, iusto assumenda sit soluta.
-        Omnis consequuntur expedita aliquam nulla eum. Accusantium quis minima,
-        quidem voluptatum sequi placeat modi doloribus adipisci ipsum quos
-        pariatur similique amet itaque dolor ipsa minus numquam reiciendis id
-        qui officia, vel excepturi? Repellendus harum ducimus delectus! At,
-        error! Iste soluta, aut alias reprehenderit officiis praesentium ab
-        ipsam asperiores. Perferendis consequatur, facere, enim error fuga
-        fugiat recusandae nisi neque assumenda omnis voluptates optio facilis
-        aut dolorem sequi? Vitae eum reiciendis nobis ipsum saepe officiis atque
-        eius maiores aliquam? Cumque, unde neque suscipit quasi officia fuga,
-        iusto asperiores eos ea facere, nihil ducimus! Voluptatum, tenetur
-        aspernatur? Expedita, officia.
-      </span>
-      <Box width={2000} height={2000}></Box>
-    </Box>
+    <div ref={ref}>
+      <ScrollView>
+        <Box sx={{ padding: 4 }}>
+          <div>
+            <DateTimePicker />
+          </div>
+          <iframe src="https://bilibili.com" width={700} height={700}></iframe>
+          <Box width={2000} height={2000}></Box>
+        </Box>
+      </ScrollView>
+    </div>
   );
 };
 
@@ -79,6 +52,10 @@ export const Component = () => {
   const [lastActivePanel, setLastActivePanel] =
     React.useState<ActivePanel>("content");
 
+  const frameRef = React.useRef<HTMLDivElement>(null);
+  const cursorRef = React.useRef<HTMLDivElement>(null);
+  const contentRef = React.useRef<HTMLDivElement>(null);
+
   const theme = useTheme();
   const isSmallScreen = useMediaQuery(theme.breakpoints.down("sm"));
 
@@ -92,6 +69,33 @@ export const Component = () => {
     setLastActivePanel((prev) => (prev === "chat" ? "content" : "chat"));
   };
 
+  React.useEffect(() => {
+    let timer = 0;
+    const fn = () => {
+      timer = requestAnimationFrame(fn);
+      const cursor = cursorRef.current;
+      const frame = frameRef.current!;
+      const content = contentRef.current!;
+
+      if (!cursor) {
+        frame.style.display = "none";
+        return;
+      }
+
+      content.style.width = cursor.getBoundingClientRect().width + "px";
+      content.style.height = cursor.getBoundingClientRect().height + "px";
+      frame.style.display = "block";
+      frame.style.left = cursor.getBoundingClientRect().left + "px";
+      frame.style.top = cursor.getBoundingClientRect().top + "px";
+    };
+
+    fn();
+
+    return () => {
+      cancelAnimationFrame(timer);
+    };
+  }, []);
+
   const renderPanelInSmallScreen = () => {
     switch (lastActivePanel) {
       case "menu":
@@ -100,7 +104,12 @@ export const Component = () => {
         return <CopilotChat />;
       case "content":
       default:
-        return <Content />;
+        return (
+          <Box
+            ref={cursorRef}
+            sx={{ inlineSize: "100%", blockSize: "100%" }}
+          ></Box>
+        );
     }
   };
 
@@ -130,9 +139,10 @@ export const Component = () => {
           </>
         )}
         <Panel id="content" order={2}>
-          <ScrollView>
-            <Content />
-          </ScrollView>
+          <Box
+            ref={cursorRef}
+            sx={{ inlineSize: "100%", blockSize: "100%" }}
+          ></Box>
         </Panel>
         {openChat && (
           <>
@@ -166,6 +176,17 @@ export const Component = () => {
         blockSize: "100dvh",
       }}
     >
+      <Box
+        ref={frameRef}
+        sx={{
+          position: "fixed",
+          zIndex: 10,
+          inlineSize: "100%",
+          blockSize: 0,
+        }}
+      >
+        <Content ref={contentRef} />
+      </Box>
       <Box
         sx={{
           display: "flex",
