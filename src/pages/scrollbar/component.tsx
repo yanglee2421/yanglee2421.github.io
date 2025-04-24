@@ -5,7 +5,7 @@ import * as RadixScroll from "@radix-ui/react-scroll-area";
 export const Component = () => {
   return (
     <Box>
-      <Box sx={{ border: "1px solid #ccc", width: 300, height: 300 }}>
+      <Box sx={{ border: "1px solid #ccc", width: 600, height: 600 }}>
         <Scroll />
       </Box>
       <Box sx={{ border: "1px solid #ccc", width: 300, height: 300 }}>
