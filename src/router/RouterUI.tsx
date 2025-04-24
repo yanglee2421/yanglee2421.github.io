@@ -57,10 +57,10 @@ import { ScrollView } from "@/components/scrollbar";
 const AuthLayoutWrapper = styled("div")(({ theme }) => ({
   blockSize: "100dvh",
   [theme.breakpoints.down("sm")]: {
-    "&:where([data-showmenu=false]) > [role=menu]": {
+    "&:where([data-showmenu=false]) [role=menu]": {
       display: "none",
     },
-    "&:where([data-showmenu=true]) > [role=main]": {
+    "&:where([data-showmenu=true]) [role=main]": {
       display: "none",
     },
   },
