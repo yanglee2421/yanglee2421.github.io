@@ -26,6 +26,10 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
 
   const scrollViewRef = React.useRef<HTMLDivElement>(null);
   const scrollContentRef = React.useRef<HTMLDivElement>(null);
+  const xStartClientXRef = React.useRef(0);
+  const yStartClientYRef = React.useRef(0);
+  const xThumbLeftRef = React.useRef(0);
+  const yThumbTopRef = React.useRef(0);
 
   const updateScrollInfo = React.useCallback(() => {
     const container = scrollViewRef.current;
@@ -45,41 +49,49 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
     const scrollContent = scrollContentRef.current;
     if (!scrollContent) return;
 
+    let raf = 0;
+
     const observer = new ResizeObserver(() => {
-      updateScrollInfo();
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateScrollInfo);
     });
-    observer.observe(scrollContentRef.current!);
+    observer.observe(scrollContent);
 
     return () => {
+      cancelAnimationFrame(raf);
       observer.disconnect();
     };
   }, [updateScrollInfo]);
 
-  const thumbHeight = Math.max(
-    30,
+  const yThumbHeight = Math.max(
+    18,
     scrollInfo.clientHeight ** 2 / scrollInfo.scrollHeight,
   );
-  const thumbWidth = Math.max(
-    30,
+  const xThumbWidth = Math.max(
+    18,
     scrollInfo.clientWidth ** 2 / scrollInfo.scrollWidth,
   );
 
-  const needScrollX = scrollInfo.scrollWidth > scrollInfo.clientWidth;
-  const needScrollY = scrollInfo.scrollHeight > scrollInfo.clientHeight;
-  const cornerWidth = needScrollY ? 12 : 0;
-  const cornerHeight = needScrollX ? 12 : 0;
-  const thummbScrollableWidth =
-    scrollInfo.clientWidth - cornerWidth - thumbWidth;
-  const thummbScrollableHeight =
-    scrollInfo.clientHeight - cornerHeight - thumbHeight;
-  const scrollableWidth = scrollInfo.scrollWidth - scrollInfo.clientWidth;
-  const scrollableHeight = scrollInfo.scrollHeight - scrollInfo.clientHeight;
-
-  const thumbTop =
-    (scrollInfo.scrollTop / scrollableHeight) * thummbScrollableHeight;
-
-  const thumbLeft =
-    (scrollInfo.scrollLeft / scrollableWidth) * thummbScrollableWidth;
+  const {
+    scrollWidth,
+    scrollHeight,
+    clientWidth,
+    clientHeight,
+    scrollLeft,
+    scrollTop,
+  } = scrollInfo;
+  const xScrollbarHeight = 12;
+  const yScrollbarWidth = 12;
+  const xScrollableWidth = scrollWidth - clientWidth;
+  const yScrollableHeight = scrollHeight - clientHeight;
+  const needScrollX = !!Math.floor(xScrollableWidth);
+  const needScrollY = !!Math.floor(yScrollableHeight);
+  const cornerWidth = needScrollY ? yScrollbarWidth : 0;
+  const cornerHeight = needScrollX ? xScrollbarHeight : 0;
+  const xThumbScrollableWidth = clientWidth - cornerWidth - xThumbWidth;
+  const yThumbScrollableHeight = clientHeight - cornerHeight - yThumbHeight;
+  const yThumbTop = scrollTop * (yThumbScrollableHeight / yScrollableHeight);
+  const xThumbLeft = scrollLeft * (xThumbScrollableWidth / xScrollableWidth);
 
   const renderBackgroundColor = (isActive: boolean, isHover: boolean) => {
     if (isActive) {
@@ -126,7 +138,28 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
         onScroll={updateScrollInfo}
       >
         <Box ref={scrollContentRef}>
-          {children || <Box height={1000}>滚动内容区域</Box>}
+          {children || (
+            <Box height={1000} width={1000}>
+              Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus
+              vitae quos repudiandae voluptate magnam molestias, aspernatur
+              tempora? Distinctio, cupiditate perspiciatis temporibus
+              repellendus iste, quo nostrum illum adipisci, tempora at dolorum.
+              Architecto eius, optio officia velit repellat illo tempore dolor
+              ipsam tenetur voluptatibus pariatur impedit nulla doloremque
+              quidem harum molestias quis, eos a autem? Eveniet libero itaque
+              nisi, sit molestiae maiores. Odio quidem reprehenderit soluta
+              ratione odit quo cumque, quam nesciunt eum distinctio error sunt
+              voluptate molestias iusto vero quia ab! Sint maiores ad cum. Cum
+              placeat tempore delectus mollitia nemo! Totam placeat laborum,
+              itaque delectus deserunt quam ut, ratione quibusdam pariatur magni
+              cupiditate distinctio voluptates aliquid in sed deleniti sunt quas
+              perspiciatis aperiam assumenda animi non veniam velit odio? Quis?
+              Commodi eos deserunt neque voluptatem sed cumque nostrum at
+              possimus, aliquam molestiae alias vero ipsa voluptas ex minus
+              laudantium optio? Voluptatem repellendus dolor, quae cupiditate
+              rerum iure et nisi magni.
+            </Box>
+          )}
         </Box>
       </Box>
 
@@ -147,8 +180,8 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             insetInlineEnd: 0,
             insetBlockStart: 0,
             inlineSize: "100%",
-            blockSize: thumbHeight,
-            transform: `translate3d(0, ${thumbTop}px, 0)`,
+            blockSize: yThumbHeight,
+            transform: `translate3d(0, ${yThumbTop}px, 0)`,
             backgroundColor: backgroundColorY,
             cursor: "pointer",
           }}
@@ -160,13 +193,17 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
           }}
           onPointerDown={(e) => {
             if (!e.nativeEvent.isPrimary) return;
-
             e.currentTarget.setPointerCapture(e.pointerId);
+
+            const currentRect = e.currentTarget.getBoundingClientRect();
+            const parentRect =
+              e.currentTarget.parentElement!.getBoundingClientRect();
+
+            yStartClientYRef.current = e.clientY;
+            yThumbTopRef.current = currentRect.top - parentRect.top;
+
             const activeY = e.currentTarget.hasPointerCapture(e.pointerId);
-            setScrollBarInfo((prev) => ({
-              ...prev,
-              activeY,
-            }));
+            setScrollBarInfo((prev) => ({ ...prev, activeY }));
           }}
           onPointerMove={(e) => {
             const hasPointerCapture = e.currentTarget.hasPointerCapture(
@@ -174,20 +211,19 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             );
             if (!hasPointerCapture) return;
 
-            const container = scrollViewRef.current;
-            if (!container) return;
+            const scrollView = scrollViewRef.current;
+            if (!scrollView) return;
 
-            const top = e.clientY - container.getBoundingClientRect().top;
-            container.scrollTop =
-              (scrollableHeight / thummbScrollableHeight) * top;
+            const translationY = e.clientY - yStartClientYRef.current;
+            const top = translationY + yThumbTopRef.current;
+
+            scrollView.scrollTop =
+              (yScrollableHeight / yThumbScrollableHeight) * top;
           }}
           onPointerUp={(e) => {
             e.currentTarget.releasePointerCapture(e.pointerId);
             const activeY = e.currentTarget.hasPointerCapture(e.pointerId);
-            setScrollBarInfo((prev) => ({
-              ...prev,
-              activeY,
-            }));
+            setScrollBarInfo((prev) => ({ ...prev, activeY }));
           }}
         />
       </Box>
@@ -210,9 +246,9 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
               position: "absolute",
               insetInlineStart: 0,
               insetBlockEnd: 0,
-              inlineSize: thumbWidth,
+              inlineSize: xThumbWidth,
               blockSize: "100%",
-              transform: `translate3d(${thumbLeft}px, 0, 0)`,
+              transform: `translate3d(${xThumbLeft}px, 0, 0)`,
               backgroundColor: backgroundColorX,
               cursor: "pointer",
             }}
@@ -224,13 +260,17 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             }}
             onPointerDown={(e) => {
               if (!e.nativeEvent.isPrimary) return;
-
               e.currentTarget.setPointerCapture(e.pointerId);
+
+              const currentRect = e.currentTarget.getBoundingClientRect();
+              const parentRect =
+                e.currentTarget.parentElement!.getBoundingClientRect();
+
+              xStartClientXRef.current = e.clientX;
+              xThumbLeftRef.current = currentRect.left - parentRect.left;
+
               const activeX = e.currentTarget.hasPointerCapture(e.pointerId);
-              setScrollBarInfo((prev) => ({
-                ...prev,
-                activeX,
-              }));
+              setScrollBarInfo((prev) => ({ ...prev, activeX }));
             }}
             onPointerMove={(e) => {
               const hasPointerCapture = e.currentTarget.hasPointerCapture(
@@ -238,20 +278,19 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
               );
               if (!hasPointerCapture) return;
 
-              const container = scrollViewRef.current;
-              if (!container) return;
+              const scrollView = scrollViewRef.current;
+              if (!scrollView) return;
 
-              const left = e.clientX - container.getBoundingClientRect().left;
-              container.scrollLeft =
-                (scrollableWidth / thummbScrollableWidth) * left;
+              const translationX = e.clientX - xStartClientXRef.current;
+              const left = translationX + xThumbLeftRef.current;
+
+              scrollView.scrollLeft =
+                (xScrollableWidth / xThumbScrollableWidth) * left;
             }}
             onPointerUp={(e) => {
               e.currentTarget.releasePointerCapture(e.pointerId);
               const activeX = e.currentTarget.hasPointerCapture(e.pointerId);
-              setScrollBarInfo((prev) => ({
-                ...prev,
-                activeX,
-              }));
+              setScrollBarInfo((prev) => ({ ...prev, activeX }));
             }}
           />
         </Box>
