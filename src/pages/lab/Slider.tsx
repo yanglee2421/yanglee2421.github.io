@@ -34,25 +34,69 @@ const Dot = styled("div")(({ theme: t }) => ({
   translate: "-50% -50%",
 }));
 
+const useResizeObserver = () => {
+  const trackRef = React.useRef<HTMLDivElement>(null);
+  const thumbRef = React.useRef<HTMLDivElement>(null);
+  const scrollableWidthRef = React.useRef(0);
+
+  const updateScrollableWidth = React.useCallback(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const thumb = thumbRef.current;
+    if (!thumb) return;
+
+    const trackRect = track.getBoundingClientRect();
+    const thumbRect = thumb.getBoundingClientRect();
+
+    scrollableWidthRef.current = trackRect.width - thumbRect.width;
+  }, []);
+
+  React.useEffect(() => {
+    const track = trackRef.current;
+    if (!track) return;
+    const thumb = thumbRef.current;
+    if (!thumb) return;
+
+    let raf = 0;
+    const observer = new ResizeObserver(() => {
+      /**
+       * Performance optimization:
+       * Separate the reading and writing of layout information by requestAnimationFrame
+       * to avoid Forced Reflow / Forced Layout
+       */
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateScrollableWidth);
+    });
+    observer.observe(track);
+    observer.observe(thumb);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      observer.disconnect();
+    };
+  }, [updateScrollableWidth]);
+
+  return [trackRef, thumbRef, scrollableWidthRef] as const;
+};
+
 export const Slider = () => {
   const [translateX, setTranslateX] = React.useState(0);
 
   const startClientXRef = React.useRef(0);
   const startTranslateXRef = React.useRef(0);
 
+  const [trackRef, thumbRef, scrollableWidthRef] = useResizeObserver();
+
   return (
-    <Track>
+    <Track ref={trackRef}>
       <Thumb
+        ref={thumbRef}
         onPointerDown={(evt) => {
           if (!evt.nativeEvent.isPrimary) return;
           evt.currentTarget.setPointerCapture(evt.pointerId);
 
-          const currentRect = evt.currentTarget.getBoundingClientRect();
-          const parentRect =
-            evt.currentTarget.parentElement!.getBoundingClientRect();
-
           startClientXRef.current = evt.clientX;
-          startTranslateXRef.current = currentRect.left - parentRect.left;
+          startTranslateXRef.current = translateX;
         }}
         onPointerMove={(evt) => {
           const hasPointerCapture = evt.currentTarget.hasPointerCapture(
@@ -60,12 +104,8 @@ export const Slider = () => {
           );
           if (!hasPointerCapture) return;
 
-          const currentRect = evt.currentTarget.getBoundingClientRect();
-          const parentRect =
-            evt.currentTarget.parentElement!.getBoundingClientRect();
-
           const translationX = evt.clientX - startClientXRef.current;
-          const scrollableWidth = parentRect.width - currentRect.width;
+          const scrollableWidth = scrollableWidthRef.current;
 
           setTranslateX(() =>
             minmax(startTranslateXRef.current + translationX, {

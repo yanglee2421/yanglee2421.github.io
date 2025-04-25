@@ -52,6 +52,11 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
     let raf = 0;
 
     const observer = new ResizeObserver(() => {
+      /**
+       * Performance optimization:
+       * Separate the reading and writing of layout information by requestAnimationFrame
+       * to avoid Forced Reflow / Forced Layout
+       */
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(updateScrollInfo);
     });
@@ -163,7 +168,7 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
         </Box>
       </Box>
 
-      {/* 垂直滚动条 */}
+      {/* Vertical scrollbar */}
       <Box
         sx={{
           position: "absolute",
@@ -195,12 +200,8 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             if (!e.nativeEvent.isPrimary) return;
             e.currentTarget.setPointerCapture(e.pointerId);
 
-            const currentRect = e.currentTarget.getBoundingClientRect();
-            const parentRect =
-              e.currentTarget.parentElement!.getBoundingClientRect();
-
             yStartClientYRef.current = e.clientY;
-            yThumbTopRef.current = currentRect.top - parentRect.top;
+            yThumbTopRef.current = yThumbTop;
 
             const activeY = e.currentTarget.hasPointerCapture(e.pointerId);
             setScrollBarInfo((prev) => ({ ...prev, activeY }));
@@ -228,7 +229,7 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
         />
       </Box>
 
-      {/* 水平滚动条 */}
+      {/* Horizontal scrollbar */}
       {needScrollX && (
         <Box
           sx={{
@@ -262,12 +263,8 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
               if (!e.nativeEvent.isPrimary) return;
               e.currentTarget.setPointerCapture(e.pointerId);
 
-              const currentRect = e.currentTarget.getBoundingClientRect();
-              const parentRect =
-                e.currentTarget.parentElement!.getBoundingClientRect();
-
               xStartClientXRef.current = e.clientX;
-              xThumbLeftRef.current = currentRect.left - parentRect.left;
+              xThumbLeftRef.current = xThumbLeft;
 
               const activeX = e.currentTarget.hasPointerCapture(e.pointerId);
               setScrollBarInfo((prev) => ({ ...prev, activeX }));
@@ -296,7 +293,7 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
         </Box>
       )}
 
-      {/* 右下角区域 */}
+      {/* Scrollbar corner */}
       {needScrollX && needScrollY && (
         <Box
           sx={{
