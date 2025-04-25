@@ -4,11 +4,23 @@ import * as RadixScroll from "@radix-ui/react-scroll-area";
 
 export const Component = () => {
   return (
-    <Box>
-      <Box sx={{ border: "1px solid #ccc", width: 600, height: 600 }}>
+    <Box
+      sx={{ display: "grid", gridTemplateColumns: "repeat(3, 1fr)", gap: 2 }}
+    >
+      <Box sx={{ border: "1px solid #ccc", width: 300, height: 600 }}>
         <Scroll />
       </Box>
-      <Box sx={{ border: "1px solid #ccc", width: 300, height: 300 }}>
+      <Box
+        sx={{
+          border: "1px solid #ccc",
+          width: 300,
+          height: 600,
+          overflow: "auto",
+        }}
+      >
+        <Box width={1000} height={10000}></Box>
+      </Box>
+      <Box sx={{ border: "1px solid #ccc", width: 300, height: 600 }}>
         <RadixScroll.Root
           type="always"
           style={{ inlineSize: "100%", blockSize: "100%" }}
@@ -16,7 +28,7 @@ export const Component = () => {
           <RadixScroll.Viewport
             style={{ inlineSize: "100%", blockSize: "100%" }}
           >
-            <Box width={2000} height={2000}></Box>
+            <Box width={1000} height={10000}></Box>
           </RadixScroll.Viewport>
           <RadixScroll.Scrollbar
             orientation="horizontal"

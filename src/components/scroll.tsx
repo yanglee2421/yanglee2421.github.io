@@ -1,4 +1,4 @@
-import { Box } from "@mui/material";
+import { Box, Button } from "@mui/material";
 import React from "react";
 
 export interface ScrollProps {
@@ -6,11 +6,6 @@ export interface ScrollProps {
   className?: string;
   style?: React.CSSProperties;
 }
-
-// 工具函数：确保值在指定范围内
-const clamp = (value: number, min: number, max: number): number => {
-  return Math.max(min, Math.min(max, value));
-};
 
 export const Scroll = ({ children, className, style }: ScrollProps) => {
   const [scrollInfo, setScrollInfo] = React.useState({
@@ -29,20 +24,17 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
     hoverY: false,
   });
 
-  // 滚动视图和内容的引用
   const scrollViewRef = React.useRef<HTMLDivElement>(null);
   const scrollContentRef = React.useRef<HTMLDivElement>(null);
-
-  // 滚动条滑块的引用
-  const xThumbRef = React.useRef<HTMLDivElement>(null);
+  const scrollRafRef = React.useRef(0);
+  const xStartClientXRef = React.useRef(0);
+  const yStartClientYRef = React.useRef(0);
+  const xThumbLeftRef = React.useRef(0);
+  const yThumbTopRef = React.useRef(0);
+  const xRafRef = React.useRef(0);
+  const yRafRef = React.useRef(0);
   const yThumbRef = React.useRef<HTMLDivElement>(null);
 
-  // 用于处理拖动的 RAF 引用
-  const xRafRef = React.useRef<number>(0);
-  const yRafRef = React.useRef<number>(0);
-  const scrollRafRef = React.useRef<number>(0);
-
-  // 更新滚动信息
   const updateScrollInfo = React.useCallback(() => {
     const container = scrollViewRef.current;
     if (!container) return;
@@ -57,7 +49,6 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
     });
   }, []);
 
-  // 监听容器大小变化
   React.useEffect(() => {
     const scrollContent = scrollContentRef.current;
     if (!scrollContent) return;
@@ -66,9 +57,9 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
 
     const observer = new ResizeObserver(() => {
       /**
-       * 性能优化：
-       * 使用 requestAnimationFrame 分离布局读取和写入操作
-       * 避免强制重排/重绘
+       * Performance optimization:
+       * Separate the reading and writing of layout information by requestAnimationFrame
+       * to avoid Forced Reflow / Forced Layout
        */
       cancelAnimationFrame(raf);
       raf = requestAnimationFrame(updateScrollInfo);
@@ -81,290 +72,6 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
     };
   }, [updateScrollInfo]);
 
-  // 设置垂直滚动条的原生事件处理
-  React.useEffect(() => {
-    const yThumb = yThumbRef.current;
-    const scrollView = scrollViewRef.current;
-    if (!yThumb || !scrollView) return;
-
-    // 创建 AbortController 用于清理事件监听器
-    const controller = new AbortController();
-    const { signal } = controller;
-
-    // 存储拖动状态
-    const dragState = {
-      startClientY: 0,
-      startThumbTop: 0,
-      isDragging: false,
-    };
-
-    // 垂直方向的尺寸计算
-    const getYThumbMetrics = () => {
-      const { scrollHeight, clientHeight } = scrollView;
-      const yScrollableHeight = scrollHeight - clientHeight;
-      const yThumbHeight = Math.max(18, clientHeight ** 2 / scrollHeight);
-      const needScrollX = scrollView.scrollWidth > scrollView.clientWidth;
-      const cornerHeight = needScrollX ? 12 : 0;
-      const yThumbScrollableHeight = clientHeight - cornerHeight - yThumbHeight;
-
-      return {
-        yThumbHeight,
-        yScrollableHeight,
-        yThumbScrollableHeight,
-      };
-    };
-
-    // 指针按下事件处理
-    yThumb.addEventListener(
-      "pointerdown",
-      (e) => {
-        if (!e.isPrimary) return;
-        e.preventDefault(); // 阻止文本选择
-
-        // 设置全局样式以防止拖动时文本选择
-        document.body.style.userSelect = "none";
-
-        // 捕获指针
-        yThumb.setPointerCapture(e.pointerId);
-
-        // 存储开始位置
-        const { scrollTop } = scrollView;
-        const { yScrollableHeight, yThumbScrollableHeight } =
-          getYThumbMetrics();
-        const yThumbTop =
-          scrollTop * (yThumbScrollableHeight / yScrollableHeight);
-
-        dragState.startClientY = e.clientY;
-        dragState.startThumbTop = yThumbTop;
-        dragState.isDragging = true;
-
-        // 更新状态
-        setScrollBarInfo((prev) => ({ ...prev, activeY: true }));
-      },
-      { signal },
-    );
-
-    // 指针移动事件处理
-    yThumb.addEventListener(
-      "pointermove",
-      (e) => {
-        if (!dragState.isDragging || !e.isPrimary) return;
-
-        // 使用 RAF 优化性能
-        cancelAnimationFrame(yRafRef.current);
-        yRafRef.current = requestAnimationFrame(() => {
-          const { yScrollableHeight, yThumbScrollableHeight } =
-            getYThumbMetrics();
-
-          // 计算新的滑块位置
-          const translationY = e.clientY - dragState.startClientY;
-          const newThumbTop = translationY + dragState.startThumbTop;
-          const boundedTop = clamp(newThumbTop, 0, yThumbScrollableHeight);
-
-          // 直接更新视觉反馈（使滚动更跟手）
-          yThumb.style.transform = `translate3d(0, ${boundedTop}px, 0)`;
-
-          // 计算并设置滚动位置
-          scrollView.scrollTop =
-            (yScrollableHeight / yThumbScrollableHeight) * boundedTop;
-        });
-      },
-      { signal },
-    );
-
-    // 指针释放事件处理
-    yThumb.addEventListener(
-      "pointerup",
-      (e) => {
-        if (!e.isPrimary) return;
-        dragState.isDragging = false;
-
-        // 恢复全局样式
-        document.body.style.userSelect = "";
-
-        // 释放指针捕获
-        try {
-          yThumb.releasePointerCapture(e.pointerId);
-        } catch (error) {
-          // 忽略可能的错误，例如 pointerId 已不存在
-        }
-
-        // 更新状态
-        setScrollBarInfo((prev) => ({ ...prev, activeY: false }));
-      },
-      { signal },
-    );
-
-    // 鼠标悬停事件
-    yThumb.addEventListener(
-      "pointerenter",
-      () => {
-        setScrollBarInfo((prev) => ({ ...prev, hoverY: true }));
-      },
-      { signal },
-    );
-
-    yThumb.addEventListener(
-      "pointerleave",
-      () => {
-        if (!dragState.isDragging) {
-          setScrollBarInfo((prev) => ({ ...prev, hoverY: false }));
-        }
-      },
-      { signal },
-    );
-
-    // 清理函数
-    return () => {
-      controller.abort();
-      cancelAnimationFrame(yRafRef.current);
-    };
-  }, []);
-
-  // 设置水平滚动条的原生事件处理
-  React.useEffect(() => {
-    const xThumb = xThumbRef.current;
-    const scrollView = scrollViewRef.current;
-    if (!xThumb || !scrollView) return;
-
-    // 检查是否需要水平滚动
-    const needScrollX = scrollView.scrollWidth > scrollView.clientWidth;
-    if (!needScrollX) return;
-
-    // 创建 AbortController 用于清理事件监听器
-    const controller = new AbortController();
-    const { signal } = controller;
-
-    // 存储拖动状态
-    const dragState = {
-      startClientX: 0,
-      startThumbLeft: 0,
-      isDragging: false,
-    };
-
-    // 水平方向的尺寸计算
-    const getXThumbMetrics = () => {
-      const { scrollWidth, clientWidth } = scrollView;
-      const xScrollableWidth = scrollWidth - clientWidth;
-      const xThumbWidth = Math.max(18, clientWidth ** 2 / scrollWidth);
-      const needScrollY = scrollView.scrollHeight > scrollView.clientHeight;
-      const cornerWidth = needScrollY ? 12 : 0;
-      const xThumbScrollableWidth = clientWidth - cornerWidth - xThumbWidth;
-
-      return {
-        xThumbWidth,
-        xScrollableWidth,
-        xThumbScrollableWidth,
-      };
-    };
-
-    // 指针按下事件处理
-    xThumb.addEventListener(
-      "pointerdown",
-      (e) => {
-        if (!e.isPrimary) return;
-        e.preventDefault(); // 阻止文本选择
-
-        // 设置全局样式以防止拖动时文本选择
-        document.body.style.userSelect = "none";
-
-        // 捕获指针
-        xThumb.setPointerCapture(e.pointerId);
-
-        // 存储开始位置
-        const { scrollLeft } = scrollView;
-        const { xScrollableWidth, xThumbScrollableWidth } = getXThumbMetrics();
-        const xThumbLeft =
-          scrollLeft * (xThumbScrollableWidth / xScrollableWidth);
-
-        dragState.startClientX = e.clientX;
-        dragState.startThumbLeft = xThumbLeft;
-        dragState.isDragging = true;
-
-        // 更新状态
-        setScrollBarInfo((prev) => ({ ...prev, activeX: true }));
-      },
-      { signal },
-    );
-
-    // 指针移动事件处理
-    xThumb.addEventListener(
-      "pointermove",
-      (e) => {
-        if (!dragState.isDragging || !e.isPrimary) return;
-
-        // 使用 RAF 优化性能
-        cancelAnimationFrame(xRafRef.current);
-        xRafRef.current = requestAnimationFrame(() => {
-          const { xScrollableWidth, xThumbScrollableWidth } =
-            getXThumbMetrics();
-
-          // 计算新的滑块位置
-          const translationX = e.clientX - dragState.startClientX;
-          const newThumbLeft = translationX + dragState.startThumbLeft;
-          const boundedLeft = clamp(newThumbLeft, 0, xThumbScrollableWidth);
-
-          // 直接更新视觉反馈（使滚动更跟手）
-          xThumb.style.transform = `translate3d(${boundedLeft}px, 0, 0)`;
-
-          // 计算并设置滚动位置
-          scrollView.scrollLeft =
-            (xScrollableWidth / xThumbScrollableWidth) * boundedLeft;
-        });
-      },
-      { signal },
-    );
-
-    // 指针释放事件处理
-    xThumb.addEventListener(
-      "pointerup",
-      (e) => {
-        if (!e.isPrimary) return;
-        dragState.isDragging = false;
-
-        // 恢复全局样式
-        document.body.style.userSelect = "";
-
-        // 释放指针捕获
-        try {
-          xThumb.releasePointerCapture(e.pointerId);
-        } catch (error) {
-          // 忽略可能的错误，例如 pointerId 已不存在
-        }
-
-        // 更新状态
-        setScrollBarInfo((prev) => ({ ...prev, activeX: false }));
-      },
-      { signal },
-    );
-
-    // 鼠标悬停事件
-    xThumb.addEventListener(
-      "pointerenter",
-      () => {
-        setScrollBarInfo((prev) => ({ ...prev, hoverX: true }));
-      },
-      { signal },
-    );
-
-    xThumb.addEventListener(
-      "pointerleave",
-      () => {
-        if (!dragState.isDragging) {
-          setScrollBarInfo((prev) => ({ ...prev, hoverX: false }));
-        }
-      },
-      { signal },
-    );
-
-    // 清理函数
-    return () => {
-      controller.abort();
-      cancelAnimationFrame(xRafRef.current);
-    };
-  }, []);
-
-  // 计算滚动条尺寸
   const yThumbHeight = Math.max(
     18,
     scrollInfo.clientHeight ** 2 / scrollInfo.scrollHeight,
@@ -395,7 +102,61 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
   const yThumbTop = scrollTop * (yThumbScrollableHeight / yScrollableHeight);
   const xThumbLeft = scrollLeft * (xThumbScrollableWidth / xScrollableWidth);
 
-  // 根据状态计算背景颜色
+  React.useEffect(() => {
+    const yThumb = yThumbRef.current;
+    if (!yThumb) return;
+
+    const controller = new AbortController();
+    yThumb.addEventListener(
+      "pointerdown",
+      (e) => {
+        yThumb.setPointerCapture(e.pointerId);
+        yStartClientYRef.current = e.clientY;
+        yThumbTopRef.current = yThumbTop;
+        const activeY = yThumb.hasPointerCapture(e.pointerId);
+        setScrollBarInfo((prev) => ({ ...prev, activeY }));
+      },
+      controller,
+    );
+    yThumb.addEventListener(
+      "pointermove",
+      (e) => {
+        const hasPointerCapture = yThumb.hasPointerCapture(e.pointerId);
+        if (!hasPointerCapture) return;
+
+        /**
+         * Performance optimization:
+         * Ensure only execute scroll once per frame
+         */
+        cancelAnimationFrame(yRafRef.current);
+        yRafRef.current = requestAnimationFrame(() => {
+          const scrollView = scrollViewRef.current;
+          if (!scrollView) return;
+
+          const translationY = e.clientY - yStartClientYRef.current;
+          const top = translationY + yThumbTopRef.current;
+          // yThumb.style.transform = `translate3d(0, ${top}px, 0)`;
+          scrollView.scrollTop =
+            (yScrollableHeight / yThumbScrollableHeight) * top;
+        });
+      },
+      controller,
+    );
+    yThumb.addEventListener(
+      "pointerup",
+      (e) => {
+        yThumb.releasePointerCapture(e.pointerId);
+        const activeY = yThumb.hasPointerCapture(e.pointerId);
+        setScrollBarInfo((prev) => ({ ...prev, activeY }));
+      },
+      controller,
+    );
+
+    return () => {
+      controller.abort();
+    };
+  }, [yScrollableHeight, yThumbScrollableHeight, yThumbTop]);
+
   const renderBackgroundColor = (isActive: boolean, isHover: boolean) => {
     if (isActive) {
       return "rgba(255, 255, 255, 0.5)";
@@ -434,9 +195,12 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
           inlineSize: "100%",
           blockSize: "100%",
           overflow: "auto",
-          scrollbarWidth: "none", // Firefox
-          "&::-webkit-scrollbar": { display: "none" }, // Webkit
-          msOverflowStyle: "none", // IE/Edge
+          // Firefox
+          scrollbarWidth: "none",
+          // Webkit
+          "&::-webkit-scrollbar": { display: "none" },
+          // IE/Edge
+          msOverflowStyle: "none",
         }}
         onScroll={() => {
           cancelAnimationFrame(scrollRafRef.current);
@@ -445,7 +209,7 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
       >
         <Box ref={scrollContentRef}>
           {children || (
-            <Box height={1000} width={1000}>
+            <Box height={10000} width={1000}>
               Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus
               vitae quos repudiandae voluptate magnam molestias, aspernatur
               tempora? Distinctio, cupiditate perspiciatis temporibus
@@ -464,20 +228,23 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
               possimus, aliquam molestiae alias vero ipsa voluptas ex minus
               laudantium optio? Voluptatem repellendus dolor, quae cupiditate
               rerum iure et nisi magni.
+              <Box sx={{ display: "flex", justifyContent: "flex-end" }}>
+                <Button>Click Me</Button>
+              </Box>
             </Box>
           )}
         </Box>
       </Box>
 
-      {/* 垂直滚动条 */}
+      {/* Vertical scrollbar */}
       <Box
         sx={{
           position: "absolute",
           insetInlineEnd: 0,
           insetBlockStart: 0,
           inlineSize: 12,
-          blockSize: "100%",
           pointerEvents: "none",
+
           display: { xs: "none", sm: "block" },
         }}
       >
@@ -487,20 +254,63 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             position: "absolute",
             insetInlineEnd: 0,
             insetBlockStart: 0,
+
             inlineSize: "100%",
             blockSize: yThumbHeight,
             backgroundColor: backgroundColorY,
+
+            // Use translate3d to enable GPU acceleration
             transform: `translate3d(0, ${yThumbTop}px, 0)`,
+
             cursor: "pointer",
             pointerEvents: "auto",
-            touchAction: "none", // 阻止触摸设备上的默认行为
-            willChange: "transform", // 提示浏览器优化
           }}
-          // 不再使用 React 事件处理器，改用上面的原生事件
+          onPointerEnter={() => {
+            setScrollBarInfo((prev) => ({ ...prev, hoverY: true }));
+          }}
+          onPointerLeave={() => {
+            setScrollBarInfo((prev) => ({ ...prev, hoverY: false }));
+          }}
+          // onPointerDown={(e) => {
+          //   if (!e.nativeEvent.isPrimary) return;
+          //   e.currentTarget.setPointerCapture(e.pointerId);
+
+          //   yStartClientYRef.current = e.clientY;
+          //   yThumbTopRef.current = yThumbTop;
+
+          //   const activeY = e.currentTarget.hasPointerCapture(e.pointerId);
+          //   setScrollBarInfo((prev) => ({ ...prev, activeY }));
+          // }}
+          // onPointerMove={(e) => {
+          //   const hasPointerCapture = e.currentTarget.hasPointerCapture(
+          //     e.pointerId,
+          //   );
+          //   if (!hasPointerCapture) return;
+
+          //   /**
+          //    * Performance optimization:
+          //    * Ensure only execute scroll once per frame
+          //    */
+          //   cancelAnimationFrame(yRafRef.current);
+          //   yRafRef.current = requestAnimationFrame(() => {
+          //     const scrollView = scrollViewRef.current;
+          //     if (!scrollView) return;
+
+          //     const translationY = e.clientY - yStartClientYRef.current;
+          //     const top = translationY + yThumbTopRef.current;
+          //     scrollView.scrollTop =
+          //       (yScrollableHeight / yThumbScrollableHeight) * top;
+          //   });
+          // }}
+          // onPointerUp={(e) => {
+          //   e.currentTarget.releasePointerCapture(e.pointerId);
+          //   const activeY = e.currentTarget.hasPointerCapture(e.pointerId);
+          //   setScrollBarInfo((prev) => ({ ...prev, activeY }));
+          // }}
         />
       </Box>
 
-      {/* 水平滚动条 */}
+      {/* Horizontal scrollbar */}
       {needScrollX && (
         <Box
           sx={{
@@ -510,30 +320,73 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             inlineSize: "100%",
             blockSize: 12,
             pointerEvents: "none",
+
             display: { xs: "none", sm: "block" },
           }}
         >
           <Box
-            ref={xThumbRef}
             sx={{
               position: "absolute",
               insetInlineStart: 0,
               insetBlockEnd: 0,
+
               inlineSize: xThumbWidth,
               blockSize: "100%",
               backgroundColor: backgroundColorX,
+
+              // Use translate3d to enable GPU acceleration
               transform: `translate3d(${xThumbLeft}px, 0, 0)`,
+
               cursor: "pointer",
               pointerEvents: "auto",
-              touchAction: "none",
-              willChange: "transform",
             }}
-            // 不再使用 React 事件处理器，改用上面的原生事件
+            onPointerEnter={() => {
+              setScrollBarInfo((prev) => ({ ...prev, hoverX: true }));
+            }}
+            onPointerLeave={() => {
+              setScrollBarInfo((prev) => ({ ...prev, hoverX: false }));
+            }}
+            onPointerDown={(e) => {
+              if (!e.nativeEvent.isPrimary) return;
+              e.currentTarget.setPointerCapture(e.pointerId);
+
+              xStartClientXRef.current = e.clientX;
+              xThumbLeftRef.current = xThumbLeft;
+
+              const activeX = e.currentTarget.hasPointerCapture(e.pointerId);
+              setScrollBarInfo((prev) => ({ ...prev, activeX }));
+            }}
+            onPointerMove={(e) => {
+              const hasPointerCapture = e.currentTarget.hasPointerCapture(
+                e.pointerId,
+              );
+              if (!hasPointerCapture) return;
+
+              /**
+               * Performance optimization:
+               * Ensure only execute scroll once per frame
+               */
+              cancelAnimationFrame(xRafRef.current);
+              xRafRef.current = requestAnimationFrame(() => {
+                const scrollView = scrollViewRef.current;
+                if (!scrollView) return;
+
+                const translationX = e.clientX - xStartClientXRef.current;
+                const left = translationX + xThumbLeftRef.current;
+                scrollView.scrollLeft =
+                  (xScrollableWidth / xThumbScrollableWidth) * left;
+              });
+            }}
+            onPointerUp={(e) => {
+              e.currentTarget.releasePointerCapture(e.pointerId);
+              const activeX = e.currentTarget.hasPointerCapture(e.pointerId);
+              setScrollBarInfo((prev) => ({ ...prev, activeX }));
+            }}
           />
         </Box>
       )}
 
-      {/* 滚动条角落 */}
+      {/* Scrollbar corner */}
       {needScrollX && needScrollY && (
         <Box
           sx={{
@@ -542,8 +395,8 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             insetBlockEnd: 0,
             inlineSize: 12,
             blockSize: 12,
-            backgroundColor: "rgba(0, 0, 0, 0.1)",
-            borderRadius: 3,
+            backgroundColor: "transparent",
+            pointerEvents: "none",
           }}
         />
       )}
