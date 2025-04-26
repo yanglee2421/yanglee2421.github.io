@@ -1,11 +1,23 @@
 import { Box } from "@mui/material";
 import React from "react";
 
-export interface ScrollProps {
+const renderBackgroundColor = (isActive: boolean, isHover: boolean) => {
+  if (isActive) {
+    return "rgba(255, 255, 255, 0.5)";
+  }
+
+  if (isHover) {
+    return "rgba(255, 255, 255, 0.3)";
+  }
+
+  return "rgba(255, 255, 255, 0.1)";
+};
+
+export type ScrollProps = {
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
-}
+};
 
 export const Scroll = ({ children, className, style }: ScrollProps) => {
   const [scrollInfo, setScrollInfo] = React.useState({
@@ -30,6 +42,9 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
   const yStartClientYRef = React.useRef(0);
   const xThumbLeftRef = React.useRef(0);
   const yThumbTopRef = React.useRef(0);
+  const xRafRef = React.useRef(0);
+  const yRafRef = React.useRef(0);
+  const scrollRafRef = React.useRef(0);
 
   const updateScrollInfo = React.useCallback(() => {
     const container = scrollViewRef.current;
@@ -45,30 +60,12 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
     });
   }, []);
 
-  React.useEffect(() => {
-    const scrollContent = scrollContentRef.current;
-    if (!scrollContent) return;
-
-    let raf = 0;
-
-    const observer = new ResizeObserver(() => {
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(updateScrollInfo);
-    });
-    observer.observe(scrollContent);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      observer.disconnect();
-    };
-  }, [updateScrollInfo]);
-
   const yThumbHeight = Math.max(
-    18,
+    20,
     scrollInfo.clientHeight ** 2 / scrollInfo.scrollHeight,
   );
   const xThumbWidth = Math.max(
-    18,
+    20,
     scrollInfo.clientWidth ** 2 / scrollInfo.scrollWidth,
   );
 
@@ -93,18 +90,6 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
   const yThumbTop = scrollTop * (yThumbScrollableHeight / yScrollableHeight);
   const xThumbLeft = scrollLeft * (xThumbScrollableWidth / xScrollableWidth);
 
-  const renderBackgroundColor = (isActive: boolean, isHover: boolean) => {
-    if (isActive) {
-      return "rgba(255, 255, 255, 0.5)";
-    }
-
-    if (isHover) {
-      return "rgba(255, 255, 255, 0.3)";
-    }
-
-    return "rgba(255, 255, 255, 0.1)";
-  };
-
   const backgroundColorX = renderBackgroundColor(
     scrollBarInfo.activeX,
     scrollBarInfo.hoverX,
@@ -113,6 +98,38 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
     scrollBarInfo.activeY,
     scrollBarInfo.hoverY,
   );
+
+  const handleActiveXChange = (e: React.PointerEvent<HTMLDivElement>) => {
+    const activeX = e.currentTarget.hasPointerCapture(e.pointerId);
+    setScrollBarInfo((prev) => ({ ...prev, activeX }));
+  };
+  const handleActiveYChange = (e: React.PointerEvent<HTMLDivElement>) => {
+    const activeY = e.currentTarget.hasPointerCapture(e.pointerId);
+    setScrollBarInfo((prev) => ({ ...prev, activeY }));
+  };
+
+  React.useEffect(() => {
+    const scrollContent = scrollContentRef.current;
+    if (!scrollContent) return;
+
+    let raf = 0;
+
+    const observer = new ResizeObserver(() => {
+      /**
+       * Performance optimization:
+       * Separate the reading and writing of layout information by requestAnimationFrame
+       * to avoid Forced Reflow / Forced Layout
+       */
+      cancelAnimationFrame(raf);
+      raf = requestAnimationFrame(updateScrollInfo);
+    });
+    observer.observe(scrollContent);
+
+    return () => {
+      cancelAnimationFrame(raf);
+      observer.disconnect();
+    };
+  }, [updateScrollInfo]);
 
   return (
     <Box
@@ -131,104 +148,102 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
           inlineSize: "100%",
           blockSize: "100%",
           overflow: "auto",
-          scrollbarWidth: "none", // Firefox
-          "&::-webkit-scrollbar": { display: "none" }, // Webkit
-          msOverflowStyle: "none", // IE/Edge
+          // Firefox
+          scrollbarWidth: "none",
+          // Webkit
+          "&::-webkit-scrollbar": { display: "none" },
+          // IE/Edge
+          msOverflowStyle: "none",
         }}
-        onScroll={updateScrollInfo}
+        onScroll={() => {
+          cancelAnimationFrame(scrollRafRef.current);
+          scrollRafRef.current = requestAnimationFrame(updateScrollInfo);
+        }}
       >
-        <Box ref={scrollContentRef}>
-          {children || (
-            <Box height={1000} width={1000}>
-              Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus
-              vitae quos repudiandae voluptate magnam molestias, aspernatur
-              tempora? Distinctio, cupiditate perspiciatis temporibus
-              repellendus iste, quo nostrum illum adipisci, tempora at dolorum.
-              Architecto eius, optio officia velit repellat illo tempore dolor
-              ipsam tenetur voluptatibus pariatur impedit nulla doloremque
-              quidem harum molestias quis, eos a autem? Eveniet libero itaque
-              nisi, sit molestiae maiores. Odio quidem reprehenderit soluta
-              ratione odit quo cumque, quam nesciunt eum distinctio error sunt
-              voluptate molestias iusto vero quia ab! Sint maiores ad cum. Cum
-              placeat tempore delectus mollitia nemo! Totam placeat laborum,
-              itaque delectus deserunt quam ut, ratione quibusdam pariatur magni
-              cupiditate distinctio voluptates aliquid in sed deleniti sunt quas
-              perspiciatis aperiam assumenda animi non veniam velit odio? Quis?
-              Commodi eos deserunt neque voluptatem sed cumque nostrum at
-              possimus, aliquam molestiae alias vero ipsa voluptas ex minus
-              laudantium optio? Voluptatem repellendus dolor, quae cupiditate
-              rerum iure et nisi magni.
-            </Box>
-          )}
-        </Box>
+        <Box ref={scrollContentRef}>{children}</Box>
       </Box>
 
-      {/* 垂直滚动条 */}
-      <Box
-        sx={{
-          position: "absolute",
-          insetInlineEnd: 0,
-          insetBlockStart: 0,
-          inlineSize: 12,
-
-          display: { xs: "none", sm: "block" },
-        }}
-      >
+      {/* Vertical scrollbar */}
+      {needScrollY && (
         <Box
           sx={{
             position: "absolute",
             insetInlineEnd: 0,
             insetBlockStart: 0,
-            inlineSize: "100%",
-            blockSize: yThumbHeight,
-            transform: `translate3d(0, ${yThumbTop}px, 0)`,
-            backgroundColor: backgroundColorY,
-            cursor: "pointer",
+            inlineSize: 12,
+            pointerEvents: "none",
+
+            display: { xs: "none", sm: "block" },
           }}
-          onPointerEnter={() => {
-            setScrollBarInfo((prev) => ({ ...prev, hoverY: true }));
-          }}
-          onPointerLeave={() => {
-            setScrollBarInfo((prev) => ({ ...prev, hoverY: false }));
-          }}
-          onPointerDown={(e) => {
-            if (!e.nativeEvent.isPrimary) return;
-            e.currentTarget.setPointerCapture(e.pointerId);
+        >
+          <Box
+            sx={{
+              position: "absolute",
+              insetInlineEnd: 0,
+              insetBlockStart: 0,
 
-            const currentRect = e.currentTarget.getBoundingClientRect();
-            const parentRect =
-              e.currentTarget.parentElement!.getBoundingClientRect();
+              inlineSize: "100%",
+              blockSize: yThumbHeight,
+              backgroundColor: backgroundColorY,
 
-            yStartClientYRef.current = e.clientY;
-            yThumbTopRef.current = currentRect.top - parentRect.top;
+              // Use translate3d to enable GPU acceleration
+              transform: `translate3d(0, ${yThumbTop}px, 0)`,
 
-            const activeY = e.currentTarget.hasPointerCapture(e.pointerId);
-            setScrollBarInfo((prev) => ({ ...prev, activeY }));
-          }}
-          onPointerMove={(e) => {
-            const hasPointerCapture = e.currentTarget.hasPointerCapture(
-              e.pointerId,
-            );
-            if (!hasPointerCapture) return;
+              cursor: "pointer",
+              pointerEvents: "auto",
+              userSelect: "none",
+              touchAction: "none",
+            }}
+            onPointerEnter={() => {
+              setScrollBarInfo((prev) => ({ ...prev, hoverY: true }));
+            }}
+            onPointerLeave={() => {
+              setScrollBarInfo((prev) => ({ ...prev, hoverY: false }));
+            }}
+            onPointerDown={(e) => {
+              if (!e.nativeEvent.isPrimary) return;
+              e.currentTarget.setPointerCapture(e.pointerId);
+              e.preventDefault();
 
-            const scrollView = scrollViewRef.current;
-            if (!scrollView) return;
+              yStartClientYRef.current = e.clientY;
+              yThumbTopRef.current = yThumbTop;
 
-            const translationY = e.clientY - yStartClientYRef.current;
-            const top = translationY + yThumbTopRef.current;
+              handleActiveYChange(e);
+            }}
+            onPointerMove={(e) => {
+              const hasPointerCapture = e.currentTarget.hasPointerCapture(
+                e.pointerId,
+              );
+              if (!hasPointerCapture) return;
 
-            scrollView.scrollTop =
-              (yScrollableHeight / yThumbScrollableHeight) * top;
-          }}
-          onPointerUp={(e) => {
-            e.currentTarget.releasePointerCapture(e.pointerId);
-            const activeY = e.currentTarget.hasPointerCapture(e.pointerId);
-            setScrollBarInfo((prev) => ({ ...prev, activeY }));
-          }}
-        />
-      </Box>
+              /**
+               * Performance optimization:
+               * Ensure only execute scroll once per frame
+               */
+              cancelAnimationFrame(yRafRef.current);
+              yRafRef.current = requestAnimationFrame(() => {
+                const scrollView = scrollViewRef.current;
+                if (!scrollView) return;
 
-      {/* 水平滚动条 */}
+                const translationY = e.clientY - yStartClientYRef.current;
+                const top = translationY + yThumbTopRef.current;
+                scrollView.scrollTop =
+                  (yScrollableHeight / yThumbScrollableHeight) * top;
+              });
+            }}
+            onPointerUp={(e) => {
+              e.currentTarget.releasePointerCapture(e.pointerId);
+              handleActiveYChange(e);
+            }}
+            onPointerCancel={(e) => {
+              e.currentTarget.releasePointerCapture(e.pointerId);
+              handleActiveYChange(e);
+            }}
+          />
+        </Box>
+      )}
+
+      {/* Horizontal scrollbar */}
       {needScrollX && (
         <Box
           sx={{
@@ -237,6 +252,7 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             insetBlockEnd: 0,
             inlineSize: "100%",
             blockSize: 12,
+            pointerEvents: "none",
 
             display: { xs: "none", sm: "block" },
           }}
@@ -246,11 +262,18 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
               position: "absolute",
               insetInlineStart: 0,
               insetBlockEnd: 0,
+
               inlineSize: xThumbWidth,
               blockSize: "100%",
-              transform: `translate3d(${xThumbLeft}px, 0, 0)`,
               backgroundColor: backgroundColorX,
+
+              // Use translate3d to enable GPU acceleration
+              transform: `translate3d(${xThumbLeft}px, 0, 0)`,
+
               cursor: "pointer",
+              pointerEvents: "auto",
+              userSelect: "none",
+              touchAction: "none",
             }}
             onPointerEnter={() => {
               setScrollBarInfo((prev) => ({ ...prev, hoverX: true }));
@@ -261,16 +284,12 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             onPointerDown={(e) => {
               if (!e.nativeEvent.isPrimary) return;
               e.currentTarget.setPointerCapture(e.pointerId);
-
-              const currentRect = e.currentTarget.getBoundingClientRect();
-              const parentRect =
-                e.currentTarget.parentElement!.getBoundingClientRect();
+              e.preventDefault();
 
               xStartClientXRef.current = e.clientX;
-              xThumbLeftRef.current = currentRect.left - parentRect.left;
+              xThumbLeftRef.current = xThumbLeft;
 
-              const activeX = e.currentTarget.hasPointerCapture(e.pointerId);
-              setScrollBarInfo((prev) => ({ ...prev, activeX }));
+              handleActiveXChange(e);
             }}
             onPointerMove={(e) => {
               const hasPointerCapture = e.currentTarget.hasPointerCapture(
@@ -278,25 +297,34 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
               );
               if (!hasPointerCapture) return;
 
-              const scrollView = scrollViewRef.current;
-              if (!scrollView) return;
+              /**
+               * Performance optimization:
+               * Ensure only execute scroll once per frame
+               */
+              cancelAnimationFrame(xRafRef.current);
+              xRafRef.current = requestAnimationFrame(() => {
+                const scrollView = scrollViewRef.current;
+                if (!scrollView) return;
 
-              const translationX = e.clientX - xStartClientXRef.current;
-              const left = translationX + xThumbLeftRef.current;
-
-              scrollView.scrollLeft =
-                (xScrollableWidth / xThumbScrollableWidth) * left;
+                const translationX = e.clientX - xStartClientXRef.current;
+                const left = translationX + xThumbLeftRef.current;
+                scrollView.scrollLeft =
+                  (xScrollableWidth / xThumbScrollableWidth) * left;
+              });
             }}
             onPointerUp={(e) => {
               e.currentTarget.releasePointerCapture(e.pointerId);
-              const activeX = e.currentTarget.hasPointerCapture(e.pointerId);
-              setScrollBarInfo((prev) => ({ ...prev, activeX }));
+              handleActiveXChange(e);
+            }}
+            onPointerCancel={(e) => {
+              e.currentTarget.releasePointerCapture(e.pointerId);
+              handleActiveXChange(e);
             }}
           />
         </Box>
       )}
 
-      {/* 右下角区域 */}
+      {/* Scrollbar corner */}
       {needScrollX && needScrollY && (
         <Box
           sx={{
@@ -305,8 +333,8 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
             insetBlockEnd: 0,
             inlineSize: 12,
             blockSize: 12,
-            backgroundColor: "rgba(0, 0, 0, 0.1)",
-            borderRadius: 3,
+            backgroundColor: "transparent",
+            pointerEvents: "none",
           }}
         />
       )}
