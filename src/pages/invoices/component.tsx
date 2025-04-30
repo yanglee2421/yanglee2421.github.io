@@ -148,8 +148,16 @@ const InvoiceTable = (props: InvoiceTableProps) => {
         dayjs(search.startDate).startOf("day").toISOString(),
         dayjs(search.endDate).endOf("day").toISOString(),
       )
-      .limit(search.pageSize)
+      /**
+       * NOTE:
+       * offset must be called before limit
+       * if called limt before offset, it will not work as expected
+       * it will limit the number of rows first, then offset the rows
+       * this is same as SQL
+       * @link https://dexie.org/docs/api-classes/Dexie.Table/offset#note
+       */
       .offset(search.pageIndex * search.pageSize)
+      .limit(search.pageSize)
       .toArray();
     return { rows, count };
   }, [search.startDate, search.endDate, search.pageIndex, search.pageSize]);
