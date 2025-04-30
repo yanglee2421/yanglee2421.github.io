@@ -416,7 +416,7 @@ export const Component = () => {
                     return aliasMap.get(staffName)?.name || staffName;
                   }),
                   note: i.note,
-                  date: i.start,
+                  date: getDate(),
                   amount: +calculatorAmount(
                     i.start,
                     i.end,
