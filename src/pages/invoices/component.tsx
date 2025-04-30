@@ -148,9 +148,11 @@ const InvoiceTable = (props: InvoiceTableProps) => {
         dayjs(search.startDate).startOf("day").toISOString(),
         dayjs(search.endDate).endOf("day").toISOString(),
       )
+      .limit(search.pageSize)
+      .offset(search.pageIndex * search.pageSize)
       .toArray();
     return { rows, count };
-  }, [search.startDate, search.endDate]);
+  }, [search.startDate, search.endDate, search.pageIndex, search.pageSize]);
 
   const data = React.useMemo(() => invoices?.rows || [], [invoices]);
 
