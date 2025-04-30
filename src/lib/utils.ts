@@ -282,3 +282,17 @@ export const error: typeof console.error = (...args) => {
     console.error(...args);
   }
 };
+
+export const clamp = (value: number, min: number, max: number) => {
+  return Math.max(min, Math.min(max, value));
+};
+
+export const chunk = <TData>(list: TData[], size: number) => {
+  const chunked: TData[][] = [];
+
+  for (let i = 0; i < list.length; i += size) {
+    chunked.push(list.slice(i, i + size));
+  }
+
+  return chunked;
+};

@@ -658,6 +658,11 @@ const routes: RouteObject[] = [
                     path: "scrollbar",
                     lazy: () => import("@/pages/scrollbar/component"),
                   },
+                  {
+                    id: "virtual",
+                    path: "virtual",
+                    lazy: () => import("@/pages/virtual/component"),
+                  },
                 ],
               },
             ],

@@ -13,6 +13,7 @@ import {
   AppsOutlined,
   ChevronRightOutlined,
   TokenOutlined,
+  ViewDayRounded,
 } from "@mui/icons-material";
 import { styled, alpha, Typography } from "@mui/material";
 import { useParams, NavLink } from "react-router";
@@ -110,6 +111,11 @@ const list = [
     to: "/app",
     label: "App",
     icon: <AppsOutlined />,
+  },
+  {
+    to: "/virtual",
+    label: "Virtual",
+    icon: <ViewDayRounded />,
   },
 ];
 
