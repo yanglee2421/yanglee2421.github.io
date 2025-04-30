@@ -362,11 +362,40 @@ const InvoiceTable = (props: InvoiceTableProps) => {
         page={table.getState().pagination.pageIndex}
         rowsPerPage={table.getState().pagination.pageSize}
         onPageChange={(e, idx) => {
-          table.setPageIndex(idx);
           void e;
+          setSearchValue((prev) => {
+            if (!prev) {
+              return {
+                startDate: search.startDate,
+                endDate: search.endDate,
+                pageIndex: idx,
+                pageSize: search.pageSize,
+              };
+            }
+
+            return {
+              ...prev,
+              pageIndex: idx,
+            };
+          });
         }}
         onRowsPerPageChange={(e) => {
-          table.setPageSize(Number.parseInt(e.target.value));
+          const pageSize = Number.parseInt(e.target.value);
+          setSearchValue((prev) => {
+            if (!prev) {
+              return {
+                startDate: search.startDate,
+                endDate: search.endDate,
+                pageIndex: search.pageIndex,
+                pageSize,
+              };
+            }
+
+            return {
+              ...prev,
+              pageSize,
+            };
+          });
         }}
         rowsPerPageOptions={[20, 50, 100]}
       />
