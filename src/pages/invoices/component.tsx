@@ -359,8 +359,8 @@ const InvoiceTable = (props: InvoiceTableProps) => {
       <TablePagination
         component={"div"}
         count={table.getRowCount()}
-        page={table.getState().pagination.pageIndex}
-        rowsPerPage={table.getState().pagination.pageSize}
+        page={search.pageIndex}
+        rowsPerPage={search.pageSize}
         onPageChange={(e, idx) => {
           void e;
           setSearchValue((prev) => {
