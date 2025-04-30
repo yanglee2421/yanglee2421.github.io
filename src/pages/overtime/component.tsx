@@ -19,7 +19,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -36,6 +35,7 @@ import {
 } from "firebase/firestore";
 import classNames from "classnames";
 import { Add } from "./Add";
+import { ScrollView } from "@/components/scrollbar";
 
 export const Component = () => {
   // eslint-disable-next-line
@@ -86,7 +86,7 @@ export const Component = () => {
               </Button>
             </Stack>
           </CardContent>
-          <TableContainer>
+          <ScrollView>
             <Table>
               <TableHead>
                 {table.getHeaderGroups().map((hg) => (
@@ -126,7 +126,7 @@ export const Component = () => {
                 ))}
               </TableBody>
             </Table>
-          </TableContainer>
+          </ScrollView>
           <TablePagination
             component={"div"}
             page={0}

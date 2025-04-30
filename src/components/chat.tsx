@@ -25,12 +25,12 @@ import {
   IconButton,
   TextField,
   InputAdornment,
-  useTheme,
   Typography,
   Menu,
   MenuItem,
   ListItemIcon,
   ListItemText,
+  Divider,
 } from "@mui/material";
 import { useSnackbar } from "notistack";
 import openai from "openai";
@@ -42,6 +42,7 @@ import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
 import type { Message, MessageInAPI } from "@/lib/db";
 import { useDbStore } from "@/hooks/store/useDbStore";
+import { ScrollView } from "./scrollbar";
 
 type MarkdownContentProps = {
   text: string;
@@ -185,7 +186,6 @@ export const CopilotChat = () => {
   const controllerRef = React.useRef<AbortController | null>(null);
   const formRef = React.useRef<HTMLFormElement>(null);
 
-  const theme = useTheme();
   const chatForm = useChatForm();
   const [scrollRef, setScrollId] = useScrollToView();
   const chatLogRef = useScrollToBottom();
@@ -478,9 +478,9 @@ export const CopilotChat = () => {
         blockSize: "100%",
       }}
     >
-      <Box sx={{ display: "flex" }}>
+      <Box sx={{ display: "flex", paddingInline: 3.5, paddingBlock: 1.5 }}>
         <Box sx={{ flex: 1, minInlineSize: 0 }}>
-          <Typography variant="h6">{completion?.name}</Typography>
+          <Typography variant="h6">Copilot Chat</Typography>
           <Typography variant="subtitle1">#{completion?.id}</Typography>
         </Box>
         <IconButton onClick={(e) => setMenuAnchorEl(e.currentTarget)}>
@@ -537,48 +537,53 @@ export const CopilotChat = () => {
           )}
         </Menu>
       </Box>
+      <Divider />
       <Box
         sx={{
           flex: 1,
-          overflowY: "auto",
-          scrollbarColor: `${theme.palette.divider} transparent`,
+          minBlockSize: 0,
         }}
       >
-        <Box
-          sx={{
-            padding: 3,
-            "&>*+*": {
-              marginBlockStart: 3,
-            },
-          }}
-        >
-          {chatLogs?.map((i) => (
-            <ChatLogItem
-              key={i.id}
-              question={
-                <div>
-                  <Paper
-                    sx={{ padding: 3, bgcolor: (t) => t.palette.primary.main }}
-                  >
-                    {i.question}
-                  </Paper>
-                  <Typography variant="caption" color="text.secondary">
-                    {new Date(i.questionDate).toLocaleTimeString()}
-                  </Typography>
-                </div>
-              }
-              answer={renderAnswer(i)}
-              ref={(el) => {
-                if (!el) return;
-                scrollRef.current.set(i.id, el);
-                return () => {
-                  scrollRef.current.delete(i.id);
-                };
-              }}
-            />
-          ))}
-        </Box>
-        <div ref={chatLogRef} />
+        <ScrollView>
+          <Box
+            sx={{
+              padding: 3,
+              "&>*+*": {
+                marginBlockStart: 3,
+              },
+            }}
+          >
+            {chatLogs?.map((i) => (
+              <ChatLogItem
+                key={i.id}
+                question={
+                  <div>
+                    <Paper
+                      sx={{
+                        padding: 3,
+                        bgcolor: (t) => t.palette.primary.main,
+                      }}
+                    >
+                      {i.question}
+                    </Paper>
+                    <Typography variant="caption" color="text.secondary">
+                      {new Date(i.questionDate).toLocaleTimeString()}
+                    </Typography>
+                  </div>
+                }
+                answer={renderAnswer(i)}
+                ref={(el) => {
+                  if (!el) return;
+                  scrollRef.current.set(i.id, el);
+                  return () => {
+                    scrollRef.current.delete(i.id);
+                  };
+                }}
+              />
+            ))}
+          </Box>
+          <div ref={chatLogRef} />
+        </ScrollView>
       </Box>
       <Box sx={{ padding: 3, paddingBlockStart: 0 }}>
         <form

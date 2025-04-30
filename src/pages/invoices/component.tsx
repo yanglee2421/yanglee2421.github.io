@@ -16,7 +16,6 @@ import {
   Table,
   TableBody,
   TableCell,
-  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -36,6 +35,7 @@ import { Link, useSearchParams } from "react-router";
 import { db } from "@/lib/db";
 import type { Invoice } from "@/lib/db";
 import { useLiveQuery } from "dexie-react-hooks";
+import { ScrollView } from "@/components/scrollbar";
 
 const columnHelper = createColumnHelper<Invoice>();
 
@@ -319,7 +319,7 @@ const InvoiceTable = (props: InvoiceTableProps) => {
           </Link>
         </Box>
       </CardContent>
-      <TableContainer>
+      <ScrollView>
         <Table>
           <TableHead>
             {table.getHeaderGroups().map((hg) => (
@@ -339,7 +339,7 @@ const InvoiceTable = (props: InvoiceTableProps) => {
           </TableHead>
           <TableBody>{renderBody()}</TableBody>
         </Table>
-      </TableContainer>
+      </ScrollView>
       <TablePagination
         component={"div"}
         count={table.getRowCount()}

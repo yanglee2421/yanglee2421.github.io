@@ -12,6 +12,7 @@ import {
   HandshakeOutlined,
   AppsOutlined,
   ChevronRightOutlined,
+  TokenOutlined,
 } from "@mui/icons-material";
 import { styled, alpha, Typography } from "@mui/material";
 import { useParams, NavLink } from "react-router";
@@ -94,6 +95,11 @@ const list = [
     to: "/lab",
     label: "Lab",
     icon: <ScienceOutlined />,
+  },
+  {
+    to: "/scrollbar",
+    label: "Scrollbar",
+    icon: <TokenOutlined />,
   },
   {
     to: "/handbook",
