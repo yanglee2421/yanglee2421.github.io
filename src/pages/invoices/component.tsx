@@ -1,6 +1,7 @@
 import {
   AddOutlined,
   CloseOutlined,
+  DeleteOutlined,
   OutputOutlined,
 } from "@mui/icons-material";
 import {
@@ -72,6 +73,19 @@ const columns = [
     cell(props) {
       return new Date(props.getValue()).toLocaleDateString();
     },
+  }),
+  columnHelper.display({
+    id: "actions",
+    header: () => <span>Actions</span>,
+    cell: (info) => (
+      <IconButton
+        onClick={() => {
+          db.invoices.delete(info.row.getValue("id"));
+        }}
+      >
+        <DeleteOutlined color="error" />
+      </IconButton>
+    ),
   }),
 ];
 
