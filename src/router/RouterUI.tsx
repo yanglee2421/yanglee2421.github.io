@@ -98,6 +98,7 @@ const AuthContentWrapper = styled("div")(({ theme }) => ({
     paddingBlockStart: theme.spacing(consts.HEADER_SIZE_SM),
   },
   "&:has([data-contentfixed=true])": {
+    inlineSize: "100dvw",
     blockSize: "100dvh",
   },
 }));

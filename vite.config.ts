@@ -56,53 +56,68 @@ export default defineConfig(() => {
             if (id.includes("node_modules/recharts/")) {
               return "recharts";
             }
-            if (id.includes("node_modules/react/")) {
-              return "react";
-            }
-            if (id.includes("node_modules/react-dom/")) {
-              return "react-dom";
-            }
             if (id.includes("node_modules/zustand/")) {
               return "zustand";
             }
-            if (id.includes("node_modules/@tsparticles/engine/")) {
-              return "tsparticles-engine";
-            }
-            if (id.includes("node_modules/@tsparticles/slim/")) {
-              return "tsparticles-slim";
-            }
-            if (id.includes("node_modules/@tsparticles/react/")) {
-              return "tsparticles-react";
-            }
-            if (id.includes("node_modules/@tsparticles/preset-")) {
-              return "tsparticles-perset";
-            }
-            if (id.includes("node_modules/@tsparticles/preset-")) {
-              return "tsparticles-perset";
+            if (
+              id.includes("node_modules/@tsparticles/engine/") ||
+              id.includes("node_modules/@tsparticles/slim/") ||
+              id.includes("node_modules/@tsparticles/react/") ||
+              id.includes("node_modules/@tsparticles/preset-")
+            ) {
+              return "tsparticles-full";
             }
             if (id.includes("node_modules/qrcode.react/")) {
               return "qrcode.react";
             }
-            if (id.includes("node_modules/i18next/")) {
-              return "i18next";
-            }
-            if (id.includes("node_modules/react-i18next/")) {
-              return "react-i18next";
-            }
-            if (id.includes("node_modules/immer/")) {
-              return "immer";
-            }
-            if (id.includes("node_modules/use-immer/")) {
-              return "use-immer";
-            }
             if (id.includes("node_modules/notistack/")) {
               return "notistack";
+            }
+            if (
+              id.includes("node_modules/react/") ||
+              id.includes("node_modules/react-dom/")
+            ) {
+              return "react-dom";
+            }
+            if (
+              id.includes("node_modules/i18next/") ||
+              id.includes("node_modules/react-i18next/")
+            ) {
+              return "react-i18next";
+            }
+            if (
+              id.includes("node_modules/immer/") ||
+              id.includes("node_modules/use-immer/")
+            ) {
+              return "use-immer";
+            }
+            if (
+              id.includes("node_modules/zod/") ||
+              id.includes("node_modules/react-hook-form/") ||
+              id.includes("node_modules/@hookform/resolvers/")
+            ) {
+              return "react-hook-form";
+            }
+            if (
+              id.includes("node_modules/dexie/") ||
+              id.includes("node_modules/dexie-react-hooks/")
+            ) {
+              return "dexie-react-hooks";
             }
             if (id.includes("node_modules/@tanstack/react-query/")) {
               return "tanstack-react-query";
             }
             if (id.includes("node_modules/@tanstack/react-table/")) {
               return "tanstack-react-table";
+            }
+            if (id.includes("node_modules/@tanstack/react-virtual/")) {
+              return "tanstack-react-virtual";
+            }
+            if (id.includes("node_modules/@tanstack/react-form/")) {
+              return "tanstack-react-form";
+            }
+            if (id.includes("node_modules/react-router/")) {
+              return "react-router";
             }
           },
           entryFileNames: "assets/[name]-[hash].js",
