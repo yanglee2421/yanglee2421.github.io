@@ -52,9 +52,16 @@ export const LangToggle = () => {
       <IconButton onClick={(e) => setAnchor(e.currentTarget)}>
         <TranslateOutlined />
       </IconButton>
-      <Menu open={!!anchor} anchorEl={anchor} onClose={handleClose}>
+      <Menu
+        open={!!anchor}
+        anchorEl={anchor}
+        onClose={handleClose}
+        onClick={handleClose}
+      >
         {locales.map((i) => (
-          <LangLink key={i.locale} locale={i.locale}>{i.label}</LangLink>
+          <LangLink key={i.locale} locale={i.locale}>
+            {i.label}
+          </LangLink>
         ))}
       </Menu>
     </>
