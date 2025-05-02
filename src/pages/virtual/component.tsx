@@ -1,5 +1,4 @@
 import { ScrollView } from "@/components/scrollbar";
-import { chunk } from "@/lib/utils";
 import {
   Box,
   Button,
@@ -8,11 +7,37 @@ import {
   CardContent,
   CardHeader,
   Link,
+  styled,
 } from "@mui/material";
-import { useVirtualizer } from "@tanstack/react-virtual";
+import { useVirtualizer, elementScroll } from "@tanstack/react-virtual";
 import React from "react";
+import type { VirtualizerOptions } from "@tanstack/react-virtual";
 
-const Item = (props: React.PropsWithChildren) => {
+const StyledItemDiv = styled("div")({
+  height: 340,
+  border: "1px solid #ccc",
+  padding: 12,
+});
+
+const easeInOutQuint = (t: number) => {
+  return t < 0.5 ? 16 * t * t * t * t * t : 1 + 16 * --t * t * t * t * t;
+};
+
+type ItemProps = React.PropsWithChildren<{
+  mui?: boolean;
+  onClick?: () => void;
+}>;
+
+const Item = (props: ItemProps) => {
+  if (!props.mui) {
+    return (
+      <StyledItemDiv>
+        <p>{props.children}</p>
+        <button onClick={props.onClick}>click me</button>
+      </StyledItemDiv>
+    );
+  }
+
   return (
     <Card
       sx={{
@@ -31,11 +56,24 @@ const Item = (props: React.PropsWithChildren) => {
         aliquid.
       </CardContent>
       <CardActions>
-        <Button>Share</Button>
+        <Button onClick={props.onClick}>Share</Button>
       </CardActions>
     </Card>
   );
 };
+
+const StyledDiv = styled("div")({
+  position: "absolute",
+  insetInlineStart: 0,
+  insetBlockStart: 0,
+
+  paddingInlineEnd: 12,
+  paddingBlockEnd: 12,
+});
+
+const StyledTotalSizeDiv = styled("div")({
+  position: "relative",
+});
 
 const data: number[] = [];
 
@@ -45,43 +83,70 @@ for (let i = 0; i < 1000; i++) {
 
 export const Component = () => {
   "use no memo";
-  const [cols, setCols] = React.useState(8);
+  const [open, setOpen] = React.useState(false);
 
   const parentRef = React.useRef<HTMLDivElement>(null);
-  const containerRef = React.useRef<HTMLDivElement>(null);
+  const scrollingRef = React.useRef<number>(0);
 
-  const list = chunk(data, cols);
-  const virtual = useVirtualizer({
-    count: list.length,
+  const scrollToFn: VirtualizerOptions<any, any>["scrollToFn"] =
+    React.useCallback((offset, canSmooth, instance) => {
+      const duration = 1000;
+      const start = parentRef.current?.scrollTop || 0;
+      const startTime = (scrollingRef.current = Date.now());
+
+      const run = () => {
+        if (scrollingRef.current !== startTime) return;
+        const now = Date.now();
+        const elapsed = now - startTime;
+        const progress = easeInOutQuint(Math.min(elapsed / duration, 1));
+        const interpolated = start + (offset - start) * progress;
+
+        if (elapsed < duration) {
+          elementScroll(interpolated, canSmooth, instance);
+          requestAnimationFrame(run);
+        } else {
+          elementScroll(interpolated, canSmooth, instance);
+        }
+      };
+
+      requestAnimationFrame(run);
+    }, []);
+
+  const rowVirtualizer = useVirtualizer({
+    count: 1000,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 100,
-    overscan: 3,
+    estimateSize: () => 352,
+    overscan: 5,
+    scrollMargin: 12,
+    useAnimationFrameWithResizeObserver: true,
+    scrollToFn,
   });
 
-  const items = virtual.getVirtualItems();
+  const columnVirtualizer = useVirtualizer({
+    horizontal: true,
+    count: 1000,
+    getScrollElement: () => parentRef.current,
+    estimateSize: () => 300,
+    overscan: 5,
+    useAnimationFrameWithResizeObserver: true,
+  });
 
-  React.useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
-
-    const observer = new ResizeObserver((entries) => {
-      entries.forEach((entry) => {
-        const { inlineSize } = entry.contentBoxSize[0];
-        const cols = Math.floor(inlineSize / 280);
-        setCols(cols);
-      });
-    });
-
-    observer.observe(el);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
+  const handleToggleMui = () => setOpen((prev) => !prev);
 
   return (
     <>
-      <Box sx={{ height: 600 }}>
+      <Box
+        data-contentfixed
+        sx={{
+          inlineSize: "100%",
+          blockSize: "100%",
+          position: "relative",
+          zIndex: 1,
+          borderWidth: 1,
+          borderStyle: "solid",
+          borderColor: (t) => t.palette.divider,
+        }}
+      >
         <ScrollView
           slotProps={{
             viewport: {
@@ -89,52 +154,31 @@ export const Component = () => {
             },
           }}
         >
-          <Box
-            ref={containerRef}
-            sx={{
-              height: virtual.getTotalSize(),
-              position: "relative",
+          <StyledTotalSizeDiv
+            style={{
+              inlineSize: columnVirtualizer.getTotalSize(),
+              blockSize: rowVirtualizer.getTotalSize(),
             }}
           >
-            <Box
-              sx={{
-                position: "absolute",
-                top: 0,
-                left: 0,
-                inlineSize: "100%",
-
-                willChange: "transform",
-                contain: "paint",
-              }}
-              style={{
-                transform: `translate3d(0, ${items[0]?.start || 0}px, 0)`,
-              }}
-            >
-              {items.map((item) => {
-                const row = list[item.index];
-
-                return (
-                  <Box
-                    data-index={item.index}
-                    ref={virtual.measureElement}
-                    key={item.index}
-                    sx={{
-                      paddingBlockEnd: Object.is(item.index, list.length - 1)
-                        ? 0
-                        : 3,
-                      display: "grid",
-                      gridTemplateColumns: `repeat(${cols}, minmax(0,1fr))`,
-                      gap: 3,
+            {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+              <React.Fragment key={virtualRow.key}>
+                {columnVirtualizer.getVirtualItems().map((virtualColumn) => (
+                  <StyledDiv
+                    key={virtualColumn.key}
+                    style={{
+                      inlineSize: virtualColumn.size,
+                      blockSize: virtualRow.size,
+                      transform: `translate3d(${virtualColumn.start}px, ${virtualRow.start}px, 0)`,
                     }}
                   >
-                    {row.map((i, idx) => (
-                      <Item key={i}>{row[idx]}</Item>
-                    ))}
-                  </Box>
-                );
-              })}
-            </Box>
-          </Box>
+                    <Item mui={open} onClick={handleToggleMui}>
+                      {virtualRow.index}
+                    </Item>
+                  </StyledDiv>
+                ))}
+              </React.Fragment>
+            ))}
+          </StyledTotalSizeDiv>
         </ScrollView>
       </Box>
     </>
