@@ -102,8 +102,7 @@ export const Component = () => {
                 top: 0,
                 left: 0,
                 inlineSize: "100%",
-                // 使用style prop来处理频繁变化的transform
-                // contain和willChange保持在sx中，因为它们不经常变化
+
                 willChange: "transform",
                 contain: "paint",
               }}
