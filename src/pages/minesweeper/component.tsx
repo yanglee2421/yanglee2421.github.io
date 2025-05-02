@@ -214,6 +214,7 @@ const reducer = ({ game }: ReducerState, args?: ReducerArgs) => ({
 });
 
 export const Component = () => {
+  "use no memo";
   const handleTimeStart = () => {
     log("started");
   };
