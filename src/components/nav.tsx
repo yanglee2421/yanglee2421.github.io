@@ -14,6 +14,7 @@ import {
   ChevronRightOutlined,
   TokenOutlined,
   ViewDayRounded,
+  MessageOutlined,
 } from "@mui/icons-material";
 import { styled, alpha, Typography } from "@mui/material";
 import { useParams, NavLink } from "react-router";
@@ -116,6 +117,11 @@ const list = [
     to: "/virtual",
     label: "Virtual",
     icon: <ViewDayRounded />,
+  },
+  {
+    to: "/snackbar",
+    label: "Snackbar",
+    icon: <MessageOutlined />,
   },
 ];
 

@@ -16,7 +16,7 @@ import { type Mode, useLocalStore } from "@/hooks/store/useLocalStore";
 import "dayjs/locale/zh";
 import "dayjs/locale/en";
 import { useTranslation } from "react-i18next";
-import { SnackbarProvider } from "notistack";
+import { SnackbarProvider } from "@/components/ui/snackbar";
 import { QueryProvider } from "./components/query";
 
 const WHITE = "#fff";
