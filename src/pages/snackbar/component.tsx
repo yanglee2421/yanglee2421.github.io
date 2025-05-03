@@ -20,7 +20,7 @@ export const Component = () => {
             onClick={() => {
               snackbar.enqueueSnackbar("This is a default snackbar", {
                 variant: "default",
-                autoHideDuration: 3000,
+                persist: true,
               });
             }}
           >
@@ -30,7 +30,6 @@ export const Component = () => {
             onClick={() => {
               snackbar.enqueueSnackbar("This is a success snackbar", {
                 variant: "success",
-                autoHideDuration: 3000,
               });
             }}
             color="success"
@@ -41,7 +40,6 @@ export const Component = () => {
             onClick={() => {
               snackbar.enqueueSnackbar("This is an error snackbar", {
                 variant: "error",
-                autoHideDuration: 3000,
               });
             }}
             color="error"
@@ -52,7 +50,6 @@ export const Component = () => {
             onClick={() => {
               snackbar.enqueueSnackbar("This is a warning snackbar", {
                 variant: "warning",
-                autoHideDuration: 3000,
               });
             }}
             color="warning"
@@ -63,7 +60,6 @@ export const Component = () => {
             onClick={() => {
               snackbar.enqueueSnackbar("This is an info snackbar", {
                 variant: "info",
-                autoHideDuration: 3000,
               });
             }}
             color="info"
