@@ -1,5 +1,3 @@
-import { overtimeCollection } from "@/api/firebase/app";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   AddOutlined,
@@ -15,14 +13,14 @@ import {
   Grid,
   TextField,
 } from "@mui/material";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { addDoc, Timestamp } from "firebase/firestore";
 import React from "react";
 import { Controller, useForm } from "react-hook-form";
 import { z } from "zod";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import { error } from "@/lib/utils";
+import { useOvertime } from "@/api/netlify";
+import { useSnackbar } from "notistack";
 
 const schema = z.object({
   hours: z.number().int(),
@@ -31,10 +29,8 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-export function Add() {
-  const [show, setShow] = React.useState(false);
-  const formId = React.useId();
-  const form = useForm<FormValues>({
+const useAddForm = () =>
+  useForm<FormValues>({
     defaultValues: {
       hours: 8,
       date: new Date(),
@@ -43,28 +39,19 @@ export function Add() {
     resolver: zodResolver(schema),
   });
 
+export function Add() {
+  const [show, setShow] = React.useState(false);
+
+  const formId = React.useId();
+
+  const add = useOvertime();
+  const form = useAddForm();
+  const snackbar = useSnackbar();
+
   const handleClose = () => {
     setShow(false);
     form.reset();
   };
-
-  const user = useCurrentUser();
-  const queryClient = useQueryClient();
-  const add = useMutation<unknown, Error, FormValues>({
-    mutationFn(data) {
-      return addDoc(overtimeCollection, {
-        hours: data.hours,
-        userId: user?.uid,
-        date: Timestamp.fromDate(data.date),
-      });
-    },
-    onSuccess() {
-      queryClient.invalidateQueries({
-        queryKey: ["firebase", "overtime"],
-      });
-      handleClose();
-    },
-  });
 
   return (
     <>
@@ -80,8 +67,30 @@ export function Add() {
         <DialogContent>
           <form
             id={formId}
-            onSubmit={form.handleSubmit(async (data) => {
-              await add.mutateAsync(data);
+            onSubmit={form.handleSubmit((data) => {
+              add.mutateAsync(
+                {
+                  data: {
+                    rows: [
+                      {
+                        hours: data.hours,
+                        date: data.date.toISOString(),
+                      },
+                    ],
+                  },
+                },
+                {
+                  onSuccess: () => {
+                    handleClose();
+                    form.reset();
+                  },
+                  onError: () => {
+                    snackbar.enqueueSnackbar("Some error", {
+                      variant: "error",
+                    });
+                  },
+                },
+              );
             }, error)}
             onReset={handleClose}
           >
