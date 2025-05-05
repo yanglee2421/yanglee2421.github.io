@@ -53,6 +53,8 @@ import { Logo as AppLogo } from "@/components/Logo";
 import * as consts from "@/lib/constants";
 import { NavMenu } from "@/components/nav";
 import { ScrollView } from "@/components/scrollbar";
+import { fetchUserByFirebase, netlify } from "@/api/netlify";
+import { useQuery } from "@tanstack/react-query";
 
 const AuthLayoutWrapper = styled("div")(({ theme }) => ({
   blockSize: "100dvh",
@@ -548,8 +550,42 @@ const NavigateToLogin = () => {
   );
 };
 
-const AuthGuard = () => (useCurrentUser() ? <Outlet /> : <NavigateToLogin />);
 const GuestGuard = () => (useCurrentUser() ? <NavigateToHome /> : <Outlet />);
+const AuthGuard = () => {
+  const user = useCurrentUser();
+  const netlifyToken = useLocalStore((s) => s.netlifyToken);
+  const setNetlifyToken = useLocalStore((s) => s.update);
+
+  const auth = useQuery({
+    ...fetchUserByFirebase({
+      data: {
+        firebaseId: user?.uid || "",
+        name: user?.displayName || "",
+      },
+    }),
+    enabled: !!user?.uid,
+  });
+
+  React.useInsertionEffect(() => {
+    if (!auth.data?.data.token) return;
+    setNetlifyToken({ netlifyToken: auth.data.data.token });
+  }, [auth.data?.data.token]);
+
+  React.useInsertionEffect(() => {
+    if (!netlifyToken) return;
+
+    const id = netlify.interceptors.request.use((config) => {
+      config.headers.setAuthorization(`Bearer ${netlifyToken}`, false);
+      return config;
+    });
+
+    return () => {
+      netlify.interceptors.request.eject(id);
+    };
+  }, [netlifyToken]);
+
+  return user ? <Outlet /> : <NavigateToLogin />;
+};
 
 const routes: RouteObject[] = [
   {
@@ -607,7 +643,7 @@ const routes: RouteObject[] = [
                   {
                     id: "overtime",
                     path: "overtime",
-                    lazy: () => import("@/pages/overtime/component"),
+                    lazy: () => import("@/pages/overtime"),
                   },
                   {
                     id: "minesweeper",

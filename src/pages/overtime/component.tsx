@@ -38,7 +38,6 @@ import { ScrollView } from "@/components/scrollbar";
 import {
   fetchOvertime,
   fetchUserByFirebase,
-  netlify,
   useDeleteOvertime,
   useOvertime,
 } from "@/api/netlify";
@@ -129,19 +128,6 @@ export const Component = () => {
     data,
     getRowId: (originalRow) => originalRow.id,
   });
-
-  React.useInsertionEffect(() => {
-    if (!auth.data?.data.token) return;
-
-    const id = netlify.interceptors.request.use((config) => {
-      config.headers.setAuthorization(`Bearer ${auth.data.data.token}`, false);
-      return config;
-    });
-
-    return () => {
-      netlify.interceptors.request.eject(id);
-    };
-  }, [auth.data?.data.token]);
 
   const renderTableBody = () => {
     if (overtime.isPending) {

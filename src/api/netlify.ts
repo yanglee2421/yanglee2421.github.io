@@ -5,12 +5,8 @@ import {
   useQueryClient,
 } from "@tanstack/react-query";
 
-const baseURL = import.meta.env.DEV
-  ? "http://localhost:3000/api/"
-  : "https://yanglee2421.netlify.app/api/";
-
 export const netlify = axios.create({
-  baseURL,
+  baseURL: import.meta.env.VITE_NETLIFY_API_URL,
   timeout: 1000 * 60,
 });
 
