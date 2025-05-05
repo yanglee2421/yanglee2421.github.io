@@ -664,6 +664,11 @@ const routes: RouteObject[] = [
                     path: "virtual",
                     lazy: () => import("@/pages/virtual/component"),
                   },
+                  {
+                    id: "snackbar",
+                    path: "snackbar",
+                    lazy: () => import("@/pages/snackbar/component"),
+                  },
                 ],
               },
             ],
