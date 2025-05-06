@@ -7,9 +7,10 @@ import { DEFAULT_MODE, FALLBACK_LANG } from "@/lib/constants";
 
 export type Mode = "light" | "dark" | "system";
 
-type State = {
+export type State = {
   fallbackLang: string;
   mode: Mode;
+  netlifyToken: string;
 };
 
 type Actions = {
@@ -28,6 +29,7 @@ export const useLocalStore = create<Store>()(
     immer((update) => ({
       mode: DEFAULT_MODE,
       fallbackLang: FALLBACK_LANG,
+      netlifyToken: "",
 
       update,
     })),

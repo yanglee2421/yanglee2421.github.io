@@ -16,6 +16,7 @@ import {
   CircularProgress,
   Divider,
   IconButton,
+  Link,
   Stack,
   Table,
   TableBody,
@@ -38,7 +39,6 @@ import { ScrollView } from "@/components/scrollbar";
 import {
   fetchOvertime,
   fetchUserByFirebase,
-  netlify,
   useDeleteOvertime,
   useOvertime,
 } from "@/api/netlify";
@@ -68,6 +68,16 @@ const columns = [
       );
     },
   }),
+  columnHelper.accessor("id", {
+    header: "ID",
+    cell({ getValue }) {
+      return (
+        <Link underline="none">
+          #{getValue().slice(0, 6).toLocaleUpperCase()}
+        </Link>
+      );
+    },
+  }),
   columnHelper.accessor("date", {
     header: "date",
     cell({ getValue }) {
@@ -76,6 +86,12 @@ const columns = [
   }),
   columnHelper.accessor("hours", {
     header: "hours",
+    cell({ getValue }) {
+      return getValue();
+    },
+  }),
+  columnHelper.accessor("reason", {
+    header: "reason",
     cell({ getValue }) {
       return getValue();
     },
@@ -129,19 +145,6 @@ export const Component = () => {
     data,
     getRowId: (originalRow) => originalRow.id,
   });
-
-  React.useInsertionEffect(() => {
-    if (!auth.data?.data.token) return;
-
-    const id = netlify.interceptors.request.use((config) => {
-      config.headers.setAuthorization(`Bearer ${auth.data.data.token}`, false);
-      return config;
-    });
-
-    return () => {
-      netlify.interceptors.request.eject(id);
-    };
-  }, [auth.data?.data.token]);
 
   const renderTableBody = () => {
     if (overtime.isPending) {
