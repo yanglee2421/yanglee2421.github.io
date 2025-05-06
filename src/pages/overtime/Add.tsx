@@ -1,11 +1,8 @@
 import { zodResolver } from "@hookform/resolvers/zod";
-import {
-  AddOutlined,
-  PlusOneOutlined,
-  RotateRightOutlined,
-} from "@mui/icons-material";
+import { AddOutlined, PlusOneOutlined } from "@mui/icons-material";
 import {
   Button,
+  CircularProgress,
   Dialog,
   DialogActions,
   DialogContent,
@@ -21,10 +18,12 @@ import dayjs from "dayjs";
 import { error } from "@/lib/utils";
 import { useOvertime } from "@/api/netlify";
 import { useSnackbar } from "notistack";
+import { NumberField } from "@/components/form/number";
 
 const schema = z.object({
   hours: z.number().int(),
   date: z.date(),
+  reason: z.string(),
 });
 
 type FormValues = z.infer<typeof schema>;
@@ -34,6 +33,7 @@ const useAddForm = () =>
     defaultValues: {
       hours: 8,
       date: new Date(),
+      reason: "",
     },
 
     resolver: zodResolver(schema),
@@ -75,6 +75,7 @@ export function Add() {
                       {
                         hours: data.hours,
                         date: data.date.toISOString(),
+                        reason: data.reason,
                       },
                     ],
                   },
@@ -123,16 +124,31 @@ export function Add() {
                   control={form.control}
                   name="hours"
                   render={({ field, fieldState }) => (
-                    <TextField
-                      value={field.value}
-                      onChange={(e) =>
-                        field.onChange(Number.parseInt(e.target.value) || 0)
-                      }
-                      onBlur={field.onBlur}
+                    <NumberField
+                      field={field}
                       error={!!fieldState.error}
                       helperText={fieldState.error?.message}
                       fullWidth
                       label="Hours"
+                    />
+                  )}
+                />
+              </Grid>
+              <Grid size={{ xs: 12 }}>
+                <Controller
+                  control={form.control}
+                  name="reason"
+                  render={({ field, fieldState }) => (
+                    <TextField
+                      value={field.value}
+                      onChange={(e) => field.onChange(e.target.value)}
+                      onBlur={field.onBlur}
+                      error={!!fieldState.error}
+                      helperText={fieldState.error?.message}
+                      fullWidth
+                      label="Reason"
+                      multiline
+                      minRows={2}
                     />
                   )}
                 />
@@ -145,18 +161,17 @@ export function Add() {
             form={formId}
             startIcon={
               add.isPending ? (
-                <RotateRightOutlined className="animate-spin" />
+                <CircularProgress size={16} color="inherit" />
               ) : (
                 <PlusOneOutlined />
               )
             }
             disabled={add.isPending}
             type="submit"
-            variant="contained"
           >
             add
           </Button>
-          <Button form={formId} type="reset" variant="outlined">
+          <Button form={formId} type="reset">
             cancel
           </Button>
         </DialogActions>

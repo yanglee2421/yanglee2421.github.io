@@ -16,6 +16,7 @@ import {
   CircularProgress,
   Divider,
   IconButton,
+  Link,
   Stack,
   Table,
   TableBody,
@@ -67,6 +68,16 @@ const columns = [
       );
     },
   }),
+  columnHelper.accessor("id", {
+    header: "ID",
+    cell({ getValue }) {
+      return (
+        <Link underline="none">
+          #{getValue().slice(0, 6).toLocaleUpperCase()}
+        </Link>
+      );
+    },
+  }),
   columnHelper.accessor("date", {
     header: "date",
     cell({ getValue }) {
@@ -75,6 +86,12 @@ const columns = [
   }),
   columnHelper.accessor("hours", {
     header: "hours",
+    cell({ getValue }) {
+      return getValue();
+    },
+  }),
+  columnHelper.accessor("reason", {
+    header: "reason",
     cell({ getValue }) {
       return getValue();
     },
