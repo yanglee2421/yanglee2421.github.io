@@ -59,9 +59,9 @@ const lightTheme = createTheme({
     divider: "#e4e4e7",
   },
 
-  spacing(abs: number) {
-    return `${abs * 0.25}rem`;
-  },
+  // spacing(abs: number) {
+  //   return `${abs * 0.25}rem`;
+  // },
 });
 
 const darkTheme = createTheme({
@@ -102,9 +102,9 @@ const darkTheme = createTheme({
     divider: "#27272a",
   },
 
-  spacing(abs: number) {
-    return `${abs * 0.25}rem`;
-  },
+  // spacing(abs: number) {
+  //   return `${abs * 0.25}rem`;
+  // },
 });
 
 const modeToHasSelector = (mode: Mode, isDark: boolean) => {
