@@ -95,7 +95,7 @@ export function Add() {
             }, error)}
             onReset={handleClose}
           >
-            <Grid container spacing={6} sx={{ mt: 2 }}>
+            <Grid container spacing={3} sx={{ mt: 2 }}>
               <Grid size={{ xs: 12 }}>
                 <Controller
                   control={form.control}

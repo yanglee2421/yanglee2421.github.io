@@ -19,92 +19,22 @@ import { useTranslation } from "react-i18next";
 import { SnackbarProvider } from "@/components/ui/snackbar";
 import { QueryProvider } from "./components/query";
 
-const WHITE = "#fff";
-
 const lightTheme = createTheme({
-  palette: {
-    mode: "light",
-    primary: {
-      main: "#6366f1",
-      contrastText: WHITE,
-    },
-    secondary: {
-      main: "#9ca3af",
-      contrastText: WHITE,
-    },
-    error: {
-      main: "#ef4444",
-      contrastText: WHITE,
-    },
-    warning: {
-      main: "#f59e0b",
-      contrastText: WHITE,
-    },
-    info: {
-      main: "#3b82f6",
-      contrastText: WHITE,
-    },
-    success: {
-      main: "#22c55e",
-      contrastText: WHITE,
-    },
-    text: {
-      primary: "#09090b",
-      secondary: "#71717a",
-    },
-    background: {
-      default: WHITE,
-      paper: WHITE,
-    },
-    divider: "#e4e4e7",
-  },
+  palette: { mode: "light" },
 
-  spacing(abs: number) {
-    return `${abs * 0.25}rem`;
-  },
+  // spacing(abs: number) {
+  //   return `${abs * 0.25}rem`;
+  // },
 });
 
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
-    primary: {
-      main: "#6366f1",
-      contrastText: WHITE,
-    },
-    secondary: {
-      main: "#9ca3af",
-      contrastText: WHITE,
-    },
-    error: {
-      main: "#ef4444",
-      contrastText: WHITE,
-    },
-    warning: {
-      main: "#f59e0b",
-      contrastText: WHITE,
-    },
-    info: {
-      main: "#3b82f6",
-      contrastText: WHITE,
-    },
-    success: {
-      main: "#22c55e",
-      contrastText: WHITE,
-    },
-    text: {
-      primary: "#fafafa",
-      secondary: "#a1a1aa",
-    },
-    background: {
-      default: "#09090b",
-      paper: "#09090b",
-    },
-    divider: "#27272a",
   },
 
-  spacing(abs: number) {
-    return `${abs * 0.25}rem`;
-  },
+  // spacing(abs: number) {
+  //   return `${abs * 0.25}rem`;
+  // },
 });
 
 const modeToHasSelector = (mode: Mode, isDark: boolean) => {

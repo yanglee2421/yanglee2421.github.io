@@ -214,7 +214,7 @@ export const Component = () => {
       />
       <Divider />
       <CardContent>
-        <Stack direction={"row"} spacing={4}>
+        <Stack direction={"row"} spacing={2}>
           <Add />
           <Button
             variant="outlined"

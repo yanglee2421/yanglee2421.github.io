@@ -18,7 +18,7 @@ import React from "react";
 import { PanelResizeHandle, PanelGroup, Panel } from "react-resizable-panels";
 import { DateTimePicker } from "@mui/x-date-pickers";
 import { CopilotChat } from "@/components/chat";
-import { NavMenu } from "@/components/nav";
+import { NavMenu } from "@/router/nav";
 import { ScrollView } from "@/components/scrollbar";
 
 const Content = () => {

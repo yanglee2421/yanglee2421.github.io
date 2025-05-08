@@ -191,7 +191,7 @@ export const Component = () => {
     return (
       <>
         <CardContent>
-          <Grid container spacing={6}>
+          <Grid container spacing={3}>
             <Grid size={{ xs: 12, sm: 6, md: 4 }}>
               <TextField
                 value={search.name}
@@ -289,7 +289,7 @@ export const Component = () => {
             noValidate
             onReset={() => form.reset()}
           >
-            <Grid container spacing={6}>
+            <Grid container spacing={3}>
               <Grid size={{ xs: 12, sm: 6, md: 4 }}>
                 <Controller
                   control={form.control}

@@ -11,7 +11,6 @@ export const Logo = () => {
         component={"span"}
         variant="h6"
         sx={{
-          fontSize: (t) => t.spacing(5),
           fontWeight: 600,
           textTransform: "uppercase",
           color: (t) => t.palette.text.primary,

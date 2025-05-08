@@ -8,9 +8,9 @@ export const DEFAULT_MODE = "system";
 export const LANGS = new Set(["en", "zh"]);
 export const HOME_PATH = "/";
 export const LOGIN_PATH = "/login";
-export const HEADER_SIZE_XS = 14;
-export const HEADER_SIZE_SM = 16;
-export const ASIDE_SIZE = 72;
+export const HEADER_SIZE_XS = 7;
+export const HEADER_SIZE_SM = 8;
+export const ASIDE_SIZE = 40;
 export const FULL_YEAR = new Date().getFullYear();
 
 export const hightlighter = createHighlighterCore({

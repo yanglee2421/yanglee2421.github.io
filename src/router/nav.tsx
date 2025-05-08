@@ -22,21 +22,21 @@ import { useParams, NavLink } from "react-router";
 const LinkWrapper = styled("div")(({ theme }) => ({
   display: "flex",
   flexDirection: "column",
-  gap: theme.spacing(2),
+  gap: theme.spacing(1),
 
   "& a": {
     textDecoration: "none",
     color: theme.palette.text.primary,
 
     display: "flex",
-    gap: theme.spacing(3),
+    gap: theme.spacing(1.5),
     alignItem: "center",
 
-    padding: theme.spacing(5),
+    padding: theme.spacing(2.5),
 
     [theme.breakpoints.up("sm")]: {
-      paddingInline: theme.spacing(3),
-      paddingBlock: theme.spacing(3),
+      paddingInline: theme.spacing(1.5),
+      paddingBlock: theme.spacing(1.5),
     },
   },
   "& a:hover": {
@@ -89,14 +89,8 @@ const list = [
   },
   {
     to: "/qrcode",
-    label: "qrcode",
+    label: "QRCode",
     icon: <QrCodeOutlined />,
-  },
-  { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
-  {
-    to: "/lab",
-    label: "Lab",
-    icon: <ScienceOutlined />,
   },
   {
     to: "/scrollbar",
@@ -109,19 +103,25 @@ const list = [
     icon: <HandshakeOutlined />,
   },
   {
+    to: "/snackbar",
+    label: "Snackbar",
+    icon: <MessageOutlined />,
+  },
+  {
+    to: "/lab",
+    label: "Lab",
+    icon: <ScienceOutlined />,
+  },
+  {
     to: "/app",
     label: "App",
     icon: <AppsOutlined />,
   },
+  { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
   {
     to: "/virtual",
     label: "Virtual",
     icon: <ViewDayRounded />,
-  },
-  {
-    to: "/snackbar",
-    label: "Snackbar",
-    icon: <MessageOutlined />,
   },
 ];
 

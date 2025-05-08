@@ -1,44 +1,43 @@
-import { LangToggle } from "@/components/shared/LangToggle";
-import { ModeToggle } from "@/components/shared/ModeToggle";
-import { SignInWithGithub, SignInWithGoogle } from "@/pages/login/sign";
-import { GitHub } from "@mui/icons-material";
-import { Box, IconButton, Stack, Typography } from "@mui/material";
-import * as consts from "@/lib/constants";
+import { SignInPage } from "@toolpad/core";
+import { LinearProgress } from "@mui/material";
+import { useNavigation } from "react-router";
+import { getAuth, signInWithPopup } from "firebase/auth";
+import {
+  app,
+  auth,
+  githubAuthProvider,
+  googleAuthProvider,
+} from "@/api/firebase/app";
 
 export const Component = () => {
+  const navigation = useNavigation();
+
+  if (navigation.state === "loading") {
+    return <LinearProgress />;
+  }
+
   return (
-    <Box
-      sx={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "stretch",
-        justifyContent: "center",
+    <SignInPage
+      providers={[
+        { id: "google", name: "Google" },
+        { id: "github", name: "GitHub" },
+      ]}
+      signIn={async (provider) => {
+        try {
+          if (provider.id === "google") {
+            await signInWithPopup(auth, googleAuthProvider);
+          }
+          if (provider.id === "github") {
+            await signInWithPopup(getAuth(app), githubAuthProvider);
+          }
 
-        inlineSize: "100%",
-        blockSize: "100%",
-
-        padding: 6,
+          return { success: "" };
+        } catch (error) {
+          return {
+            error: error instanceof Error ? error.message : "An error occurred",
+          };
+        }
       }}
-    >
-      <div>
-        <Typography variant="h4" sx={{ marginBlockEnd: 1 }}>
-          Login to App
-        </Typography>
-        <Typography color="secondary">
-          Please sign-in to your account and start the adventure
-        </Typography>
-      </div>
-      <Stack spacing={6} sx={{ marginBlockStart: 4 }}>
-        <SignInWithGithub />
-        <SignInWithGoogle />
-        <Stack direction={"row"} spacing={3} useFlexGap>
-          <LangToggle />
-          <ModeToggle />
-          <IconButton href={consts.GITHUB_URL} target={consts.GITHUB_URL}>
-            <GitHub />
-          </IconButton>
-        </Stack>
-      </Stack>
-    </Box>
+    />
   );
 };

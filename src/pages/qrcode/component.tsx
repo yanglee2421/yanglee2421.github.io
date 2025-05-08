@@ -14,7 +14,7 @@ export const Component = () => {
           setQrValue(qrInput);
         }}
       >
-        <Grid container spacing={6}>
+        <Grid container spacing={3}>
           <Grid size={12}>
             <Box
               sx={{

@@ -15,7 +15,7 @@ export const Component = () => {
     <Card>
       <CardHeader title="Snackbar" />
       <CardContent>
-        <Stack spacing={3} useFlexGap flexWrap={"wrap"} direction={"row"}>
+        <Stack spacing={1.5} useFlexGap flexWrap={"wrap"} direction={"row"}>
           <Button
             onClick={() => {
               snackbar.enqueueSnackbar("This is a default snackbar", {

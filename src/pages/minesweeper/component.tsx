@@ -270,7 +270,7 @@ export const Component = () => {
         }
       />
       <CardContent>
-        <Grid container spacing={6}>
+        <Grid container spacing={3}>
           <Grid size={{ xs: 12 }}>
             <TextField
               value={`${game.columns},${game.rows},${game.bombNums}`}

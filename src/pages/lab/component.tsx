@@ -98,7 +98,7 @@ const WebSocketCard = () => {
     <Card>
       <CardHeader title="WebSocket" subheader={data || "Placeholder"} />
       <CardContent>
-        <Grid container spacing={6}>
+        <Grid container spacing={3}>
           <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <TextField
               value={input}
@@ -264,7 +264,7 @@ export const Component = () => {
 
   return (
     <>
-      <Stack spacing={6}>
+      <Stack spacing={3}>
         <ToastCard />
         <Box
           sx={{
