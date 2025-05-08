@@ -433,7 +433,7 @@ export const Component = () => {
           onReset={() => form.reset()}
           noValidate
         >
-          <Grid container spacing={4}>
+          <Grid container spacing={2}>
             {fields.fields.map((f, idx) => {
               const typeVal = form.watch(`invoices.${idx}.type`);
               const isSubsidy = typeVal === "subsidy";

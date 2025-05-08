@@ -2,9 +2,9 @@ import { styled, alpha, Box, useTheme } from "@mui/material";
 import React from "react";
 import { Outlet } from "react-router";
 
-const IMAGE_SIZE = 1024;
+const IMAGE_SIZE = 512;
 const ICON_SIZE = (IMAGE_SIZE * 1) / 2;
-const MAIN_SIZE = 120;
+const MAIN_SIZE = 60;
 
 const GuestAside = styled("aside")(({ theme }) => ({
   position: "fixed",

@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import React from "react";
 import { useLocation, Link, Outlet } from "react-router";
-import { NavMenu } from "../nav";
+import { NavMenu } from "@/router/nav";
 import { ScrollView } from "../scrollbar";
 import { LangToggle } from "../shared/LangToggle";
 import { ModeToggle } from "../shared/ModeToggle";
@@ -73,7 +73,7 @@ const AuthMain = styled("main")(({ theme }) => ({
   flex: 1,
   inlineSize: "100%",
   minBlockSize: 0,
-  padding: theme.spacing(4),
+  padding: theme.spacing(2),
   "&:has([data-contentfixed=true])": {
     blockSize: "100%",
   },
@@ -127,7 +127,7 @@ export const AuthLayout = () => {
             to="/"
             sx={{
               display: { xs: "none", sm: "flex" },
-              gap: 2.5,
+              gap: 1,
               alignItems: "flex-end",
               textDecoration: "none",
               color: "inherit",

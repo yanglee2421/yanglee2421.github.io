@@ -478,7 +478,7 @@ export const CopilotChat = () => {
         blockSize: "100%",
       }}
     >
-      <Box sx={{ display: "flex", paddingInline: 3.5, paddingBlock: 1.5 }}>
+      <Box sx={{ display: "flex", paddingInline: 1.5, paddingBlock: 1.5 }}>
         <Box sx={{ flex: 1, minInlineSize: 0 }}>
           <Typography variant="h6">Copilot Chat</Typography>
           <Typography variant="subtitle1">#{completion?.id}</Typography>
@@ -560,7 +560,7 @@ export const CopilotChat = () => {
                   <div>
                     <Paper
                       sx={{
-                        padding: 3,
+                        padding: 1.5,
                         bgcolor: (t) => t.palette.primary.main,
                       }}
                     >
@@ -585,7 +585,7 @@ export const CopilotChat = () => {
           <div ref={chatLogRef} />
         </ScrollView>
       </Box>
-      <Box sx={{ padding: 3, paddingBlockStart: 0 }}>
+      <Box sx={{ padding: 1.5, paddingBlockStart: 0 }}>
         <form
           ref={formRef}
           onSubmit={handleSubmit}

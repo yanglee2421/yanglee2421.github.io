@@ -624,7 +624,7 @@ export const Component = () => {
   const [stream, setStream] = React.useState(initStream);
 
   return (
-    <Grid container spacing={6}>
+    <Grid container spacing={3}>
       <Grid size={{ xs: 12 }}>
         <Typography variant="h4">
           <Translation ns="/dashboard">{(t) => t("Dashboard")}</Translation>
