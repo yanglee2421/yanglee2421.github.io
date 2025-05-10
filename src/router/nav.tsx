@@ -3,7 +3,6 @@ import {
   CalendarTodayOutlined,
   CalculateOutlined,
   WalletOutlined,
-  PeopleOutlineOutlined,
   CalendarMonthOutlined,
   SportsEsportsOutlined,
   QrCodeOutlined,
@@ -15,6 +14,8 @@ import {
   TokenOutlined,
   ViewDayRounded,
   MessageOutlined,
+  GroupAddOutlined,
+  GroupOutlined,
 } from "@mui/icons-material";
 import { styled, alpha, Typography } from "@mui/material";
 import { useParams, NavLink } from "react-router";
@@ -63,22 +64,32 @@ const list = [
     icon: <CalendarTodayOutlined />,
   },
   {
-    to: "/calculator",
-    label: "Calculator",
-    icon: <CalculateOutlined />,
-  },
-  {
     to: "/invoices",
     label: "Invoices",
     icon: <WalletOutlined />,
   },
   {
+    to: "/invoices/new",
+    label: "Calculator",
+    icon: <CalculateOutlined />,
+  },
+  {
     to: "/staff",
     label: "Staff",
-    icon: <PeopleOutlineOutlined />,
+    icon: <GroupOutlined />,
+  },
+  {
+    to: "/staff/new",
+    label: "Staff",
+    icon: <GroupAddOutlined />,
   },
   {
     to: "/overtime",
+    label: "Overtime",
+    icon: <CalendarMonthOutlined />,
+  },
+  {
+    to: "/overtime/new",
     label: "Overtime",
     icon: <CalendarMonthOutlined />,
   },
@@ -91,11 +102,6 @@ const list = [
     to: "/qrcode",
     label: "QRCode",
     icon: <QrCodeOutlined />,
-  },
-  {
-    to: "/scrollbar",
-    label: "Scrollbar",
-    icon: <TokenOutlined />,
   },
   {
     to: "/handbook",
@@ -118,6 +124,11 @@ const list = [
     icon: <AppsOutlined />,
   },
   { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
+  {
+    to: "/scrollbar",
+    label: "Scrollbar",
+    icon: <TokenOutlined />,
+  },
   {
     to: "/virtual",
     label: "Virtual",

@@ -1,5 +1,9 @@
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import {
+  keepPreviousData,
+  useIsMutating,
+  useQuery,
+} from "@tanstack/react-query";
 import React from "react";
 import {
   createColumnHelper,
@@ -25,6 +29,8 @@ import {
   TablePagination,
   TableRow,
   Typography,
+  TableContainer,
+  LinearProgress,
 } from "@mui/material";
 import {
   CheckBoxOutlined,
@@ -35,7 +41,6 @@ import {
 } from "@mui/icons-material";
 import classNames from "classnames";
 import { Add } from "./Add";
-import { ScrollView } from "@/components/scrollbar";
 import {
   fetchOvertime,
   fetchUserByFirebase,
@@ -114,6 +119,7 @@ export const Component = () => {
   const user = useCurrentUser();
   const update = useOvertime();
   const deleteOvertime = useDeleteOvertime();
+  const isMutating = useIsMutating();
   const auth = useQuery({
     ...fetchUserByFirebase({
       data: {
@@ -263,7 +269,8 @@ export const Component = () => {
           </Button>
         </Stack>
       </CardContent>
-      <ScrollView>
+      {!!isMutating && <LinearProgress />}
+      <TableContainer>
         <Table>
           <TableHead>
             {table.getHeaderGroups().map((hg) => (
@@ -285,7 +292,7 @@ export const Component = () => {
           </TableHead>
           <TableBody>{renderTableBody()}</TableBody>
         </Table>
-      </ScrollView>
+      </TableContainer>
       <Divider />
       <TablePagination
         component={"div"}

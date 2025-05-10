@@ -81,7 +81,7 @@ export const fetchUserByGithub = (conf: SignInGithubConf) =>
       }),
   });
 
-const OVERTIME_PATH = "/overtime";
+export const OVERTIME_PATH = "/overtime";
 
 type OvertimeParams = {
   pageIndex: number;
