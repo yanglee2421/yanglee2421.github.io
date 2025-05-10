@@ -67,6 +67,7 @@ export const Component = () => {
                 name: data.name.trim(),
                 alias: data.alias.trim(),
               });
+              await navigate(`/${params.lang}/staff`);
               form.reset();
             }, warn)()
           }
