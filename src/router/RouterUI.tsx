@@ -4,115 +4,63 @@ import {
   Outlet,
   RouteObject,
   RouterProvider,
-  ScrollRestoration,
-  useParams,
   Link,
   useRouteError,
   isRouteErrorResponse,
+  useParams,
 } from "react-router";
-import {
-  Alert,
-  AlertTitle,
-  Box,
-  Button,
-  Typography,
-  useTheme,
-} from "@mui/material";
+import { Alert, AlertTitle, Box, Button, Typography } from "@mui/material";
 import { HomeOutlined } from "@mui/icons-material";
-import { ReactRouterAppProvider } from "@toolpad/core/react-router";
-import { DashboardLayout, type Navigation, PageContainer } from "@toolpad/core";
+import { DashboardLayout, PageContainer, useActivePage } from "@toolpad/core";
 import { GuestLayout } from "@/components/layout/guest";
 import { BlankLayout } from "@/components/layout/blank";
-import { NprogressBar } from "@/components/layout/nprogress";
 import { ModeToggle } from "@/components/shared/ModeToggle";
 import { AuthGuard, GuestGuard, LangGuard } from "./guard";
-import { ParticlesUI } from "@/components/layout/particles";
-import React from "react";
 import { AuthLayout } from "@/components/layout/auth";
-import { NavMenu } from "./nav";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { signOut } from "firebase/auth";
-import { auth } from "@/api/firebase/app";
-
-const BRANDING = {
-  title: "GitHub IO",
-};
-
-const path = (...args: unknown[]) => args.join("/");
-
-const useNavigtion = () => {
-  const params = useParams();
-  const lang = params.lang;
-  return React.useMemo<Navigation>(() => {
-    const navigation: Navigation = NavMenu.list.map((i) => ({
-      segment: path(lang, i.to.replace("/", "")),
-      icon: i.icon,
-      title: i.label,
-    }));
-
-    return [
-      {
-        kind: "header",
-        title: "Main items",
-      },
-      ...navigation.slice(0, -3),
-      {
-        kind: "divider",
-      },
-      {
-        kind: "header",
-        title: "Custom layout",
-      },
-      ...navigation.slice(-3),
-    ];
-  }, [lang]);
-};
-
-const RootRoute = () => {
-  const theme = useTheme();
-  const navigation = useNavigtion();
-  const user = useCurrentUser();
-
-  const session = user
-    ? {
-        user: {
-          id: user.uid,
-          image: user.photoURL,
-          name: user.displayName,
-          email: user.email,
-        },
-      }
-    : null;
-
-  return (
-    <ReactRouterAppProvider
-      navigation={navigation}
-      branding={BRANDING}
-      theme={theme}
-      session={session}
-      authentication={{
-        signIn() {},
-        async signOut() {
-          await signOut(auth);
-        },
-      }}
-    >
-      <ParticlesUI preset="bubbles" />
-      <NprogressBar />
-      <Outlet />
-      <ScrollRestoration />
-    </ReactRouterAppProvider>
-  );
-};
+import { RootRoute } from "./root";
 
 const DashLayout = () => {
+  const activePage = useActivePage();
+  const params = useParams();
+
+  const segments =
+    activePage?.path.split("/").filter((path) => {
+      if (!path) return false;
+      if (path === params.lang) return false;
+      return true;
+    }) || [];
+
+  const renderTitle = () => {
+    const segment = segments[segments.length - 1];
+    if (!segment) return;
+
+    const title = decodeURIComponent(segment);
+
+    return [title.slice(0, 1).toLocaleUpperCase(), title.slice(1)].join("");
+  };
+
+  const renderBreadcrumbs = () => {
+    if (!activePage) return;
+
+    return segments.map((segment, idx) => {
+      const title = decodeURIComponent(
+        [segment.slice(0, 1).toLocaleUpperCase(), segment.slice(1)].join(""),
+      );
+
+      return {
+        title,
+        path: ["", params.lang, ...segments.slice(0, idx + 1)].join("/"),
+      };
+    });
+  };
+
   return (
     <DashboardLayout
       slots={{
         toolbarActions: ModeToggle,
       }}
     >
-      <PageContainer>
+      <PageContainer title={renderTitle()} breadcrumbs={renderBreadcrumbs()}>
         <Outlet />
       </PageContainer>
     </DashboardLayout>
@@ -214,6 +162,11 @@ const routes: RouteObject[] = [
                     lazy: () => import("@/pages/chat/component"),
                   },
                   {
+                    id: "scrollbar",
+                    path: "scrollbar",
+                    lazy: () => import("@/pages/scrollbar/component"),
+                  },
+                  {
                     id: "virtual",
                     path: "virtual",
                     lazy: () => import("@/pages/virtual/component"),
@@ -235,9 +188,52 @@ const routes: RouteObject[] = [
                     lazy: () => import("@/pages/dashboard/component"),
                   },
                   {
+                    id: "invoices",
+                    path: "invoices",
+                    children: [
+                      {
+                        id: "invoices/list",
+                        index: true,
+                        lazy: () => import("@/pages/invoices/component"),
+                      },
+                      {
+                        id: "invoices/new",
+                        path: "new",
+                        lazy: () => import("@/pages/invoices_new/component"),
+                      },
+                    ],
+                  },
+                  {
+                    id: "staff",
+                    path: "staff",
+                    children: [
+                      {
+                        id: "staff/list",
+                        index: true,
+                        lazy: () => import("@/pages/staff/component"),
+                      },
+                      {
+                        id: "staff/new",
+                        path: "new",
+                        lazy: () => import("@/pages/staff_new/component"),
+                      },
+                    ],
+                  },
+                  {
                     id: "overtime",
                     path: "overtime",
-                    lazy: () => import("@/pages/overtime"),
+                    children: [
+                      {
+                        id: "overtime/list",
+                        index: true,
+                        lazy: () => import("@/pages/overtime"),
+                      },
+                      {
+                        id: "overtime/new",
+                        path: "new",
+                        lazy: () => import("@/pages/overtime_new/component"),
+                      },
+                    ],
                   },
                   {
                     id: "minesweeper",
@@ -254,21 +250,6 @@ const routes: RouteObject[] = [
                     path: "calendar",
                     lazy: () => import("@/pages/calendar/component"),
                   },
-                  {
-                    id: "calculator",
-                    path: "calculator",
-                    lazy: () => import("@/pages/calculator/component"),
-                  },
-                  {
-                    id: "invoices",
-                    path: "invoices",
-                    lazy: () => import("@/pages/invoices/component"),
-                  },
-                  {
-                    id: "staff",
-                    path: "staff",
-                    lazy: () => import("@/pages/staff/component"),
-                  },
 
                   {
                     id: "handbook",
@@ -279,11 +260,6 @@ const routes: RouteObject[] = [
                     id: "qrcode",
                     path: "qrcode",
                     lazy: () => import("@/pages/qrcode/component"),
-                  },
-                  {
-                    id: "scrollbar",
-                    path: "scrollbar",
-                    lazy: () => import("@/pages/scrollbar/component"),
                   },
 
                   {

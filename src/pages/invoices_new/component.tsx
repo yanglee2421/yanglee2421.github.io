@@ -394,7 +394,18 @@ export const Component = () => {
         <option value="Accommodation"></option>
         <option value="Taxi"></option>
       </datalist>
-      <CardHeader title="Calculator" />
+      <CardHeader
+        title="Calculator"
+        action={
+          <IconButton
+            onClick={() => {
+              navigate(`/${params.lang}/invoices`);
+            }}
+          >
+            <CloseOutlined />
+          </IconButton>
+        }
+      />
       <CardContent>
         <form
           id={formId}

@@ -17,6 +17,7 @@ import {
   Table,
   TableBody,
   TableCell,
+  TableContainer,
   TableHead,
   TablePagination,
   TableRow,
@@ -32,11 +33,10 @@ import {
 import dayjs from "dayjs";
 import * as mathjs from "mathjs";
 import React from "react";
-import { Link, useSearchParams } from "react-router";
+import { Link, useParams } from "react-router";
 import { db } from "@/lib/db";
 import type { Invoice } from "@/lib/db";
 import { useLiveQuery } from "dexie-react-hooks";
-import { ScrollView } from "@/components/scrollbar";
 
 const columnHelper = createColumnHelper<Invoice>();
 
@@ -100,24 +100,13 @@ type SearchValue = {
   pageSize: number;
 };
 
-const useSearch = () =>
-  useSearchParams({
-    startDate: new Date().toISOString(),
-    endDate: new Date().toISOString(),
-    pageIndex: "0",
-    pageSize: "20",
-  });
-
-const searchParamsToSearchValue = (searchParams: URLSearchParams) => {
-  const startDate = searchParams.get("startDate") || "";
-  const endDate = searchParams.get("endDate") || "";
-  const pageIndex = parseInt(searchParams.get("pageIndex") || "0", 10);
-  const pageSize = parseInt(searchParams.get("pageSize") || "20", 10);
-
-  return { startDate, endDate, pageIndex, pageSize };
-};
-
 const renderDayjsValue = (value: string) => (value ? dayjs(value) : null);
+const initSearch = (): SearchValue => ({
+  startDate: new Date().toISOString(),
+  endDate: new Date().toISOString(),
+  pageIndex: 0,
+  pageSize: 20,
+});
 
 type InvoiceTableProps = {
   onView: (rows: Invoice[]) => void;
@@ -126,13 +115,9 @@ type InvoiceTableProps = {
 const InvoiceTable = (props: InvoiceTableProps) => {
   // eslint-disable-next-line
   "use no memo";
-  const [searchValue, setSearchValue] = React.useState<SearchValue | null>(
-    null,
-  );
+  const [search, setSearchValue] = React.useState<SearchValue>(initSearch);
 
-  const [searchParams, setSearchParams] = useSearch();
-
-  const search = searchValue || searchParamsToSearchValue(searchParams);
+  const params = useParams();
 
   const invoices = useLiveQuery(async () => {
     const count = await db.invoices
@@ -163,25 +148,6 @@ const InvoiceTable = (props: InvoiceTableProps) => {
   }, [search.startDate, search.endDate, search.pageIndex, search.pageSize]);
 
   const data = React.useMemo(() => invoices?.rows || [], [invoices]);
-
-  React.useEffect(() => {
-    setSearchParams((p) => {
-      const n = new URLSearchParams(p);
-
-      n.set("startDate", search.startDate || "");
-      n.set("endDate", search.endDate || "");
-      n.set("pageIndex", search.pageIndex.toString());
-      n.set("pageSize", search.pageSize.toString());
-
-      return n;
-    });
-  }, [
-    setSearchParams,
-    search.startDate,
-    search.endDate,
-    search.pageIndex,
-    search.pageSize,
-  ]);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
@@ -336,14 +302,14 @@ const InvoiceTable = (props: InvoiceTableProps) => {
             Output
           </Button>
           <Box sx={{ marginInlineEnd: "auto" }} />
-          <Link to="/calculator">
+          <Link to={`/${params.lang}/invoices/new`}>
             <Button startIcon={<AddOutlined />} variant="outlined" fullWidth>
               Add
             </Button>
           </Link>
         </Box>
       </CardContent>
-      <ScrollView>
+      <TableContainer>
         <Table>
           <TableHead>
             {table.getHeaderGroups().map((hg) => (
@@ -363,7 +329,7 @@ const InvoiceTable = (props: InvoiceTableProps) => {
           </TableHead>
           <TableBody>{renderBody()}</TableBody>
         </Table>
-      </ScrollView>
+      </TableContainer>
       <TablePagination
         component={"div"}
         count={table.getRowCount()}
