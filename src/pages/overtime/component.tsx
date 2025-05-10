@@ -1,9 +1,5 @@
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import {
-  keepPreviousData,
-  useIsMutating,
-  useQuery,
-} from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import React from "react";
 import {
   createColumnHelper,
@@ -119,7 +115,6 @@ export const Component = () => {
   const user = useCurrentUser();
   const update = useOvertime();
   const deleteOvertime = useDeleteOvertime();
-  const isMutating = useIsMutating();
   const auth = useQuery({
     ...fetchUserByFirebase({
       data: {
@@ -150,6 +145,7 @@ export const Component = () => {
     columns,
     data,
     getRowId: (originalRow) => originalRow.id,
+    rowCount: overtime.data?.data.count,
   });
 
   const renderTableBody = () => {
@@ -269,7 +265,7 @@ export const Component = () => {
           </Button>
         </Stack>
       </CardContent>
-      {!!isMutating && <LinearProgress />}
+      {overtime.isFetching && <LinearProgress />}
       <TableContainer>
         <Table>
           <TableHead>
@@ -297,7 +293,7 @@ export const Component = () => {
       <TablePagination
         component={"div"}
         page={pageIndex}
-        count={overtime.data?.data.count || 0}
+        count={table.getRowCount()}
         rowsPerPage={pageSize}
         rowsPerPageOptions={[20, 50, 100]}
         onPageChange={(e, pageIndex) => {
