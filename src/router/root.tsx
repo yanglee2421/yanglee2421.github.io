@@ -110,11 +110,6 @@ const langToNavition = (lang: string): Navigation => [
   },
   { segment: path(lang, "qrcode"), title: "QRCode", icon: <QrCodeOutlined /> },
   {
-    segment: path(lang, "scrollbar"),
-    title: "Scrollbar",
-    icon: <TokenOutlined />,
-  },
-  {
     segment: path(lang, "handbook"),
     title: "Handbook",
     icon: <HandshakeOutlined />,
@@ -129,6 +124,11 @@ const langToNavition = (lang: string): Navigation => [
   { kind: "header", title: "Custom layout" },
   { segment: path(lang, "app"), title: "App", icon: <AppsOutlined /> },
   { segment: path(lang, "chat"), title: "Chat", icon: <ChatOutlined /> },
+  {
+    segment: path(lang, "scrollbar"),
+    title: "Scrollbar",
+    icon: <TokenOutlined />,
+  },
   {
     segment: path(lang, "virtual"),
     title: "Virtual",
