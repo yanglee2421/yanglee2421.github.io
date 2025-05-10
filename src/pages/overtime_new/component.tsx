@@ -49,15 +49,15 @@ export const Component = () => {
   const form = useAddForm();
   const snackbar = useNotifications();
 
+  const handleNavigateToOvertime = () => {
+    navigate(`/${params.lang}/overtime`);
+  };
+
   return (
     <Card>
       <CardHeader
         action={
-          <IconButton
-            onClick={() => {
-              navigate(["", params.lang, "overtime"].join("/"));
-            }}
-          >
+          <IconButton onClick={handleNavigateToOvertime}>
             <CloseOutlined />
           </IconButton>
         }
@@ -66,7 +66,7 @@ export const Component = () => {
         <form
           id={formId}
           onSubmit={form.handleSubmit((data) => {
-            add.mutateAsync(
+            add.mutate(
               {
                 data: {
                   rows: [
@@ -81,6 +81,7 @@ export const Component = () => {
               {
                 onSuccess: () => {
                   form.reset();
+                  handleNavigateToOvertime();
                 },
                 onError: () => {
                   snackbar.show("Some error", {
