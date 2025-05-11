@@ -301,12 +301,15 @@ const InvoiceTable = (props: InvoiceTableProps) => {
           >
             Output
           </Button>
-          <Box sx={{ marginInlineEnd: "auto" }} />
-          <Link to={`/${params.lang}/invoices/new`}>
-            <Button startIcon={<AddOutlined />} variant="outlined" fullWidth>
-              Add
-            </Button>
-          </Link>
+          <Button
+            component={Link}
+            to={`/${params.lang}/invoices/new`}
+            startIcon={<AddOutlined />}
+            variant="outlined"
+            sx={{ marginInlineEnd: { sm: "auto" } }}
+          >
+            Add
+          </Button>
         </Box>
       </CardContent>
       <TableContainer>

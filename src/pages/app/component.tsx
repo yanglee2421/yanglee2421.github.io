@@ -163,7 +163,7 @@ export const Component = () => {
       >
         <Box
           sx={{
-            paddingBlockStart: "57px",
+            paddingBlockStart: "73px",
             blockSize: "100%",
           }}
         >

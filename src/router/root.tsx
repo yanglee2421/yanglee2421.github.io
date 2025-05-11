@@ -36,14 +36,18 @@ const path = (...args: unknown[]) => args.join("/");
 
 const langToNavition = (lang: string): Navigation => [
   {
+    kind: "header",
+    title: "Fontend",
+  },
+  {
     segment: path(lang, "dashboard"),
     title: "Dashboard",
     icon: <DashboardOutlined />,
   },
   {
-    segment: path(lang, "calendar"),
-    title: "Calendar",
-    icon: <CalendarTodayOutlined />,
+    segment: path(lang, "handbook"),
+    title: "Handbook",
+    icon: <HandshakeOutlined />,
   },
   {
     kind: "divider",
@@ -103,17 +107,18 @@ const langToNavition = (lang: string): Navigation => [
   {
     kind: "divider",
   },
+  { kind: "header", title: "App" },
+  {
+    segment: path(lang, "calendar"),
+    title: "Calendar",
+    icon: <CalendarTodayOutlined />,
+  },
   {
     segment: path(lang, "minesweeper"),
     title: "Minesweeper",
     icon: <SportsEsportsOutlined />,
   },
   { segment: path(lang, "qrcode"), title: "QRCode", icon: <QrCodeOutlined /> },
-  {
-    segment: path(lang, "handbook"),
-    title: "Handbook",
-    icon: <HandshakeOutlined />,
-  },
   {
     segment: path(lang, "snackbar"),
     title: "Snackbar",
@@ -175,6 +180,7 @@ export const RootRoute = () => {
         slotProps={{
           snackbar: {
             anchorOrigin: { horizontal: "center", vertical: "top" },
+            autoHideDuration: 1000 * 3,
           },
         }}
       >
