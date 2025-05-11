@@ -170,7 +170,7 @@ export const Component = () => {
           add
         </Button>
         <Button form={formId} type="reset">
-          cancel
+          reset
         </Button>
       </CardActions>
     </Card>

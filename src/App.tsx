@@ -21,6 +21,13 @@ import { QueryProvider } from "./components/query";
 
 const lightTheme = createTheme({
   palette: { mode: "light" },
+  components: {
+    MuiAlert: {
+      defaultProps: {
+        variant: "filled",
+      },
+    },
+  },
 
   // spacing(abs: number) {
   //   return `${abs * 0.25}rem`;
@@ -30,6 +37,13 @@ const lightTheme = createTheme({
 const darkTheme = createTheme({
   palette: {
     mode: "dark",
+  },
+  components: {
+    MuiAlert: {
+      defaultProps: {
+        variant: "filled",
+      },
+    },
   },
 
   // spacing(abs: number) {
