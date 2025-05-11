@@ -122,7 +122,7 @@ export const Component = () => {
         }
       />
       <CardContent>
-        <Grid container spacing={6}>
+        <Grid container spacing={1.5}>
           <Grid size={{ xs: 12, md: 6, lg: 4 }}>
             <DatePicker
               value={selectedTime}
