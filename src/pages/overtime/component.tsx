@@ -45,6 +45,7 @@ import {
 } from "@/api/netlify";
 import type { Overtime } from "@/api/netlify";
 import { Loading } from "@/components/loading";
+import { useDialogs } from "@toolpad/core";
 
 const columnHelper = createColumnHelper<Overtime>();
 
@@ -114,6 +115,7 @@ export const Component = () => {
 
   const user = useCurrentUser();
   const update = useOvertime();
+  const dialogs = useDialogs();
   const deleteOvertime = useDeleteOvertime();
   const auth = useQuery({
     ...fetchUserByFirebase({
@@ -147,6 +149,30 @@ export const Component = () => {
     getRowId: (originalRow) => originalRow.id,
     rowCount: overtime.data?.data.count,
   });
+
+  const handleUse = async () => {
+    const confirmed = await dialogs.confirm("Are you sure ?");
+    if (!confirmed) return;
+
+    update.mutate({
+      data: {
+        rows: table
+          .getSelectedRowModel()
+          .rows.map((r) => ({ id: r.original.id, redeemed: true })),
+      },
+    });
+  };
+
+  const handleDelete = async () => {
+    const confirmed = await dialogs.confirm("Confirm delete ?");
+    if (!confirmed) return;
+
+    deleteOvertime.mutate({
+      data: {
+        id: table.getSelectedRowModel().rows.map((r) => r.original.id),
+      },
+    });
+  };
 
   const renderTableBody = () => {
     if (overtime.isPending) {
@@ -228,15 +254,7 @@ export const Component = () => {
                 <CheckBoxOutlined />
               )
             }
-            onClick={() => {
-              update.mutate({
-                data: {
-                  rows: table
-                    .getSelectedRowModel()
-                    .rows.map((r) => ({ id: r.original.id, redeemed: true })),
-                },
-              });
-            }}
+            onClick={handleUse}
           >
             use
           </Button>
@@ -251,15 +269,7 @@ export const Component = () => {
                 <DeleteOutlined />
               )
             }
-            onClick={() => {
-              deleteOvertime.mutate({
-                data: {
-                  id: table
-                    .getSelectedRowModel()
-                    .rows.map((r) => r.original.id),
-                },
-              });
-            }}
+            onClick={handleDelete}
           >
             delete
           </Button>
@@ -275,9 +285,7 @@ export const Component = () => {
                   <TableCell
                     key={h.id}
                     padding={h.column.id === "check" ? "checkbox" : "normal"}
-                    sx={() => ({
-                      textTransform: "uppercase",
-                    })}
+                    sx={{ textTransform: "uppercase" }}
                   >
                     {h.isPlaceholder ||
                       flexRender(h.column.columnDef.header, h.getContext())}

@@ -38,7 +38,7 @@ export const Component = () => {
         gap: 2,
         blockSize: "100%",
       }}
-      data-contentFixed
+      data-contentfixed
     >
       <Box sx={{ border: "1px solid #ccc", blockSize: "100%" }}>
         <Scroll>

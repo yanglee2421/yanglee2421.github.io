@@ -127,13 +127,11 @@ const SortableItem = (props: SortableItemProps) => {
           sort.isDragging ? t.shape.borderRadius / 2 : void 0,
         position: "relative",
         zIndex: (t) => (sort.isDragging ? t.zIndex.speedDial : void 0),
+        touchAction: "none",
+        cursor: "pointer",
       }}
       secondaryAction={
-        <ListItemIcon
-          sx={{
-            cursor: "pointer",
-          }}
-        >
+        <ListItemIcon>
           <DragIndicatorOutlined />
         </ListItemIcon>
       }
