@@ -39,20 +39,6 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { DragIndicatorOutlined } from "@mui/icons-material";
 import bg from "@/assets/images/justHer.jpg";
-import { useSnackbar } from "notistack";
-
-const ToastCard = () => {
-  const toast = useSnackbar();
-  return (
-    <Button
-      onClick={() => {
-        toast.enqueueSnackbar("test", { variant: "success" });
-      }}
-    >
-      test
-    </Button>
-  );
-};
 
 const bgImgHref = new URL(bg, import.meta.url).href;
 
@@ -113,11 +99,10 @@ const WebSocketCard = () => {
           onClick={() => {
             ref.current?.send(input);
           }}
-          variant="contained"
         >
           send
         </Button>
-        <Button variant="outlined">reset</Button>
+        <Button>reset</Button>
       </CardActions>
     </Card>
   );
@@ -142,13 +127,11 @@ const SortableItem = (props: SortableItemProps) => {
           sort.isDragging ? t.shape.borderRadius / 2 : void 0,
         position: "relative",
         zIndex: (t) => (sort.isDragging ? t.zIndex.speedDial : void 0),
+        touchAction: "none",
+        cursor: "pointer",
       }}
       secondaryAction={
-        <ListItemIcon
-          sx={{
-            cursor: "pointer",
-          }}
-        >
+        <ListItemIcon>
           <DragIndicatorOutlined />
         </ListItemIcon>
       }
@@ -217,7 +200,7 @@ const Counter = () => {
   useTestEffect("parent 2");
 
   return (
-    <Button onClick={() => setCount((prev) => prev + 1)} variant="contained">
+    <Button onClick={() => setCount((prev) => prev + 1)}>
       {count}
       <ChildEffect />
     </Button>
@@ -263,83 +246,78 @@ export const Component = () => {
   };
 
   return (
-    <>
-      <Stack spacing={3}>
-        <ToastCard />
+    <Stack spacing={3}>
+      <Box
+        sx={{
+          position: "relative",
+          overflow: "hidden",
+          borderRadius(theme) {
+            return theme.shape.borderRadius + "px";
+          },
+        }}
+      >
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 1,
+
+            backgroundImage: `url(${bgImgHref})`,
+            backgroundPosition: "50%",
+            backgroundSize: "150%",
+
+            filter: "blur(15px)",
+          }}
+        />
+        <Box
+          sx={{
+            position: "absolute",
+            inset: 0,
+            zIndex: 2,
+
+            backgroundColor: alpha(grey[700], 0.4),
+          }}
+        />
         <Box
           sx={{
             position: "relative",
-            overflow: "hidden",
-            borderRadius(theme) {
-              return theme.shape.borderRadius + "px";
-            },
+            zIndex: 3,
+
+            display: "flex",
+            alignItems: "center",
+
+            height: 320,
+
+            padding: 4,
           }}
         >
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 1,
-
-              backgroundImage: `url(${bgImgHref})`,
-              backgroundPosition: "50%",
-              backgroundSize: "150%",
-
-              filter: "blur(15px)",
-            }}
-          />
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              zIndex: 2,
-
-              backgroundColor: alpha(grey[700], 0.4),
-            }}
-          />
-          <Box
-            sx={{
-              position: "relative",
-              zIndex: 3,
-
-              display: "flex",
-              alignItems: "center",
-
-              height: 320,
-
-              padding: 4,
-            }}
-          >
-            <img src={bgImgHref} width={192} height={108} />
-          </Box>
+          <img src={bgImgHref} width={192} height={108} />
         </Box>
+      </Box>
 
-        <Card>
-          <CardHeader title="Slider" />
-          <CardContent>
-            <Slider />
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader title="Camera" />
-          <CardContent>
-            <Camera id={id} />
-          </CardContent>
-          <CardActions>
-            <Button onClick={handleCutImage} variant="contained">
-              cut image
-            </Button>
-            <Counter />
-          </CardActions>
-        </Card>
-        <Card>
-          <CardHeader title="DnD" />
-          <CardContent>
-            <SortableDnd />
-          </CardContent>
-        </Card>
-        <WebSocketCard />
-      </Stack>
-    </>
+      <Card>
+        <CardHeader title="Slider" />
+        <CardContent>
+          <Slider />
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader title="Camera" />
+        <CardContent>
+          <Camera id={id} />
+        </CardContent>
+        <CardActions>
+          <Button onClick={handleCutImage}>cut image</Button>
+          <Counter />
+        </CardActions>
+      </Card>
+      <Card>
+        <CardHeader title="DnD" />
+        <CardContent>
+          <SortableDnd />
+        </CardContent>
+      </Card>
+      <WebSocketCard />
+    </Stack>
   );
 };
