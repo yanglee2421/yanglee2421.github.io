@@ -42,14 +42,16 @@ const DashLayout = () => {
   const renderBreadcrumbs = () => {
     if (!activePage) return;
 
-    return segments.map((segment, idx) => {
+    return segments.map((segment, idx, segments) => {
       const title = decodeURIComponent(
         [segment.slice(0, 1).toLocaleUpperCase(), segment.slice(1)].join(""),
       );
 
       return {
         title,
-        path: ["", params.lang, ...segments.slice(0, idx + 1)].join("/"),
+        path: Object.is(segments.length - 1, idx)
+          ? void 0
+          : ["", params.lang, ...segments.slice(0, idx + 1)].join("/"),
       };
     });
   };
