@@ -23,8 +23,17 @@ export function ModeToggle() {
   };
 
   const handleModeChange = (mode: Mode) => {
-    updateMode({ mode });
-    handleClose();
+    const update = () => {
+      updateMode({ mode });
+      handleClose();
+    };
+
+    if (typeof document.startViewTransition === "function") {
+      document.startViewTransition(update);
+      return;
+    }
+
+    update();
   };
 
   return (
@@ -39,19 +48,19 @@ export function ModeToggle() {
           <ListItemIcon>
             <DesktopWindowsOutlined />
           </ListItemIcon>
-          <ListItemText primary="system" />
+          <ListItemText primary="System" />
         </MenuItem>
         <MenuItem onClick={handleModeChange.bind(null, "light")}>
           <ListItemIcon>
             <LightModeOutlined />
           </ListItemIcon>
-          <ListItemText primary="light" />
+          <ListItemText primary="Light" />
         </MenuItem>
         <MenuItem onClick={handleModeChange.bind(null, "dark")}>
           <ListItemIcon>
             <DarkModeOutlined />
           </ListItemIcon>
-          <ListItemText primary="dark" />
+          <ListItemText primary="Dark" />
         </MenuItem>
       </Menu>
     </>

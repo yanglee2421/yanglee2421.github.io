@@ -21,17 +21,32 @@ const Thumb = styled("div")(({ theme: t }) => ({
   backgroundColor: t.palette.primary.main,
 }));
 
-const Dot = styled("div")(({ theme: t }) => ({
-  backgroundColor: t.palette.primary.contrastText,
+const Dot = styled("input")(() => ({
+  // backgroundColor: t.palette.primary.contrastText,
 
-  inlineSize: 10,
-  blockSize: 10,
-  borderRadius: 99999,
+  inlineSize: "100%",
+  blockSize: "100%",
+  // borderRadius: 99999,
+
+  // position: "absolute",
+  // insetInline: "50%",
+  // insetBlock: "50%",
+  // translate: "-50% -50%",
+
+  appearance: "auto",
+  clipPath: "rect(0px 0px 0px 0px)",
+  overflow: "hidden",
+  whiteSpace: "nowrap",
+
+  padding: 0,
+  margin: 0,
+
+  display: "block",
+
+  backgroundColor: "transparent",
 
   position: "absolute",
-  insetInline: "50%",
-  insetBlock: "50%",
-  translate: "-50% -50%",
+  zIndex: -1,
 }));
 
 const useResizeObserver = () => {
@@ -121,7 +136,7 @@ export const Slider = () => {
           transform: `translate3d(${translateX}px, 0, 0)`,
         }}
       >
-        <Dot />
+        <Dot type="range" />
       </Thumb>
     </Track>
   );

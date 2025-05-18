@@ -155,27 +155,6 @@ const routes: RouteObject[] = [
             Component: AuthGuard,
             children: [
               {
-                id: "auth_layout",
-                Component: AuthLayout,
-                children: [
-                  {
-                    id: "chat",
-                    path: "chat",
-                    lazy: () => import("@/pages/chat/component"),
-                  },
-                  {
-                    id: "scrollbar",
-                    path: "scrollbar",
-                    lazy: () => import("@/pages/scrollbar/component"),
-                  },
-                  {
-                    id: "virtual",
-                    path: "virtual",
-                    lazy: () => import("@/pages/virtual/component"),
-                  },
-                ],
-              },
-              {
                 id: "dash_layout",
                 Component: DashLayout,
                 children: [
@@ -270,6 +249,27 @@ const routes: RouteObject[] = [
                     lazy: () => import("@/pages/snackbar/component"),
                   },
                 ],
+              },
+            ],
+          },
+          {
+            id: "auth_layout",
+            Component: AuthLayout,
+            children: [
+              {
+                id: "chat",
+                path: "chat",
+                lazy: () => import("@/pages/chat/component"),
+              },
+              {
+                id: "scrollbar",
+                path: "scrollbar",
+                lazy: () => import("@/pages/scrollbar/component"),
+              },
+              {
+                id: "virtual",
+                path: "virtual",
+                lazy: () => import("@/pages/virtual/component"),
               },
             ],
           },
