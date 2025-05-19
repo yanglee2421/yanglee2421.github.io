@@ -7,11 +7,9 @@ import {
   CardContent,
   CardHeader,
   Grid,
-  Typography,
   useTheme,
 } from "@mui/material";
 import React from "react";
-import { Translation } from "react-i18next";
 import { useSize } from "@/hooks/dom/useSize";
 import { minmax } from "@/lib/utils";
 
@@ -625,15 +623,6 @@ export const Component = () => {
 
   return (
     <Grid container spacing={3}>
-      <Grid size={{ xs: 12 }}>
-        <Typography variant="h4">
-          <Translation ns="/dashboard">{(t) => t("Dashboard")}</Translation>
-        </Typography>
-        <Typography color="secondary">
-          Lorem ipsum dolor sit amet consectetur adipisicing elit.
-        </Typography>
-      </Grid>
-
       <React.Suspense>
         <Grid size={{ xs: 12, sm: 6, md: 4 }}>
           <Microphone stream={stream} />

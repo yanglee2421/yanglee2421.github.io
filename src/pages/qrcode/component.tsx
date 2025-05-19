@@ -1,7 +1,14 @@
 import { QRCodeSVG } from "qrcode.react";
-import { Box, Button, Grid, TextField } from "@mui/material";
+import {
+  Box,
+  Grid,
+  IconButton,
+  InputAdornment,
+  TextField,
+} from "@mui/material";
 import React from "react";
 import * as consts from "@/lib/constants";
+import { QrCode2Outlined } from "@mui/icons-material";
 
 export const Component = () => {
   const [qrValue, setQrValue] = React.useState(consts.GITHUB_URL);
@@ -34,12 +41,21 @@ export const Component = () => {
               label="Enter QR Code Value"
               variant="outlined"
               fullWidth
+              slotProps={{
+                input: {
+                  endAdornment: (
+                    <InputAdornment position="end">
+                      <IconButton type="submit">
+                        <QrCode2Outlined />
+                      </IconButton>
+                    </InputAdornment>
+                  ),
+                },
+                htmlInput: {
+                  autoComplete: "off",
+                },
+              }}
             />
-          </Grid>
-          <Grid size={12}>
-            <Button type="submit" variant="contained" color="primary">
-              Generate QR Code
-            </Button>
           </Grid>
         </Grid>
       </form>

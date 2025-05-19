@@ -85,7 +85,7 @@ const WebSocketCard = () => {
       <CardHeader title="WebSocket" subheader={data || "Placeholder"} />
       <CardContent>
         <Grid container spacing={3}>
-          <Grid size={{ xs: 12, md: 6, lg: 4 }}>
+          <Grid size={{ xs: 12, sm: 6 }}>
             <TextField
               value={input}
               onChange={(e) => setInput(e.target.value)}
@@ -296,13 +296,14 @@ export const Component = () => {
       </Box>
 
       <Card>
-        <CardHeader title="Slider" />
+        <CardHeader title="Slider" subheader=" slider input" />
         <CardContent>
           <Slider />
+          <input type="range" />
         </CardContent>
       </Card>
       <Card>
-        <CardHeader title="Camera" />
+        <CardHeader title="Camera" subheader="Camera" />
         <CardContent>
           <Camera id={id} />
         </CardContent>
@@ -312,12 +313,28 @@ export const Component = () => {
         </CardActions>
       </Card>
       <Card>
-        <CardHeader title="DnD" />
+        <CardHeader title="DnD" subheader="Drag and drop" />
         <CardContent>
           <SortableDnd />
         </CardContent>
       </Card>
       <WebSocketCard />
+      <Card>
+        <CardContent>
+          <div
+            onClick={async (e) => {
+              const el = e.currentTarget;
+              const view = document.startViewTransition(() => {
+                el.style.height = 100 * 3 * Math.random() + "px";
+              });
+              await view.ready;
+              await view.finished;
+            }}
+          >
+            click me
+          </div>
+        </CardContent>
+      </Card>
     </Stack>
   );
 };

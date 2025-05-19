@@ -56,6 +56,7 @@ export const Component = () => {
   return (
     <Card>
       <CardHeader
+        title="Overtime"
         action={
           <IconButton onClick={handleNavigateToOvertime}>
             <CloseOutlined />
