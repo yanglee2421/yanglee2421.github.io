@@ -110,12 +110,15 @@ const initSearch = (): SearchValue => ({
 
 type InvoiceTableProps = {
   onView: (rows: Invoice[]) => void;
+  search: SearchValue;
+  onSearchChange: React.Dispatch<React.SetStateAction<SearchValue>>;
 };
 
 const InvoiceTable = (props: InvoiceTableProps) => {
   // eslint-disable-next-line
   "use no memo";
-  const [search, setSearchValue] = React.useState<SearchValue>(initSearch);
+
+  const { search, onSearchChange: setSearchValue } = props;
 
   const params = useParams();
 
@@ -439,9 +442,16 @@ const ResultPanel = (props: ResultPanelProps) => {
 
 export const Component = () => {
   const [rows, setRows] = React.useState<Invoice[] | null>(null);
+  const [search, setSearchValue] = React.useState<SearchValue>(initSearch);
 
   if (!rows) {
-    return <InvoiceTable onView={setRows} />;
+    return (
+      <InvoiceTable
+        onView={setRows}
+        search={search}
+        onSearchChange={setSearchValue}
+      />
+    );
   }
 
   return <ResultPanel rows={rows} onClose={() => setRows(null)} />;
