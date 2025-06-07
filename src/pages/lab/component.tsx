@@ -15,6 +15,17 @@ import {
   TextField,
   Box,
   alpha,
+  LinearProgress,
+  TableContainer,
+  Table,
+  TableHead,
+  TableBody,
+  TableFooter,
+  TableRow,
+  TableCell,
+  TablePagination,
+  Divider,
+  ButtonBase,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
@@ -39,6 +50,13 @@ import {
 import { CSS } from "@dnd-kit/utilities";
 import { DragIndicatorOutlined } from "@mui/icons-material";
 import bg from "@/assets/images/justHer.jpg";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  getPaginationRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
 
 const bgImgHref = new URL(bg, import.meta.url).href;
 
@@ -207,6 +225,145 @@ const Counter = () => {
   );
 };
 
+const initMockData = () =>
+  Array.from({ length: 100 }, (_, i) => ({
+    id: i + 1,
+    title: `Row ${i + 1}`,
+    description: `Description ${i + 1}`,
+  }));
+
+const Cell = (props: React.PropsWithChildren) => {
+  const [editable, setEditable] = React.useState(false);
+
+  if (editable) {
+    return (
+      <TextField
+        autoFocus
+        fullWidth
+        onBlur={() => setEditable(false)}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            setEditable(false);
+          }
+        }}
+      />
+    );
+  }
+
+  return (
+    <ButtonBase onClick={() => setEditable(true)}>{props.children}</ButtonBase>
+  );
+};
+
+const columnHelper = createColumnHelper<{
+  id: number;
+  title: string;
+  description: string;
+}>();
+
+const columns = [
+  columnHelper.accessor("id", {
+    header: "ID",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+  columnHelper.accessor("title", {
+    header: "Title",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+  columnHelper.accessor("description", {
+    header: "Description",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+];
+
+const EditableTable = () => {
+  "use no memo";
+  const [data, setData] = React.useState(initMockData);
+
+  const table = useReactTable({
+    getCoreRowModel: getCoreRowModel(),
+    columns,
+    getRowId: (row) => String(row.id),
+    data,
+    getPaginationRowModel: getPaginationRowModel(),
+  });
+
+  const renderBody = () => {
+    return table.getRowModel().rows.map((row) => (
+      <TableRow key={row.id}>
+        {row.getVisibleCells().map((cell) => (
+          <TableCell key={cell.id}>
+            {flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
+      </TableRow>
+    ));
+  };
+
+  return (
+    <Card>
+      <CardHeader title="Editable Table" />
+      <CardContent>
+        <Grid container spacing={3}>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField label="Search" fullWidth placeholder="Search..." />
+          </Grid>
+          <Grid size={{ xs: 12, sm: 6 }}>
+            <TextField label="Filter" fullWidth placeholder="Filter..." />
+          </Grid>
+        </Grid>
+      </CardContent>
+      <Divider />
+      <CardContent>
+        <Button variant="contained">Add New Row</Button>
+      </CardContent>
+      <LinearProgress />
+      <TableContainer>
+        <Table>
+          <TableHead>
+            {table.getHeaderGroups().map((hg) => (
+              <TableRow key={hg.id}>
+                {hg.headers.map((h) => (
+                  <TableCell key={h.id}>
+                    {h.isPlaceholder ||
+                      flexRender(h.column.columnDef.header, h.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableHead>
+          <TableBody>{renderBody()}</TableBody>
+          <TableFooter>
+            {table.getFooterGroups().map((hg) => (
+              <TableRow key={hg.id}>
+                {hg.headers.map((h) => (
+                  <TableCell key={h.id}>
+                    {h.isPlaceholder ||
+                      flexRender(h.column.columnDef.footer, h.getContext())}
+                  </TableCell>
+                ))}
+              </TableRow>
+            ))}
+          </TableFooter>
+        </Table>
+      </TableContainer>
+      <TablePagination
+        component={"div"}
+        count={table.getRowCount()}
+        rowsPerPage={table.getState().pagination.pageSize}
+        page={table.getState().pagination.pageIndex}
+        onPageChange={(_, page) => {
+          table.setPageIndex(page);
+        }}
+        onRowsPerPageChange={(e) => {
+          table.setPageSize(Number(e.target.value));
+        }}
+        rowsPerPageOptions={[10, 20, 50]}
+      />
+    </Card>
+  );
+};
+
 export const Component = () => {
   const id = React.useId();
 
@@ -319,22 +476,7 @@ export const Component = () => {
         </CardContent>
       </Card>
       <WebSocketCard />
-      <Card>
-        <CardContent>
-          <div
-            onClick={async (e) => {
-              const el = e.currentTarget;
-              const view = document.startViewTransition(() => {
-                el.style.height = 100 * 3 * Math.random() + "px";
-              });
-              await view.ready;
-              await view.finished;
-            }}
-          >
-            click me
-          </div>
-        </CardContent>
-      </Card>
+      <EditableTable />
     </Stack>
   );
 };
