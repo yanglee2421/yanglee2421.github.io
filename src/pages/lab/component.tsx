@@ -281,6 +281,62 @@ const columns = [
   }),
 ];
 
+const AnimateBorderButton = () => {
+  const theme = useTheme();
+
+  return (
+    <ButtonBase
+      sx={{
+        paddingInline: 2,
+        paddingBlock: 1,
+
+        borderColor: "transparent",
+        borderWidth: 3,
+        borderStyle: "solid",
+        borderRadius: (theme) => theme.shape.borderRadius + "px",
+
+        position: "relative",
+        isolation: "isolate",
+
+        animation: "glow 4s infinite linear",
+
+        background: `linear-gradient(${alpha(theme.palette.background.default, 1)} 0 0) padding-box,
+        conic-gradient(from var(--glow-deg),#399953 0deg 90deg, #fbb300 90deg 180deg,#d53e33 180deg 270deg,#377af5 270deg 360deg) border-box`,
+      }}
+    >
+      Google
+    </ButtonBase>
+  );
+};
+
+const AnimateBorderButton2 = () => {
+  const theme = useTheme();
+
+  return (
+    <ButtonBase
+      sx={{
+        paddingInline: 2,
+        paddingBlock: 1,
+
+        borderColor: "transparent",
+        borderWidth: 3,
+        borderStyle: "solid",
+        borderRadius: (theme) => theme.shape.borderRadius + "px",
+
+        position: "relative",
+        isolation: "isolate",
+
+        animation: "glow 4s infinite linear",
+
+        background: `linear-gradient(${alpha(theme.palette.background.default, 1)} 0 0) padding-box,
+        conic-gradient(from var(--glow-deg),${theme.palette.divider},rgb(245, 118, 60),${theme.palette.divider} 30%) border-box`,
+      }}
+    >
+      Search
+    </ButtonBase>
+  );
+};
+
 const GoogleButton = (props: React.PropsWithChildren) => {
   const theme = useTheme();
 
@@ -288,14 +344,8 @@ const GoogleButton = (props: React.PropsWithChildren) => {
     <ButtonBase
       sx={{
         // Padding box background must forward to the border box background
-        background: `linear-gradient(${theme.palette.background.default} 0 0) padding-box,conic-gradient(from var(--glow-deg,-45deg), ${[
-          theme.palette.primary.main,
-          theme.palette.secondary.main,
-          theme.palette.error.main,
-          theme.palette.warning.main,
-          theme.palette.info.main,
-          theme.palette.success.main,
-        ].join()}) border-box`,
+        background: `linear-gradient(${alpha(theme.palette.background.default, 1)} 0 0) padding-box,
+        conic-gradient(from var(--glow-deg),#13f41c,#33acf1) border-box`,
 
         paddingInline: 2,
         paddingBlock: 1,
@@ -314,7 +364,7 @@ const GoogleButton = (props: React.PropsWithChildren) => {
       <Box
         sx={{
           position: "absolute",
-          inset: "0.25rem",
+          inset: "0.125rem",
           zIndex: -1,
 
           borderRadius: "inherit",
@@ -329,17 +379,10 @@ const GoogleButton = (props: React.PropsWithChildren) => {
       <Box
         sx={{
           position: "absolute",
-          inset: "-0.25rem",
+          inset: "-0.125rem",
           zIndex: -2,
           borderRadius: "inherit",
-          backgroundImage: `conic-gradient(from var(--glow-deg,-45deg), ${[
-            theme.palette.primary.main,
-            theme.palette.secondary.main,
-            theme.palette.error.main,
-            theme.palette.warning.main,
-            theme.palette.info.main,
-            theme.palette.success.main,
-          ].join()})`,
+          background: `conic-gradient(from var(--glow-deg),#13f41c,#33acf1) border-box`,
           filter: "blur(1rem)",
           opacity: 0.25,
         }}
@@ -375,8 +418,9 @@ const EditableTable = () => {
   return (
     <>
       <Box sx={{ display: "flex", gap: 1 }}>
-        <GoogleButton>Lorem ipsum</GoogleButton>
-        <Button variant="contained">Add New Row</Button>
+        <GoogleButton>Click me</GoogleButton>
+        <AnimateBorderButton />
+        <AnimateBorderButton2 />
       </Box>
       <Card>
         <CardHeader title="Editable Table" />
