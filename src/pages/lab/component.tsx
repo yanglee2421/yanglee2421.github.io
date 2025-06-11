@@ -26,6 +26,10 @@ import {
   TablePagination,
   Divider,
   ButtonBase,
+  useTheme,
+  Switch,
+  FormControlLabel,
+  Typography,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
@@ -57,6 +61,7 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import "./border.css";
 
 const bgImgHref = new URL(bg, import.meta.url).href;
 
@@ -276,9 +281,76 @@ const columns = [
   }),
 ];
 
+const GoogleButton = (props: React.PropsWithChildren) => {
+  const theme = useTheme();
+
+  return (
+    <ButtonBase
+      sx={{
+        // Padding box background must forward to the border box background
+        background: `linear-gradient(${theme.palette.background.default} 0 0) padding-box,conic-gradient(from var(--glow-deg,-45deg), ${[
+          theme.palette.primary.main,
+          theme.palette.secondary.main,
+          theme.palette.error.main,
+          theme.palette.warning.main,
+          theme.palette.info.main,
+          theme.palette.success.main,
+        ].join()}) border-box`,
+
+        paddingInline: 2,
+        paddingBlock: 1,
+
+        borderColor: "transparent",
+        borderWidth: 3,
+        borderStyle: "solid",
+        borderRadius: theme.shape.borderRadius + "px",
+
+        position: "relative",
+        isolation: "isolate",
+
+        animation: "glow 8s infinite linear",
+      }}
+    >
+      <Box
+        sx={{
+          position: "absolute",
+          inset: "0.25rem",
+          zIndex: -1,
+
+          borderRadius: "inherit",
+
+          background: `linear-gradient(${theme.palette.background.default} 0 0)`,
+          filter: "blur(1rem)",
+          transformOrigin: "center",
+          scale: "1 1",
+        }}
+      ></Box>
+      {props.children}
+      <Box
+        sx={{
+          position: "absolute",
+          inset: "-0.25rem",
+          zIndex: -2,
+          borderRadius: "inherit",
+          backgroundImage: `conic-gradient(from var(--glow-deg,-45deg), ${[
+            theme.palette.primary.main,
+            theme.palette.secondary.main,
+            theme.palette.error.main,
+            theme.palette.warning.main,
+            theme.palette.info.main,
+            theme.palette.success.main,
+          ].join()})`,
+          filter: "blur(1rem)",
+          opacity: 0.25,
+        }}
+      ></Box>
+    </ButtonBase>
+  );
+};
+
 const EditableTable = () => {
   "use no memo";
-  const [data, setData] = React.useState(initMockData);
+  const [data] = React.useState(initMockData);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
@@ -301,66 +373,119 @@ const EditableTable = () => {
   };
 
   return (
-    <Card>
-      <CardHeader title="Editable Table" />
-      <CardContent>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField label="Search" fullWidth placeholder="Search..." />
-          </Grid>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField label="Filter" fullWidth placeholder="Filter..." />
-          </Grid>
-        </Grid>
-      </CardContent>
-      <Divider />
-      <CardContent>
+    <>
+      <Box sx={{ display: "flex", gap: 1 }}>
+        <GoogleButton>Lorem ipsum</GoogleButton>
         <Button variant="contained">Add New Row</Button>
-      </CardContent>
-      <LinearProgress />
-      <TableContainer>
-        <Table>
-          <TableHead>
-            {table.getHeaderGroups().map((hg) => (
-              <TableRow key={hg.id}>
-                {hg.headers.map((h) => (
-                  <TableCell key={h.id}>
-                    {h.isPlaceholder ||
-                      flexRender(h.column.columnDef.header, h.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableHead>
-          <TableBody>{renderBody()}</TableBody>
-          <TableFooter>
-            {table.getFooterGroups().map((hg) => (
-              <TableRow key={hg.id}>
-                {hg.headers.map((h) => (
-                  <TableCell key={h.id}>
-                    {h.isPlaceholder ||
-                      flexRender(h.column.columnDef.footer, h.getContext())}
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableFooter>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        component={"div"}
-        count={table.getRowCount()}
-        rowsPerPage={table.getState().pagination.pageSize}
-        page={table.getState().pagination.pageIndex}
-        onPageChange={(_, page) => {
-          table.setPageIndex(page);
-        }}
-        onRowsPerPageChange={(e) => {
-          table.setPageSize(Number(e.target.value));
-        }}
-        rowsPerPageOptions={[10, 20, 50]}
+      </Box>
+      <Card>
+        <CardHeader title="Editable Table" />
+        <CardContent>
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField label="Search" fullWidth placeholder="Search..." />
+            </Grid>
+            <Grid size={{ xs: 12, sm: 6 }}>
+              <TextField label="Filter" fullWidth placeholder="Filter..." />
+            </Grid>
+          </Grid>
+        </CardContent>
+        <Divider />
+        <CardContent>
+          <Stack spacing={1} direction={"row"}>
+            <Button variant="contained">Add New Row</Button>
+          </Stack>
+        </CardContent>
+        <LinearProgress />
+        <TableContainer>
+          <Table>
+            <TableHead>
+              {table.getHeaderGroups().map((hg) => (
+                <TableRow key={hg.id}>
+                  {hg.headers.map((h) => (
+                    <TableCell key={h.id}>
+                      {h.isPlaceholder ||
+                        flexRender(h.column.columnDef.header, h.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableHead>
+            <TableBody>{renderBody()}</TableBody>
+            <TableFooter>
+              {table.getFooterGroups().map((hg) => (
+                <TableRow key={hg.id}>
+                  {hg.headers.map((h) => (
+                    <TableCell key={h.id}>
+                      {h.isPlaceholder ||
+                        flexRender(h.column.columnDef.footer, h.getContext())}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              ))}
+            </TableFooter>
+          </Table>
+        </TableContainer>
+        <TablePagination
+          component={"div"}
+          count={table.getRowCount()}
+          rowsPerPage={table.getState().pagination.pageSize}
+          page={table.getState().pagination.pageIndex}
+          onPageChange={(_, page) => {
+            table.setPageIndex(page);
+          }}
+          onRowsPerPageChange={(e) => {
+            table.setPageSize(Number(e.target.value));
+          }}
+          rowsPerPageOptions={[10, 20, 50]}
+        />
+      </Card>
+    </>
+  );
+};
+
+const StackContextDemo = () => {
+  const [enableIsolation, setIsolation] = React.useState(false);
+
+  return (
+    <Box sx={{ isolation: "isolate", height: 400 }}>
+      <FormControlLabel
+        control={
+          <Switch
+            checked={enableIsolation}
+            onChange={(event) => setIsolation(event.target.checked)}
+          />
+        }
+        label="Enable Isolation"
       />
-    </Card>
+      <Box>
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 2,
+            height: 200,
+            width: 200,
+            backgroundColor: (theme) => alpha(theme.palette.error.main, 1),
+          }}
+        >
+          <Typography variant="h2">2</Typography>
+        </Box>
+      </Box>
+      <Box sx={{ isolation: enableIsolation ? "isolate" : "auto" }}>
+        <Box
+          sx={{
+            position: "relative",
+            zIndex: 3,
+            height: 200,
+            width: 200,
+            backgroundColor: (theme) => alpha(theme.palette.success.main, 1),
+            top: -100,
+          }}
+        >
+          <Typography variant="h2">3</Typography>
+        </Box>
+      </Box>
+    </Box>
   );
 };
 
@@ -477,6 +602,7 @@ export const Component = () => {
       </Card>
       <WebSocketCard />
       <EditableTable />
+      <StackContextDemo />
     </Stack>
   );
 };
