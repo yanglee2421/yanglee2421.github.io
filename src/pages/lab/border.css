@@ -1,0 +1,11 @@
+@property --glow-deg {
+  syntax: "<angle>";
+  inherits: true;
+  initial-value: 0deg;
+}
+
+@keyframes glow {
+  100% {
+    --glow-deg: 360deg;
+  }
+}
