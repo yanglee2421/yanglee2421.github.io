@@ -24,6 +24,7 @@ import {
   AddOutlined,
   ListOutlined,
   GroupOutlined,
+  InsertDriveFileOutlined,
 } from "@mui/icons-material";
 import { Box, useTheme } from "@mui/material";
 import { NotificationsProvider, DialogsProvider } from "@toolpad/core";
@@ -117,6 +118,11 @@ const langToNavition = (lang: string): Navigation => [
     segment: path(lang, "minesweeper"),
     title: "Minesweeper",
     icon: <SportsEsportsOutlined />,
+  },
+  {
+    segment: path(lang, "file"),
+    title: "File",
+    icon: <InsertDriveFileOutlined />,
   },
   { segment: path(lang, "qrcode"), title: "QRCode", icon: <QrCodeOutlined /> },
   {
