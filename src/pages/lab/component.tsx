@@ -147,7 +147,9 @@ const SortableItem = (props: SortableItemProps) => {
         backgroundColor: (t) =>
           sort.isDragging ? t.palette.background.paper : void 0,
         borderRadius: (t) =>
-          sort.isDragging ? t.shape.borderRadius / 2 : void 0,
+          sort.isDragging
+            ? parseFloat(t.shape.borderRadius as string) / 2
+            : void 0,
         position: "relative",
         zIndex: (t) => (sort.isDragging ? t.zIndex.speedDial : void 0),
         touchAction: "none",

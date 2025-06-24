@@ -1,19 +1,21 @@
 class Item {
   id: string;
 
-  constructor(
-    public readonly x: number,
-    public readonly y: number,
-  ) {
+  public readonly x: number;
+  public readonly y: number;
+  constructor(x: number, y: number) {
+    this.x = x;
+    this.y = y;
     this.id = `x${this.x}y${this.y}`;
   }
 }
 
-enum GAME_STATUS {
-  PENDING,
-  LOST,
-  WON,
-}
+const GAME_STATUS = {
+  PENDING: 0,
+  LOST: 1,
+  WON: 2,
+} as const;
+type GAME_STATUS = (typeof GAME_STATUS)[keyof typeof GAME_STATUS];
 
 export class MinesweeperGame {
   readonly cells: Array<Item> = [];
@@ -25,13 +27,23 @@ export class MinesweeperGame {
   startTime = 0;
   endTime = 0;
 
+  public readonly columns: number;
+  public readonly rows: number;
+  public readonly bombNums: number;
+  public readonly onGameOver: () => void;
+  public readonly onGameStart: () => void;
   constructor(
-    public readonly columns: number,
-    public readonly rows: number,
-    public readonly bombNums: number,
-    public readonly onGameOver: () => void,
-    public readonly onGameStart: () => void,
+    columns: number,
+    rows: number,
+    bombNums: number,
+    onGameOver: () => void,
+    onGameStart: () => void,
   ) {
+    this.columns = columns;
+    this.rows = rows;
+    this.bombNums = bombNums;
+    this.onGameOver = onGameOver;
+    this.onGameStart = onGameStart;
     for (let i = 0; i < this.rows; i++) {
       for (let j = 0; j < this.columns; j++) {
         this.cells.push(new Item(j, i));

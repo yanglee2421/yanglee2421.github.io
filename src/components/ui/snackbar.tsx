@@ -15,18 +15,7 @@ type CustomSnackbarProps = CustomContentProps & {
 };
 
 const CustomSnackbar = (props: CustomSnackbarProps) => {
-  const {
-    id,
-    message,
-    iconVariant,
-    hideIconVariant,
-    action,
-    anchorOrigin,
-    autoHideDuration,
-    persist,
-    variant,
-    ...rest
-  } = props;
+  const { id, message, action, ...rest } = props;
 
   const snackbar = useSnackbar();
 
@@ -52,7 +41,18 @@ const CustomSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div role="alert" {...rest}>
+    <div
+      role="alert"
+      style={rest.style}
+      className={rest.className}
+      ref={(el) => {
+        if (typeof rest.ref === "function") {
+          rest.ref(el);
+        } else if (rest.ref) {
+          rest.ref.current = el;
+        }
+      }}
+    >
       <SnackbarContent message={message} action={renderAction()} />
     </div>
   );
@@ -60,15 +60,10 @@ const CustomSnackbar = (props: CustomSnackbarProps) => {
 
 const SuccessSnackbar = (props: CustomSnackbarProps) => {
   const {
-    id,
     message,
-    iconVariant,
-    hideIconVariant,
+
     action,
-    anchorOrigin,
-    autoHideDuration,
-    persist,
-    variant,
+
     ...rest
   } = props;
 
@@ -96,7 +91,18 @@ const SuccessSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div role="alert" {...rest}>
+    <div
+      role="alert"
+      style={rest.style}
+      className={rest.className}
+      ref={(el) => {
+        if (typeof rest.ref === "function") {
+          rest.ref(el);
+        } else if (rest.ref) {
+          rest.ref.current = el;
+        }
+      }}
+    >
       <SnackbarContent
         message={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -119,15 +125,10 @@ const SuccessSnackbar = (props: CustomSnackbarProps) => {
 
 const ErrorSnackbar = (props: CustomSnackbarProps) => {
   const {
-    id,
     message,
-    iconVariant,
-    hideIconVariant,
+
     action,
-    anchorOrigin,
-    autoHideDuration,
-    persist,
-    variant,
+
     ...rest
   } = props;
 
@@ -155,7 +156,18 @@ const ErrorSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div role="alert" {...rest}>
+    <div
+      role="alert"
+      style={rest.style}
+      className={rest.className}
+      ref={(el) => {
+        if (typeof rest.ref === "function") {
+          rest.ref(el);
+        } else if (rest.ref) {
+          rest.ref.current = el;
+        }
+      }}
+    >
       <SnackbarContent
         message={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -177,18 +189,7 @@ const ErrorSnackbar = (props: CustomSnackbarProps) => {
 };
 
 const WarningSnackbar = (props: CustomSnackbarProps) => {
-  const {
-    id,
-    message,
-    iconVariant,
-    hideIconVariant,
-    action,
-    anchorOrigin,
-    autoHideDuration,
-    persist,
-    variant,
-    ...rest
-  } = props;
+  const { message, action, ...rest } = props;
 
   const snackbar = useSnackbar();
 
@@ -214,7 +215,18 @@ const WarningSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div role="alert" {...rest}>
+    <div
+      role="alert"
+      style={rest.style}
+      className={rest.className}
+      ref={(el) => {
+        if (typeof rest.ref === "function") {
+          rest.ref(el);
+        } else if (rest.ref) {
+          rest.ref.current = el;
+        }
+      }}
+    >
       <SnackbarContent
         message={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -236,18 +248,7 @@ const WarningSnackbar = (props: CustomSnackbarProps) => {
 };
 
 const InfoSnackbar = (props: CustomSnackbarProps) => {
-  const {
-    id,
-    message,
-    iconVariant,
-    hideIconVariant,
-    action,
-    anchorOrigin,
-    autoHideDuration,
-    persist,
-    variant,
-    ...rest
-  } = props;
+  const { message, action, ...rest } = props;
 
   const snackbar = useSnackbar();
 
@@ -273,7 +274,18 @@ const InfoSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div role="alert" {...rest}>
+    <div
+      role="alert"
+      style={rest.style}
+      className={rest.className}
+      ref={(el) => {
+        if (typeof rest.ref === "function") {
+          rest.ref(el);
+        } else if (rest.ref) {
+          rest.ref.current = el;
+        }
+      }}
+    >
       <SnackbarContent
         message={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -297,7 +309,15 @@ const InfoSnackbar = (props: CustomSnackbarProps) => {
 export const SnackbarProvider = (props: SnackbarProviderProps) => {
   return (
     <NotistackProvider
-      {...props}
+      style={props.style}
+      className={props.className}
+      ref={(el) => {
+        if (typeof props.ref === "function") {
+          props.ref(el);
+        } else if (props.ref) {
+          props.ref.current = el;
+        }
+      }}
       Components={{
         default: CustomSnackbar,
         success: SuccessSnackbar,

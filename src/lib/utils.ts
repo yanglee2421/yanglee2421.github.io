@@ -47,7 +47,11 @@ export const getMatchedLang = (path = "", state: string) => {
 };
 
 export class AnimateController {
-  constructor(private readonly animate: () => void) {}
+  private readonly animate: () => void;
+
+  constructor(animate: () => void) {
+    this.animate = animate;
+  }
 
   #animateId = 0;
   play() {
@@ -61,10 +65,13 @@ export class AnimateController {
 }
 
 export class GetRandom {
-  constructor(
-    private readonly min: number,
-    private readonly max: number,
-  ) {}
+  private readonly min: number;
+  private readonly max: number;
+
+  constructor(min: number, max: number) {
+    this.min = min;
+    this.max = max;
+  }
   get() {
     return Math.random() * (this.max - this.min) + this.min;
   }

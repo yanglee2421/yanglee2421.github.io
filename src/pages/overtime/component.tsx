@@ -107,7 +107,6 @@ const columns = [
 ];
 
 export const Component = () => {
-  // eslint-disable-next-line
   "use no memo";
 
   const [pageIndex, setPageIndex] = React.useState(0);

@@ -2,7 +2,7 @@ import {
   createBrowserRouter,
   createHashRouter,
   Outlet,
-  RouteObject,
+  type RouteObject,
   RouterProvider,
   Link,
   useRouteError,

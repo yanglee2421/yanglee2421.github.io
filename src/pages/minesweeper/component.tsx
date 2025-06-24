@@ -10,7 +10,7 @@ import {
   IconButton,
   MenuItem,
   TextField,
-  Theme,
+  type Theme,
   useTheme,
 } from "@mui/material";
 import {
@@ -58,7 +58,7 @@ type CellProps = {
 
 const Cell = (props: CellProps) => {
   const ref = React.useRef(null);
-  const timerRef = React.useRef(0);
+  const timerRef = React.useRef<NodeJS.Timeout | number>(0);
   const lastPressRef = React.useRef(0);
 
   const theme = useTheme();
