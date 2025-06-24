@@ -5,7 +5,7 @@ import remarkBreaks from "remark-breaks";
 import remarkGfm from "remark-gfm";
 import rehypeRaw from "rehype-raw";
 import rehypeShikiFromHighlighter, {
-  RehypeShikiCoreOptions,
+  type RehypeShikiCoreOptions,
 } from "@shikijs/rehype/core";
 import { hightlighter } from "@/lib/constants";
 import { useIsDark } from "@/hooks/dom/useIsDark";

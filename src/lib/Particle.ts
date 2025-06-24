@@ -10,10 +10,12 @@ class Particle {
   x: number;
   y: number;
   color: string;
-  constructor(private readonly canvas: HTMLCanvasElement) {
+  private readonly canvas: HTMLCanvasElement;
+  constructor(canvas: HTMLCanvasElement) {
     this.x = Math.random() * canvas.width;
     this.y = Math.random() * canvas.height;
     this.color = `rgba(254,250,255,${1 - 1 / this.radius})`;
+    this.canvas = canvas;
   }
 
   draw() {
@@ -40,11 +42,11 @@ class Particle {
 
 export class Particles {
   #arr: Particle[] = [];
-  constructor(
-    private readonly canvas: HTMLCanvasElement,
-    particleNum = 100,
-    private lineMax = 100,
-  ) {
+  private readonly canvas: HTMLCanvasElement;
+  private lineMax: number;
+  constructor(canvas: HTMLCanvasElement, particleNum = 100, lineMax = 100) {
+    this.canvas = canvas;
+    this.lineMax = lineMax;
     for (let i = 0; i < particleNum; i++) {
       this.#arr.push(new Particle(this.canvas));
     }

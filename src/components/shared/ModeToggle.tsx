@@ -11,7 +11,7 @@ import {
   DesktopWindowsOutlined,
   LightModeOutlined,
 } from "@mui/icons-material";
-import { Mode, useLocalStore } from "@/hooks/store/useLocalStore";
+import { type Mode, useLocalStore } from "@/hooks/store/useLocalStore";
 
 export function ModeToggle() {
   const mode = useLocalStore((s) => s.mode);

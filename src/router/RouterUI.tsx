@@ -2,7 +2,7 @@ import {
   createBrowserRouter,
   createHashRouter,
   Outlet,
-  RouteObject,
+  type RouteObject,
   RouterProvider,
   Link,
   useRouteError,
@@ -242,7 +242,11 @@ const routes: RouteObject[] = [
                     path: "qrcode",
                     lazy: () => import("@/pages/qrcode/component"),
                   },
-
+                  {
+                    id: "file",
+                    path: "file",
+                    lazy: () => import("@/pages/file/component"),
+                  },
                   {
                     id: "snackbar",
                     path: "snackbar",

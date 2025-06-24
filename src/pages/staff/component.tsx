@@ -80,7 +80,6 @@ const initSearch = () => ({
 });
 
 export const Component = () => {
-  // eslint-disable-next-line
   "use no memo";
   const [search, setSearchValue] = React.useState<SearchValue>(initSearch);
 

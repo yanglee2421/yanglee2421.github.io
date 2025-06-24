@@ -88,7 +88,7 @@ export const Component = () => {
   const parentRef = React.useRef<HTMLDivElement>(null);
   const scrollingRef = React.useRef<number>(0);
 
-  const scrollToFn: VirtualizerOptions<any, any>["scrollToFn"] =
+  const scrollToFn: VirtualizerOptions<HTMLDivElement, Element>["scrollToFn"] =
     React.useCallback((offset, canSmooth, instance) => {
       const duration = 1000;
       const start = parentRef.current?.scrollTop || 0;

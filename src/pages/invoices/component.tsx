@@ -115,7 +115,6 @@ type InvoiceTableProps = {
 };
 
 const InvoiceTable = (props: InvoiceTableProps) => {
-  // eslint-disable-next-line
   "use no memo";
 
   const { search, onSearchChange: setSearchValue } = props;

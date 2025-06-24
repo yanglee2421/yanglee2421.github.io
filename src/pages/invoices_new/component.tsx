@@ -18,7 +18,7 @@ import {
   IconButton,
   ToggleButtonGroup,
   TextField,
-  TextFieldProps,
+  type TextFieldProps,
   ToggleButton,
   Typography,
   RadioGroup,

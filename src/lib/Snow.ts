@@ -11,7 +11,9 @@ class Snowflake {
   yv = 2;
   r = 0;
   color = "";
-  constructor(private readonly canvas: HTMLCanvasElement) {
+  private readonly canvas: HTMLCanvasElement;
+  constructor(canvas: HTMLCanvasElement) {
+    this.canvas = canvas;
     this.reset();
   }
   reset() {
@@ -51,10 +53,12 @@ class Snowflake {
 
 export class Snow {
   #snowflake: Snowflake[] = [];
-  constructor(
-    private readonly canvas: HTMLCanvasElement,
-    public readonly number = 100,
-  ) {}
+  private readonly canvas: HTMLCanvasElement;
+  public readonly number: number;
+  constructor(canvas: HTMLCanvasElement, number = 100) {
+    this.canvas = canvas;
+    this.number = number;
+  }
 
   #animationId = 0;
   animate() {
