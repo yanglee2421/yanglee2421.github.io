@@ -30,7 +30,7 @@ export default defineConfig(() => {
         localsConvention: "camelCaseOnly",
       },
     },
-
+    experimental: { enableNativePlugin: true },
     base: "./",
     envDir: resolve(__dirname, "./"),
     assetsInclude: [],
@@ -133,7 +133,7 @@ export default defineConfig(() => {
       manifest: true,
       sourcemap: false,
       chunkSizeWarningLimit: 500,
-      assetsInlineLimit: 0,
+      assetsInlineLimit: 4096,
     },
 
     server: {
