@@ -19,34 +19,26 @@ const Thumb = styled("div")(({ theme: t }) => ({
   cursor: "pointer",
   borderRadius: 99999,
   backgroundColor: t.palette.primary.main,
+
+  display: "flex",
 }));
 
 const Dot = styled("input")(() => ({
-  // backgroundColor: t.palette.primary.contrastText,
-
   inlineSize: "100%",
   blockSize: "100%",
-  // borderRadius: 99999,
 
-  // position: "absolute",
-  // insetInline: "50%",
-  // insetBlock: "50%",
-  // translate: "-50% -50%",
-
-  appearance: "auto",
-  clipPath: "rect(0px 0px 0px 0px)",
+  appearance: "none",
+  clip: "rect(0px, 0px, 0px, 0px)",
+  margin: -1,
   overflow: "hidden",
   whiteSpace: "nowrap",
+  // pointerEvents: "none",
 
   padding: 0,
-  margin: 0,
-
-  display: "block",
 
   backgroundColor: "transparent",
 
   position: "absolute",
-  zIndex: -1,
 }));
 
 const useResizeObserver = () => {
@@ -99,8 +91,15 @@ export const Slider = () => {
 
   const startClientXRef = React.useRef(0);
   const startTranslateXRef = React.useRef(0);
+  const dotRef = React.useRef<HTMLInputElement>(null);
 
   const [trackRef, thumbRef, scrollableWidthRef] = useResizeObserver();
+
+  React.useEffect(() => {
+    document.onkeydown = () => {
+      console.log(document.activeElement);
+    };
+  }, []);
 
   return (
     <Track ref={trackRef}>
@@ -112,6 +111,8 @@ export const Slider = () => {
 
           startClientXRef.current = evt.clientX;
           startTranslateXRef.current = translateX;
+          dotRef.current?.focus();
+          console.log(dotRef.current);
         }}
         onPointerMove={(evt) => {
           const hasPointerCapture = evt.currentTarget.hasPointerCapture(
@@ -128,6 +129,7 @@ export const Slider = () => {
               max: scrollableWidth,
             }),
           );
+          dotRef.current?.focus();
         }}
         onPointerUp={(evt) => {
           evt.currentTarget.releasePointerCapture(evt.pointerId);
@@ -136,7 +138,22 @@ export const Slider = () => {
           transform: `translate3d(${translateX}px, 0, 0)`,
         }}
       >
-        <Dot type="range" />
+        <Dot
+          ref={dotRef}
+          type="range"
+          tabIndex={0}
+          onChange={(e) => {
+            const value = parseFloat(e.target.value);
+            const scrollableWidth = scrollableWidthRef.current;
+            const newTranslateX = minmax((value / 100) * scrollableWidth, {
+              min: 0,
+              max: scrollableWidth,
+            });
+
+            setTranslateX(newTranslateX);
+            dotRef.current?.focus();
+          }}
+        />
       </Thumb>
     </Track>
   );

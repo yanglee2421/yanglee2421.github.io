@@ -2,7 +2,6 @@ import { warn } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
   StopOutlined,
-  SendOutlined,
   AutorenewOutlined,
   ContentCopyOutlined,
   ThumbUpOutlined,
@@ -12,6 +11,7 @@ import {
   MoreVertOutlined,
   DeleteOutlined,
   AddOutlined,
+  ArrowUpwardOutlined,
 } from "@mui/icons-material";
 import {
   Box,
@@ -356,7 +356,7 @@ export const CopilotChat = () => {
       default:
         return (
           <Fab type="submit" size="small" color="primary">
-            <SendOutlined fontSize="small" />
+            <ArrowUpwardOutlined fontSize="small" />
           </Fab>
         );
     }
@@ -478,12 +478,22 @@ export const CopilotChat = () => {
         blockSize: "100%",
       }}
     >
-      <Box sx={{ display: "flex", paddingInline: 1.5, paddingBlock: 1.5 }}>
+      <Box
+        sx={{
+          display: "flex",
+          paddingInline: 1.5,
+          paddingBlock: 1.5,
+          alignItems: "center",
+        }}
+      >
         <Box sx={{ flex: 1, minInlineSize: 0 }}>
           <Typography variant="h6">Copilot Chat</Typography>
           <Typography variant="subtitle1">#{completion?.id}</Typography>
         </Box>
-        <IconButton onClick={(e) => setMenuAnchorEl(e.currentTarget)}>
+        <IconButton
+          onClick={(e) => setMenuAnchorEl(e.currentTarget)}
+          size="large"
+        >
           <MoreVertOutlined />
         </IconButton>
         <Menu
@@ -562,6 +572,7 @@ export const CopilotChat = () => {
                       sx={{
                         padding: 1.5,
                         bgcolor: (t) => t.palette.primary.main,
+                        color: (t) => t.palette.primary.contrastText,
                       }}
                     >
                       {i.question}
@@ -585,7 +596,7 @@ export const CopilotChat = () => {
           <div ref={chatLogRef} />
         </ScrollView>
       </Box>
-      <Box sx={{ padding: 1.5, paddingBlockStart: 0 }}>
+      <Box sx={{}}>
         <form
           ref={formRef}
           onSubmit={handleSubmit}
