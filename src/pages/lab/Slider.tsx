@@ -94,12 +94,6 @@ export const Slider = () => {
 
   const [trackRef, thumbRef, scrollableWidthRef] = useResizeObserver();
 
-  React.useEffect(() => {
-    document.onkeydown = () => {
-      console.log(document.activeElement);
-    };
-  }, []);
-
   return (
     <Track ref={trackRef}>
       <Thumb
@@ -111,7 +105,6 @@ export const Slider = () => {
           startClientXRef.current = evt.clientX;
           startTranslateXRef.current = translateX;
           dotRef.current?.focus();
-          console.log(dotRef.current);
         }}
         onPointerMove={(evt) => {
           const hasPointerCapture = evt.currentTarget.hasPointerCapture(

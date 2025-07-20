@@ -80,10 +80,11 @@ const renderBadgeContent = (date: Date, start?: Date, end?: Date) => {
         mathjs.multiply(
           mathjs.bignumber(1000),
           mathjs.bignumber(60),
-          mathjs.multiply(mathjs.bignumber(60), mathjs.bignumber(24)),
+          mathjs.bignumber(60),
+          mathjs.bignumber(24),
         ),
       ),
-      1,
+      mathjs.bignumber(1),
     )
     .toString();
 };
@@ -107,8 +108,8 @@ export const Component = () => {
   return (
     <Card>
       <CardHeader
-        title={time}
-        subheader={date}
+        title={date}
+        subheader={time}
         action={
           <>
             <IconButton
