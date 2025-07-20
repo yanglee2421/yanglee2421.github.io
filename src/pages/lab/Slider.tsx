@@ -28,13 +28,12 @@ const Dot = styled("input")(() => ({
   blockSize: "100%",
 
   appearance: "none",
-  clip: "rect(0px, 0px, 0px, 0px)",
-  margin: -1,
+  clipPath: "rect(0px 0px 0px 0px)",
   overflow: "hidden",
   whiteSpace: "nowrap",
-  // pointerEvents: "none",
 
   padding: 0,
+  margin: -1,
 
   backgroundColor: "transparent",
 
