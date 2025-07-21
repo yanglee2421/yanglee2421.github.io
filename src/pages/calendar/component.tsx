@@ -14,7 +14,9 @@ import {
   TableBody,
   TableCell,
   TableContainer,
+  TableFooter,
   TableHead,
+  TablePagination,
   TableRow,
 } from "@mui/material";
 import {
@@ -23,6 +25,7 @@ import {
 } from "@mui/icons-material";
 import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
 import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
+import * as mathjs from "mathjs";
 
 const minmax = (num: number, { min, max }: { min: number; max: number }) =>
   Math.min(Math.max(num, min), max);
@@ -60,18 +63,33 @@ const renderBadgeContent = (date: Date, start?: Date, end?: Date) => {
     return;
   }
 
-  const time = date.getTime();
-  const minTime = start.getTime();
-  const maxTime = end ? end.getTime() : Number.POSITIVE_INFINITY;
+  const time = dayjs(date).startOf("day").valueOf();
+  const minTime = dayjs(start).startOf("day").valueOf();
+  const maxTime = end
+    ? dayjs(end).startOf("day").valueOf()
+    : Number.POSITIVE_INFINITY;
 
   if (!inRange(time, minTime, maxTime)) {
     return;
   }
 
-  return (time - minTime) / (1000 * 60 * 60 * 24) + 1;
+  return mathjs
+    .add(
+      mathjs.divide(
+        mathjs.subtract(mathjs.bignumber(time), mathjs.bignumber(minTime)),
+        mathjs.multiply(
+          mathjs.bignumber(1000),
+          mathjs.bignumber(60),
+          mathjs.bignumber(60),
+          mathjs.bignumber(24),
+        ),
+      ),
+      mathjs.bignumber(1),
+    )
+    .toString();
 };
 
-const initSelectedTime = () => dayjs(new Date().toDateString());
+const initSelectedTime = () => dayjs();
 
 export const Component = () => {
   const [endDate, setEndDate] = React.useState<dayjs.Dayjs | null>(null);
@@ -90,8 +108,8 @@ export const Component = () => {
   return (
     <Card>
       <CardHeader
-        title={time}
-        subheader={date}
+        title={date}
+        subheader={time}
         action={
           <>
             <IconButton
@@ -194,8 +212,28 @@ export const Component = () => {
               </TableRow>
             ))}
           </TableBody>
+          <TableFooter>
+            <TableRow>
+              {calendar.slice(0, 7).map((date) => {
+                const weekday = date.toLocaleString(i18n.language, {
+                  weekday: "short",
+                });
+
+                return <TableCell key={weekday}>{weekday}</TableCell>;
+              })}
+            </TableRow>
+          </TableFooter>
         </Table>
       </TableContainer>
+      <TablePagination
+        component="div"
+        count={calendar.length}
+        rowsPerPage={20}
+        rowsPerPageOptions={[20, 50, 100]}
+        page={0}
+        onPageChange={Boolean}
+        onRowsPerPageChange={Boolean}
+      />
     </Card>
   );
 };

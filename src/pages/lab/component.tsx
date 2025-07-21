@@ -30,6 +30,10 @@ import {
   Switch,
   FormControlLabel,
   Typography,
+  FormLabel,
+  FormControl,
+  FormGroup,
+  Slider as MuiSlider,
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
@@ -626,8 +630,34 @@ export const Component = () => {
       <Card>
         <CardHeader title="Slider" subheader=" slider input" />
         <CardContent>
-          <Slider />
-          <input type="range" />
+          <Grid container spacing={3}>
+            <Grid size={{ xs: 12 }}>
+              <FormControl fullWidth>
+                <FormLabel>Slider</FormLabel>
+                <FormGroup>
+                  <Box sx={{ paddingBlock: 2 }}>
+                    <Slider />
+                  </Box>
+                </FormGroup>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <FormControl>
+                <FormLabel>Native</FormLabel>
+                <FormGroup>
+                  <input type="range" />
+                </FormGroup>
+              </FormControl>
+            </Grid>
+            <Grid size={{ xs: 12 }}>
+              <FormControl fullWidth>
+                <FormLabel>MUI</FormLabel>
+                <FormGroup>
+                  <MuiSlider />
+                </FormGroup>
+              </FormControl>
+            </Grid>
+          </Grid>
         </CardContent>
       </Card>
       <Card>

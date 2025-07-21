@@ -1,8 +1,6 @@
 import {
   DashboardOutlined,
   CalendarTodayOutlined,
-  CalculateOutlined,
-  WalletOutlined,
   CalendarMonthOutlined,
   SportsEsportsOutlined,
   QrCodeOutlined,
@@ -14,8 +12,6 @@ import {
   TokenOutlined,
   ViewDayRounded,
   MessageOutlined,
-  GroupAddOutlined,
-  GroupOutlined,
 } from "@mui/icons-material";
 import { styled, alpha, Typography } from "@mui/material";
 import { useParams, NavLink } from "react-router";
@@ -63,26 +59,26 @@ const list = [
     label: "Calendar",
     icon: <CalendarTodayOutlined />,
   },
-  {
-    to: "/invoices",
-    label: "Invoices",
-    icon: <WalletOutlined />,
-  },
-  {
-    to: "/invoices/new",
-    label: "Calculator",
-    icon: <CalculateOutlined />,
-  },
-  {
-    to: "/staff",
-    label: "Staff",
-    icon: <GroupOutlined />,
-  },
-  {
-    to: "/staff/new",
-    label: "Staff",
-    icon: <GroupAddOutlined />,
-  },
+  // {
+  //   to: "/invoices",
+  //   label: "Invoices",
+  //   icon: <WalletOutlined />,
+  // },
+  // {
+  //   to: "/invoices/new",
+  //   label: "Calculator",
+  //   icon: <CalculateOutlined />,
+  // },
+  // {
+  //   to: "/staff",
+  //   label: "Staff",
+  //   icon: <GroupOutlined />,
+  // },
+  // {
+  //   to: "/staff/new",
+  //   label: "Staff",
+  //   icon: <GroupAddOutlined />,
+  // },
   {
     to: "/overtime",
     label: "Overtime",
@@ -90,7 +86,7 @@ const list = [
   },
   {
     to: "/overtime/new",
-    label: "Overtime",
+    label: "Overtime New",
     icon: <CalendarMonthOutlined />,
   },
   {
