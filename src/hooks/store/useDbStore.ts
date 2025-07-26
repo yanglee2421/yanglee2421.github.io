@@ -30,6 +30,9 @@ export const useDbStore = create<Store>()(
       name: "useDbStore",
       storage: createJSONStorage(() => localforage),
       version: 1,
+      migrate(state) {
+        return state;
+      },
     },
   ),
 );

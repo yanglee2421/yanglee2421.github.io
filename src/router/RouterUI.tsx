@@ -18,6 +18,7 @@ import { ModeToggle } from "@/components/shared/ModeToggle";
 import { AuthGuard, GuestGuard, LangGuard } from "./guard";
 import { AuthLayout } from "@/components/layout/auth";
 import { RootRoute } from "./root";
+import { UserDropdown } from "@/components/shared/UserDropdonw";
 
 const DashLayout = () => {
   const activePage = useActivePage();
@@ -60,6 +61,7 @@ const DashLayout = () => {
     <DashboardLayout
       slots={{
         toolbarActions: ModeToggle,
+        toolbarAccount: UserDropdown,
       }}
     >
       <PageContainer title={renderTitle()} breadcrumbs={renderBreadcrumbs()}>
@@ -121,6 +123,7 @@ const routes: RouteObject[] = [
     id: "root",
     Component: RootRoute,
     ErrorBoundary: RootErrorBoundary,
+    HydrateFallback: () => <>HydrateFallback</>,
     children: [
       {
         id: "lang",

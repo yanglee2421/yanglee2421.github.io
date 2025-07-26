@@ -18,13 +18,63 @@ import { signOut } from "firebase/auth";
 import { auth } from "@/api/firebase/app";
 import { Link } from "react-router";
 
-export function UserDropdown() {
+export const UserDropdown = () => {
   const user = useCurrentUser();
   const isOnline = useOnlineStatus();
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const handleClose = () => {
     setAnchor(null);
+  };
+
+  const renderUserMenuItem = () => {
+    if (user) {
+      return [
+        <MenuItem key="profile">
+          <ListItemIcon>
+            <PersonOutlined />
+          </ListItemIcon>
+          <ListItemText
+            primary={
+              <Translation ns="/layout/userdropdown">
+                {(t) => t("profile")}
+              </Translation>
+            }
+          />
+        </MenuItem>,
+        <Divider key={"Divider"} />,
+        <Box sx={{ paddingInline: 1 }} key={"signout"}>
+          <Button
+            onClick={() => {
+              signOut(auth);
+              handleClose();
+            }}
+            size="small"
+            fullWidth
+            variant="contained"
+            color="error"
+          >
+            signout
+          </Button>
+        </Box>,
+      ];
+    }
+
+    return [
+      <Divider key={"Divider"} />,
+      <Box key={"login"} sx={{ paddingInline: 3, paddingBlock: 3 }}>
+        <Button
+          to="/login"
+          component={Link}
+          size="small"
+          fullWidth
+          variant="contained"
+          color="info"
+        >
+          Sign In
+        </Button>
+      </Box>,
+    ];
   };
 
   return (
@@ -65,52 +115,8 @@ export function UserDropdown() {
             }
           />
         </MenuItem>
-        {user
-          ? [
-              <MenuItem key="profile">
-                <ListItemIcon>
-                  <PersonOutlined />
-                </ListItemIcon>
-                <ListItemText
-                  primary={
-                    <Translation ns="/layout/userdropdown">
-                      {(t) => t("profile")}
-                    </Translation>
-                  }
-                />
-              </MenuItem>,
-              <Divider key={"Divider"} />,
-              <Box sx={{ paddingInline: 3, paddingBlock: 3 }} key={"signout"}>
-                <Button
-                  onClick={() => {
-                    signOut(auth);
-                    handleClose();
-                  }}
-                  size="small"
-                  fullWidth
-                  variant="contained"
-                  color="error"
-                >
-                  signout
-                </Button>
-              </Box>,
-            ]
-          : [
-              <Divider key={"Divider"} />,
-              <Box key={"login"} sx={{ paddingInline: 3, paddingBlock: 3 }}>
-                <Button
-                  to="/login"
-                  component={Link}
-                  size="small"
-                  fullWidth
-                  variant="contained"
-                  color="info"
-                >
-                  Sign In
-                </Button>
-              </Box>,
-            ]}
+        {renderUserMenuItem()}
       </Menu>
     </>
   );
-}
+};
