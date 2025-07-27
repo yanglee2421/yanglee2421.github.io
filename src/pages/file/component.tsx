@@ -1,11 +1,24 @@
 import { AddOutlined } from "@mui/icons-material";
-import { Divider, useTheme } from "@mui/material";
+import {
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  Divider,
+  FormControl,
+  FormLabel,
+  Grid,
+  LinearProgress,
+  Stack,
+  TextField,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 import * as pdfjs from "pdfjs-dist";
 import { readBarcodes, prepareZXingModule } from "zxing-wasm/reader";
 import wasmURL from "zxing-wasm/reader/zxing_reader.wasm?url";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
 
 prepareZXingModule({
   overrides: {
@@ -89,27 +102,25 @@ const renderFile = (file: File | null) => {
   return <p>File type not supported for preview: {file.type}</p>;
 };
 
+const fetchBarcodeText = (file: File) =>
+  queryOptions({
+    queryKey: [
+      "pdf demo",
+      [file.lastModified, file.name, file.size, file.type],
+    ],
+    async queryFn() {
+      const blob = await pdfToImageBlob(file);
+      const barcodes = await readBarcodes(blob);
+      return barcodes.map((i) => i.text);
+    },
+  });
+
 type BarcodeTextProps = {
   file: File;
 };
 
 const BarcodeText = (props: BarcodeTextProps) => {
-  const query = useQuery({
-    queryKey: [
-      "pdf demo",
-      [
-        props.file.lastModified,
-        props.file.name,
-        props.file.size,
-        props.file.type,
-      ],
-    ],
-    async queryFn() {
-      const blob = await pdfToImageBlob(props.file);
-      const barcodes = await readBarcodes(blob);
-      return barcodes.map((i) => i.text);
-    },
-  });
+  const query = useQuery(fetchBarcodeText(props.file));
 
   if (query.isPending) {
     return <p>loading...</p>;
@@ -135,76 +146,137 @@ export const Component = () => {
   const theme = useTheme();
 
   return (
-    <div>
-      <h2>Extract QRCode from pdf</h2>
-      <div>{renderFile(file)}</div>
-      <Divider />
-      <label
-        onDrop={(e) => {
-          e.preventDefault();
-          const file = e.dataTransfer.files.item(0);
-          if (file) {
-            setFile(file);
-          }
-        }}
-        onDragOver={(e) => {
-          e.preventDefault();
-        }}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "3rem",
-          border: "2px dashed",
-          borderColor: theme.palette.divider,
+    <Stack spacing={1.5}>
+      <Card>
+        <CardHeader title={"Extract QRCode from pdf"} />
+        <CardContent>
+          <Grid container spacing={1.5}>
+            <Grid size={12}>
+              <div>{renderFile(file)}</div>
+            </Grid>
+            <Grid size={12}>
+              <Divider />
+            </Grid>
+            <Grid size={12}>
+              <label
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files.item(0);
+                  if (file) {
+                    setFile(file);
+                  }
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                }}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "3rem",
+                  border: "2px dashed",
+                  borderColor: theme.palette.divider,
 
-          cursor: "pointer",
-        }}
-      >
-        <input
-          type="file"
-          onChange={(e) => {
-            const file = e.target.files?.item(0);
-            if (file) {
-              setFile(file);
-            }
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    const file = e.target.files?.item(0);
+                    if (file) {
+                      setFile(file);
+                    }
+                  }}
+                  style={{ display: "none" }}
+                />
+                <AddOutlined fontSize="large" />
+              </label>
+            </Grid>
+            <Grid size={12}>
+              <FormControl fullWidth>
+                <FormLabel>Paste your files here to upload</FormLabel>
+                <TextField
+                  onPaste={(e) => {
+                    const file = e.clipboardData.files.item(0);
+                    if (file) {
+                      setFile(file);
+                    }
+                  }}
+                  rows={5}
+                  placeholder="Paste any file here"
+                  fullWidth
+                />
+              </FormControl>
+            </Grid>
+            <Grid size={12}>
+              <Divider />
+            </Grid>
+            <Grid size={12}>
+              <div>
+                <TextField
+                  onPaste={async (e) => {
+                    const fileList = [...e.clipboardData.files];
+                    setFiles(fileList);
+                  }}
+                  placeholder="Paste pdf file here"
+                  style={{ width: "100%", resize: "vertical" }}
+                />
+                <ul>
+                  {files.map((file, index) => (
+                    <li key={index}>
+                      <BarcodeText file={file} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+      <CalculatePDF />
+    </Stack>
+  );
+};
+
+const CalculatePDF = () => {
+  const [files, setFiles] = React.useState<File[]>([]);
+
+  const queries = useQueries({
+    queries: files.map((file) => fetchBarcodeText(file)),
+  });
+
+  const isFetching = queries.some((query) => query.isFetching);
+
+  return (
+    <Card>
+      <CardHeader title={"Calculate"} />
+      <CardContent>
+        <TextField
+          fullWidth
+          multiline
+          minRows={2}
+          onDrop={(e) => {
+            e.preventDefault();
+            const files = [...e.dataTransfer.files];
+            setFiles(files);
           }}
-          style={{ display: "none" }}
+          onDragOver={(e) => {
+            e.preventDefault();
+          }}
+          onPaste={(e) => {
+            const files = [...e.clipboardData.files];
+            setFiles(files);
+          }}
         />
-        <AddOutlined fontSize="large" />
-      </label>
-      <p>Paste your files here to upload</p>
-      <textarea
-        name=""
-        id=""
-        onPaste={(e) => {
-          const file = e.clipboardData.files.item(0);
-          if (file) {
-            setFile(file);
-          }
-        }}
-        rows={5}
-        placeholder="Paste any file here"
-        style={{ width: "100%", resize: "vertical" }}
-      ></textarea>
-      <hr />
-      <div>
-        <textarea
-          onPaste={async (e) => {
-            const fileList = [...e.clipboardData.files];
-            setFiles(fileList);
-          }}
-          placeholder="Paste pdf file here"
-          style={{ width: "100%", resize: "vertical" }}
-        ></textarea>
-        <ul>
-          {files.map((file, index) => (
-            <li key={index}>
-              <BarcodeText file={file} />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+      </CardContent>
+      {isFetching && <LinearProgress />}
+      <ol>
+        {queries.map((query) =>
+          query.data?.map((barcode) => <li key={barcode}>{barcode}</li>),
+        )}
+      </ol>
+      <CardActions></CardActions>
+    </Card>
   );
 };
