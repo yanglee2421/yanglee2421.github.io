@@ -1,4 +1,4 @@
-import { AddOutlined } from "@mui/icons-material";
+import { AddOutlined, LinkOutlined } from "@mui/icons-material";
 import {
   Card,
   CardActions,
@@ -8,8 +8,17 @@ import {
   FormControl,
   FormLabel,
   Grid,
+  IconButton,
+  InputAdornment,
   LinearProgress,
   Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TableRow,
   TextField,
   useTheme,
 } from "@mui/material";
@@ -19,6 +28,16 @@ import { readBarcodes, prepareZXingModule } from "zxing-wasm/reader";
 import wasmURL from "zxing-wasm/reader/zxing_reader.wasm?url";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
 import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
+import * as mathjs from "mathjs";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 
 prepareZXingModule({
   overrides: {
@@ -247,6 +266,27 @@ const CalculatePDF = () => {
   });
 
   const isFetching = queries.some((query) => query.isFetching);
+  // const isSuccess = queries.every((query) => query.isSuccess);
+
+  const getBarcodes = () => {
+    return queries.flatMap((query) => {
+      if (!query.isSuccess) return [];
+      return query.data
+        .map((text) => stringToInvoiceBarcode(text))
+        .filter((i) => typeof i === "object");
+    });
+  };
+
+  const barcodes = getBarcodes();
+
+  const getTotal = () => {
+    return barcodes.reduce((result, invoice) => {
+      if (!invoice?.amount) return result;
+      return mathjs
+        .add(mathjs.bignumber(result), mathjs.bignumber(invoice.amount))
+        .toString();
+    }, "0");
+  };
 
   return (
     <Card>
@@ -254,8 +294,6 @@ const CalculatePDF = () => {
       <CardContent>
         <TextField
           fullWidth
-          multiline
-          minRows={2}
           onDrop={(e) => {
             e.preventDefault();
             const files = [...e.dataTransfer.files];
@@ -268,15 +306,146 @@ const CalculatePDF = () => {
             const files = [...e.clipboardData.files];
             setFiles(files);
           }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton component="label">
+                    <input
+                      hidden
+                      type="file"
+                      value=""
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        setFiles(files);
+                      }}
+                      multiple
+                      accept="application/pdf"
+                    />
+                    <LinkOutlined />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+          placeholder="Drag or Paste your files here to upload"
         />
       </CardContent>
       {isFetching && <LinearProgress />}
-      <ol>
-        {queries.map((query) =>
-          query.data?.map((barcode) => <li key={barcode}>{barcode}</li>),
-        )}
-      </ol>
-      <CardActions></CardActions>
+      <DataGrid data={barcodes} />
+      <CardActions>{getTotal()}</CardActions>
     </Card>
   );
 };
+
+const stringToInvoiceBarcode = (text: string) => {
+  try {
+    const list = text.split(",");
+    return {
+      id: list.at(3),
+      amount: list.at(4),
+      date: list.at(5),
+    };
+  } catch {
+    return false;
+  }
+};
+
+type Invoice = {
+  id: string | undefined;
+  amount: string | undefined;
+  date: string | undefined;
+};
+
+const columnHelper = createColumnHelper<Invoice>();
+const columns = [
+  columnHelper.accessor("id", {}),
+  columnHelper.accessor("amount", {}),
+  columnHelper.accessor("date", {}),
+];
+
+type DataGridProps = {
+  data: Invoice[];
+};
+
+const DataGrid = (props: DataGridProps) => {
+  "use no memo";
+
+  const table = useReactTable({
+    getCoreRowModel: getCoreRowModel(),
+    columns,
+    data: props.data,
+  });
+
+  const renderBody = () => {
+    return table.getRowModel().rows.map((row) => (
+      <TableRow key={row.id}>
+        {row.getVisibleCells().map((cell) => (
+          <TableCell key={cell.id}>
+            {cell.getIsPlaceholder() ||
+              flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
+      </TableRow>
+    ));
+  };
+
+  return (
+    <>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            {table.getHeaderGroups().map((headerGroup) => {
+              return (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableCell
+                      key={header.id}
+                      sx={{ textTransform: "uppercase" }}
+                    >
+                      {header.isPlaceholder ||
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableHead>
+          <TableBody>{renderBody()}</TableBody>
+          <TableFooter>
+            {table.getFooterGroups().map((footerGroup) => {
+              return (
+                <TableRow key={footerGroup.id}>
+                  {footerGroup.headers.map((footer) => (
+                    <TableCell key={footer.id}>
+                      {footer.isPlaceholder ||
+                        flexRender(
+                          footer.column.columnDef.footer,
+                          footer.getContext(),
+                        )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </>
+  );
+};
+
+const useSessionStore = create()(
+  persist(
+    immer((set) => ({
+      set,
+    })),
+    {
+      name: "useSessionStore",
+      storage: createJSONStorage(() => window.sessionStorage),
+    },
+  ),
+);
