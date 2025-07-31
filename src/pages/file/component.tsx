@@ -1,7 +1,6 @@
 import { AddOutlined, LinkOutlined } from "@mui/icons-material";
 import {
   Card,
-  CardActions,
   CardContent,
   CardHeader,
   Divider,
@@ -66,6 +65,7 @@ const pdfToImageBlob = async (file: File, pageIndex = 1) => {
 
   await page.render({
     viewport,
+    canvas,
     canvasContext,
     transform: Object.is(outputScale, 1)
       ? void 0
@@ -279,15 +279,6 @@ const CalculatePDF = () => {
 
   const barcodes = getBarcodes();
 
-  const getTotal = () => {
-    return barcodes.reduce((result, invoice) => {
-      if (!invoice?.amount) return result;
-      return mathjs
-        .add(mathjs.bignumber(result), mathjs.bignumber(invoice.amount))
-        .toString();
-    }, "0");
-  };
-
   return (
     <Card>
       <CardHeader title={"Calculate"} />
@@ -333,7 +324,6 @@ const CalculatePDF = () => {
       </CardContent>
       {isFetching && <LinearProgress />}
       <DataGrid data={barcodes} />
-      <CardActions>{getTotal()}</CardActions>
     </Card>
   );
 };
@@ -341,10 +331,16 @@ const CalculatePDF = () => {
 const stringToInvoiceBarcode = (text: string) => {
   try {
     const list = text.split(",");
+    const id = list.at(3);
+    if (!id) return false;
+    const amount = list.at(4);
+    if (!amount) return false;
+    const date = list.at(5);
+    if (!date) return false;
     return {
-      id: list.at(3),
-      amount: list.at(4),
-      date: list.at(5),
+      id,
+      amount,
+      date,
     };
   } catch {
     return false;
@@ -359,9 +355,28 @@ type Invoice = {
 
 const columnHelper = createColumnHelper<Invoice>();
 const columns = [
-  columnHelper.accessor("id", {}),
-  columnHelper.accessor("amount", {}),
-  columnHelper.accessor("date", {}),
+  columnHelper.accessor("id", {
+    footer(props) {
+      return props.table.getRowCount();
+    },
+  }),
+  columnHelper.accessor("amount", {
+    footer(props) {
+      return mathjs
+        .sum([
+          mathjs.bignumber(0),
+          ...props.table
+            .getRowModel()
+            .rows.map((row) => mathjs.bignumber(row.original.amount)),
+        ])
+        .toString();
+    },
+  }),
+  columnHelper.accessor("date", {
+    footer(props) {
+      return props.table.getRowCount();
+    },
+  }),
 ];
 
 type DataGridProps = {
