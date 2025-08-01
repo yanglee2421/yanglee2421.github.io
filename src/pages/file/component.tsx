@@ -1,11 +1,48 @@
-import { AddOutlined } from "@mui/icons-material";
-import { Divider, useTheme } from "@mui/material";
+import { AddOutlined, LinkOutlined } from "@mui/icons-material";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  Divider,
+  FormControl,
+  FormLabel,
+  Grid,
+  IconButton,
+  InputAdornment,
+  LinearProgress,
+  Stack,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TableRow,
+  TextField,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 import * as pdfjs from "pdfjs-dist";
 import { readBarcodes, prepareZXingModule } from "zxing-wasm/reader";
 import wasmURL from "zxing-wasm/reader/zxing_reader.wasm?url";
 import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
-import { useQuery } from "@tanstack/react-query";
+import { queryOptions, useQueries, useQuery } from "@tanstack/react-query";
+import * as mathjs from "mathjs";
+import {
+  createColumnHelper,
+  flexRender,
+  getCoreRowModel,
+  useReactTable,
+} from "@tanstack/react-table";
+import { create } from "zustand";
+import { persist, type PersistStorage } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
+import type { WritableDraft } from "immer";
+import { enableMapSet } from "immer";
+import { NumberField } from "@/components/form/number";
+import superjson from "superjson";
+
+enableMapSet();
 
 prepareZXingModule({
   overrides: {
@@ -34,6 +71,7 @@ const pdfToImageBlob = async (file: File, pageIndex = 1) => {
 
   await page.render({
     viewport,
+    canvas,
     canvasContext,
     transform: Object.is(outputScale, 1)
       ? void 0
@@ -89,27 +127,25 @@ const renderFile = (file: File | null) => {
   return <p>File type not supported for preview: {file.type}</p>;
 };
 
+const fetchBarcodeText = (file: File) =>
+  queryOptions({
+    queryKey: [
+      "pdf demo",
+      [file.lastModified, file.name, file.size, file.type],
+    ],
+    async queryFn() {
+      const blob = await pdfToImageBlob(file);
+      const barcodes = await readBarcodes(blob);
+      return barcodes.map((i) => i.text);
+    },
+  });
+
 type BarcodeTextProps = {
   file: File;
 };
 
 const BarcodeText = (props: BarcodeTextProps) => {
-  const query = useQuery({
-    queryKey: [
-      "pdf demo",
-      [
-        props.file.lastModified,
-        props.file.name,
-        props.file.size,
-        props.file.type,
-      ],
-    ],
-    async queryFn() {
-      const blob = await pdfToImageBlob(props.file);
-      const barcodes = await readBarcodes(blob);
-      return barcodes.map((i) => i.text);
-    },
-  });
+  const query = useQuery(fetchBarcodeText(props.file));
 
   if (query.isPending) {
     return <p>loading...</p>;
@@ -135,76 +171,375 @@ export const Component = () => {
   const theme = useTheme();
 
   return (
-    <div>
-      <h2>Extract QRCode from pdf</h2>
-      <div>{renderFile(file)}</div>
-      <Divider />
-      <label
-        onDrop={(e) => {
-          e.preventDefault();
-          const file = e.dataTransfer.files.item(0);
-          if (file) {
-            setFile(file);
-          }
-        }}
-        onDragOver={(e) => {
-          e.preventDefault();
-        }}
-        style={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "center",
-          padding: "3rem",
-          border: "2px dashed",
-          borderColor: theme.palette.divider,
+    <Stack spacing={1.5}>
+      <Card>
+        <CardHeader title={"Extract QRCode from pdf"} />
+        <CardContent>
+          <Grid container spacing={1.5}>
+            <Grid size={12}>
+              <div>{renderFile(file)}</div>
+            </Grid>
+            <Grid size={12}>
+              <Divider />
+            </Grid>
+            <Grid size={12}>
+              <label
+                onDrop={(e) => {
+                  e.preventDefault();
+                  const file = e.dataTransfer.files.item(0);
+                  if (file) {
+                    setFile(file);
+                  }
+                }}
+                onDragOver={(e) => {
+                  e.preventDefault();
+                }}
+                style={{
+                  display: "flex",
+                  justifyContent: "center",
+                  alignItems: "center",
+                  padding: "3rem",
+                  border: "2px dashed",
+                  borderColor: theme.palette.divider,
 
-          cursor: "pointer",
-        }}
-      >
-        <input
-          type="file"
-          onChange={(e) => {
-            const file = e.target.files?.item(0);
-            if (file) {
-              setFile(file);
-            }
-          }}
-          style={{ display: "none" }}
-        />
-        <AddOutlined fontSize="large" />
-      </label>
-      <p>Paste your files here to upload</p>
-      <textarea
-        name=""
-        id=""
-        onPaste={(e) => {
-          const file = e.clipboardData.files.item(0);
-          if (file) {
-            setFile(file);
-          }
-        }}
-        rows={5}
-        placeholder="Paste any file here"
-        style={{ width: "100%", resize: "vertical" }}
-      ></textarea>
-      <hr />
-      <div>
-        <textarea
-          onPaste={async (e) => {
-            const fileList = [...e.clipboardData.files];
-            setFiles(fileList);
-          }}
-          placeholder="Paste pdf file here"
-          style={{ width: "100%", resize: "vertical" }}
-        ></textarea>
-        <ul>
-          {files.map((file, index) => (
-            <li key={index}>
-              <BarcodeText file={file} />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </div>
+                  cursor: "pointer",
+                }}
+              >
+                <input
+                  type="file"
+                  onChange={(e) => {
+                    const file = e.target.files?.item(0);
+                    if (file) {
+                      setFile(file);
+                    }
+                  }}
+                  style={{ display: "none" }}
+                />
+                <AddOutlined fontSize="large" />
+              </label>
+            </Grid>
+            <Grid size={12}>
+              <FormControl fullWidth>
+                <FormLabel>Paste your files here to upload</FormLabel>
+                <TextField
+                  onPaste={(e) => {
+                    const file = e.clipboardData.files.item(0);
+                    if (file) {
+                      setFile(file);
+                    }
+                  }}
+                  rows={5}
+                  placeholder="Paste any file here"
+                  fullWidth
+                />
+              </FormControl>
+            </Grid>
+            <Grid size={12}>
+              <Divider />
+            </Grid>
+            <Grid size={12}>
+              <div>
+                <TextField
+                  onPaste={async (e) => {
+                    const fileList = [...e.clipboardData.files];
+                    setFiles(fileList);
+                  }}
+                  placeholder="Paste pdf file here"
+                  style={{ width: "100%", resize: "vertical" }}
+                />
+                <ul>
+                  {files.map((file, index) => (
+                    <li key={index}>
+                      <BarcodeText file={file} />
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </Grid>
+          </Grid>
+        </CardContent>
+      </Card>
+      <CalculatePDF />
+    </Stack>
   );
+};
+
+const CalculatePDF = () => {
+  const [files, setFiles] = React.useState<File[]>([]);
+
+  const queries = useQueries({
+    queries: files.map((file) => fetchBarcodeText(file)),
+  });
+
+  const isFetching = queries.some((query) => query.isFetching);
+  // const isSuccess = queries.every((query) => query.isSuccess);
+
+  const getBarcodes = () => {
+    return queries.flatMap((query) => {
+      if (!query.isSuccess) return [];
+      return query.data
+        .map((text) => stringToInvoiceBarcode(text))
+        .filter((i) => typeof i === "object");
+    });
+  };
+
+  const barcodes = getBarcodes();
+
+  return (
+    <Card>
+      <CardHeader title={"Calculate"} />
+      <CardContent>
+        <TextField
+          fullWidth
+          onDrop={(e) => {
+            e.preventDefault();
+            const files = [...e.dataTransfer.files];
+            setFiles(files);
+          }}
+          onDragOver={(e) => {
+            e.preventDefault();
+          }}
+          onPaste={(e) => {
+            const files = [...e.clipboardData.files];
+            setFiles(files);
+          }}
+          slotProps={{
+            input: {
+              endAdornment: (
+                <InputAdornment position="end">
+                  <IconButton component="label">
+                    <input
+                      hidden
+                      type="file"
+                      value=""
+                      onChange={(e) => {
+                        const files = Array.from(e.target.files || []);
+                        setFiles(files);
+                      }}
+                      multiple
+                      accept="application/pdf"
+                    />
+                    <LinkOutlined />
+                  </IconButton>
+                </InputAdornment>
+              ),
+            },
+          }}
+          placeholder="Drag or Paste your files here to upload"
+        />
+      </CardContent>
+      {isFetching && <LinearProgress />}
+      <DataGrid data={barcodes} />
+    </Card>
+  );
+};
+
+const stringToInvoiceBarcode = (text: string) => {
+  try {
+    const list = text.split(",");
+    const id = list.at(3);
+    if (!id) return false;
+    const amount = list.at(4);
+    if (!amount) return false;
+    const date = list.at(5);
+    if (!date) return false;
+    return {
+      id,
+      amount,
+      date,
+    };
+  } catch {
+    return false;
+  }
+};
+
+type Invoice = {
+  id: string;
+  amount: string;
+  date: string;
+};
+
+const columnHelper = createColumnHelper<Invoice>();
+const columns = [
+  columnHelper.accessor("id", {
+    footer(props) {
+      return props.table.getRowCount();
+    },
+  }),
+  columnHelper.accessor("amount", {
+    footer: (props) => <AmountFooter rows={props.table.options.data} />,
+  }),
+  columnHelper.accessor("date", {
+    footer(props) {
+      return props.table.getRowCount();
+    },
+  }),
+  columnHelper.display({
+    id: "action",
+    header: "action",
+    cell(props) {
+      return <ActionCell id={props.row.original.id} />;
+    },
+  }),
+];
+
+type DataGridProps = {
+  data: Invoice[];
+};
+
+const DataGrid = (props: DataGridProps) => {
+  "use no memo";
+
+  const table = useReactTable({
+    getCoreRowModel: getCoreRowModel(),
+    columns,
+    data: props.data,
+    getRowId(originalRow) {
+      return originalRow.id || "";
+    },
+  });
+
+  const renderBody = () => {
+    return table.getRowModel().rows.map((row) => (
+      <TableRow key={row.id}>
+        {row.getVisibleCells().map((cell) => (
+          <TableCell key={cell.id}>
+            {cell.getIsPlaceholder() ||
+              flexRender(cell.column.columnDef.cell, cell.getContext())}
+          </TableCell>
+        ))}
+      </TableRow>
+    ));
+  };
+
+  return (
+    <>
+      <TableContainer>
+        <Table>
+          <TableHead>
+            {table.getHeaderGroups().map((headerGroup) => {
+              return (
+                <TableRow key={headerGroup.id}>
+                  {headerGroup.headers.map((header) => (
+                    <TableCell
+                      key={header.id}
+                      sx={{ textTransform: "uppercase" }}
+                    >
+                      {header.isPlaceholder ||
+                        flexRender(
+                          header.column.columnDef.header,
+                          header.getContext(),
+                        )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableHead>
+          <TableBody>{renderBody()}</TableBody>
+          <TableFooter>
+            {table.getFooterGroups().map((footerGroup) => {
+              return (
+                <TableRow key={footerGroup.id}>
+                  {footerGroup.headers.map((footer) => (
+                    <TableCell key={footer.id}>
+                      {footer.isPlaceholder ||
+                        flexRender(
+                          footer.column.columnDef.footer,
+                          footer.getContext(),
+                        )}
+                    </TableCell>
+                  ))}
+                </TableRow>
+              );
+            })}
+          </TableFooter>
+        </Table>
+      </TableContainer>
+    </>
+  );
+};
+
+const storage: PersistStorage<State> = {
+  getItem: (name) => {
+    const str = sessionStorage.getItem(name);
+    if (!str) return null;
+    return superjson.parse(str);
+  },
+  setItem: (name, value) => {
+    sessionStorage.setItem(name, superjson.stringify(value));
+  },
+  removeItem: (name) => sessionStorage.removeItem(name),
+};
+
+type State = {
+  divide: Map<string, number>;
+};
+
+type Actions = {
+  set(
+    nextStateOrUpdater:
+      | State
+      | Partial<State>
+      | ((state: WritableDraft<State>) => void),
+  ): void;
+};
+
+type Store = State & Actions;
+
+const useSessionStore = create<Store>()(
+  persist(
+    immer((set) => ({
+      set,
+      divide: new Map(),
+    })),
+    {
+      name: "useSessionStore",
+      storage,
+    },
+  ),
+);
+
+type ActionCellProps = {
+  id: string;
+};
+
+const ActionCell = (props: ActionCellProps) => {
+  const divide = useSessionStore((s) => s.divide);
+  const set = useSessionStore((s) => s.set);
+
+  return (
+    <NumberField
+      field={{
+        value: divide.get(props.id) || 1,
+        onChange: (e) => {
+          set((draft) => {
+            draft.divide.set(props.id, e);
+          });
+        },
+        onBlur() {},
+      }}
+      autoComplete="off"
+    />
+  );
+};
+
+type AmountFooterProps = {
+  rows: Invoice[];
+};
+
+const AmountFooter = (props: AmountFooterProps) => {
+  const divide = useSessionStore((s) => s.divide);
+
+  return props.rows.reduce((result, row) => {
+    return mathjs
+      .add(
+        mathjs.bignumber(result),
+        mathjs.divide(
+          mathjs.bignumber(row.amount),
+          mathjs.bignumber(divide.get(row.id) || 1),
+        ),
+      )
+      .toString();
+  }, "0");
 };

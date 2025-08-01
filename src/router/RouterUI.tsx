@@ -9,7 +9,14 @@ import {
   isRouteErrorResponse,
   useParams,
 } from "react-router";
-import { Alert, AlertTitle, Box, Button, Typography } from "@mui/material";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+} from "@mui/material";
 import { HomeOutlined } from "@mui/icons-material";
 import { DashboardLayout, PageContainer, useActivePage } from "@toolpad/core";
 import { GuestLayout } from "@/components/layout/guest";
@@ -18,6 +25,7 @@ import { ModeToggle } from "@/components/shared/ModeToggle";
 import { AuthGuard, GuestGuard, LangGuard } from "./guard";
 import { AuthLayout } from "@/components/layout/auth";
 import { RootRoute } from "./root";
+import { UserDropdown } from "@/components/shared/UserDropdonw";
 
 const DashLayout = () => {
   const activePage = useActivePage();
@@ -60,6 +68,7 @@ const DashLayout = () => {
     <DashboardLayout
       slots={{
         toolbarActions: ModeToggle,
+        toolbarAccount: UserDropdown,
       }}
     >
       <PageContainer title={renderTitle()} breadcrumbs={renderBreadcrumbs()}>
@@ -116,11 +125,28 @@ const RootErrorBoundary = () => {
   return <Box sx={{ padding: 6 }}>{renderError(error)}</Box>;
 };
 
+const RootHydrateFallback = () => {
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        inset: 0,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <CircularProgress size={64} />
+    </Box>
+  );
+};
+
 const routes: RouteObject[] = [
   {
     id: "root",
     Component: RootRoute,
     ErrorBoundary: RootErrorBoundary,
+    HydrateFallback: RootHydrateFallback,
     children: [
       {
         id: "lang",

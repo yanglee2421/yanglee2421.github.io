@@ -88,11 +88,11 @@ const langToNavition = (lang: string): Navigation => [
   //   ],
   // },
   {
-    segment: path(lang, "overtime"),
     title: "Overtime",
     icon: <CalendarMonthOutlined />,
     children: [
       {
+        segment: path(lang, "overtime"),
         title: "List",
         icon: <ListOutlined />,
       },

@@ -65,16 +65,16 @@ export const NumberField = (props: NumberFieldProps) => {
             e.preventDefault();
             setFocusedValue((prev) => {
               const nextValue = (Number.parseFloat(prev) || 0) + _step;
+              field.onChange(nextValue);
               return nextValue.toString();
             });
-            field.onChange(field.value + _step);
             break;
           case "ArrowDown":
             setFocusedValue((prev) => {
               const nextValue = (Number.parseFloat(prev) || 0) - _step;
+              field.onChange(nextValue);
               return nextValue.toString();
             });
-            field.onChange(field.value - _step);
             break;
           default:
         }
