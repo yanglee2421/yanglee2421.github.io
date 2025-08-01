@@ -35,8 +35,14 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import { create } from "zustand";
-import { createJSONStorage, persist } from "zustand/middleware";
+import { persist, type PersistStorage } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
+import type { WritableDraft } from "immer";
+import { enableMapSet } from "immer";
+import { NumberField } from "@/components/form/number";
+import superjson from "superjson";
+
+enableMapSet();
 
 prepareZXingModule({
   overrides: {
@@ -348,9 +354,9 @@ const stringToInvoiceBarcode = (text: string) => {
 };
 
 type Invoice = {
-  id: string | undefined;
-  amount: string | undefined;
-  date: string | undefined;
+  id: string;
+  amount: string;
+  date: string;
 };
 
 const columnHelper = createColumnHelper<Invoice>();
@@ -361,20 +367,18 @@ const columns = [
     },
   }),
   columnHelper.accessor("amount", {
-    footer(props) {
-      return mathjs
-        .sum([
-          mathjs.bignumber(0),
-          ...props.table
-            .getRowModel()
-            .rows.map((row) => mathjs.bignumber(row.original.amount)),
-        ])
-        .toString();
-    },
+    footer: (props) => <AmountFooter rows={props.table.options.data} />,
   }),
   columnHelper.accessor("date", {
     footer(props) {
       return props.table.getRowCount();
+    },
+  }),
+  columnHelper.display({
+    id: "action",
+    header: "action",
+    cell(props) {
+      return <ActionCell id={props.row.original.id} />;
     },
   }),
 ];
@@ -390,6 +394,9 @@ const DataGrid = (props: DataGridProps) => {
     getCoreRowModel: getCoreRowModel(),
     columns,
     data: props.data,
+    getRowId(originalRow) {
+      return originalRow.id || "";
+    },
   });
 
   const renderBody = () => {
@@ -453,14 +460,86 @@ const DataGrid = (props: DataGridProps) => {
   );
 };
 
-const useSessionStore = create()(
+const storage: PersistStorage<State> = {
+  getItem: (name) => {
+    const str = sessionStorage.getItem(name);
+    if (!str) return null;
+    return superjson.parse(str);
+  },
+  setItem: (name, value) => {
+    sessionStorage.setItem(name, superjson.stringify(value));
+  },
+  removeItem: (name) => sessionStorage.removeItem(name),
+};
+
+type State = {
+  divide: Map<string, number>;
+};
+
+type Actions = {
+  set(
+    nextStateOrUpdater:
+      | State
+      | Partial<State>
+      | ((state: WritableDraft<State>) => void),
+  ): void;
+};
+
+type Store = State & Actions;
+
+const useSessionStore = create<Store>()(
   persist(
     immer((set) => ({
       set,
+      divide: new Map(),
     })),
     {
       name: "useSessionStore",
-      storage: createJSONStorage(() => window.sessionStorage),
+      storage,
     },
   ),
 );
+
+type ActionCellProps = {
+  id: string;
+};
+
+const ActionCell = (props: ActionCellProps) => {
+  const divide = useSessionStore((s) => s.divide);
+  const set = useSessionStore((s) => s.set);
+
+  return (
+    <NumberField
+      field={{
+        value: divide.get(props.id) || 1,
+        onChange: (e) => {
+          set((draft) => {
+            draft.divide.set(props.id, e);
+          });
+        },
+        onBlur() {},
+      }}
+      autoComplete="off"
+    />
+  );
+};
+
+type AmountFooterProps = {
+  rows: Invoice[];
+};
+
+const AmountFooter = (props: AmountFooterProps) => {
+  const divide = useSessionStore((s) => s.divide);
+
+  return props.rows.reduce((result, row) => {
+    return mathjs
+      .add(
+        mathjs.bignumber(result),
+        mathjs.divide(
+          mathjs.bignumber(row.amount),
+          mathjs.bignumber(divide.get(row.id) || 1),
+        ),
+      )
+      .toString();
+  }, "0");
+};
