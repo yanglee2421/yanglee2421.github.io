@@ -7,23 +7,7 @@ import {
 } from "@mui/material";
 import React from "react";
 
-const renderNumberValue = (
-  value: number,
-  focusValue: string,
-  focused: boolean,
-) => {
-  if (focused) {
-    return focusValue;
-  }
-
-  if (Number.isNaN(value)) {
-    return "";
-  }
-
-  return value;
-};
-
-const numberToFocusedValue = (value: number) => {
+const numberToInputText = (value: number) => {
   if (Number.isNaN(value)) {
     return "";
   }
@@ -54,43 +38,44 @@ export const NumberField = (props: NumberFieldProps) => {
   } = props;
 
   const [focused, setFocused] = React.useState(false);
-  const [focusedValue, setFocusedValue] = React.useState("");
+  const [draftText, setDraftText] = React.useState("");
+
+  const inputText = focused ? draftText : numberToInputText(field.value);
 
   const changeValue = (num: number) => {
-    field.onChange(minmax(num, _min, _max));
+    const nextValue = minmax(num, _min, _max);
+    field.onChange(nextValue);
+    setDraftTextWithNumber(nextValue);
+  };
+
+  const setDraftTextWithNumber = (num: number) => {
+    setDraftText(numberToInputText(num));
   };
 
   const handlePlus = () => {
-    setFocusedValue((prev) => {
-      const nextValue = (Number.parseFloat(prev) || 0) + _step;
-      changeValue(nextValue);
-      return minmax(nextValue, _min, _max).toString();
-    });
+    const nextValue = field.value + _step;
+    changeValue(nextValue);
   };
 
   const handleMinus = () => {
-    setFocusedValue((prev) => {
-      const nextValue = (Number.parseFloat(prev) || 0) - _step;
-      changeValue(nextValue);
-      return minmax(nextValue, _min, _max).toString();
-    });
+    const nextValue = field.value - _step;
+    changeValue(nextValue);
   };
 
   return (
     <TextField
-      value={renderNumberValue(field.value, focusedValue, focused)}
+      value={inputText}
       onChange={(e) => {
-        setFocusedValue(e.target.value);
+        setDraftText(e.target.value);
       }}
       onFocus={() => {
         setFocused(true);
-        setFocusedValue(numberToFocusedValue(field.value));
+        setDraftTextWithNumber(field.value);
       }}
       onBlur={(e) => {
         setFocused(false);
-        setFocusedValue("");
-        field.onBlur?.();
         changeValue(Number.parseFloat(e.target.value.trim()));
+        field.onBlur?.();
       }}
       onKeyDown={(e) => {
         switch (e.key) {
