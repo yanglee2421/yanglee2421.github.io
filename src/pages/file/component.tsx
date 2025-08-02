@@ -520,6 +520,9 @@ const ActionCell = (props: ActionCellProps) => {
         onBlur() {},
       }}
       autoComplete="off"
+      _min={1}
+      _spinner
+      _step={1}
     />
   );
 };
