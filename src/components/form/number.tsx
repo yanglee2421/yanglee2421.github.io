@@ -40,52 +40,90 @@ export const NumberField = (props: NumberFieldProps) => {
   const [focused, setFocused] = React.useState(false);
   const [draftText, setDraftText] = React.useState("");
 
+  // Variables
+
   const inputText = focused ? draftText : numberToInputText(field.value);
+
+  // Shared Logic
 
   const changeValue = (num: number) => {
     const nextValue = minmax(num, _min, _max);
     field.onChange(nextValue);
-    setDraftTextWithNumber(nextValue);
+    return nextValue;
   };
 
   const setDraftTextWithNumber = (num: number) => {
     setDraftText(numberToInputText(num));
   };
 
-  const handlePlus = () => {
-    const nextValue = field.value + _step;
-    changeValue(nextValue);
+  const plusStep = () => {
+    const nextValue = changeValue(field.value + _step);
+    return nextValue;
   };
 
-  const handleMinus = () => {
-    const nextValue = field.value - _step;
-    changeValue(nextValue);
+  const minusStep = () => {
+    const nextValue = changeValue(field.value - _step);
+    return nextValue;
+  };
+
+  // Mouse Event
+
+  const handlePlusSpinnerClick = () => {
+    plusStep();
+  };
+
+  const handleMinusSpinnerClick = () => {
+    minusStep();
+  };
+
+  // Keyboard Event
+
+  const handleArrowUpPress = () => {
+    const nextValue = plusStep();
+    setDraftTextWithNumber(nextValue);
+  };
+
+  const handleArrowDownPress = () => {
+    const nextValue = minusStep();
+    setDraftTextWithNumber(nextValue);
+  };
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setDraftText(e.target.value);
+  };
+
+  // Focus Event
+
+  const handleInputFocus = () => {
+    setFocused(true);
+    setDraftTextWithNumber(field.value);
+  };
+
+  const handleInputBlur = (
+    e: React.FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setFocused(false);
+    changeValue(Number.parseFloat(e.target.value.trim()));
+    field.onBlur?.();
   };
 
   return (
     <TextField
       value={inputText}
-      onChange={(e) => {
-        setDraftText(e.target.value);
-      }}
-      onFocus={() => {
-        setFocused(true);
-        setDraftTextWithNumber(field.value);
-      }}
-      onBlur={(e) => {
-        setFocused(false);
-        changeValue(Number.parseFloat(e.target.value.trim()));
-        field.onBlur?.();
-      }}
+      onChange={handleInputChange}
+      onFocus={handleInputFocus}
+      onBlur={handleInputBlur}
       onKeyDown={(e) => {
         switch (e.key) {
           case "ArrowUp":
             e.preventDefault();
-            handlePlus();
+            handleArrowUpPress();
             break;
           case "ArrowDown":
             e.preventDefault();
-            handleMinus();
+            handleArrowDownPress();
             break;
           default:
         }
@@ -94,14 +132,14 @@ export const NumberField = (props: NumberFieldProps) => {
         input: {
           startAdornment: _spinner && (
             <InputAdornment position="start">
-              <IconButton onClick={handleMinus}>
+              <IconButton onClick={handleMinusSpinnerClick}>
                 <RemoveOutlined />
               </IconButton>
             </InputAdornment>
           ),
           endAdornment: _spinner && (
             <InputAdornment position="end">
-              <IconButton onClick={handlePlus}>
+              <IconButton onClick={handlePlusSpinnerClick}>
                 <AddOutlined />
               </IconButton>
             </InputAdornment>
