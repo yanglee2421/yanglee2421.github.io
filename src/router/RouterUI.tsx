@@ -26,6 +26,7 @@ import { AuthGuard, GuestGuard, LangGuard } from "./guard";
 import { AuthLayout } from "@/components/layout/auth";
 import { RootRoute } from "./root";
 import { UserDropdown } from "@/components/shared/UserDropdonw";
+import { LangToggle } from "@/components/shared/LangToggle";
 
 const DashLayout = () => {
   const activePage = useActivePage();
@@ -67,7 +68,7 @@ const DashLayout = () => {
   return (
     <DashboardLayout
       slots={{
-        toolbarActions: ModeToggle,
+        toolbarActions: ToolbarActions,
         toolbarAccount: UserDropdown,
       }}
     >
@@ -325,3 +326,12 @@ const router = import.meta.env.PROD
   : createBrowserRouter(routes);
 
 export const RouterUI = () => <RouterProvider router={router} />;
+
+const ToolbarActions = () => {
+  return (
+    <>
+      <LangToggle />
+      <ModeToggle />
+    </>
+  );
+};
