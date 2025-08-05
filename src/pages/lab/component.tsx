@@ -67,7 +67,7 @@ import {
 } from "@tanstack/react-table";
 import "./border.css";
 
-const bgImgHref = new URL(bg, import.meta.url).href;
+const getBgImgHref = () => new URL(bg, import.meta.url).href;
 
 const WebSocketCard = () => {
   const [data, setData] = React.useState("");
@@ -541,6 +541,8 @@ const StackContextDemo = () => {
 
 export const Component = () => {
   const id = React.useId();
+
+  const bgImgHref = getBgImgHref();
 
   const handleCutImage = () => {
     const video = document.getElementById(id);

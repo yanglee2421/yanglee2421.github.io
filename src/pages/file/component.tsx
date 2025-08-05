@@ -42,19 +42,22 @@ import { enableMapSet } from "immer";
 import { NumberField } from "@/components/form/number";
 import superjson from "superjson";
 
+const getWASMHref = () => new URL(wasmURL, import.meta.url).href;
+const getPDFWorkerHref = () => new URL(pdfWorker, import.meta.url).href;
+
 enableMapSet();
 
 prepareZXingModule({
   overrides: {
     locateFile(path: string, prefix: string) {
       if (path.endsWith(".wasm")) {
-        return new URL(wasmURL, import.meta.url).href;
+        return getWASMHref();
       }
       return prefix + path;
     },
   },
 });
-pdfjs.GlobalWorkerOptions.workerSrc = new URL(pdfWorker, import.meta.url).href;
+pdfjs.GlobalWorkerOptions.workerSrc = getPDFWorkerHref();
 
 const pdfToImageBlob = async (file: File, pageIndex = 1) => {
   const buf = await file.arrayBuffer();
