@@ -13,7 +13,7 @@ import {
 } from "@mui/icons-material";
 import { type Mode, useLocalStore } from "@/hooks/store/useLocalStore";
 
-export function ModeToggle() {
+export const ModeToggle = () => {
   const mode = useLocalStore((s) => s.mode);
   const updateMode = useLocalStore((s) => s.update);
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
@@ -65,4 +65,4 @@ export function ModeToggle() {
       </Menu>
     </>
   );
-}
+};

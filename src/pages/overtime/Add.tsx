@@ -2,7 +2,7 @@ import { AddOutlined } from "@mui/icons-material";
 import { Button } from "@mui/material";
 import { Link, useParams } from "react-router";
 
-export function Add() {
+export const Add = () => {
   const params = useParams();
 
   return (
@@ -15,4 +15,4 @@ export function Add() {
       add
     </Button>
   );
-}
+};

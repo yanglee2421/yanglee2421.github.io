@@ -178,6 +178,52 @@ const routes: RouteObject[] = [
             ],
           },
           {
+            Component: DashLayout,
+            children: [
+              {
+                id: "file",
+                path: "file",
+                lazy: () => import("@/pages/file/component"),
+              },
+              {
+                id: "lab",
+                path: "lab",
+                lazy: () => import("@/pages/lab/component"),
+              },
+              {
+                id: "calendar",
+                path: "calendar",
+                lazy: () => import("@/pages/calendar/component"),
+              },
+
+              {
+                id: "handbook",
+                path: "handbook",
+                lazy: () => import("@/pages/handbook/component"),
+              },
+              {
+                id: "qrcode",
+                path: "qrcode",
+                lazy: () => import("@/pages/qrcode/component"),
+              },
+              {
+                id: "snackbar",
+                path: "snackbar",
+                lazy: () => import("@/pages/snackbar/component"),
+              },
+              {
+                id: "minesweeper",
+                path: "minesweeper",
+                lazy: () => import("@/pages/minesweeper/component"),
+              },
+              {
+                id: "home",
+                index: true,
+                lazy: () => import("@/pages/home/component"),
+              },
+            ],
+          },
+          {
             id: "auth_guard",
             Component: AuthGuard,
             children: [
@@ -185,11 +231,6 @@ const routes: RouteObject[] = [
                 id: "dash_layout",
                 Component: DashLayout,
                 children: [
-                  {
-                    id: "home",
-                    index: true,
-                    lazy: () => import("@/pages/home/component"),
-                  },
                   {
                     id: "dashboard",
                     path: "dashboard",
@@ -242,42 +283,6 @@ const routes: RouteObject[] = [
                         lazy: () => import("@/pages/overtime_new/component"),
                       },
                     ],
-                  },
-                  {
-                    id: "minesweeper",
-                    path: "minesweeper",
-                    lazy: () => import("@/pages/minesweeper/component"),
-                  },
-                  {
-                    id: "lab",
-                    path: "lab",
-                    lazy: () => import("@/pages/lab/component"),
-                  },
-                  {
-                    id: "calendar",
-                    path: "calendar",
-                    lazy: () => import("@/pages/calendar/component"),
-                  },
-
-                  {
-                    id: "handbook",
-                    path: "handbook",
-                    lazy: () => import("@/pages/handbook/component"),
-                  },
-                  {
-                    id: "qrcode",
-                    path: "qrcode",
-                    lazy: () => import("@/pages/qrcode/component"),
-                  },
-                  {
-                    id: "file",
-                    path: "file",
-                    lazy: () => import("@/pages/file/component"),
-                  },
-                  {
-                    id: "snackbar",
-                    path: "snackbar",
-                    lazy: () => import("@/pages/snackbar/component"),
                   },
                 ],
               },

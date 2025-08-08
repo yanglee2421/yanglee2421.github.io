@@ -17,11 +17,7 @@ import {
   TextField,
 } from "@mui/material";
 import React from "react";
-import * as pdfjs from "pdfjs-dist";
-import { readBarcodes, prepareZXingModule } from "zxing-wasm/reader";
-import wasmURL from "zxing-wasm/reader/zxing_reader.wasm?url";
-import pdfWorker from "pdfjs-dist/build/pdf.worker.mjs?url";
-import { queryOptions, useQueries } from "@tanstack/react-query";
+import { useQueries } from "@tanstack/react-query";
 import * as mathjs from "mathjs";
 import {
   createColumnHelper,
@@ -33,73 +29,9 @@ import { create } from "zustand";
 import { persist, type PersistStorage } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import type { WritableDraft } from "immer";
-import { enableMapSet } from "immer";
 import { NumberField } from "@/components/form/number";
 import superjson from "superjson";
-
-const getWASMHref = () => new URL(wasmURL, import.meta.url).href;
-const getPDFWorkerHref = () => new URL(pdfWorker, import.meta.url).href;
-
-enableMapSet();
-
-prepareZXingModule({
-  overrides: {
-    locateFile(path: string, prefix: string) {
-      if (path.endsWith(".wasm")) {
-        return getWASMHref();
-      }
-      return prefix + path;
-    },
-  },
-});
-pdfjs.GlobalWorkerOptions.workerSrc = getPDFWorkerHref();
-
-const pdfToImageBlob = async (file: File, pageIndex = 1) => {
-  const buf = await file.arrayBuffer();
-  const doc = await pdfjs.getDocument({ data: buf }).promise;
-  const page = await doc.getPage(pageIndex);
-  const viewport = page.getViewport({ scale: 1 });
-  const outputScale = devicePixelRatio || 1;
-  const canvas = document.createElement("canvas");
-  const canvasContext = canvas.getContext("2d");
-  if (!canvasContext) throw new Error("get canvas context failed");
-
-  canvas.width = Math.floor(viewport.width * outputScale);
-  canvas.height = Math.floor(viewport.height * outputScale);
-
-  await page.render({
-    viewport,
-    canvas,
-    canvasContext,
-    transform: Object.is(outputScale, 1)
-      ? void 0
-      : [outputScale, 0, 0, outputScale, 0, 0],
-  }).promise;
-
-  const blob = await new Promise<Blob>((resolve) => {
-    canvas.toBlob((blob) => {
-      if (!blob) {
-        throw new Error("get blob from canvas failed");
-      }
-      resolve(blob);
-    });
-  });
-
-  return blob;
-};
-
-const fetchBarcodeText = (file: File) =>
-  queryOptions({
-    queryKey: [
-      "pdf demo",
-      [file.lastModified, file.name, file.size, file.type],
-    ],
-    async queryFn() {
-      const blob = await pdfToImageBlob(file);
-      const barcodes = await readBarcodes(blob);
-      return barcodes.map((i) => i.text);
-    },
-  });
+import { fetchBarcodeTextFromPDF } from "@/api/pdf";
 
 export const Component = () => {
   return (
@@ -113,7 +45,7 @@ const CalculatePDF = () => {
   const [files, setFiles] = React.useState<File[]>([]);
 
   const queries = useQueries({
-    queries: files.map((file) => fetchBarcodeText(file)),
+    queries: files.map((file) => fetchBarcodeTextFromPDF(file)),
   });
 
   const isFetching = queries.some((query) => query.isFetching);

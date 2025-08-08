@@ -1,6 +1,6 @@
 import React from "react";
 
-export function Google(props: React.SVGProps<SVGSVGElement>) {
+export const Google = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       enableBackground="new 0 0 48 48"
@@ -28,4 +28,4 @@ export function Google(props: React.SVGProps<SVGSVGElement>) {
       />
     </svg>
   );
-}
+};
