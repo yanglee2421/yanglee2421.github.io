@@ -12,7 +12,7 @@ export const LangGuard = () => {
   const params = useParams();
   const location = useLocation();
   const { i18n } = useTranslation();
-  const setStoreLang = useLocalStore((s) => s.update);
+  const setStoreLang = useLocalStore.setState;
   const storeLang = useLocalStore((s) => s.fallbackLang);
   const matchedLang = getMatchedLang(params.lang, storeLang);
 
@@ -44,7 +44,7 @@ export const GuestGuard = () =>
 export const AuthGuard = () => {
   const user = useCurrentUser();
   const netlifyToken = useLocalStore((s) => s.netlifyToken);
-  const setNetlifyToken = useLocalStore((s) => s.update);
+  const setNetlifyToken = useLocalStore.setState;
 
   const auth = useQuery({
     ...fetchUserByFirebase({

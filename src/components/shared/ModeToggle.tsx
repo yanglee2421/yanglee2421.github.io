@@ -15,7 +15,7 @@ import { type Mode, useLocalStore } from "@/hooks/store/useLocalStore";
 
 export const ModeToggle = () => {
   const mode = useLocalStore((s) => s.mode);
-  const updateMode = useLocalStore((s) => s.update);
+  const updateMode = useLocalStore.setState;
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
 
   const handleClose = () => {

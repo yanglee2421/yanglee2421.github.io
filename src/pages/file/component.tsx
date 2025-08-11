@@ -28,7 +28,6 @@ import {
 import { create } from "zustand";
 import { persist, type PersistStorage } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import type { WritableDraft } from "immer";
 import { NumberField } from "@/components/form/number";
 import superjson from "superjson";
 import { fetchBarcodeTextFromPDF } from "@/api/pdf";
@@ -253,21 +252,9 @@ type State = {
   divide: Map<string, number>;
 };
 
-type Actions = {
-  set(
-    nextStateOrUpdater:
-      | State
-      | Partial<State>
-      | ((state: WritableDraft<State>) => void),
-  ): void;
-};
-
-type Store = State & Actions;
-
-const useSessionStore = create<Store>()(
+const useSessionStore = create<State>()(
   persist(
-    immer((set) => ({
-      set,
+    immer(() => ({
       divide: new Map(),
     })),
     {
@@ -283,7 +270,7 @@ type ActionCellProps = {
 
 const ActionCell = (props: ActionCellProps) => {
   const divide = useSessionStore((s) => s.divide);
-  const set = useSessionStore((s) => s.set);
+  const set = useSessionStore.setState;
 
   return (
     <NumberField

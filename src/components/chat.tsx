@@ -194,7 +194,7 @@ export const CopilotChat = () => {
   const windowInnerHeight = useWindowInnerHeight();
   const visualViewportHeight = useVisualViewportHeight();
   const activeCompletionId = useDbStore((state) => state.completionId);
-  const setDb = useDbStore((state) => state.set);
+  const setDb = useDbStore.setState;
   const completion = useLiveQuery(
     () => db.completions.get(activeCompletionId),
     [activeCompletionId],
