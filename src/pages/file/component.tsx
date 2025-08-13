@@ -3,6 +3,7 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Checkbox,
   IconButton,
   InputAdornment,
   LinearProgress,
@@ -137,13 +138,55 @@ type Invoice = {
 
 const columnHelper = createColumnHelper<Invoice>();
 const columns = [
+  columnHelper.display({
+    id: "checkbox",
+    header(props) {
+      return (
+        <Checkbox
+          indeterminate={props.table.getIsSomeRowsSelected()}
+          checked={props.table.getIsAllRowsSelected()}
+          onChange={props.table.getToggleAllRowsSelectedHandler()}
+        />
+      );
+    },
+    cell(props) {
+      return (
+        <Checkbox
+          checked={props.row.getIsSelected()}
+          onChange={props.row.getToggleSelectedHandler()}
+        />
+      );
+    },
+    footer(props) {
+      return (
+        <Checkbox
+          indeterminate={props.table.getIsSomeRowsSelected()}
+          checked={props.table.getIsAllRowsSelected()}
+          onChange={props.table.getToggleAllRowsSelectedHandler()}
+        />
+      );
+    },
+  }),
   columnHelper.accessor("id", {
     footer(props) {
       return props.table.getRowCount();
     },
   }),
   columnHelper.accessor("amount", {
-    footer: (props) => <AmountFooter rows={props.table.options.data} />,
+    footer: (props) => (
+      <AmountFooter
+        rows={props.table
+          .getRowModel()
+          .flatRows.filter((row) => {
+            if (row.getIsSelected()) {
+              return false;
+            }
+
+            return true;
+          })
+          .map((row) => row.original)}
+      />
+    ),
   }),
   columnHelper.accessor("date", {
     footer(props) {
