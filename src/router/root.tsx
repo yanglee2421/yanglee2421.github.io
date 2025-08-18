@@ -55,38 +55,6 @@ const langToNavition = (lang: string): Navigation => [
     kind: "header",
     title: "Table",
   },
-  // {
-  //   segment: path(lang, "invoices"),
-  //   title: "Invoices",
-  //   icon: <WalletOutlined />,
-  //   children: [
-  //     {
-  //       title: "List",
-  //       icon: <ListOutlined />,
-  //     },
-  //     {
-  //       segment: "new",
-  //       title: "Add",
-  //       icon: <AddOutlined />,
-  //     },
-  //   ],
-  // },
-  // {
-  //   segment: path(lang, "staff"),
-  //   title: "Staff",
-  //   icon: <GroupOutlined />,
-  //   children: [
-  //     {
-  //       title: "List",
-  //       icon: <ListOutlined />,
-  //     },
-  //     {
-  //       segment: "new",
-  //       title: "Add",
-  //       icon: <AddOutlined />,
-  //     },
-  //   ],
-  // },
   {
     title: "Overtime",
     icon: <CalendarMonthOutlined />,
@@ -97,7 +65,7 @@ const langToNavition = (lang: string): Navigation => [
         icon: <ListOutlined />,
       },
       {
-        segment: "new",
+        segment: path(lang, "overtime", "new"),
         title: "Add",
         icon: <AddOutlined />,
       },
