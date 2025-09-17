@@ -1,23 +1,17 @@
 import React from "react";
-import { useTranslation } from "react-i18next";
 import { useParams } from "react-router";
 import { DatePicker } from "@mui/x-date-pickers";
 import dayjs from "dayjs";
 import {
   Badge,
+  Box,
   Card,
   CardContent,
   CardHeader,
+  Divider,
   Grid,
   IconButton,
-  Table,
-  TableBody,
-  TableCell,
-  TableContainer,
-  TableFooter,
-  TableHead,
-  TablePagination,
-  TableRow,
+  Typography,
 } from "@mui/material";
 import {
   NavigateBeforeOutlined,
@@ -27,56 +21,55 @@ import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
 import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
 import * as mathjs from "mathjs";
 
-const minmax = (num: number, { min, max }: { min: number; max: number }) =>
-  Math.min(Math.max(num, min), max);
-
-const chunk = <T,>(arr: T[], size: number) => {
-  const chunkedArr: T[][] = [];
-
-  for (let i = 0; i < arr.length; i += size) {
-    chunkedArr.push(arr.slice(i, i + size));
-  }
-
-  return chunkedArr;
+const minmax = (num: number, min: number, max: number) => {
+  return Math.min(Math.max(num, min), max);
 };
 
-const dayInterval = 1000 * 60 * 60 * 24;
+const DAY_INTERVAL = 1000 * 60 * 60 * 24;
 
-const timeToCalendar = (time: number) => {
-  const monthStartTime = new Date(time).setDate(1);
-  const monthStartIndex = new Date(monthStartTime).getDay();
-  const calendarStartTime = monthStartTime - monthStartIndex * dayInterval;
+const getMonthFirst = (date: Date) => new Date(date).setDate(1);
+const getMonthLast = (date: Date) => {
+  return new Date(date).setMonth(date.getMonth() + 1, 0);
+};
+
+const timestampToCalendar = (timestamp: number) => {
+  const currentDate = new Date(timestamp);
+  const monthFirst = getMonthFirst(currentDate);
+  const monthLast = getMonthLast(currentDate);
+  const weekdayOfMonthFirst = new Date(monthFirst).getDay();
+  const calendarFirst = monthFirst - weekdayOfMonthFirst * DAY_INTERVAL;
+  const needLine6 = monthLast > calendarFirst + 34 * DAY_INTERVAL;
+  const cellNumber = needLine6 ? 42 : 35;
   const calendar = [];
 
-  for (let i = 0; i < 42; i++) {
-    calendar.push(calendarStartTime + i * dayInterval);
+  for (let i = 0; i < cellNumber; i++) {
+    calendar.push(calendarFirst + i * DAY_INTERVAL);
   }
 
   return calendar;
 };
 
-const inRange = (num: number, min: number, max: number) =>
-  Object.is(num, minmax(num, { min, max }));
+const inRange = (num: number, min: number, max: number) => {
+  return Object.is(num, minmax(num, min, max));
+};
 
 const renderBadgeContent = (date: Date, start?: Date, end?: Date) => {
-  if (!start) {
-    return;
-  }
+  if (!start) return;
 
-  const time = dayjs(date).startOf("day").valueOf();
+  const current = dayjs(date).startOf("day").valueOf();
   const minTime = dayjs(start).startOf("day").valueOf();
   const maxTime = end
     ? dayjs(end).startOf("day").valueOf()
     : Number.POSITIVE_INFINITY;
 
-  if (!inRange(time, minTime, maxTime)) {
+  if (!inRange(current, minTime, maxTime)) {
     return;
   }
 
   return mathjs
     .add(
       mathjs.divide(
-        mathjs.subtract(mathjs.bignumber(time), mathjs.bignumber(minTime)),
+        mathjs.subtract(mathjs.bignumber(current), mathjs.bignumber(minTime)),
         mathjs.multiply(
           mathjs.bignumber(1000),
           mathjs.bignumber(60),
@@ -97,11 +90,10 @@ export const Component = () => {
   const [selectedTime, setSelectedTime] = React.useState(initSelectedTime);
 
   const params = useParams();
-  const { i18n } = useTranslation();
   const date = useLocaleDate(params.lang);
   const time = useLocaleTime(params.lang);
 
-  const calendar = timeToCalendar(selectedTime.toDate().getTime()).map(
+  const calendar = timestampToCalendar(selectedTime.toDate().getTime()).map(
     (i) => new Date(i),
   );
 
@@ -179,61 +171,47 @@ export const Component = () => {
           </Grid>
         </Grid>
       </CardContent>
-      <TableContainer>
-        <Table>
-          <TableHead>
-            <TableRow>
-              {calendar.slice(0, 7).map((date) => {
-                const weekday = date.toLocaleString(i18n.language, {
-                  weekday: "short",
-                });
+      <Divider />
+      <Box
+        sx={{
+          display: "grid",
+          gridTemplateColumns: "repeat(7, minmax(0,1fr))",
+        }}
+      >
+        {calendar.map((date, index) => (
+          <Box
+            key={date.getTime()}
+            sx={{
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
 
-                return <TableCell key={weekday}>{weekday}</TableCell>;
-              })}
-            </TableRow>
-          </TableHead>
-          <TableBody>
-            {chunk(calendar, 7).map((row, idx) => (
-              <TableRow key={idx}>
-                {row.map((cell) => (
-                  <TableCell key={cell.toLocaleDateString()}>
-                    <Badge
-                      badgeContent={renderBadgeContent(
-                        cell,
-                        startDate?.toDate(),
-                        endDate?.toDate(),
-                      )}
-                      color="primary"
-                    >
-                      <IconButton size="small">{cell.getDate()}</IconButton>
-                    </Badge>
-                  </TableCell>
-                ))}
-              </TableRow>
-            ))}
-          </TableBody>
-          <TableFooter>
-            <TableRow>
-              {calendar.slice(0, 7).map((date) => {
-                const weekday = date.toLocaleString(i18n.language, {
-                  weekday: "short",
-                });
+              border: (theme) => `1px solid ${theme.palette.divider}`,
+              borderBottom: 0,
+              borderLeft: 0,
+              borderRight: (index + 1) % 7 === 0 ? 0 : void 0,
+              borderTop: index < 7 ? 0 : void 0,
 
-                return <TableCell key={weekday}>{weekday}</TableCell>;
-              })}
-            </TableRow>
-          </TableFooter>
-        </Table>
-      </TableContainer>
-      <TablePagination
-        component="div"
-        count={calendar.length}
-        rowsPerPage={20}
-        rowsPerPageOptions={[20, 50, 100]}
-        page={0}
-        onPageChange={Boolean}
-        onRowsPerPageChange={Boolean}
-      />
+              padding: 2,
+            }}
+          >
+            <Badge
+              badgeContent={renderBadgeContent(
+                date,
+                startDate?.toDate(),
+                endDate?.toDate(),
+              )}
+              color="primary"
+            >
+              <Box padding={1.5}>
+                <Typography variant="h5" fontWeight={300}>
+                  {date.getDate()}
+                </Typography>
+              </Box>
+            </Badge>
+          </Box>
+        ))}
+      </Box>
     </Card>
   );
 };

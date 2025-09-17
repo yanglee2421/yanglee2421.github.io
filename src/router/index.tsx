@@ -27,6 +27,8 @@ import { AuthLayout } from "@/components/layout/auth";
 import { RootRoute } from "./root";
 import { UserDropdown } from "@/components/shared/UserDropdonw";
 import { LangToggle } from "@/components/shared/LangToggle";
+import { useDbStore } from "@/hooks/store/useDbStore";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
 
 const DashLayout = () => {
   const activePage = useActivePage();
@@ -142,15 +144,30 @@ const RootHydrateFallback = () => {
   );
 };
 
+type UseStore = typeof useDbStore | typeof useLocalStore;
+
+const finishHydrate = (useStore: UseStore) =>
+  new Promise<void>((resolve) => {
+    const hasHydrated = useStore.persist.hasHydrated();
+    if (!hasHydrated) {
+      useStore.persist.onFinishHydration(() => resolve());
+      return;
+    }
+
+    resolve();
+  });
+
 const routes: RouteObject[] = [
   {
-    id: "root",
     Component: RootRoute,
     ErrorBoundary: RootErrorBoundary,
     HydrateFallback: RootHydrateFallback,
+    loader: async () => {
+      await finishHydrate(useDbStore);
+      await finishHydrate(useLocalStore);
+    },
     children: [
       {
-        id: "lang",
         path: ":lang?",
         Component: LangGuard,
         children: [
@@ -330,7 +347,7 @@ const router = import.meta.env.PROD
   ? createHashRouter(routes)
   : createBrowserRouter(routes);
 
-export const RouterUI = () => <RouterProvider router={router} />;
+export const Router = () => <RouterProvider router={router} />;
 
 const ToolbarActions = () => {
   return (
