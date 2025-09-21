@@ -2,7 +2,6 @@ import {
   createBrowserRouter,
   createHashRouter,
   Outlet,
-  type RouteObject,
   RouterProvider,
   Link,
   useRouteError,
@@ -29,6 +28,7 @@ import { UserDropdown } from "@/components/shared/UserDropdonw";
 import { LangToggle } from "@/components/shared/LangToggle";
 import { useDbStore } from "@/hooks/store/useDbStore";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
+import type { RouteObject } from "react-router";
 
 const DashLayout = () => {
   const activePage = useActivePage();
@@ -172,23 +172,19 @@ const routes: RouteObject[] = [
         Component: LangGuard,
         children: [
           {
-            id: "404",
             path: "*",
             lazy() {
               return import("@/pages/not-fount/component");
             },
           },
           {
-            id: "guest_guard",
             Component: GuestGuard,
             children: [
               {
-                id: "login",
                 path: "login",
                 lazy: () => import("@/pages/login/component"),
               },
               {
-                id: "guest_layout",
                 Component: GuestLayout,
                 children: [],
               },
@@ -198,104 +194,84 @@ const routes: RouteObject[] = [
             Component: DashLayout,
             children: [
               {
-                id: "file",
                 path: "file",
                 lazy: () => import("@/pages/file/component"),
               },
               {
-                id: "lab",
                 path: "lab",
                 lazy: () => import("@/pages/lab/component"),
               },
               {
-                id: "calendar",
                 path: "calendar",
                 lazy: () => import("@/pages/calendar/component"),
               },
 
               {
-                id: "handbook",
                 path: "handbook",
                 lazy: () => import("@/pages/handbook/component"),
               },
               {
-                id: "qrcode",
                 path: "qrcode",
                 lazy: () => import("@/pages/qrcode/component"),
               },
               {
-                id: "snackbar",
                 path: "snackbar",
                 lazy: () => import("@/pages/snackbar/component"),
               },
               {
-                id: "minesweeper",
                 path: "minesweeper",
                 lazy: () => import("@/pages/minesweeper/component"),
               },
               {
-                id: "home",
                 index: true,
                 lazy: () => import("@/pages/home/component"),
               },
             ],
           },
           {
-            id: "auth_guard",
             Component: AuthGuard,
             children: [
               {
-                id: "dash_layout",
                 Component: DashLayout,
                 children: [
                   {
-                    id: "dashboard",
                     path: "dashboard",
                     lazy: () => import("@/pages/dashboard/component"),
                   },
                   {
-                    id: "invoices",
                     path: "invoices",
                     children: [
                       {
-                        id: "invoices/list",
                         index: true,
                         lazy: () => import("@/pages/invoices/component"),
                       },
                       {
-                        id: "invoices/new",
                         path: "new",
                         lazy: () => import("@/pages/invoices_new/component"),
                       },
                     ],
                   },
                   {
-                    id: "staff",
                     path: "staff",
                     children: [
                       {
-                        id: "staff/list",
                         index: true,
                         lazy: () => import("@/pages/staff/component"),
                       },
                       {
-                        id: "staff/new",
                         path: "new",
                         lazy: () => import("@/pages/staff_new/component"),
                       },
                     ],
                   },
                   {
-                    id: "overtime",
                     path: "overtime",
                     children: [
                       {
-                        id: "overtime/list",
                         index: true,
                         lazy: () => import("@/pages/overtime"),
                       },
                       {
-                        id: "overtime/new",
                         path: "new",
                         lazy: () => import("@/pages/overtime_new/component"),
                       },
@@ -306,32 +282,26 @@ const routes: RouteObject[] = [
             ],
           },
           {
-            id: "auth_layout",
             Component: AuthLayout,
             children: [
               {
-                id: "chat",
                 path: "chat",
                 lazy: () => import("@/pages/chat/component"),
               },
               {
-                id: "scrollbar",
                 path: "scrollbar",
                 lazy: () => import("@/pages/scrollbar/component"),
               },
               {
-                id: "virtual",
                 path: "virtual",
                 lazy: () => import("@/pages/virtual/component"),
               },
             ],
           },
           {
-            id: "blank_layout",
             Component: BlankLayout,
             children: [
               {
-                id: "app",
                 path: "app",
                 lazy: () => import("@/pages/app/component"),
               },
