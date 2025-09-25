@@ -12,6 +12,7 @@ import {
   TokenOutlined,
   ViewDayRounded,
   MessageOutlined,
+  AlignHorizontalLeftOutlined,
 } from "@mui/icons-material";
 import { styled, alpha, Typography } from "@mui/material";
 import { useParams, NavLink } from "react-router";
@@ -113,6 +114,11 @@ const list = [
     to: "/lab",
     label: "Lab",
     icon: <ScienceOutlined />,
+  },
+  {
+    to: "/rank",
+    label: "Rank",
+    icon: <AlignHorizontalLeftOutlined />,
   },
   {
     to: "/app",

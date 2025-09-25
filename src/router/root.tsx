@@ -23,6 +23,7 @@ import {
   AddOutlined,
   ListOutlined,
   InsertDriveFileOutlined,
+  AlignHorizontalLeftOutlined,
 } from "@mui/icons-material";
 import { Box, useTheme } from "@mui/material";
 import { NotificationsProvider, DialogsProvider } from "@toolpad/core";
@@ -97,6 +98,11 @@ const langToNavition = (lang: string): Navigation => [
     icon: <MessageOutlined />,
   },
   { segment: path(lang, "lab"), title: "Lab", icon: <ScienceOutlined /> },
+  {
+    segment: path(lang, "rank"),
+    title: "Rank",
+    icon: <AlignHorizontalLeftOutlined />,
+  },
   { kind: "divider" },
   { kind: "header", title: "Custom layout" },
   { segment: path(lang, "app"), title: "App", icon: <AppsOutlined /> },

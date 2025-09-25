@@ -277,6 +277,10 @@ const routes: RouteObject[] = [
                       },
                     ],
                   },
+                  {
+                    path: "rank",
+                    lazy: () => import("@/pages/rank/component"),
+                  },
                 ],
               },
             ],
