@@ -46,7 +46,7 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
   const yRafRef = React.useRef(0);
   const scrollRafRef = React.useRef(0);
 
-  const updateScrollInfo = React.useCallback(() => {
+  const updateScrollInfo = React.useEffectEvent(() => {
     const container = scrollViewRef.current;
     if (!container) return;
 
@@ -58,7 +58,7 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
       clientWidth: container.clientWidth,
       clientHeight: container.clientHeight,
     });
-  }, []);
+  });
 
   const yThumbHeight = Math.max(
     20,
@@ -129,7 +129,7 @@ export const Scroll = ({ children, className, style }: ScrollProps) => {
       cancelAnimationFrame(raf);
       observer.disconnect();
     };
-  }, [updateScrollInfo]);
+  }, []);
 
   return (
     <Box

@@ -121,14 +121,14 @@ type SendButtonStatus = "idle" | "loading" | "streaming";
 const useScrollToBottom = () => {
   const chatLogRef = React.useRef<HTMLDivElement>(null);
 
-  const handleScrollToBottom = React.useCallback(() => {
+  const handleScrollToBottom = React.useEffectEvent(() => {
     chatLogRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "end",
     });
-  }, []);
+  });
 
-  React.useEffect(handleScrollToBottom, [handleScrollToBottom]);
+  React.useEffect(() => handleScrollToBottom(), []);
 
   return chatLogRef;
 };

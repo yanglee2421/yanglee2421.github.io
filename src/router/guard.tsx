@@ -16,10 +16,14 @@ export const LangGuard = () => {
   const storeLang = useLocalStore((s) => s.fallbackLang);
   const matchedLang = getMatchedLang(params.lang, storeLang);
 
-  React.useEffect(() => {
-    setStoreLang({ fallbackLang: matchedLang });
+  const changeLanguage = React.useEffectEvent((matchedLang: string) => {
     i18n.changeLanguage(matchedLang);
-  }, [setStoreLang, matchedLang, i18n]);
+    setStoreLang({ fallbackLang: matchedLang });
+  });
+
+  React.useEffect(() => {
+    changeLanguage(matchedLang);
+  }, [matchedLang]);
 
   if (matchedLang !== params.lang) {
     return (
