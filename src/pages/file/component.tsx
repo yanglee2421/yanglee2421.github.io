@@ -73,9 +73,6 @@ const CalculatePDF = () => {
             const files = [...e.dataTransfer.files];
             setFiles(files);
           }}
-          onDragOver={(e) => {
-            e.preventDefault();
-          }}
           onPaste={(e) => {
             const files = [...e.clipboardData.files];
             setFiles(files);

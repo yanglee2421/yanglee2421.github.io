@@ -46,10 +46,6 @@ const PasteInput = () => {
     setFiles([...e.dataTransfer.files]);
   };
 
-  const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
-    e.preventDefault();
-  };
-
   type Query = ElementOf<typeof queries>;
 
   const renderQuery = (query: Query) => {
@@ -74,7 +70,6 @@ const PasteInput = () => {
         fullWidth
         onPaste={handlePaste}
         onDrop={handleDrop}
-        onDragOver={handleDragOver}
         slotProps={{
           input: {
             endAdornment: (
