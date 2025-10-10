@@ -1,7 +1,4 @@
-import { RouterUI } from "@/router/RouterUI";
-import { useLocalStoreHasHydrated } from "@/hooks/store/useLocalStore";
-import { useDbStoreHasHydrated } from "./hooks/store/useDbStore";
-import { Loading } from "./components/loading";
+import { Router } from "@/router";
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import {
   createTheme,
@@ -28,10 +25,6 @@ const lightTheme = createTheme({
       },
     },
   },
-
-  // spacing(abs: number) {
-  //   return `${abs * 0.25}rem`;
-  // },
 });
 
 const darkTheme = createTheme({
@@ -45,10 +38,6 @@ const darkTheme = createTheme({
       },
     },
   },
-
-  // spacing(abs: number) {
-  //   return `${abs * 0.25}rem`;
-  // },
 });
 
 const modeToHasSelector = (mode: Mode, isDark: boolean) => {
@@ -118,24 +107,11 @@ const MuiProvider = (props: React.PropsWithChildren) => {
 };
 
 export const App = () => {
-  const hasHydrated = useLocalStoreHasHydrated();
-  const hasDbHydrated = useDbStoreHasHydrated();
-
-  const renderRouter = () => {
-    if (!hasHydrated) {
-      return <Loading />;
-    }
-
-    if (!hasDbHydrated) {
-      return <Loading />;
-    }
-
-    return <RouterUI />;
-  };
-
   return (
     <QueryProvider>
-      <MuiProvider>{renderRouter()}</MuiProvider>
+      <MuiProvider>
+        <Router />
+      </MuiProvider>
     </QueryProvider>
   );
 };

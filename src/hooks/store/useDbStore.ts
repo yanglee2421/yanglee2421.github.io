@@ -3,38 +3,24 @@ import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 import React from "react";
 import localforage from "localforage";
-import type { WritableDraft } from "immer";
 
 type State = {
   completionId: number;
 };
 
-type Actions = {
-  set(
-    nextStateOrUpdater:
-      | State
-      | Partial<State>
-      | ((state: WritableDraft<State>) => void),
-  ): void;
-};
+const initialState = (): State => ({
+  completionId: 0,
+});
 
-type Store = State & Actions;
-
-export const useDbStore = create<Store>()(
-  persist(
-    immer((set) => ({
-      set,
-      completionId: 0,
-    })),
-    {
-      name: "useDbStore",
-      storage: createJSONStorage(() => localforage),
-      version: 1,
-      migrate(state) {
-        return state;
-      },
+export const useDbStore = create<State>()(
+  persist(immer(initialState), {
+    name: "useDbStore",
+    storage: createJSONStorage(() => localforage),
+    version: 1,
+    migrate(state) {
+      return state;
     },
-  ),
+  }),
 );
 
 export const useDbStoreHasHydrated = () =>

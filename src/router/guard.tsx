@@ -12,14 +12,18 @@ export const LangGuard = () => {
   const params = useParams();
   const location = useLocation();
   const { i18n } = useTranslation();
-  const setStoreLang = useLocalStore((s) => s.update);
+  const setStoreLang = useLocalStore.setState;
   const storeLang = useLocalStore((s) => s.fallbackLang);
   const matchedLang = getMatchedLang(params.lang, storeLang);
 
-  React.useEffect(() => {
-    setStoreLang({ fallbackLang: matchedLang });
+  const changeLanguage = React.useEffectEvent((matchedLang: string) => {
     i18n.changeLanguage(matchedLang);
-  }, [setStoreLang, matchedLang, i18n]);
+    setStoreLang({ fallbackLang: matchedLang });
+  });
+
+  React.useEffect(() => {
+    changeLanguage(matchedLang);
+  }, [matchedLang]);
 
   if (matchedLang !== params.lang) {
     return (
@@ -44,7 +48,7 @@ export const GuestGuard = () =>
 export const AuthGuard = () => {
   const user = useCurrentUser();
   const netlifyToken = useLocalStore((s) => s.netlifyToken);
-  const setNetlifyToken = useLocalStore((s) => s.update);
+  const setNetlifyToken = useLocalStore.setState;
 
   const auth = useQuery({
     ...fetchUserByFirebase({

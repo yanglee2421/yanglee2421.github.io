@@ -291,7 +291,7 @@ const Sinewave = (props: SinewaveProps) => {
     const dataArray = new Uint8Array(bufferLength);
 
     let timer = 0;
-    const draw = function () {
+    const draw = () => {
       timer = requestAnimationFrame(draw);
 
       const canvasWidth = canvas.width;

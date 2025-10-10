@@ -1,6 +1,6 @@
 import React from "react";
 
-export function Materio(props: React.SVGProps<SVGSVGElement>) {
+export const Materio = (props: React.SVGProps<SVGSVGElement>) => {
   return (
     <svg
       width="1em"
@@ -78,4 +78,4 @@ export function Materio(props: React.SVGProps<SVGSVGElement>) {
       />
     </svg>
   );
-}
+};

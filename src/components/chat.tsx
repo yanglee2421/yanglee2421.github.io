@@ -121,14 +121,14 @@ type SendButtonStatus = "idle" | "loading" | "streaming";
 const useScrollToBottom = () => {
   const chatLogRef = React.useRef<HTMLDivElement>(null);
 
-  const handleScrollToBottom = React.useCallback(() => {
+  const handleScrollToBottom = React.useEffectEvent(() => {
     chatLogRef.current?.scrollIntoView({
       behavior: "smooth",
       block: "end",
     });
-  }, []);
+  });
 
-  React.useEffect(handleScrollToBottom, [handleScrollToBottom]);
+  React.useEffect(() => handleScrollToBottom(), []);
 
   return chatLogRef;
 };
@@ -194,7 +194,7 @@ export const CopilotChat = () => {
   const windowInnerHeight = useWindowInnerHeight();
   const visualViewportHeight = useVisualViewportHeight();
   const activeCompletionId = useDbStore((state) => state.completionId);
-  const setDb = useDbStore((state) => state.set);
+  const setDb = useDbStore.setState;
   const completion = useLiveQuery(
     () => db.completions.get(activeCompletionId),
     [activeCompletionId],

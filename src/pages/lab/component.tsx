@@ -67,7 +67,7 @@ import {
 } from "@tanstack/react-table";
 import "./border.css";
 
-const bgImgHref = new URL(bg, import.meta.url).href;
+const getBgImgHref = () => new URL(bg, import.meta.url).href;
 
 const WebSocketCard = () => {
   const [data, setData] = React.useState("");
@@ -542,6 +542,8 @@ const StackContextDemo = () => {
 export const Component = () => {
   const id = React.useId();
 
+  const bgImgHref = getBgImgHref();
+
   const handleCutImage = () => {
     const video = document.getElementById(id);
 
@@ -679,6 +681,44 @@ export const Component = () => {
       <WebSocketCard />
       <EditableTable />
       <StackContextDemo />
+      <ActivityDemo />
     </Stack>
+  );
+};
+
+const ActivityDemo = () => {
+  const [show, setShow] = React.useState(false);
+
+  return (
+    <>
+      <Switch
+        checked={show}
+        onChange={(e) => {
+          setShow(e.target.checked);
+        }}
+      />
+      <React.Activity mode={show ? "visible" : "hidden"}>
+        <iframe
+          src="https://www.bilibili.com/"
+          frameBorder="0"
+          height={500}
+        ></iframe>
+        <h1>Activity</h1>
+        <OtherComponent />
+      </React.Activity>
+    </>
+  );
+};
+
+const OtherComponent = () => {
+  return (
+    <>
+      <span>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit
+        provident voluptates dolores veritatis omnis sed pariatur porro, nihil
+        fugit tempore odio odit maxime ex modi dolorum nesciunt nulla neque
+        molestias.
+      </span>
+    </>
   );
 };

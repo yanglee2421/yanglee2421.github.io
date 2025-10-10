@@ -1,6 +1,6 @@
 import { FALLBACK_LANG, LANGS } from "./constants";
 
-export function onAnimationFrame(cb: () => void) {
+export const onAnimationFrame = (cb: () => void) => {
   let animate = 0;
 
   const run = () => {
@@ -11,7 +11,7 @@ export function onAnimationFrame(cb: () => void) {
   run();
 
   return () => cancelAnimationFrame(animate);
-}
+};
 
 export const android_ripple = (color: string) => ({
   color,
@@ -77,13 +77,13 @@ export class GetRandom {
   }
 }
 
-export function withoutFalsy(list: unknown[]) {
+export const withoutFalsy = (list: unknown[]) => {
   return list.every(Boolean);
-}
+};
 
-export function withinTruthy(list: unknown[]) {
+export const withinTruthy = (list: unknown[]) => {
   return list.some(Boolean);
-}
+};
 
 type Ops = {
   key: string | symbol;
@@ -303,3 +303,11 @@ export const chunk = <TData>(list: TData[], size: number) => {
 
   return chunked;
 };
+
+export type ElementOf<TList> = TList extends (infer TElement)[]
+  ? TElement
+  : never;
+
+export type ParamsOf<TFunc> = TFunc extends (...args: infer TParams) => void
+  ? TParams
+  : never;
