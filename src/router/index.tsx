@@ -202,11 +202,6 @@ const routes: RouteObject[] = [
                 lazy: () => import("@/pages/lab/component"),
               },
               {
-                path: "calendar",
-                lazy: () => import("@/pages/calendar/component"),
-              },
-
-              {
                 path: "handbook",
                 lazy: () => import("@/pages/handbook/component"),
               },
@@ -217,10 +212,6 @@ const routes: RouteObject[] = [
               {
                 path: "snackbar",
                 lazy: () => import("@/pages/snackbar/component"),
-              },
-              {
-                path: "minesweeper",
-                lazy: () => import("@/pages/minesweeper/component"),
               },
               {
                 index: true,

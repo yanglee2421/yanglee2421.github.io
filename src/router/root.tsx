@@ -9,9 +9,7 @@ import { useParams, Outlet, ScrollRestoration } from "react-router";
 import type { Navigation } from "@toolpad/core";
 import {
   DashboardOutlined,
-  CalendarTodayOutlined,
   CalendarMonthOutlined,
-  SportsEsportsOutlined,
   QrCodeOutlined,
   TokenOutlined,
   HandshakeOutlined,
@@ -76,16 +74,6 @@ const langToNavition = (lang: string): Navigation => [
     kind: "divider",
   },
   { kind: "header", title: "App" },
-  {
-    segment: path(lang, "calendar"),
-    title: "Calendar",
-    icon: <CalendarTodayOutlined />,
-  },
-  {
-    segment: path(lang, "minesweeper"),
-    title: "Minesweeper",
-    icon: <SportsEsportsOutlined />,
-  },
   {
     segment: path(lang, "file"),
     title: "File",

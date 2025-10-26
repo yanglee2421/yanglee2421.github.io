@@ -27,7 +27,6 @@ const Content = () => {
       <div>
         <DateTimePicker />
       </div>
-      <iframe src="https://bilibili.com" width={700} height={700}></iframe>
       <Box width={2000} height={2000}></Box>
     </Box>
   );
