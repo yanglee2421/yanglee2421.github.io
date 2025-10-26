@@ -60,8 +60,6 @@
     "notistack": "^3.0.2",
     "nprogress": "^0.2.0",
     "openai": "^6.7.0",
-    "pdfjs-dist": "^5.4.296",
-    "qrcode.react": "^4.2.0",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
     "react-dropzone": "^14.3.8",
@@ -77,11 +75,9 @@
     "remark-gfm": "^4.0.1",
     "remark-math": "^6.0.0",
     "shiki": "^3.14.0",
-    "superjson": "^2.2.3",
     "use-immer": "^0.11.0",
     "zod": "^4.1.12",
-    "zustand": "^5.0.8",
-    "zxing-wasm": "^2.2.2"
+    "zustand": "^5.0.8"
   },
   "devDependencies": {
     "@eslint/js": "^9.38.0",

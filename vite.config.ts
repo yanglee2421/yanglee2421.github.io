@@ -63,9 +63,6 @@ export default defineConfig(() => {
             ) {
               return "tsparticles-full";
             }
-            if (id.includes("node_modules/qrcode.react/")) {
-              return "qrcode.react";
-            }
             if (id.includes("node_modules/notistack/")) {
               return "notistack";
             }

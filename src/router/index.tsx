@@ -194,20 +194,12 @@ const routes: RouteObject[] = [
             Component: DashLayout,
             children: [
               {
-                path: "file",
-                lazy: () => import("@/pages/file/component"),
-              },
-              {
                 path: "lab",
                 lazy: () => import("@/pages/lab/component"),
               },
               {
                 path: "handbook",
                 lazy: () => import("@/pages/handbook/component"),
-              },
-              {
-                path: "qrcode",
-                lazy: () => import("@/pages/qrcode/component"),
               },
               {
                 path: "snackbar",

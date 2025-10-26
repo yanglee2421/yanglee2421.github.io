@@ -1,7 +1,6 @@
 import {
   DashboardOutlined,
   CalendarMonthOutlined,
-  QrCodeOutlined,
   ChatOutlined,
   ScienceOutlined,
   HandshakeOutlined,
@@ -62,11 +61,6 @@ const list = [
     to: "/overtime/new",
     label: "Overtime New",
     icon: <CalendarMonthOutlined />,
-  },
-  {
-    to: "/qrcode",
-    label: "QRCode",
-    icon: <QrCodeOutlined />,
   },
   {
     to: "/handbook",

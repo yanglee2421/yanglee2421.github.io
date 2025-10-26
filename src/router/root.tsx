@@ -10,7 +10,6 @@ import type { Navigation } from "@toolpad/core";
 import {
   DashboardOutlined,
   CalendarMonthOutlined,
-  QrCodeOutlined,
   TokenOutlined,
   HandshakeOutlined,
   MessageOutlined,
@@ -20,7 +19,6 @@ import {
   ViewDayRounded,
   AddOutlined,
   ListOutlined,
-  InsertDriveFileOutlined,
   AlignHorizontalLeftOutlined,
 } from "@mui/icons-material";
 import { Box, useTheme } from "@mui/material";
@@ -74,12 +72,6 @@ const langToNavition = (lang: string): Navigation => [
     kind: "divider",
   },
   { kind: "header", title: "App" },
-  {
-    segment: path(lang, "file"),
-    title: "File",
-    icon: <InsertDriveFileOutlined />,
-  },
-  { segment: path(lang, "qrcode"), title: "QRCode", icon: <QrCodeOutlined /> },
   {
     segment: path(lang, "snackbar"),
     title: "Snackbar",
