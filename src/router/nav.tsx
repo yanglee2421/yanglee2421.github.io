@@ -1,9 +1,6 @@
 import {
   DashboardOutlined,
-  CalendarTodayOutlined,
   CalendarMonthOutlined,
-  SportsEsportsOutlined,
-  QrCodeOutlined,
   ChatOutlined,
   ScienceOutlined,
   HandshakeOutlined,
@@ -56,31 +53,6 @@ const list = [
     icon: <DashboardOutlined />,
   },
   {
-    to: "/calendar",
-    label: "Calendar",
-    icon: <CalendarTodayOutlined />,
-  },
-  // {
-  //   to: "/invoices",
-  //   label: "Invoices",
-  //   icon: <WalletOutlined />,
-  // },
-  // {
-  //   to: "/invoices/new",
-  //   label: "Calculator",
-  //   icon: <CalculateOutlined />,
-  // },
-  // {
-  //   to: "/staff",
-  //   label: "Staff",
-  //   icon: <GroupOutlined />,
-  // },
-  // {
-  //   to: "/staff/new",
-  //   label: "Staff",
-  //   icon: <GroupAddOutlined />,
-  // },
-  {
     to: "/overtime",
     label: "Overtime",
     icon: <CalendarMonthOutlined />,
@@ -89,16 +61,6 @@ const list = [
     to: "/overtime/new",
     label: "Overtime New",
     icon: <CalendarMonthOutlined />,
-  },
-  {
-    to: "/minesweeper",
-    label: "Minesweeper",
-    icon: <SportsEsportsOutlined />,
-  },
-  {
-    to: "/qrcode",
-    label: "QRCode",
-    icon: <QrCodeOutlined />,
   },
   {
     to: "/handbook",

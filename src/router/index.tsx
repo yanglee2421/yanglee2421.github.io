@@ -194,33 +194,16 @@ const routes: RouteObject[] = [
             Component: DashLayout,
             children: [
               {
-                path: "file",
-                lazy: () => import("@/pages/file/component"),
-              },
-              {
                 path: "lab",
                 lazy: () => import("@/pages/lab/component"),
               },
-              {
-                path: "calendar",
-                lazy: () => import("@/pages/calendar/component"),
-              },
-
               {
                 path: "handbook",
                 lazy: () => import("@/pages/handbook/component"),
               },
               {
-                path: "qrcode",
-                lazy: () => import("@/pages/qrcode/component"),
-              },
-              {
                 path: "snackbar",
                 lazy: () => import("@/pages/snackbar/component"),
-              },
-              {
-                path: "minesweeper",
-                lazy: () => import("@/pages/minesweeper/component"),
               },
               {
                 index: true,
