@@ -4,6 +4,21 @@
 
 1. Gradually abandon MUI and Toolpad, and gradually migrate existing features to [electron-react](https://github.com/yanglee2421/electron-react)
 
+## Git
+
+| 类型         | 含义                   | 示例                                              |
+| ------------ | ---------------------- | ------------------------------------------------- |
+| **feat**     | 新功能                 | `feat(auth): add JWT token validation`            |
+| **fix**      | 修复 bug               | `fix(ui): correct button alignment on mobile`     |
+| **docs**     | 文档修改               | `docs(readme): update installation guide`         |
+| **style**    | 代码格式（不影响逻辑） | `style: format code using Prettier`               |
+| **refactor** | 重构（非新增、非修复） | `refactor(core): simplify data pipeline`          |
+| **perf**     | 性能优化               | `perf(api): reduce redundant DB queries`          |
+| **test**     | 增加或修改测试         | `test(auth): add unit tests for token refresh`    |
+| **chore**    | 构建流程、依赖管理等   | `chore(deps): upgrade eslint to v9`               |
+| **ci**       | CI/CD 配置相关         | `ci(github): fix build pipeline trigger`          |
+| **revert**   | 回滚之前的提交         | `revert: revert "feat(auth): add JWT validation"` |
+
 ## Awesome
 
 ### Data Fetching
