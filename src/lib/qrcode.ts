@@ -1,24 +1,12 @@
 import QRCode from "qrcode";
+import { chunk } from "@/lib/utils";
 
-const generateMatrix = (value: string) => {
+export const generateMatrix = (value: string) => {
   const unit8Array = QRCode.create(value).modules.data;
   const numbers = Array.from(unit8Array);
   const sqrt = Math.sqrt(numbers.length);
-  const result: number[][] = [];
 
-  return numbers.reduce((rows, number) => {
-    const lastRow = rows.at(-1) || [];
-
-    if (!rows.includes(lastRow)) {
-      rows.push(lastRow);
-    }
-
-    if (lastRow.length < sqrt) {
-      lastRow.push(number);
-    }
-
-    return rows;
-  }, result);
+  return chunk(numbers, sqrt);
 };
 
 type BaseShapeOptions =
@@ -36,7 +24,7 @@ type ShapeOptions = {
   eyePatternGap?: number;
 };
 
-const transformMatrixIntoPath = (
+export const transformMatrixIntoPath = (
   matrix: number[][],
   size: number,
   options: ShapeOptions = {},
@@ -50,4 +38,6 @@ const transformMatrixIntoPath = (
   } = options;
 
   const cellSize = size / matrix.length;
+
+  void { shape, eyePatternGap, gap, eyePatternShape, cellSize, logoSize };
 };
