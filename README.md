@@ -19,6 +19,17 @@
 | **ci**       | CI/CD 配置相关         | `ci(github): fix build pipeline trigger`          |
 | **revert**   | 回滚之前的提交         | `revert: revert "feat(auth): add JWT validation"` |
 
+## TypeScript
+
+### Interface & Type
+
+| 功能     | type | interface |
+| -------- | ---- | --------- |
+| 联合类型 | ✅   | ❎        |
+| 类型别名 | ✅   | ❎        |
+| 声明合并 | ❎   | ✅        |
+| 继承     | ❎   | ✅        |
+
 ## Awesome
 
 ### Data Fetching
