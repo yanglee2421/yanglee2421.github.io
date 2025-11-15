@@ -36,7 +36,6 @@ import { useSnackbar } from "notistack";
 import openai from "openai";
 import React from "react";
 import { useForm, Controller } from "react-hook-form";
-import { Markdown } from "@/components/markdown";
 import { z } from "zod";
 import { useLiveQuery } from "dexie-react-hooks";
 import { db } from "@/lib/db";
@@ -58,7 +57,7 @@ const MarkdownContent = (props: MarkdownContentProps) => {
         },
       }}
     >
-      <Markdown code={props.text} />
+      {props.text}
     </Box>
   );
 };
