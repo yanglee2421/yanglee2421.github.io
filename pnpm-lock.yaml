@@ -134,9 +134,6 @@ importers:
       nprogress:
         specifier: ^0.2.0
         version: 0.2.0
-      openai:
-        specifier: ^6.8.1
-        version: 6.8.1(zod@4.1.12)
       qrcode:
         specifier: ^1.5.4
         version: 1.5.4
@@ -2627,18 +2624,6 @@ packages:
 
   oniguruma-to-es@4.3.3:
     resolution: {integrity: sha512-rPiZhzC3wXwE59YQMRDodUwwT9FZ9nNBwQQfsd1wfdtlKEyCdRV0avrTcSZ5xlIvGRVPd/cx6ZN45ECmS39xvg==}
-
-  openai@6.8.1:
-    resolution: {integrity: sha512-ACifslrVgf+maMz9vqwMP4+v9qvx5Yzssydizks8n+YUJ6YwUoxj51sKRQ8HYMfR6wgKLSIlaI108ZwCk+8yig==}
-    hasBin: true
-    peerDependencies:
-      ws: ^8.18.0
-      zod: ^3.25 || ^4.0
-    peerDependenciesMeta:
-      ws:
-        optional: true
-      zod:
-        optional: true
 
   oppa@0.4.0:
     resolution: {integrity: sha512-DFvM3+F+rB/igo3FRnkDWitjZgBH9qZAn68IacYHsqbZBKwuTA+LdD4zSJiQtgQpWq7M08we5FlGAVHz0yW7PQ==}
@@ -5854,10 +5839,6 @@ snapshots:
       oniguruma-parser: 0.12.1
       regex: 6.0.1
       regex-recursion: 6.0.2
-
-  openai@6.8.1(zod@4.1.12):
-    optionalDependencies:
-      zod: 4.1.12
 
   oppa@0.4.0:
     dependencies:

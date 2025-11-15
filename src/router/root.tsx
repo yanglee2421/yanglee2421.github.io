@@ -15,7 +15,6 @@ import {
   MessageOutlined,
   ScienceOutlined,
   AppsOutlined,
-  ChatOutlined,
   ViewDayRounded,
   AddOutlined,
   ListOutlined,
@@ -86,7 +85,6 @@ const langToNavition = (lang: string): Navigation => [
   { kind: "divider" },
   { kind: "header", title: "Custom layout" },
   { segment: path(lang, "app"), title: "App", icon: <AppsOutlined /> },
-  { segment: path(lang, "chat"), title: "Chat", icon: <ChatOutlined /> },
   {
     segment: path(lang, "scrollbar"),
     title: "Scrollbar",

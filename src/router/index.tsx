@@ -26,7 +26,6 @@ import { AuthLayout } from "@/components/layout/auth";
 import { RootRoute } from "./root";
 import { UserDropdown } from "@/components/shared/UserDropdonw";
 import { LangToggle } from "@/components/shared/LangToggle";
-import { useDbStore } from "@/hooks/store/useDbStore";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import type { RouteObject } from "react-router";
 
@@ -144,7 +143,7 @@ const RootHydrateFallback = () => {
   );
 };
 
-type UseStore = typeof useDbStore | typeof useLocalStore;
+type UseStore = typeof useLocalStore;
 
 const finishHydrate = (useStore: UseStore) =>
   new Promise<void>((resolve) => {
@@ -163,7 +162,6 @@ const routes: RouteObject[] = [
     ErrorBoundary: RootErrorBoundary,
     HydrateFallback: RootHydrateFallback,
     loader: async () => {
-      await finishHydrate(useDbStore);
       await finishHydrate(useLocalStore);
     },
     children: [
@@ -194,20 +192,12 @@ const routes: RouteObject[] = [
             Component: DashLayout,
             children: [
               {
-                path: "lab",
+                index: true,
                 lazy: () => import("@/pages/lab/component"),
-              },
-              {
-                path: "handbook",
-                lazy: () => import("@/pages/handbook/component"),
               },
               {
                 path: "snackbar",
                 lazy: () => import("@/pages/snackbar/component"),
-              },
-              {
-                index: true,
-                lazy: () => import("@/pages/home/component"),
               },
             ],
           },
@@ -271,10 +261,6 @@ const routes: RouteObject[] = [
           {
             Component: AuthLayout,
             children: [
-              {
-                path: "chat",
-                lazy: () => import("@/pages/chat/component"),
-              },
               {
                 path: "scrollbar",
                 lazy: () => import("@/pages/scrollbar/component"),

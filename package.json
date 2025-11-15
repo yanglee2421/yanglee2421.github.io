@@ -59,7 +59,6 @@
     "mathjs": "^15.1.0",
     "notistack": "^3.0.2",
     "nprogress": "^0.2.0",
-    "openai": "^6.8.1",
     "qrcode": "^1.5.4",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",

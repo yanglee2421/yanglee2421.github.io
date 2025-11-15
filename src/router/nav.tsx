@@ -1,9 +1,7 @@
 import {
   DashboardOutlined,
   CalendarMonthOutlined,
-  ChatOutlined,
   ScienceOutlined,
-  HandshakeOutlined,
   AppsOutlined,
   ChevronRightOutlined,
   TokenOutlined,
@@ -63,11 +61,6 @@ const list = [
     icon: <CalendarMonthOutlined />,
   },
   {
-    to: "/handbook",
-    label: "Handbook",
-    icon: <HandshakeOutlined />,
-  },
-  {
     to: "/snackbar",
     label: "Snackbar",
     icon: <MessageOutlined />,
@@ -87,7 +80,6 @@ const list = [
     label: "App",
     icon: <AppsOutlined />,
   },
-  { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
   {
     to: "/scrollbar",
     label: "Scrollbar",

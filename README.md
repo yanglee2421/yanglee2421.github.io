@@ -107,3 +107,7 @@
 - [drizzle-orm](https://www.npmjs.com/package/drizzle-orm)
 - [drizzle-kit](https://www.npmjs.com/package/drizzle-kit)
 - [localforage](https://www.npmjs.com/package/localforage)
+
+### Chat
+
+- [openai](https://www.npmjs.com/package/openai)
