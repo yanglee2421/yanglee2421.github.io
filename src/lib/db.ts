@@ -1,4 +1,5 @@
-import Dexie, { type EntityTable } from "dexie";
+import Dexie from "dexie";
+import type { EntityTable } from "dexie";
 
 export type Completion = {
   id: number;
@@ -51,9 +52,12 @@ export const db = new Dexie("ChatDatabase") as Dexie & {
 
 // Schema declaration:
 db.version(3).stores({
-  completions: "++id, name", // primary key "id" automatically generated
+  // primary key "id" automatically generated
+  completions: "++id, name",
   messages:
     "++id, completionId, question, questionDate, answer, answerDate, status, thumb",
   invoices: "++id, amount, staff, note, date",
-  staffs: "++id, name, &alias, enable", // field "alias" is unique
+
+  // field "alias" is unique
+  staffs: "++id, name, &alias, enable",
 });
