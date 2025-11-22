@@ -101,13 +101,18 @@
 
 ### Database
 
-- [dexie](https://www.npmjs.com/package/dexie)
-- [dexie-react-hooks](https://www.npmjs.com/package/dexie-react-hooks)
-- [better-sqlite3](https://www.npmjs.com/package/better-sqlite3)
 - [drizzle-orm](https://www.npmjs.com/package/drizzle-orm)
 - [drizzle-kit](https://www.npmjs.com/package/drizzle-kit)
+- [better-sqlite3](https://www.npmjs.com/package/better-sqlite3)
+- [dexie](https://www.npmjs.com/package/dexie)
+- [dexie-react-hooks](https://www.npmjs.com/package/dexie-react-hooks)
 - [localforage](https://www.npmjs.com/package/localforage)
+- [mdb-reader](https://www.npmjs.com/package/mdb-reader)
 
 ### Chat
 
 - [openai](https://www.npmjs.com/package/openai)
+
+### PLC
+
+- [modbus-serial](https://www.npmjs.com/package/modbus-serial)
