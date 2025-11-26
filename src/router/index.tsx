@@ -19,7 +19,6 @@ import {
 import { HomeOutlined } from "@mui/icons-material";
 import { DashboardLayout, PageContainer, useActivePage } from "@toolpad/core";
 import { GuestLayout } from "@/components/layout/guest";
-import { BlankLayout } from "@/components/layout/blank";
 import { ModeToggle } from "@/components/shared/ModeToggle";
 import { AuthGuard, GuestGuard, LangGuard } from "./guard";
 import { AuthLayout } from "@/components/layout/auth";
@@ -252,7 +251,7 @@ const routes: RouteObject[] = [
                   },
                   {
                     path: "rank",
-                    lazy: () => import("@/pages/rank/component"),
+                    lazy: () => import("@/pages/rank/demo"),
                   },
                 ],
               },
@@ -268,15 +267,6 @@ const routes: RouteObject[] = [
               {
                 path: "virtual",
                 lazy: () => import("@/pages/virtual/component"),
-              },
-            ],
-          },
-          {
-            Component: BlankLayout,
-            children: [
-              {
-                path: "app",
-                lazy: () => import("@/pages/app/component"),
               },
             ],
           },

@@ -1,12 +1,3 @@
-import { auth } from "@/api/firebase/app";
-import { NprogressBar } from "@/components/layout/nprogress";
-import { ParticlesUI } from "@/components/layout/particles";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { ReactRouterAppProvider } from "@toolpad/core/react-router";
-import { signOut } from "firebase/auth";
-import React from "react";
-import { useParams, Outlet, ScrollRestoration } from "react-router";
-import type { Navigation } from "@toolpad/core";
 import {
   DashboardOutlined,
   CalendarMonthOutlined,
@@ -14,14 +5,22 @@ import {
   HandshakeOutlined,
   MessageOutlined,
   ScienceOutlined,
-  AppsOutlined,
   ViewDayRounded,
   AddOutlined,
   ListOutlined,
   AlignHorizontalLeftOutlined,
 } from "@mui/icons-material";
+import React from "react";
+import { signOut } from "firebase/auth";
 import { Box, useTheme } from "@mui/material";
+import { useParams, Outlet, ScrollRestoration } from "react-router";
+import { ReactRouterAppProvider } from "@toolpad/core/react-router";
 import { NotificationsProvider, DialogsProvider } from "@toolpad/core";
+import { auth } from "@/api/firebase/app";
+import { NprogressBar } from "@/components/layout/nprogress";
+import { ParticlesUI } from "@/components/layout/particles";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import type { Navigation } from "@toolpad/core";
 
 const BRANDING = {
   title: "GitHub IO",
@@ -84,7 +83,6 @@ const langToNavition = (lang: string): Navigation => [
   },
   { kind: "divider" },
   { kind: "header", title: "Custom layout" },
-  { segment: path(lang, "app"), title: "App", icon: <AppsOutlined /> },
   {
     segment: path(lang, "scrollbar"),
     title: "Scrollbar",
@@ -97,7 +95,7 @@ const langToNavition = (lang: string): Navigation => [
   },
 ];
 
-const useNavigtion = () => {
+const useNavigation = () => {
   const params = useParams();
   const lang = params.lang;
   return React.useMemo<Navigation>(() => langToNavition(String(lang)), [lang]);
@@ -105,7 +103,7 @@ const useNavigtion = () => {
 
 export const RootRoute = () => {
   const theme = useTheme();
-  const navigation = useNavigtion();
+  const navigation = useNavigation();
   const user = useCurrentUser();
 
   const session = user

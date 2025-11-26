@@ -1,139 +1,170 @@
-import { DndContext, useDraggable, useDroppable } from "@dnd-kit/core";
+import {
+  DndContext,
+  useSensor,
+  useSensors,
+  PointerSensor,
+  closestCenter,
+  KeyboardSensor,
+  useDroppable,
+} from "@dnd-kit/core";
+import {
+  arrayMove,
+  horizontalListSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Box, Divider, Typography } from "@mui/material";
-import type React from "react";
+import { Box, Card, CardHeader, Typography } from "@mui/material";
+import React from "react";
 import { useImmer } from "use-immer";
 
-const initDroppableList = () => [
-  {
-    id: "1",
-    label: "S",
-    children: [],
-  },
-  {
-    id: "2",
-    label: "A",
-    children: [],
-  },
-  {
-    id: "3",
-    label: "B",
-    children: [],
-  },
-  {
-    id: "4",
-    label: "C",
-    children: [],
-  },
-  {
-    id: "5",
-    label: "D",
-    children: [
-      {
-        id: "1",
-        label: "one",
-      },
-    ],
-  },
-];
+const makeDragable = () => {
+  return Array.from({ length: 10 }, (_, index) => {
+    return {
+      id: String(index + 1),
+      groupId: "",
+    };
+  });
+};
+
+const isGroup = (id: string) => {
+  return Number.isNaN(Number(id));
+};
 
 export const Component = () => {
-  const [droppableList, setDroppableList] = useImmer(initDroppableList);
+  "use no memo";
+  const [draggables, setDraggables] = useImmer(makeDragable);
+
+  const sensors = useSensors(
+    useSensor(PointerSensor),
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+  );
+
+  const setDraggableGroup = (dragId: string, groupId: string) => {
+    setDraggables((draft) => {
+      const active = draft.find((drag) => Object.is(drag.id, dragId));
+      if (!active) return;
+
+      active.groupId = groupId;
+    });
+  };
+
+  const setDraggableSort = (prevId: string, nextId: string) => {
+    setDraggables((draft) => {
+      const prevIndex = draft.findIndex((drag) => Object.is(drag.id, prevId));
+      const nextIndex = draft.findIndex((drag) => Object.is(drag.id, nextId));
+
+      return arrayMove(draft, prevIndex, nextIndex);
+    });
+  };
 
   return (
     <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
       onDragEnd={(e) => {
-        setDroppableList((draft) => {
-          const { active, over } = e;
-          const currentDroppable = draft.find((i) => i.id === over?.id);
-          if (!currentDroppable) return;
-          const allChilds = draft.flatMap((i) => i.children);
-          draft.forEach((i) => {
-            i.children = [];
-          });
-          currentDroppable.children = allChilds.filter(
-            (i) => i.id === active.id,
-          );
-        });
+        const { active, over } = e;
+
+        const overId = over?.id + "";
+        const activeId = active.id + "";
+        const isGroupElement = isGroup(overId);
+
+        console.log(isGroupElement, overId, activeId);
+
+        if (isGroupElement) {
+          setDraggableGroup(activeId, overId);
+        } else {
+          setDraggableSort(activeId, overId);
+        }
       }}
     >
-      {droppableList.map((droppable) => (
-        <DroppableItem
-          key={droppable.id}
-          id={droppable.id}
-          label={droppable.label}
-        >
-          {droppable.children.map((item) => (
-            <DraggableItem key={item.id} id={item.id}>
-              {item.label}
-            </DraggableItem>
-          ))}
-        </DroppableItem>
-      ))}
+      <Typography variant="h2">S</Typography>
+      <Group
+        id="s"
+        items={draggables.filter((drag) => Object.is(drag.groupId, "s"))}
+      />
+      <Typography variant="h2">A</Typography>
+      <Group
+        id="a"
+        items={draggables.filter((drag) => Object.is(drag.groupId, "a"))}
+      />
+      <Typography variant="h2">None</Typography>
+      <Group
+        id=""
+        items={draggables.filter((drag) => Object.is(drag.groupId, ""))}
+      />
     </DndContext>
   );
 };
 
-type DraggableItemProps = {
+type Item = {
   id: string;
-  children?: React.ReactNode;
 };
 
-const DraggableItem = (props: DraggableItemProps) => {
-  const draggable = useDraggable({
-    id: props.id,
-  });
-
-  console.log(CSS.Transform.toString(draggable.transform));
-
-  const transformString = {
-    ...draggable.transform,
-    x: draggable.transform?.x ? draggable.transform.x : 0,
-    y: draggable.transform?.y ? draggable.transform.y : 0,
-    scaleX: 1,
-    scaleY: 1,
-  };
-
-  return (
-    <Box
-      ref={draggable.setNodeRef}
-      {...draggable.attributes}
-      {...draggable.listeners}
-      sx={{
-        border: 1,
-        borderRadius: 1,
-        padding: 3,
-
-        width: 96,
-        height: 96,
-
-        cursor: "move",
-      }}
-      style={{
-        transform: CSS.Transform.toString(transformString),
-      }}
-    >
-      {props.children}
-    </Box>
-  );
-};
-
-type DroppableItemProps = {
+type GroupProps = {
+  items: Item[];
   id: string;
-  label?: React.ReactNode;
-  children?: React.ReactNode;
 };
 
-const DroppableItem = (props: DroppableItemProps) => {
+const Group = (props: GroupProps) => {
   const droppable = useDroppable({
     id: props.id,
   });
 
   return (
-    <Box ref={droppable.setNodeRef}>
-      <Typography variant="h4">{props.label}</Typography>
-      <Box sx={{ height: 100 }}>{props.children}</Box>
-      <Divider />
+    <SortableContext
+      strategy={horizontalListSortingStrategy}
+      items={props.items}
+    >
+      <Box
+        ref={droppable.setNodeRef}
+        sx={{
+          height: 100,
+          borderStyle: "solid",
+          borderWidth: 1,
+
+          display: "flex",
+          flexWrap: "wrap",
+          gap: 1,
+        }}
+      >
+        {props.items.map((item) => (
+          <Draggable key={item.id} id={item.id} title={item.id} />
+        ))}
+      </Box>
+    </SortableContext>
+  );
+};
+
+type DraggableProps = {
+  id: string;
+  title?: React.ReactNode;
+};
+
+const Draggable = (props: DraggableProps) => {
+  const sortable = useSortable({
+    id: props.id,
+  });
+
+  return (
+    <Box
+      ref={sortable.setNodeRef}
+      {...sortable.attributes}
+      {...sortable.listeners}
+      style={{
+        transform: CSS.Transform.toString(sortable.transform),
+      }}
+      sx={{
+        width: 100,
+        height: 100,
+      }}
+    >
+      <Card>
+        <CardHeader title={props.title} />
+      </Card>
     </Box>
   );
 };

@@ -2,7 +2,6 @@ import {
   DashboardOutlined,
   CalendarMonthOutlined,
   ScienceOutlined,
-  AppsOutlined,
   ChevronRightOutlined,
   TokenOutlined,
   ViewDayRounded,
@@ -74,11 +73,6 @@ const list = [
     to: "/rank",
     label: "Rank",
     icon: <AlignHorizontalLeftOutlined />,
-  },
-  {
-    to: "/app",
-    label: "App",
-    icon: <AppsOutlined />,
   },
   {
     to: "/scrollbar",
