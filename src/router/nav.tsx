@@ -45,44 +45,9 @@ const LinkWrapper = styled("div")(({ theme }) => ({
 
 const list = [
   {
-    to: "/dashboard",
-    label: "Dashboard",
+    to: "/dnd/core/Draggable/hooks/useDraggable/basic-setup",
+    label: "basic setup",
     icon: <DashboardOutlined />,
-  },
-  {
-    to: "/overtime",
-    label: "Overtime",
-    icon: <CalendarMonthOutlined />,
-  },
-  {
-    to: "/overtime/new",
-    label: "Overtime New",
-    icon: <CalendarMonthOutlined />,
-  },
-  {
-    to: "/snackbar",
-    label: "Snackbar",
-    icon: <MessageOutlined />,
-  },
-  {
-    to: "/lab",
-    label: "Lab",
-    icon: <ScienceOutlined />,
-  },
-  {
-    to: "/rank",
-    label: "Rank",
-    icon: <AlignHorizontalLeftOutlined />,
-  },
-  {
-    to: "/scrollbar",
-    label: "Scrollbar",
-    icon: <TokenOutlined />,
-  },
-  {
-    to: "/virtual",
-    label: "Virtual",
-    icon: <ViewDayRounded />,
   },
 ];
 

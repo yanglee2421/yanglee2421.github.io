@@ -15,7 +15,7 @@ import {
   useSortable,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
-import { Box, Card, CardHeader, Typography } from "@mui/material";
+import { Card, CardHeader, styled, Typography } from "@mui/material";
 import React from "react";
 import { useImmer } from "use-immer";
 
@@ -37,6 +37,7 @@ export const Component = () => {
   const [draggables, setDraggables] = useImmer(makeDragable);
 
   const sensors = useSensors(
+    // useSensor(MouseSensor),
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -109,33 +110,41 @@ type GroupProps = {
   id: string;
 };
 
+const Box = styled("div")({});
+
 const Group = (props: GroupProps) => {
   const droppable = useDroppable({
     id: props.id,
   });
 
   return (
-    <SortableContext
-      strategy={horizontalListSortingStrategy}
-      items={props.items}
-    >
-      <Box
-        ref={droppable.setNodeRef}
-        sx={{
-          height: 100,
-          borderStyle: "solid",
-          borderWidth: 1,
+    <Box
+      ref={(el) => {
+        droppable.setNodeRef(el);
 
-          display: "flex",
-          flexWrap: "wrap",
-          gap: 1,
-        }}
+        return () => {
+          droppable.setNodeRef(null);
+        };
+      }}
+      sx={{
+        height: 100,
+        borderStyle: "solid",
+        borderWidth: 1,
+
+        display: "flex",
+        flexWrap: "wrap",
+        gap: 1,
+      }}
+    >
+      <SortableContext
+        strategy={horizontalListSortingStrategy}
+        items={props.items}
       >
         {props.items.map((item) => (
           <Draggable key={item.id} id={item.id} title={item.id} />
         ))}
-      </Box>
-    </SortableContext>
+      </SortableContext>
+    </Box>
   );
 };
 
@@ -151,7 +160,12 @@ const Draggable = (props: DraggableProps) => {
 
   return (
     <Box
-      ref={sortable.setNodeRef}
+      ref={(el) => {
+        sortable.setNodeRef(el);
+        return () => {
+          sortable.setNodeRef(null);
+        };
+      }}
       {...sortable.attributes}
       {...sortable.listeners}
       style={{

@@ -1,6 +1,4 @@
 import React from "react";
-import classNames from "classnames";
-import styles from "./Button.module.css";
 import type { HTMLAttributes } from "react";
 
 export interface Props extends HTMLAttributes<HTMLButtonElement> {
@@ -8,9 +6,5 @@ export interface Props extends HTMLAttributes<HTMLButtonElement> {
 }
 
 export function Button({ children, ...props }: Props) {
-  return (
-    <button className={classNames(styles.Button)} {...props}>
-      {children}
-    </button>
-  );
+  return <button {...props}>{children}</button>;
 }
