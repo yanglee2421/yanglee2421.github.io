@@ -18,14 +18,14 @@ import {
 } from "@mui/material";
 import { HomeOutlined } from "@mui/icons-material";
 import { DashboardLayout, PageContainer, useActivePage } from "@toolpad/core";
-import { GuestLayout } from "@/components/layout/guest";
-import { ModeToggle } from "@/components/shared/ModeToggle";
-import { AuthGuard, GuestGuard, LangGuard } from "./guard";
 import { AuthLayout } from "@/components/layout/auth";
-import { RootRoute } from "./root";
-import { UserDropdown } from "@/components/shared/UserDropdonw";
-import { LangToggle } from "@/components/shared/LangToggle";
+import { GuestLayout } from "@/components/layout/guest";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { LangToggle } from "@/components/shared/LangToggle";
+import { ModeToggle } from "@/components/shared/ModeToggle";
+import { UserDropdown } from "@/components/shared/UserDropdonw";
+import { RootRoute } from "./root";
+import { AuthGuard, GuestGuard, LangGuard } from "./guard";
 import type { RouteObject } from "react-router";
 
 const DashLayout = () => {

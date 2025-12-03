@@ -1,11 +1,11 @@
-import { fetchUserByFirebase, netlify } from "@/api/netlify";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { getMatchedLang } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { useQuery } from "@tanstack/react-query";
 import { useParams, useLocation, Navigate, Outlet } from "react-router";
+import { getMatchedLang } from "@/lib/utils";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { fetchUserByFirebase, netlify } from "@/api/netlify";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { NavigateToHome, NavigateToLogin } from "./navigate";
 
 export const LangGuard = () => {
