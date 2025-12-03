@@ -1,5 +1,3 @@
-import { Router } from "@/router";
-import { useIsDark } from "@/hooks/dom/useIsDark";
 import {
   createTheme,
   CssBaseline,
@@ -7,14 +5,15 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { type Mode, useLocalStore } from "@/hooks/store/useLocalStore";
-import "dayjs/locale/zh";
-import "dayjs/locale/en";
-import { useTranslation } from "react-i18next";
+import { Router } from "@/router";
+import { useIsDark } from "@/hooks/dom/useIsDark";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { SnackbarProvider } from "@/components/ui/snackbar";
 import { QueryProvider } from "./components/query";
+import type { Mode } from "@/hooks/store/useLocalStore";
 
 const lightTheme = createTheme({
   palette: { mode: "light" },

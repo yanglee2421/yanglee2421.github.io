@@ -2,7 +2,6 @@ import {
   DashboardOutlined,
   CalendarMonthOutlined,
   TokenOutlined,
-  HandshakeOutlined,
   MessageOutlined,
   ScienceOutlined,
   ViewDayRounded,
@@ -37,11 +36,6 @@ const langToNavition = (lang: string): Navigation => [
     segment: path(lang, "dashboard"),
     title: "Dashboard",
     icon: <DashboardOutlined />,
-  },
-  {
-    segment: path(lang, "handbook"),
-    title: "Handbook",
-    icon: <HandshakeOutlined />,
   },
   {
     kind: "divider",
