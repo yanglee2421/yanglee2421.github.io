@@ -39,7 +39,7 @@ const darkTheme = createTheme({
   },
 });
 
-const modeToHasSelector = (mode: Mode, isDark: boolean) => {
+const enableDark = (mode: Mode, isDark: boolean) => {
   switch (mode) {
     case "dark":
       return true;
@@ -56,7 +56,7 @@ const MuiProvider = (props: React.PropsWithChildren) => {
   const [, i18n] = useTranslation();
   const mode = useLocalStore((s) => s.mode);
 
-  const hasDarkSelector = modeToHasSelector(mode, isDark);
+  const hasDarkSelector = enableDark(mode, isDark);
   const theme = hasDarkSelector ? darkTheme : lightTheme;
   const themeColor = hasDarkSelector
     ? theme.palette.background.default
