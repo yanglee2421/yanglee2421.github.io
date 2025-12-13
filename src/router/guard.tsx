@@ -6,7 +6,7 @@ import { getMatchedLang } from "@/lib/utils";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { fetchUserByFirebase, netlify } from "@/api/netlify";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { NavigateToHome, NavigateToLogin } from "./navigate";
+import { NavigateToHome, NavigateToLogin } from "./nav";
 
 export const LangGuard = () => {
   const params = useParams();

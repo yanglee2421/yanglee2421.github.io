@@ -8,7 +8,7 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { Router } from "@/router";
+import { AppRouter } from "@/router";
 import { useIsDark } from "@/hooks/dom/useIsDark";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { SnackbarProvider } from "@/components/ui/snackbar";
@@ -109,7 +109,7 @@ export const App = () => {
   return (
     <QueryProvider>
       <MuiProvider>
-        <Router />
+        <AppRouter />
       </MuiProvider>
     </QueryProvider>
   );
