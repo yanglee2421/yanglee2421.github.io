@@ -131,6 +131,10 @@ export const createRoutes = (): RouteObject[] => {
                   path: "virtual",
                   lazy: () => import("@/pages/virtual/component"),
                 },
+                {
+                  path: "electric",
+                  lazy: () => import("@/pages/electric/component"),
+                },
               ],
             },
             {
