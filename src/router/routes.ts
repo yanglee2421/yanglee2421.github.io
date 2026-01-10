@@ -137,39 +137,6 @@ export const createRoutes = (): RouteObject[] => {
                 },
               ],
             },
-            {
-              path: "dnd",
-              Component: AuthLayout,
-              children: [
-                {
-                  path: "core",
-                  children: [
-                    {
-                      path: "Draggable",
-                      caseSensitive: true,
-                      children: [
-                        {
-                          path: "hooks",
-                          children: [
-                            {
-                              path: "useDraggable",
-                              caseSensitive: true,
-                              children: [
-                                {
-                                  path: "basic-setup",
-                                  lazy: () =>
-                                    import("@/pages/dnd/core/draggable/hooks/usedraggable/basic-setup/component"),
-                                },
-                              ],
-                            },
-                          ],
-                        },
-                      ],
-                    },
-                  ],
-                },
-              ],
-            },
           ],
         },
       ],
