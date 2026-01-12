@@ -1,5 +1,6 @@
 import React from "react";
 import classNames from "classnames";
+import { devLog } from "@/lib/utils";
 import styles from "./Draggable.module.css";
 import { Handle } from "../Item";
 import {
@@ -83,3 +84,5 @@ export const Draggable = ({
     </div>
   );
 };
+
+devLog(false, styles);

@@ -311,3 +311,18 @@ export type ElementOf<TList> = TList extends (infer TElement)[]
 export type ParamsOf<TFunc> = TFunc extends (...args: infer TParams) => void
   ? TParams
   : never;
+
+export const devLog = (
+  enable: boolean,
+  ...args: Parameters<typeof console.log>
+) => {
+  if (import.meta.env.PROD) {
+    return;
+  }
+
+  if (!enable) {
+    return;
+  }
+
+  console.log(...args);
+};

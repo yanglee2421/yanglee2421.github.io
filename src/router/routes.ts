@@ -57,6 +57,11 @@ export const createRoutes = (): RouteObject[] => {
                   path: "snackbar",
                   lazy: () => import("@/pages/snackbar/component"),
                 },
+                {
+                  path: "dnd",
+                  lazy: () =>
+                    import("@/pages/stories/1 - Core/Draggable/1-Draggable.story"),
+                },
               ],
             },
             {

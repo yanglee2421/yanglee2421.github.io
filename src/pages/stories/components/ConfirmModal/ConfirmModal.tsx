@@ -1,5 +1,5 @@
 import React from "react";
-import styles from "./ConfirmModal.module.scss";
+import styles from "./ConfirmModal.module.css";
 
 interface Props {
   onConfirm(): void;

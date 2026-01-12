@@ -27,7 +27,7 @@ export default defineConfig(() => {
     css: {
       preprocessorOptions: {},
       modules: {
-        localsConvention: "camelCaseOnly",
+        // localsConvention: "camelCaseOnly",
       },
     },
     // experimental: { enableNativePlugin: true },
