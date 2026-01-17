@@ -14,6 +14,7 @@ export const Grid = ({ size }: Props) => {
       style={
         {
           "--grid-size": `${size}px`,
+          backgroundPositionX: 14,
         } as React.CSSProperties
       }
     />

@@ -89,6 +89,11 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () =>
                     import("@/pages/stories/1 - Core/Draggable/1-Draggable.story"),
                 },
+                {
+                  path: "dragoverlay/:tab?",
+                  lazy: () =>
+                    import("@/pages/stories/1 - Core/Draggable/2-DragOverlay.story"),
+                },
               ],
             },
             {

@@ -26,6 +26,7 @@ import {
   ListOutlined,
   AlignHorizontalLeftOutlined,
   HomeOutlined,
+  DragIndicator,
 } from "@mui/icons-material";
 import React from "react";
 import { signOut } from "firebase/auth";
@@ -120,6 +121,11 @@ const createNavition = (lang?: string): Navigation => [
     segment: path(lang, "dashboard"),
     title: "Dashboard",
     icon: <DashboardOutlined />,
+  },
+  {
+    segment: path(lang, "dnd"),
+    title: "Drag & Drop",
+    icon: <DragIndicator />,
   },
   { kind: "divider" },
   { kind: "header", title: "Table" },

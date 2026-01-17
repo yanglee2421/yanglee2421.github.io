@@ -28,6 +28,7 @@ import {
 import type { DragPendingEvent, Modifiers } from "@dnd-kit/core";
 import type { Coordinates } from "@dnd-kit/utilities";
 import type { PointerActivationConstraint } from "@dnd-kit/core";
+import { createPortal } from "react-dom";
 
 const defaultCoordinates: Coordinates = { x: 0, y: 0 };
 
@@ -297,6 +298,117 @@ const MinimumDistanceWithVisualCue = () => {
   );
 };
 
+const MinimumDistanceX = () => {
+  return (
+    <DraggableStory
+      label="I'm activated after dragging 15px on the x axis"
+      activationConstraint={{
+        distance: { x: 15 },
+      }}
+    />
+  );
+};
+
+const MinimumDistanceY = () => (
+  <DraggableStory
+    label="I'm activated after dragging 15px on the y axis"
+    activationConstraint={{
+      distance: { y: 15 },
+    }}
+  />
+);
+
+const MinimumDistanceXY = () => (
+  <DraggableStory
+    label="I'm activated after dragging 15px on the x and y axis"
+    activationConstraint={{
+      distance: { x: 15, y: 15 },
+    }}
+  />
+);
+
+const MinimumDistanceXToleranceY = () => (
+  <DraggableStory
+    label="I'm activated after dragging 15px on the x axis and aborted after dragging 30px on the y axis"
+    activationConstraint={{
+      distance: { x: 15 },
+      tolerance: { y: 30 },
+    }}
+  />
+);
+
+const MinimumDistanceYToleranceX = () => (
+  <DraggableStory
+    label="I'm activated after dragging 15px on the y axis and aborted after dragging 30px on the x axis"
+    activationConstraint={{
+      distance: { y: 15 },
+      tolerance: { x: 30 },
+    }}
+  />
+);
+
+const HorizontalAxis = () => (
+  <DraggableStory
+    label="Draggable horizontally"
+    axis={Axis.Horizontal}
+    modifiers={[restrictToHorizontalAxis]}
+  />
+);
+
+const VerticalAxis = () => (
+  <DraggableStory
+    label="Draggable vertically"
+    axis={Axis.Vertical}
+    modifiers={[restrictToVerticalAxis]}
+  />
+);
+
+const RestrictToWindowEdges = () => (
+  <OverflowWrapper>
+    <DraggableStory
+      label="I'm only draggable within the window bounds"
+      modifiers={[restrictToWindowEdges]}
+    />
+  </OverflowWrapper>
+);
+
+const SnapToGrid = () => {
+  const [gridSize, setGridSize] = React.useState(30);
+  const style = {
+    alignItems: "flex-start",
+  };
+  const buttonStyle = {
+    marginLeft: gridSize - 20 + 1,
+    marginTop: gridSize - 20 + 1,
+    width: gridSize * 8 - 1,
+    height: gridSize * 2 - 1,
+  };
+  const snapToGrid = React.useMemo(
+    () => createSnapModifier(gridSize),
+    [gridSize],
+  );
+
+  return (
+    <>
+      <DraggableStory
+        label={`Snapping to ${gridSize}px increments`}
+        modifiers={[snapToGrid]}
+        style={style}
+        buttonStyle={buttonStyle}
+        key={gridSize}
+      />
+      <Grid size={gridSize} onSizeChange={setGridSize} />
+    </>
+  );
+};
+
+const SnapCenterToCursor = () => (
+  <DraggableStory
+    label="When you grab me, my center will move to where the cursor is."
+    modifiers={[snapCenterToCursor]}
+  />
+);
+
 const createTabNodeMap = () => {
   const map = new Map<string, React.ReactNode>();
 
@@ -307,6 +419,19 @@ const createTabNodeMap = () => {
   map.set("press-delay-with-visual-cue", <PressDelayWithVisualCue />);
   map.set("minimum-distance", <MinimumDistance />);
   map.set("minimum-distance-with-visual-cue", <MinimumDistanceWithVisualCue />);
+  map.set("minimum-distance-x", <MinimumDistanceX />);
+  map.set("minimum-distance-y", <MinimumDistanceY />);
+  map.set("minimum-distance-x-y", <MinimumDistanceXY />);
+  map.set("minimum-distance-x-tolerance-y", <MinimumDistanceXToleranceY />);
+  map.set("minimum-distance-y-tolerance-x", <MinimumDistanceYToleranceX />);
+  map.set("horizontal-axis", <HorizontalAxis />);
+  map.set("vertical-axis", <VerticalAxis />);
+  map.set(
+    "restrict-to-window-edges",
+    createPortal(<RestrictToWindowEdges />, document.body),
+  );
+  map.set("snap-to-grid", <SnapToGrid />);
+  map.set("Snap-Center-To-Cursor", <SnapCenterToCursor />);
 
   return map;
 };
