@@ -1,8 +1,11 @@
+import React from "react";
+import { useOutlet, useParams } from "react-router";
+import { useTranslation } from "react-i18next";
 import { AuthLayout } from "@/components/layout/auth";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { RootRoute, RootErrorBoundary, RootHydrateFallback } from "./root";
 import { DashLayout } from "./layout";
-import { AuthGuard, GuestGuard, LangGuard } from "./guard";
+import { AuthGuard, GuestGuard } from "./guard";
+import { RootRoute, RootErrorBoundary, RootHydrateFallback } from "./root";
 import type { RouteObject } from "react-router";
 
 type UseStore = typeof useLocalStore;
@@ -31,7 +34,31 @@ export const createRoutes = (): RouteObject[] => {
       children: [
         {
           path: ":lang?",
-          Component: LangGuard,
+          middleware: [],
+          Component: () => {
+            const outlet = useOutlet();
+            const params = useParams();
+            const { i18n } = useTranslation();
+            const fallbackLang = useLocalStore((store) => store.fallbackLang);
+
+            const changeLanguage = React.useEffectEvent(
+              (paramLang?: string) => {
+                i18n.changeLanguage(paramLang || fallbackLang);
+
+                if (!paramLang) return;
+
+                useLocalStore.setState((draft) => {
+                  draft.fallbackLang = paramLang;
+                });
+              },
+            );
+
+            React.useEffect(() => {
+              changeLanguage(params.lang);
+            }, [params.lang]);
+
+            return outlet;
+          },
           children: [
             {
               path: "*",
@@ -58,7 +85,7 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/snackbar/component"),
                 },
                 {
-                  path: "dnd",
+                  path: "dnd/:tab?",
                   lazy: () =>
                     import("@/pages/stories/1 - Core/Draggable/1-Draggable.story"),
                 },

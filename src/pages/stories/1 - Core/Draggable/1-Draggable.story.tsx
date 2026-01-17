@@ -1,4 +1,3 @@
-import React from "react";
 import {
   DndContext,
   useDraggable,
@@ -16,6 +15,9 @@ import {
   restrictToWindowEdges,
   snapCenterToCursor,
 } from "@dnd-kit/modifiers";
+import { Grid as MuiGrid, Link } from "@mui/material";
+import { Link as RouterLink, useParams } from "react-router";
+import React from "react";
 import {
   Axis,
   Draggable,
@@ -26,7 +28,6 @@ import {
 import type { DragPendingEvent, Modifiers } from "@dnd-kit/core";
 import type { Coordinates } from "@dnd-kit/utilities";
 import type { PointerActivationConstraint } from "@dnd-kit/core";
-import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 
 const defaultCoordinates: Coordinates = { x: 0, y: 0 };
 
@@ -311,27 +312,31 @@ const createTabNodeMap = () => {
 };
 
 export const Component = () => {
-  const [tab, setTab] = React.useState("basic-setup");
+  const params = useParams();
 
   const tabToNode = createTabNodeMap();
+  const fallbackTab = "basic-setup";
+  const tab = params.tab || fallbackTab;
 
   return (
     <>
-      <ToggleButtonGroup
-        color="primary"
-        value={tab}
-        exclusive
-        onChange={(_, value) => {
-          setTab(value);
-        }}
-        aria-label="Platform"
-      >
+      <MuiGrid container>
         {Array.from(tabToNode.keys(), (key) => (
-          <ToggleButton key={key} value={key}>
-            {key.split("-").join(" ")}
-          </ToggleButton>
+          <MuiGrid key={key} size={{ xs: 12, sm: 6, md: 4 }}>
+            <Link
+              component={RouterLink}
+              to={{
+                pathname: `/${params.lang}/dnd/${key}`,
+              }}
+              color={Object.is(tab, key) ? "secondary" : "primary"}
+              sx={{ textTransform: "capitalize" }}
+            >
+              {key.split("-").join(" ")}
+            </Link>
+          </MuiGrid>
         ))}
-      </ToggleButtonGroup>
+      </MuiGrid>
+
       {tabToNode.get(tab)}
     </>
   );

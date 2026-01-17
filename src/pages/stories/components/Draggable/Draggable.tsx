@@ -29,7 +29,8 @@ interface Props {
   transform?: Transform | null;
   isPendingDelay?: boolean;
   children?: React.ReactNode;
-  ref?: React.Ref<HTMLButtonElement>;
+  // eslint-disable-next-line
+  ref?: React.Ref<any>;
 }
 
 export const Draggable = ({
@@ -63,7 +64,7 @@ export const Draggable = ({
         } as React.CSSProperties
       }
     >
-      <button
+      <div
         {...props}
         aria-label="Draggable"
         data-cypress="draggable-item"
@@ -79,7 +80,7 @@ export const Draggable = ({
             : draggable}
         {handle ? <Handle {...(handle ? listeners : {})} /> : null}
         {props.children}
-      </button>
+      </div>
       {label ? <label>{label}</label> : null}
     </div>
   );

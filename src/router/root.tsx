@@ -104,9 +104,17 @@ const BRANDING = {
   title: "GitHub IO",
 };
 
-const path = (...args: unknown[]) => args.join("/");
+const path = (...args: unknown[]) => {
+  const [lang, ...restPath] = args;
 
-const createNavition = (lang: string): Navigation => [
+  if (!lang) {
+    return restPath.join("/");
+  }
+
+  return args.join("/");
+};
+
+const createNavition = (lang?: string): Navigation => [
   { kind: "header", title: "Fontend" },
   {
     segment: path(lang, "dashboard"),
@@ -165,7 +173,7 @@ const createNavition = (lang: string): Navigation => [
 const useNavigation = () => {
   const params = useParams();
   const lang = params.lang;
-  return React.useMemo<Navigation>(() => createNavition(String(lang)), [lang]);
+  return React.useMemo<Navigation>(() => createNavition(lang), [lang]);
 };
 
 export const RootRoute = () => {

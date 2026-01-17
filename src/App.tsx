@@ -53,7 +53,7 @@ const enableDark = (mode: Mode, isDark: boolean) => {
 
 const MuiProvider = (props: React.PropsWithChildren) => {
   const isDark = useIsDark();
-  const [, i18n] = useTranslation();
+  const { i18n } = useTranslation();
   const mode = useLocalStore((s) => s.mode);
 
   const hasDarkSelector = enableDark(mode, isDark);
