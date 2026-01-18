@@ -71,11 +71,39 @@ const DisableDropAnimation = () => (
   <DragOverlayExample label="Drop animation disabled" dropAnimation={null} />
 );
 
+const HorizontalAxis = () => (
+  <DragOverlayExample
+    label="I'm only draggable horizontally"
+    axis={Axis.Horizontal}
+    modifiers={[restrictToHorizontalAxis]}
+  />
+);
+
+const VerticalAxis = () => (
+  <DragOverlayExample
+    label="I'm only draggable vertically"
+    axis={Axis.Vertical}
+    modifiers={[restrictToVerticalAxis]}
+  />
+);
+
+const RestrictToWindowEdges = () => (
+  <DragOverlayExample
+    label="I'm only draggable within the window bounds"
+    modifiers={[restrictToWindowEdges]}
+  />
+);
+
+const FALLBACK_TAB = "Basic Setup";
+
 const createTabNodeMap = () => {
   const map = new Map<string, React.ReactNode>();
 
-  map.set("basic-setup", <BasicSetup />);
-  map.set("DisableDropAnimation", <DisableDropAnimation />);
+  map.set(FALLBACK_TAB, <BasicSetup />);
+  map.set("Disable Drop Animation", <DisableDropAnimation />);
+  map.set("Horizontal Axis", <HorizontalAxis />);
+  map.set("Vertical Axis", <VerticalAxis />);
+  map.set("Restrict To Window Edges", <RestrictToWindowEdges />);
 
   return map;
 };
@@ -84,8 +112,7 @@ export const Component = () => {
   const params = useParams();
 
   const tabToNode = createTabNodeMap();
-  const fallbackTab = "basic-setup";
-  const tab = params.tab || fallbackTab;
+  const tab = params.tab || FALLBACK_TAB;
 
   return (
     <>

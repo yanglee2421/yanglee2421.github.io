@@ -409,10 +409,12 @@ const SnapCenterToCursor = () => (
   />
 );
 
+const FALLBACK_TAB = "Basic Setup";
+
 const createTabNodeMap = () => {
   const map = new Map<string, React.ReactNode>();
 
-  map.set("basic-setup", <BasicSetup />);
+  map.set(FALLBACK_TAB, <BasicSetup />);
   map.set("drag-handle", <DragHandle />);
   map.set("press-delay", <PressDelay />);
   map.set("press-delay-or-distance", <PressDelayOrDistance />);
@@ -440,8 +442,7 @@ export const Component = () => {
   const params = useParams();
 
   const tabToNode = createTabNodeMap();
-  const fallbackTab = "basic-setup";
-  const tab = params.tab || fallbackTab;
+  const tab = params.tab || FALLBACK_TAB;
 
   return (
     <>

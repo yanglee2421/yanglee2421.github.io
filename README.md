@@ -19,6 +19,14 @@
 | **ci**       | CI/CD 配置相关         | `ci(github): fix build pipeline trigger`          |
 | **revert**   | 回滚之前的提交         | `revert: revert "feat(auth): add JWT validation"` |
 
+### Statistics
+
+统计项目文件数和代码行数（不包括 git 忽略的部分）：
+
+```powershell
+(git ls-files | ForEach-Object { (Get-Content $_ | Measure-Object -Line).Lines }) | Measure-Object -Sum
+```
+
 ## TypeScript
 
 ### Interface & Type
