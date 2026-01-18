@@ -104,6 +104,16 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () =>
                     import("@/pages/stories/2 - Presets/Sortable/1-Vertical.story"),
                 },
+                {
+                  path: "sortable-horizontal/:tab?",
+                  lazy: () =>
+                    import("@/pages/stories/2 - Presets/Sortable/2-Horizontal.story"),
+                },
+                {
+                  path: "sortable-grid/:tab?",
+                  lazy: () =>
+                    import("@/pages/stories/2 - Presets/Sortable/3-Grid.story"),
+                },
               ],
             },
             {
