@@ -99,6 +99,11 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () =>
                     import("@/pages/stories/1 - Core/Droppable/Droppable.story"),
                 },
+                {
+                  path: "sortable-vertical/:tab?",
+                  lazy: () =>
+                    import("@/pages/stories/2 - Presets/Sortable/1-Vertical.story"),
+                },
               ],
             },
             {

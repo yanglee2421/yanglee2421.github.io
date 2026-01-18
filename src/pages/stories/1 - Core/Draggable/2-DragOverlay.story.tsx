@@ -132,8 +132,7 @@ export const Component = () => {
           </MuiGrid>
         ))}
       </MuiGrid>
-
-      {tabToNode.get(tab)}
+      {tabToNode.get(tab) || <BasicSetup />}
     </>
   );
 };
