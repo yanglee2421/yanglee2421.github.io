@@ -1,6 +1,7 @@
-import { Lightbulb, LightbulbOutlined } from "@mui/icons-material";
-import { Switch } from "@mui/material";
 import React from "react";
+import { Box, Switch } from "@mui/material";
+import { Lightbulb, LightbulbOutlined } from "@mui/icons-material";
+import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 
 export const Component = () => {
   const [switch1On, setSwitch1On] = React.useState(false);
@@ -31,6 +32,64 @@ export const Component = () => {
       )}
       <div>{path1Close && <p>path1 close</p>}</div>
       <div>{path2Close && <p>path2 close</p>}</div>
+      <DemoComponent />
+    </>
+  );
+};
+
+const DemoComponent = () => {
+  const [width, setWidth] = React.useState(0);
+  const [height, setHeight] = React.useState(0);
+
+  const [ref, entry] = useResizeObserver<HTMLDivElement>();
+
+  const inlineSize = entry?.borderBoxSize.at(0)?.inlineSize || 0;
+  const blockSize = entry?.borderBoxSize.at(0)?.blockSize;
+
+  return (
+    <>
+      <div
+        ref={ref}
+        style={{
+          width,
+          height,
+          border: "1px red solid",
+          textAlign: "center",
+        }}
+      >
+        <p>inlineSize: {inlineSize}</p>
+        <p>blockSize: {blockSize}</p>
+      </div>
+      <Box sx={{}}>
+        <button
+          onClick={() => {
+            setWidth((prev) => prev + 30);
+          }}
+        >
+          width+
+        </button>
+        <button
+          onClick={() => {
+            setWidth((prev) => prev - 30);
+          }}
+        >
+          width-
+        </button>
+        <button
+          onClick={() => {
+            setHeight((prev) => prev + 30);
+          }}
+        >
+          height+
+        </button>
+        <button
+          onClick={() => {
+            setHeight((prev) => prev - 30);
+          }}
+        >
+          height-
+        </button>
+      </Box>
     </>
   );
 };

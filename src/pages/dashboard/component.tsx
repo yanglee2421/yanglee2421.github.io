@@ -10,8 +10,10 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
-import { useSize } from "@/hooks/dom/useSize";
 import { minmax } from "@/lib/utils";
+import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
+
+const { inlineSize, blockSize } = useResizeObserver;
 
 const drawLine = (
   canvasCtx: CanvasRenderingContext2D,
@@ -75,11 +77,12 @@ const Microphone = (props: MicrophoneProps) => {
   const audio = React.use(props.stream);
 
   const elRef = React.useRef<HTMLCanvasElement>(null);
-  const divRef = React.useRef<HTMLDivElement>(null);
   const cursorRef = React.useRef<null | number>(null);
 
   const theme = useTheme();
-  const [width, height] = useSize(divRef);
+  const [divRef, entry] = useResizeObserver<HTMLDivElement>();
+  const width = inlineSize(entry?.borderBoxSize);
+  const height = blockSize(entry?.borderBoxSize);
 
   React.useEffect(() => {
     const canvas = elRef.current;
@@ -253,11 +256,12 @@ type SinewaveProps = {
 const Sinewave = (props: SinewaveProps) => {
   const stream = React.use(props.stream);
 
-  const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
 
   const theme = useTheme();
-  const [width, height] = useSize(divRef);
+  const [divRef, entry] = useResizeObserver<HTMLDivElement>();
+  const width = inlineSize(entry?.borderBoxSize);
+  const height = blockSize(entry?.borderBoxSize);
 
   React.useEffect(() => {
     const canvas = ref.current;
@@ -376,11 +380,12 @@ type FrequencybarsProps = {
 const Frequencybars = (props: FrequencybarsProps) => {
   const stream = React.use(props.stream);
 
-  const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
 
   const theme = useTheme();
-  const [width, height] = useSize(divRef);
+  const [divRef, entry] = useResizeObserver<HTMLDivElement>();
+  const width = inlineSize(entry?.borderBoxSize);
+  const height = blockSize(entry?.borderBoxSize);
 
   React.useEffect(() => {
     const canvas = ref.current;
@@ -525,10 +530,11 @@ type RenderNode = {
 const SvgCard = () => {
   const [renderNodes, setRenderNodes] = React.useState<RenderNode[]>([]);
 
-  const divRef = React.useRef<HTMLDivElement>(null);
   const seed = React.useRef(1);
 
-  const [width, height] = useSize(divRef);
+  const [divRef, entry] = useResizeObserver<HTMLDivElement>();
+  const width = inlineSize(entry?.borderBoxSize);
+  const height = blockSize(entry?.borderBoxSize);
   const theme = useTheme();
 
   React.useEffect(() => {
