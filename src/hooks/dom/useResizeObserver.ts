@@ -1,18 +1,23 @@
+import { devError } from "@/lib/utils";
 import React from "react";
 
-const calculateIsHTMLEl = (el: unknown): el is HTMLElement => {
-  return el instanceof HTMLElement;
+const calculateIsEl = (el: unknown): el is Element => {
+  return el instanceof Element;
 };
 
-export const useResizeObserver = <TEl>() => {
+export const useResizeObserver = <TEl extends Element>() => {
   const [entry, setEntry] = React.useState<ResizeObserverEntry | null>(null);
 
   const ref = React.useRef<TEl>(null);
 
   React.useEffect(() => {
     const el = ref.current;
-    const isHTMLEl = calculateIsHTMLEl(el);
-    if (!isHTMLEl) return;
+    const isEl = calculateIsEl(el);
+
+    if (!isEl) {
+      devError(true, "useResizeObserver: ref.current is not a valid Element");
+      return;
+    }
 
     let animationId = 0;
 
