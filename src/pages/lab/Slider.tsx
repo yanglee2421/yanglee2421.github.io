@@ -1,6 +1,7 @@
 import React from "react";
-import { minmax } from "@/lib/utils";
+import { clamp, devLog } from "@/lib/utils";
 import { alpha, styled } from "@mui/material";
+import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 
 const Track = styled("div")(({ theme: t }) => ({
   position: "relative",
@@ -40,59 +41,23 @@ const Dot = styled("input")(() => ({
   position: "absolute",
 }));
 
-const useResizeObserver = () => {
-  const trackRef = React.useRef<HTMLDivElement>(null);
-  const thumbRef = React.useRef<HTMLDivElement>(null);
-  const scrollableWidthRef = React.useRef(0);
-
-  const updateScrollableWidth = React.useCallback(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const thumb = thumbRef.current;
-    if (!thumb) return;
-
-    const trackRect = track.getBoundingClientRect();
-    const thumbRect = thumb.getBoundingClientRect();
-
-    scrollableWidthRef.current = trackRect.width - thumbRect.width;
-  }, []);
-
-  React.useEffect(() => {
-    const track = trackRef.current;
-    if (!track) return;
-    const thumb = thumbRef.current;
-    if (!thumb) return;
-
-    let raf = 0;
-    const observer = new ResizeObserver(() => {
-      /**
-       * Performance optimization:
-       * Separate the reading and writing of layout information by requestAnimationFrame
-       * to avoid Forced Reflow / Forced Layout
-       */
-      cancelAnimationFrame(raf);
-      raf = requestAnimationFrame(updateScrollableWidth);
-    });
-    observer.observe(track);
-    observer.observe(thumb);
-
-    return () => {
-      cancelAnimationFrame(raf);
-      observer.disconnect();
-    };
-  }, [updateScrollableWidth]);
-
-  return [trackRef, thumbRef, scrollableWidthRef] as const;
-};
+const { inlineSize } = useResizeObserver;
 
 export const Slider = () => {
-  const [translateX, setTranslateX] = React.useState(0);
+  const [value, setValue] = React.useState(0);
 
   const startClientXRef = React.useRef(0);
   const startTranslateXRef = React.useRef(0);
   const dotRef = React.useRef<HTMLInputElement>(null);
+  const animationIdRef = React.useRef(0);
 
-  const [trackRef, thumbRef, scrollableWidthRef] = useResizeObserver();
+  const [trackRef, trackEntry] = useResizeObserver<HTMLDivElement>();
+  const [thumbRef, thumbEntry] = useResizeObserver<HTMLDivElement>();
+
+  const trackWidth = inlineSize(trackEntry?.borderBoxSize);
+  const thumbWidth = inlineSize(thumbEntry?.borderBoxSize);
+  const scrollableWidth = trackWidth - thumbWidth;
+  const translateX = scrollableWidth * value;
 
   return (
     <Track ref={trackRef}>
@@ -112,16 +77,22 @@ export const Slider = () => {
           );
           if (!hasPointerCapture) return;
 
-          const translationX = evt.clientX - startClientXRef.current;
-          const scrollableWidth = scrollableWidthRef.current;
+          cancelAnimationFrame(animationIdRef.current);
+          animationIdRef.current = requestAnimationFrame(() => {
+            React.startTransition(() => {
+              setValue(() => {
+                const translationX = evt.clientX - startClientXRef.current;
 
-          setTranslateX(() =>
-            minmax(startTranslateXRef.current + translationX, {
-              min: 0,
-              max: scrollableWidth,
-            }),
-          );
-          dotRef.current?.focus();
+                return clamp(
+                  (startTranslateXRef.current + translationX) / scrollableWidth,
+                  0,
+                  1,
+                );
+              });
+            });
+
+            dotRef.current?.focus();
+          });
         }}
         onPointerUp={(evt) => {
           evt.currentTarget.releasePointerCapture(evt.pointerId);
@@ -134,15 +105,9 @@ export const Slider = () => {
           ref={dotRef}
           type="range"
           tabIndex={0}
+          value={value}
           onChange={(e) => {
-            const value = parseFloat(e.target.value);
-            const scrollableWidth = scrollableWidthRef.current;
-            const newTranslateX = minmax((value / 100) * scrollableWidth, {
-              min: 0,
-              max: scrollableWidth,
-            });
-
-            setTranslateX(newTranslateX);
+            devLog(true, e.target.value);
             dotRef.current?.focus();
           }}
         />

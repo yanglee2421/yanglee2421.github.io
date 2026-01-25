@@ -1,5 +1,5 @@
 import React from "react";
-import { createPortal, unstable_batchedUpdates } from "react-dom";
+import { createPortal } from "react-dom";
 import {
   closestCenter,
   pointerWithin,
@@ -38,6 +38,7 @@ import type {
 } from "@dnd-kit/core";
 import type { AnimateLayoutChanges, SortingStrategy } from "@dnd-kit/sortable";
 import type { ContainerProps } from "../../components";
+import { devLog } from "@/lib/utils";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -298,11 +299,90 @@ export const MultipleContainers = ({
     setClonedItems(null);
   };
 
+  const handleRemove = (containerID: UniqueIdentifier) => {
+    setContainers((containers) =>
+      containers.filter((id) => id !== containerID),
+    );
+  };
+
+  const handleAddColumn = () => {
+    const newContainerId = getNextContainerId();
+
+    setContainers((containers) => [...containers, newContainerId]);
+    setItems((items) => ({
+      ...items,
+      [newContainerId]: [],
+    }));
+  };
+
+  const getNextContainerId = () => {
+    const containerIds = Object.keys(items);
+    const lastContainerId = containerIds[containerIds.length - 1];
+
+    return String.fromCharCode(lastContainerId.charCodeAt(0) + 1);
+  };
+
   React.useEffect(() => {
     requestAnimationFrame(() => {
       recentlyMovedToNewContainer.current = false;
     });
   }, [items]);
+
+  const renderSortableItemDragOverlay = (id: UniqueIdentifier) => {
+    return (
+      <Item
+        value={id}
+        handle={handle}
+        style={getItemStyles({
+          containerId: findContainer(id) as UniqueIdentifier,
+          overIndex: -1,
+          index: getIndex(id),
+          value: id,
+          isSorting: true,
+          isDragging: true,
+          isDragOverlay: true,
+        })}
+        color={getColor(id)}
+        wrapperStyle={wrapperStyle({ index: 0 })}
+        renderItem={renderItem}
+        dragOverlay
+      />
+    );
+  };
+
+  const renderContainerDragOverlay = (containerId: UniqueIdentifier) => {
+    return (
+      <Container
+        label={`Column ${containerId}`}
+        columns={columns}
+        style={{
+          height: "100%",
+        }}
+        shadow
+        unstyled={false}
+      >
+        {items[containerId].map((item, index) => (
+          <Item
+            key={item}
+            value={item}
+            handle={handle}
+            style={getItemStyles({
+              containerId,
+              overIndex: -1,
+              index: getIndex(item),
+              value: item,
+              isDragging: false,
+              isSorting: false,
+              isDragOverlay: false,
+            })}
+            color={getColor(item)}
+            wrapperStyle={wrapperStyle({ index })}
+            renderItem={renderItem}
+          />
+        ))}
+      </Container>
+    );
+  };
 
   return (
     <DndContext
@@ -318,6 +398,7 @@ export const MultipleContainers = ({
         setClonedItems(items);
       }}
       onDragOver={({ active, over }) => {
+        devLog(true, "drag onDragOver", active.id, over?.id);
         const overId = over?.id;
 
         if (overId == null || overId === TRASH_ID || active.id in items) {
@@ -330,8 +411,202 @@ export const MultipleContainers = ({
         if (!overContainer || !activeContainer) {
           return;
         }
+
+        if (activeContainer !== overContainer) {
+          setItems((items) => {
+            const activeItems = items[activeContainer];
+            const overItems = items[overContainer];
+            const overIndex = overItems.indexOf(overId);
+            const activeIndex = activeItems.indexOf(active.id);
+
+            let newIndex: number;
+
+            if (overId in items) {
+              newIndex = overItems.length + 1;
+            } else {
+              const isBelowOverItem =
+                over &&
+                active.rect.current.translated &&
+                active.rect.current.translated.top >
+                  over.rect.top + over.rect.height;
+
+              const modifier = isBelowOverItem ? 1 : 0;
+
+              newIndex =
+                overIndex >= 0 ? overIndex + modifier : overItems.length + 1;
+            }
+
+            recentlyMovedToNewContainer.current = true;
+
+            return {
+              ...items,
+              [activeContainer]: items[activeContainer].filter(
+                (item) => item !== active.id,
+              ),
+              [overContainer]: [
+                ...items[overContainer].slice(0, newIndex),
+                items[activeContainer][activeIndex],
+                ...items[overContainer].slice(
+                  newIndex,
+                  items[overContainer].length,
+                ),
+              ],
+            };
+          });
+        }
       }}
-    ></DndContext>
+      onDragEnd={({ active, over }) => {
+        devLog(true, "drag end", active.id, over?.id);
+
+        if (active.id in items && over?.id) {
+          setContainers((containers) => {
+            const activeIndex = containers.indexOf(active.id);
+            const overIndex = containers.indexOf(over.id);
+
+            return arrayMove(containers, activeIndex, overIndex);
+          });
+        }
+
+        const activeContainer = findContainer(active.id);
+
+        if (!activeContainer) {
+          setActiveId(null);
+          return;
+        }
+
+        const overId = over?.id;
+
+        if (overId == null) {
+          setActiveId(null);
+          return;
+        }
+
+        if (overId === TRASH_ID) {
+          setItems((items) => ({
+            ...items,
+            [activeContainer]: items[activeContainer].filter(
+              (id) => id !== activeId,
+            ),
+          }));
+          setActiveId(null);
+          return;
+        }
+
+        if (overId === PLACEHOLDER_ID) {
+          const newContainerId = getNextContainerId();
+
+          setContainers((containers) => [...containers, newContainerId]);
+          setItems((items) => ({
+            ...items,
+            [activeContainer]: items[activeContainer].filter(
+              (id) => id !== activeId,
+            ),
+            [newContainerId]: [active.id],
+          }));
+          setActiveId(null);
+          return;
+        }
+
+        const overContainer = findContainer(overId);
+        devLog(true, overContainer);
+
+        if (overContainer) {
+          const activeIndex = items[activeContainer].indexOf(active.id);
+          const overIndex = items[overContainer].indexOf(overId);
+
+          if (activeIndex !== overIndex) {
+            setItems((items) => ({
+              ...items,
+              [overContainer]: arrayMove(
+                items[overContainer],
+                activeIndex,
+                overIndex,
+              ),
+            }));
+          }
+        }
+
+        setActiveId(null);
+      }}
+      cancelDrop={cancelDrop}
+      onDragCancel={onDragCancel}
+      modifiers={modifiers}
+    >
+      <div
+        style={{
+          display: "inline-grid",
+          boxSizing: "border-box",
+          padding: 20,
+          gridAutoFlow: vertical ? "row" : "column",
+        }}
+      >
+        <SortableContext
+          items={[...containers, PLACEHOLDER_ID]}
+          strategy={
+            vertical
+              ? verticalListSortingStrategy
+              : horizontalListSortingStrategy
+          }
+        >
+          {containers.map((containerId) => (
+            <DroppableContainer
+              key={containerId}
+              id={containerId}
+              label={minimal ? undefined : `Column ${containerId}`}
+              columns={columns}
+              items={items[containerId]}
+              scrollable={scrollable}
+              style={containerStyle}
+              unstyled={minimal}
+              onRemove={() => handleRemove(containerId)}
+            >
+              <SortableContext items={items[containerId]} strategy={strategy}>
+                {items[containerId].map((value, index) => {
+                  return (
+                    <SortableItem
+                      disabled={isSortingContainer}
+                      key={value}
+                      id={value}
+                      index={index}
+                      handle={handle}
+                      style={getItemStyles}
+                      wrapperStyle={wrapperStyle}
+                      renderItem={renderItem}
+                      containerId={containerId}
+                      getIndex={getIndex}
+                    />
+                  );
+                })}
+              </SortableContext>
+            </DroppableContainer>
+          ))}
+          {minimal ? undefined : (
+            <DroppableContainer
+              id={PLACEHOLDER_ID}
+              disabled={isSortingContainer}
+              items={empty}
+              onClick={handleAddColumn}
+              placeholder
+            >
+              + Add column
+            </DroppableContainer>
+          )}
+        </SortableContext>
+      </div>
+      {createPortal(
+        <DragOverlay adjustScale={adjustScale} dropAnimation={dropAnimation}>
+          {activeId
+            ? containers.includes(activeId)
+              ? renderContainerDragOverlay(activeId)
+              : renderSortableItemDragOverlay(activeId)
+            : null}
+        </DragOverlay>,
+        document.body,
+      )}
+      {trashable && activeId && !containers.includes(activeId) ? (
+        <Trash id={TRASH_ID} />
+      ) : null}
+    </DndContext>
   );
 };
 

@@ -74,8 +74,69 @@ export const createRoutes = (): RouteObject[] => {
               ],
             },
             {
+              Component: AuthGuard,
+              children: [
+                {
+                  Component: DashLayout,
+                  children: [
+                    {
+                      path: "staff",
+                      children: [
+                        {
+                          index: true,
+                          lazy: () => import("@/pages/staff/component"),
+                        },
+                        {
+                          path: "new",
+                          lazy: () => import("@/pages/staff_new/component"),
+                        },
+                      ],
+                    },
+                    {
+                      path: "overtime",
+                      children: [
+                        {
+                          index: true,
+                          lazy: () => import("@/pages/overtime"),
+                        },
+                        {
+                          path: "new",
+                          lazy: () => import("@/pages/overtime_new/component"),
+                        },
+                      ],
+                    },
+                  ],
+                },
+              ],
+            },
+            {
               Component: DashLayout,
               children: [
+                {
+                  path: "dashboard",
+                  lazy: () => import("@/pages/dashboard/component"),
+                },
+                {
+                  path: "rank",
+                  lazy: () => import("@/pages/rank/component"),
+                },
+                {
+                  path: "lab",
+                  lazy: () => import("@/pages/lab/component"),
+                },
+                {
+                  path: "invoices",
+                  children: [
+                    {
+                      index: true,
+                      lazy: () => import("@/pages/invoices/component"),
+                    },
+                    {
+                      path: "new",
+                      lazy: () => import("@/pages/invoices_new/component"),
+                    },
+                  ],
+                },
                 {
                   index: true,
                   lazy: () => import("@/pages/lab/component"),
@@ -114,66 +175,10 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () =>
                     import("@/pages/stories/2 - Presets/Sortable/3-Grid.story"),
                 },
-              ],
-            },
-            {
-              Component: AuthGuard,
-              children: [
                 {
-                  Component: DashLayout,
-                  children: [
-                    {
-                      path: "dashboard",
-                      lazy: () => import("@/pages/dashboard/component"),
-                    },
-                    {
-                      path: "invoices",
-                      children: [
-                        {
-                          index: true,
-                          lazy: () => import("@/pages/invoices/component"),
-                        },
-                        {
-                          path: "new",
-                          lazy: () => import("@/pages/invoices_new/component"),
-                        },
-                      ],
-                    },
-                    {
-                      path: "staff",
-                      children: [
-                        {
-                          index: true,
-                          lazy: () => import("@/pages/staff/component"),
-                        },
-                        {
-                          path: "new",
-                          lazy: () => import("@/pages/staff_new/component"),
-                        },
-                      ],
-                    },
-                    {
-                      path: "overtime",
-                      children: [
-                        {
-                          index: true,
-                          lazy: () => import("@/pages/overtime"),
-                        },
-                        {
-                          path: "new",
-                          lazy: () => import("@/pages/overtime_new/component"),
-                        },
-                      ],
-                    },
-                    {
-                      path: "rank",
-                      lazy: () => import("@/pages/rank/component"),
-                    },
-                    {
-                      path: "lab",
-                      lazy: () => import("@/pages/lab/component"),
-                    },
-                  ],
+                  path: "sortable-multiple-containers/:tab?",
+                  lazy: () =>
+                    import("@/pages/stories/2 - Presets/Sortable/4-MultipleContainers.story"),
                 },
               ],
             },
