@@ -25,6 +25,7 @@ import {
   horizontalListSortingStrategy,
 } from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
+import { devLog } from "@/lib/utils";
 import { createRange } from "../../utilities";
 import { Item, Container } from "../../components";
 import { coordinateGetter as multipleContainersCoordinateGetter } from "./multipleContainersKeyboardCoordinates";
@@ -38,7 +39,6 @@ import type {
 } from "@dnd-kit/core";
 import type { AnimateLayoutChanges, SortingStrategy } from "@dnd-kit/sortable";
 import type { ContainerProps } from "../../components";
-import { devLog } from "@/lib/utils";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });

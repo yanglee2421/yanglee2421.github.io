@@ -3,35 +3,50 @@ import {
   DndContext,
   DragOverlay,
   KeyboardSensor,
+  MeasuringStrategy,
   MouseSensor,
   PointerSensor,
   TouchSensor,
+  useDroppable,
   useSensor,
   useSensors,
-  type UniqueIdentifier,
 } from "@dnd-kit/core";
 import {
   useSortable,
   SortableContext,
-  arrayMove,
   rectSortingStrategy,
   sortableKeyboardCoordinates,
+  arrayMove,
 } from "@dnd-kit/sortable";
-import { Box } from "@mui/material";
+import { Box, Stack } from "@mui/material";
 import { CSS } from "@dnd-kit/utilities";
-import {
-  restrictToWindowEdges,
-  restrictToParentElement,
-} from "@dnd-kit/modifiers";
+import { restrictToWindowEdges } from "@dnd-kit/modifiers";
 import { createPortal } from "react-dom";
 import { devLog } from "@/lib/utils";
+import type { UniqueIdentifier } from "@dnd-kit/core";
 
-const itemsInitializer = () =>
-  Array.from({ length: 10 }, (_, index) => index + 1);
+const mapInitializer = () => {
+  const map = new Map<UniqueIdentifier, UniqueIdentifier[]>();
+
+  map.set("one", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
+  map.set("two", [11, 12, 13, 14, 15, 16, 17, 18, 19]);
+
+  return map;
+};
+
+const calculateContainerId = (data: unknown) => {
+  const containerId = Reflect.get(Object(data), "containerId");
+
+  if (typeof containerId !== "string") {
+    return null;
+  }
+
+  return containerId;
+};
 
 export const Component = () => {
-  const [items, setItems] =
-    React.useState<UniqueIdentifier[]>(itemsInitializer);
+  const [map, setMap] = React.useState(mapInitializer);
+  const [backupMap, setBackupMap] = React.useState(mapInitializer);
   const [activatedId, setActivatedId] = React.useState<UniqueIdentifier>(0);
   const [width, setWidth] = React.useState(0);
 
@@ -47,47 +62,127 @@ export const Component = () => {
   return (
     <DndContext
       onDragStart={(e) => {
-        devLog(true, e);
-        if (e.active) {
-          setActivatedId(e.active.id);
-          setWidth(e.active.data.current?.width || 0);
-        }
-      }}
-      onDragEnd={(e) => {
-        setActivatedId(0);
-        setWidth(0);
+        devLog(false, e);
+        if (!e.active) return;
 
-        const over = e.over;
+        setActivatedId(e.active.id);
+        setBackupMap(map);
+        setWidth(e.active.data.current?.width || 0);
+      }}
+      onDragOver={({ active, over }) => {
+        devLog(false, "drag over", active, over);
+
         if (!over) return;
 
-        setItems((prev) => {
-          return arrayMove(
-            prev,
-            prev.indexOf(e.active.id),
-            prev.indexOf(over.id),
+        const activeId = active.id;
+        const overId = over.id;
+        const activeContainer = calculateContainerId(active.data.current);
+        const overContainer = calculateContainerId(over.data.current);
+
+        if (!overContainer) return;
+        if (!activeContainer) return;
+        if (activeContainer === overContainer) return;
+
+        if (overId === overContainer) {
+          setMap((prev) => {
+            const nextMap = new Map(prev);
+            devLog(false, activeContainer, overContainer, activeId, overId);
+
+            const activeItems = map.get(activeContainer) || [];
+
+            nextMap.set(
+              activeContainer,
+              activeItems.filter((id) => !Object.is(id, activeId)),
+            );
+
+            const oldOverItems = map.get(overContainer) || [];
+            const nextOverItems = [...oldOverItems, activeId];
+
+            nextMap.set(overContainer, nextOverItems);
+
+            return nextMap;
+          });
+          return;
+        }
+
+        setMap((prev) => {
+          const nextMap = new Map(prev);
+          devLog(false, activeContainer, overContainer, activeId, overId);
+
+          const activeItems = map.get(activeContainer) || [];
+
+          nextMap.set(
+            activeContainer,
+            activeItems.filter((id) => !Object.is(id, activeId)),
           );
+
+          const oldOverItems = map.get(overContainer) || [];
+          const newIndex = oldOverItems.indexOf(overId);
+          const nextOverItems = [
+            ...oldOverItems.slice(0, newIndex),
+            activeId,
+            ...oldOverItems.slice(newIndex, oldOverItems.length),
+          ];
+
+          nextMap.set(overContainer, nextOverItems);
+
+          return nextMap;
+        });
+      }}
+      onDragEnd={({ active, over }) => {
+        devLog(false, "drag end", active, over);
+        if (!over) return;
+
+        setMap((prev) => {
+          const nextMap = new Map(prev);
+          const activeContainer = calculateContainerId(active.data.current);
+          const overContainer = calculateContainerId(over.data.current);
+
+          if (!activeContainer) return prev;
+          if (!overContainer) return prev;
+
+          const activeItems = nextMap.get(activeContainer) || [];
+          const fromIndex = activeItems.indexOf(active.id);
+          const toIndex = activeItems.indexOf(over.id);
+
+          devLog(false, fromIndex, toIndex, activeItems);
+
+          nextMap.set(
+            activeContainer,
+            arrayMove(activeItems, fromIndex, toIndex),
+          );
+
+          return nextMap;
         });
       }}
       onDragCancel={() => {
         setActivatedId(0);
+        setMap(backupMap);
         setWidth(0);
       }}
-      modifiers={[restrictToWindowEdges, restrictToParentElement]}
+      modifiers={[restrictToWindowEdges]}
       sensors={sensors}
+      measuring={{
+        droppable: {
+          strategy: MeasuringStrategy.Always,
+        },
+      }}
     >
-      <Box
-        sx={{
-          display: "grid",
-          gridTemplateColumns: "repeat(3,minmax(0,1fr))",
-          gap: 1,
-        }}
-      >
-        <SortableContext items={items} strategy={rectSortingStrategy}>
-          {items.map((id) => (
-            <SortableItem key={id} id={id} />
-          ))}
-        </SortableContext>
-      </Box>
+      <Stack spacing={3}>
+        {Array.from(map.keys(), (containerId) => {
+          const items = Array.from(map.get(containerId) || []);
+
+          return (
+            <DroppableContainer key={containerId} id={containerId}>
+              <SortableContext items={items} strategy={rectSortingStrategy}>
+                {items.map((id) => (
+                  <SortableItem key={id} id={id} containerId={containerId} />
+                ))}
+              </SortableContext>
+            </DroppableContainer>
+          );
+        })}
+      </Stack>
       {createPortal(
         <DragOverlay>
           {activatedId ? (
@@ -122,6 +217,7 @@ const calculateIsHTMLEl = (el: unknown): el is HTMLElement => {
 
 type SortableItemProps = {
   id: UniqueIdentifier;
+  containerId: UniqueIdentifier;
 };
 
 const SortableItem = (props: SortableItemProps) => {
@@ -131,6 +227,7 @@ const SortableItem = (props: SortableItemProps) => {
     id: props.id,
     data: {
       width: width,
+      containerId: props.containerId,
     },
   });
 
@@ -158,7 +255,7 @@ const SortableItem = (props: SortableItemProps) => {
     };
   }, []);
 
-  devLog(true, sortable);
+  devLog(false, sortable);
 
   return (
     <Box
@@ -177,6 +274,7 @@ const SortableItem = (props: SortableItemProps) => {
       component={"div"}
       style={{
         transform: CSS.Transform.toString(sortable.transform),
+        transition: sortable.transition,
       }}
       sx={{
         bgcolor: (theme) => theme.palette.error.main,
@@ -194,6 +292,44 @@ const SortableItem = (props: SortableItemProps) => {
       }}
     >
       {props.id}
+    </Box>
+  );
+};
+
+type DroppableContainerProps = {
+  id: UniqueIdentifier;
+  children?: React.ReactNode;
+};
+
+const DroppableContainer = (props: DroppableContainerProps) => {
+  const droppable = useDroppable({
+    id: props.id,
+    data: {
+      containerId: props.id,
+    },
+  });
+
+  return (
+    <Box
+      ref={(el) => {
+        const isEl = calculateIsHTMLEl(el);
+
+        if (!isEl) return;
+
+        droppable.setNodeRef(el);
+
+        return () => {
+          droppable.setNodeRef(null);
+        };
+      }}
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "repeat(6,minmax(0,1fr))",
+        gap: 1,
+        minBlockSize: 100,
+      }}
+    >
+      {props.children}
     </Box>
   );
 };
