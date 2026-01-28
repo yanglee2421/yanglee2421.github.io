@@ -1,4 +1,3 @@
-import React from "react";
 import {
   DndContext,
   DragOverlay,
@@ -18,18 +17,21 @@ import {
   sortableKeyboardCoordinates,
   arrayMove,
 } from "@dnd-kit/sortable";
-import { Box, Stack } from "@mui/material";
-import { CSS } from "@dnd-kit/utilities";
-import { restrictToWindowEdges } from "@dnd-kit/modifiers";
+import React from "react";
 import { createPortal } from "react-dom";
+import { CSS } from "@dnd-kit/utilities";
+import { Box, Stack, useTheme } from "@mui/material";
+import { indigo } from "@mui/material/colors";
+import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
 import { devLog } from "@/lib/utils";
+import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 
 const mapInitializer = () => {
   const map = new Map<UniqueIdentifier, UniqueIdentifier[]>();
 
-  map.set("one", [1, 2, 3, 4, 5, 6, 7, 8, 9]);
-  map.set("two", [11, 12, 13, 14, 15, 16, 17, 18, 19]);
+  map.set("one", [1, 2, 3, 4, 5, 6]);
+  map.set("two", [11, 12, 13, 14, 15, 16]);
 
   return map;
 };
@@ -70,7 +72,7 @@ export const Component = () => {
         setWidth(e.active.data.current?.width || 0);
       }}
       onDragOver={({ active, over }) => {
-        devLog(true, active, over);
+        devLog(false, active, over);
 
         if (!over) return;
 
@@ -81,12 +83,34 @@ export const Component = () => {
 
         if (!overContainer) return;
         if (!activeContainer) return;
-        if (activeContainer === overContainer) return;
 
+        // Active and Over are in the same container
+        if (activeContainer === overContainer) {
+          setMap((prev) => {
+            const nextMap = new Map(prev);
+
+            const activeItems = nextMap.get(activeContainer) || [];
+            const fromIndex = activeItems.indexOf(activeId);
+            const toIndex = activeItems.indexOf(overId);
+
+            nextMap.set(
+              activeContainer,
+              arrayMove(activeItems, fromIndex, toIndex),
+            );
+
+            return nextMap;
+          });
+
+          return;
+        }
+
+        /**
+         * Over is a container, not an element within the container
+         * Only move Active to the end of Over, the order of other elements does not change
+         */
         if (overId === overContainer) {
           setMap((prev) => {
             const nextMap = new Map(prev);
-            devLog(false, activeContainer, overContainer, activeId, overId);
 
             const activeItems = map.get(activeContainer) || [];
 
@@ -102,11 +126,16 @@ export const Component = () => {
 
             return nextMap;
           });
+
           return;
         }
 
-        devLog(true, activeContainer, overContainer, activeId, overId);
-
+        /**
+         * Over is an element within the container
+         * Move Active to the target container
+         * Insert Active at the position of the Over element
+         * Over and all elements after it shift backward by one position
+         */
         setMap((prev) => {
           const nextMap = new Map(prev);
 
@@ -117,15 +146,14 @@ export const Component = () => {
             activeItems.filter((id) => !Object.is(id, activeId)),
           );
 
-          const oldOverItems = map.get(overContainer) || [];
-          const newIndex = oldOverItems.indexOf(overId);
-          const nextOverItems = [
-            ...oldOverItems.slice(0, newIndex),
-            activeId,
-            ...oldOverItems.slice(newIndex, oldOverItems.length),
-          ];
+          const overItems = map.get(overContainer) || [];
+          const fromIndex = overItems.length;
+          const toIndex = overItems.indexOf(overId);
 
-          nextMap.set(overContainer, nextOverItems);
+          nextMap.set(
+            overContainer,
+            arrayMove([...overItems, activeId], fromIndex, toIndex),
+          );
 
           return nextMap;
         });
@@ -146,8 +174,6 @@ export const Component = () => {
           const fromIndex = activeItems.indexOf(active.id);
           const toIndex = activeItems.indexOf(over.id);
 
-          devLog(false, fromIndex, toIndex, activeItems);
-
           nextMap.set(
             activeContainer,
             arrayMove(activeItems, fromIndex, toIndex),
@@ -157,12 +183,11 @@ export const Component = () => {
         });
       }}
       onDragCancel={() => {
-        devLog(true, "cancel ");
         setActivatedId(0);
         setMap(backupMap);
         setWidth(0);
       }}
-      modifiers={[restrictToWindowEdges]}
+      modifiers={[restrictToWindowEdges, snapCenterToCursor]}
       sensors={sensors}
       measuring={{
         droppable: {
@@ -190,15 +215,15 @@ export const Component = () => {
           {activatedId ? (
             <Box
               sx={{
-                bgcolor: (theme) => theme.palette.error.main,
+                bgcolor: indigo[500],
                 aspectRatio: "1/1",
                 borderRadius: 1,
                 width,
                 borderStyle: "solid",
-                borderColor: "primary.main",
+                borderColor: (theme) => theme.palette.action.active,
                 borderWidth: 2,
                 "&:focus-visible": {
-                  borderColor: "info.main",
+                  borderColor: (theme) => theme.palette.action.focus,
                   borderWidth: 2,
                 },
               }}
@@ -223,7 +248,10 @@ type SortableItemProps = {
 };
 
 const SortableItem = (props: SortableItemProps) => {
-  const [width, setWidth] = React.useState(0);
+  const theme = useTheme();
+  const [ref, entry] = useResizeObserver();
+
+  const width = useResizeObserver.inlineSize(entry?.borderBoxSize);
 
   const sortable = useSortable({
     id: props.id,
@@ -233,41 +261,17 @@ const SortableItem = (props: SortableItemProps) => {
     },
   });
 
-  const changeWidth = React.useEffectEvent((observer: ResizeObserver) => {
-    const el = sortable.node.current;
-    if (!el) return;
-
-    observer.observe(el);
-  });
-
-  React.useEffect(() => {
-    const observer = new ResizeObserver(
-      ([
-        {
-          borderBoxSize: [{ inlineSize }],
-        },
-      ]) => {
-        setWidth(inlineSize);
-      },
-    );
-    changeWidth(observer);
-
-    return () => {
-      observer.disconnect();
-    };
-  }, []);
-
-  devLog(false, sortable);
-
   return (
     <Box
       ref={(el) => {
         const isHTMLEl = calculateIsHTMLEl(el);
         if (!isHTMLEl) return;
 
+        ref.current = el;
         sortable.setNodeRef(el);
 
         return () => {
+          ref.current = null;
           sortable.setNodeRef(null);
         };
       }}
@@ -279,18 +283,25 @@ const SortableItem = (props: SortableItemProps) => {
         transition: sortable.transition,
       }}
       sx={{
-        bgcolor: (theme) => theme.palette.error.main,
+        bgcolor: indigo[500],
         aspectRatio: "1/1",
         borderRadius: 1,
         opacity: sortable.isDragging ? 0.5 : void 0,
         borderStyle: "solid",
-        borderColor: "primary.main",
+        borderColor: theme.palette.action.active,
         borderWidth: Object.is(sortable.active?.id, props.id) ? 2 : 0,
         "&:focus-visible": {
-          borderColor: "info.main",
+          borderColor: theme.palette.action.focus,
           borderWidth: 2,
           outline: "none",
         },
+
+        fontSize: 60,
+        fontWeight: 300,
+
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
       }}
     >
       {props.id}
@@ -326,9 +337,15 @@ const DroppableContainer = (props: DroppableContainerProps) => {
       }}
       sx={{
         display: "grid",
-        gridTemplateColumns: "repeat(6,minmax(0,1fr))",
-        gap: 1,
+        gridTemplateColumns: "repeat(4,minmax(0,1fr))",
+        gap: 1.5,
         minBlockSize: 100,
+        borderColor: "primary.main",
+        borderWidth: 2,
+        borderStyle: "solid",
+        borderRadius: 2,
+
+        padding: 1.5,
       }}
     >
       {props.children}

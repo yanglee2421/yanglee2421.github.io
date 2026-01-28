@@ -13,12 +13,25 @@ import {
 import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
 
+const createToday = () => {
+  const today = dayjs();
+  const date = today.format("YYYY-MM-DD");
+  const time = today.format("HH:mm:ss");
+
+  return [date, time] as const;
+};
+
 export const Component = () => {
   const snackbar = useSnackbar();
   const time = useLocaleTime();
   const date = useLocaleDate();
 
-  const today = dayjs();
+  /**
+   * 1. React Compiler treats functions executed in components as pure functions
+   * 2. During re-render, the function is only executed again if the parameters of the pure function change
+   * 3. The dateString and timeString returned below remain consistent due to React Compiler's optimization
+   */
+  const [dateString, timeString] = createToday();
 
   return (
     <Stack spacing={3}>
@@ -26,7 +39,7 @@ export const Component = () => {
         <Typography
           variant="h1"
           component={"time"}
-          dateTime={today.format("HH:mm:ss")}
+          dateTime={timeString}
           sx={{ display: "block" }}
         >
           {time}
@@ -34,7 +47,7 @@ export const Component = () => {
         <Typography
           variant="subtitle1"
           component={"time"}
-          dateTime={today.format("YYYY-MM-DD")}
+          dateTime={dateString}
           sx={{ display: "block" }}
         >
           {date}
