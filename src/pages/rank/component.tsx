@@ -70,7 +70,7 @@ export const Component = () => {
         setWidth(e.active.data.current?.width || 0);
       }}
       onDragOver={({ active, over }) => {
-        devLog(false, "drag over", active, over);
+        devLog(true, active, over);
 
         if (!over) return;
 
@@ -105,9 +105,10 @@ export const Component = () => {
           return;
         }
 
+        devLog(true, activeContainer, overContainer, activeId, overId);
+
         setMap((prev) => {
           const nextMap = new Map(prev);
-          devLog(false, activeContainer, overContainer, activeId, overId);
 
           const activeItems = map.get(activeContainer) || [];
 
@@ -156,6 +157,7 @@ export const Component = () => {
         });
       }}
       onDragCancel={() => {
+        devLog(true, "cancel ");
         setActivatedId(0);
         setMap(backupMap);
         setWidth(0);
