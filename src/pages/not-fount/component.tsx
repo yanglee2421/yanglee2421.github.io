@@ -11,11 +11,15 @@ import {
 import { Link, useNavigate } from "react-router";
 import snowVillage from "@/assets/images/snowVillage.jpg";
 
-const getCardMediaImage = () => new URL(snowVillage, import.meta.url).href;
+const calculateAssetsHref = (path: string) => {
+  return new URL(path, import.meta.url).href;
+};
 
 export const Component = () => {
   const navigate = useNavigate();
   const theme = useTheme();
+
+  const snowVillageHref = calculateAssetsHref(snowVillage);
 
   return (
     <Box
@@ -38,7 +42,7 @@ export const Component = () => {
           maxWidth: { sm: theme.breakpoints.values.sm },
         }}
       >
-        <CardMedia image={getCardMediaImage()} sx={{ height: 240 }} />
+        <CardMedia image={snowVillageHref} sx={{ height: 240 }} />
         <CardContent>
           <Typography gutterBottom variant="h5" component="div">
             404 Not Found

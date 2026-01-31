@@ -66,8 +66,50 @@ const drawText = (
   canvasCtx.closePath();
 };
 
-const getY = (val: number, max: number, height: number) =>
-  Math.floor(height - (val / max) * height);
+const getY = (val: number, max: number, height: number) => {
+  return Math.floor(height - (val / max) * height);
+};
+
+const createEchoDelayEffect = (audioContext: AudioContext) => {
+  const delay = audioContext.createDelay(1);
+  const dryNode = audioContext.createGain();
+  const wetNode = audioContext.createGain();
+  const mixer = audioContext.createGain();
+  const filter = audioContext.createBiquadFilter();
+
+  delay.delayTime.value = 0.75;
+  dryNode.gain.value = 1;
+  wetNode.gain.value = 0;
+  filter.frequency.value = 1100;
+  filter.type = "highpass";
+
+  return {
+    apply() {
+      wetNode.gain.setValueAtTime(0.75, audioContext.currentTime);
+    },
+    discard() {
+      wetNode.gain.setValueAtTime(0, audioContext.currentTime);
+    },
+    isApplied() {
+      return wetNode.gain.value > 0;
+    },
+    placeBetween(inputNode: AudioNode, outputNode: AudioNode) {
+      inputNode.connect(delay);
+      delay.connect(wetNode);
+      wetNode.connect(filter);
+      filter.connect(delay);
+
+      inputNode.connect(dryNode);
+      dryNode.connect(mixer);
+      wetNode.connect(mixer);
+      mixer.connect(outputNode);
+    },
+  };
+};
+
+const streamInitializer = () => {
+  return navigator.mediaDevices.getUserMedia({ audio: true });
+};
 
 type MicrophoneProps = {
   stream: Promise<MediaStream>;
@@ -210,43 +252,6 @@ const Microphone = (props: MicrophoneProps) => {
       </CardContent>
     </Card>
   );
-};
-
-const createEchoDelayEffect = (audioContext: AudioContext) => {
-  const delay = audioContext.createDelay(1);
-  const dryNode = audioContext.createGain();
-  const wetNode = audioContext.createGain();
-  const mixer = audioContext.createGain();
-  const filter = audioContext.createBiquadFilter();
-
-  delay.delayTime.value = 0.75;
-  dryNode.gain.value = 1;
-  wetNode.gain.value = 0;
-  filter.frequency.value = 1100;
-  filter.type = "highpass";
-
-  return {
-    apply() {
-      wetNode.gain.setValueAtTime(0.75, audioContext.currentTime);
-    },
-    discard() {
-      wetNode.gain.setValueAtTime(0, audioContext.currentTime);
-    },
-    isApplied() {
-      return wetNode.gain.value > 0;
-    },
-    placeBetween(inputNode: AudioNode, outputNode: AudioNode) {
-      inputNode.connect(delay);
-      delay.connect(wetNode);
-      wetNode.connect(filter);
-      filter.connect(delay);
-
-      inputNode.connect(dryNode);
-      dryNode.connect(mixer);
-      wetNode.connect(mixer);
-      mixer.connect(outputNode);
-    },
-  };
 };
 
 type SinewaveProps = {
@@ -622,10 +627,8 @@ const SvgCard = () => {
   );
 };
 
-const initStream = () => navigator.mediaDevices.getUserMedia({ audio: true });
-
 export const Component = () => {
-  const [stream, setStream] = React.useState(initStream);
+  const [stream, setStream] = React.useState(streamInitializer);
 
   return (
     <Grid container spacing={3}>

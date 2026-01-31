@@ -32,6 +32,20 @@ import { devLog } from "@/lib/utils";
 import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 import type { UniqueIdentifier } from "@dnd-kit/core";
 
+const calculateContainerId = (data: unknown) => {
+  const containerId = Reflect.get(Object(data), "containerId");
+
+  if (typeof containerId !== "string") {
+    return null;
+  }
+
+  return containerId;
+};
+
+const calculateIsHTMLEl = (el: unknown): el is HTMLElement => {
+  return el instanceof HTMLElement;
+};
+
 const mapInitializer = () => {
   const map = new Map<UniqueIdentifier, UniqueIdentifier[]>();
 
@@ -42,14 +56,115 @@ const mapInitializer = () => {
   return map;
 };
 
-const calculateContainerId = (data: unknown) => {
-  const containerId = Reflect.get(Object(data), "containerId");
+type SortableItemProps = {
+  id: UniqueIdentifier;
+  containerId: UniqueIdentifier;
+};
 
-  if (typeof containerId !== "string") {
-    return null;
-  }
+const SortableItem = (props: SortableItemProps) => {
+  const theme = useTheme();
+  const [ref, entry] = useResizeObserver();
 
-  return containerId;
+  const width = useResizeObserver.inlineSize(entry?.borderBoxSize);
+
+  const sortable = useSortable({
+    id: props.id,
+    data: {
+      width: width,
+      containerId: props.containerId,
+    },
+  });
+
+  return (
+    <Box
+      ref={(el) => {
+        const isHTMLEl = calculateIsHTMLEl(el);
+        if (!isHTMLEl) return;
+
+        ref.current = el;
+        sortable.setNodeRef(el);
+
+        return () => {
+          ref.current = null;
+          sortable.setNodeRef(null);
+        };
+      }}
+      {...sortable.attributes}
+      {...sortable.listeners}
+      component={"div"}
+      style={{
+        transform: CSS.Transform.toString(sortable.transform),
+        transition: sortable.transition,
+      }}
+      sx={{
+        bgcolor: indigo[500],
+        aspectRatio: "1/1",
+        borderRadius: 1,
+        opacity: sortable.isDragging ? 0.5 : void 0,
+        borderStyle: "solid",
+        borderColor: theme.palette.action.active,
+        borderWidth: Object.is(sortable.active?.id, props.id) ? 2 : 0,
+        "&:focus-visible": {
+          borderColor: theme.palette.action.focus,
+          borderWidth: 2,
+          outline: "none",
+        },
+
+        fontSize: 60,
+        fontWeight: 300,
+
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      {props.id}
+    </Box>
+  );
+};
+
+type DroppableContainerProps = {
+  id: UniqueIdentifier;
+  children?: React.ReactNode;
+};
+
+const DroppableContainer = (props: DroppableContainerProps) => {
+  const droppable = useDroppable({
+    id: props.id,
+    data: {
+      containerId: props.id,
+    },
+  });
+
+  return (
+    <Box
+      ref={(el) => {
+        const isEl = calculateIsHTMLEl(el);
+
+        if (!isEl) return;
+
+        droppable.setNodeRef(el);
+
+        return () => {
+          droppable.setNodeRef(null);
+        };
+      }}
+      sx={{
+        display: "grid",
+        gridTemplateColumns: "repeat(4,minmax(0,1fr))",
+        gap: 1.5,
+        minBlockSize: 200,
+        borderColor: "primary.main",
+        borderWidth: 2,
+        borderStyle: "solid",
+        borderRadius: 2,
+
+        padding: 1.5,
+      }}
+    >
+      {props.children}
+    </Box>
+  );
 };
 
 export const Component = () => {
@@ -202,120 +317,5 @@ export const Component = () => {
         document.body,
       )}
     </DndContext>
-  );
-};
-
-const calculateIsHTMLEl = (el: unknown): el is HTMLElement => {
-  return el instanceof HTMLElement;
-};
-
-type SortableItemProps = {
-  id: UniqueIdentifier;
-  containerId: UniqueIdentifier;
-};
-
-const SortableItem = (props: SortableItemProps) => {
-  const theme = useTheme();
-  const [ref, entry] = useResizeObserver();
-
-  const width = useResizeObserver.inlineSize(entry?.borderBoxSize);
-
-  const sortable = useSortable({
-    id: props.id,
-    data: {
-      width: width,
-      containerId: props.containerId,
-    },
-  });
-
-  return (
-    <Box
-      ref={(el) => {
-        const isHTMLEl = calculateIsHTMLEl(el);
-        if (!isHTMLEl) return;
-
-        ref.current = el;
-        sortable.setNodeRef(el);
-
-        return () => {
-          ref.current = null;
-          sortable.setNodeRef(null);
-        };
-      }}
-      {...sortable.attributes}
-      {...sortable.listeners}
-      component={"div"}
-      style={{
-        transform: CSS.Transform.toString(sortable.transform),
-        transition: sortable.transition,
-      }}
-      sx={{
-        bgcolor: indigo[500],
-        aspectRatio: "1/1",
-        borderRadius: 1,
-        opacity: sortable.isDragging ? 0.5 : void 0,
-        borderStyle: "solid",
-        borderColor: theme.palette.action.active,
-        borderWidth: Object.is(sortable.active?.id, props.id) ? 2 : 0,
-        "&:focus-visible": {
-          borderColor: theme.palette.action.focus,
-          borderWidth: 2,
-          outline: "none",
-        },
-
-        fontSize: 60,
-        fontWeight: 300,
-
-        display: "flex",
-        justifyContent: "center",
-        alignItems: "center",
-      }}
-    >
-      {props.id}
-    </Box>
-  );
-};
-
-type DroppableContainerProps = {
-  id: UniqueIdentifier;
-  children?: React.ReactNode;
-};
-
-const DroppableContainer = (props: DroppableContainerProps) => {
-  const droppable = useDroppable({
-    id: props.id,
-    data: {
-      containerId: props.id,
-    },
-  });
-
-  return (
-    <Box
-      ref={(el) => {
-        const isEl = calculateIsHTMLEl(el);
-
-        if (!isEl) return;
-
-        droppable.setNodeRef(el);
-
-        return () => {
-          droppable.setNodeRef(null);
-        };
-      }}
-      sx={{
-        display: "grid",
-        gridTemplateColumns: "repeat(4,minmax(0,1fr))",
-        gap: 1.5,
-        minBlockSize: 200,
-        borderColor: "primary.main",
-        borderWidth: 2,
-        borderStyle: "solid",
-        borderRadius: 2,
-
-        padding: 1.5,
-      }}
-    >
-      {props.children}
-    </Box>
   );
 };
