@@ -9,6 +9,7 @@ import {
   useDroppable,
   useSensor,
   useSensors,
+  pointerWithin,
 } from "@dnd-kit/core";
 import {
   useSortable,
@@ -22,7 +23,11 @@ import { createPortal } from "react-dom";
 import { CSS } from "@dnd-kit/utilities";
 import { Box, Stack, useTheme } from "@mui/material";
 import { indigo } from "@mui/material/colors";
-import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
+import {
+  restrictToFirstScrollableAncestor,
+  restrictToWindowEdges,
+  snapCenterToCursor,
+} from "@dnd-kit/modifiers";
 import { devLog } from "@/lib/utils";
 import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 import type { UniqueIdentifier } from "@dnd-kit/core";
@@ -32,6 +37,7 @@ const mapInitializer = () => {
 
   map.set("one", [1, 2, 3, 4, 5, 6]);
   map.set("two", [11, 12, 13, 14, 15, 16]);
+  map.set("three", [21, 22, 23, 24, 25, 26]);
 
   return map;
 };
@@ -72,69 +78,23 @@ export const Component = () => {
         setWidth(e.active.data.current?.width || 0);
       }}
       onDragOver={({ active, over }) => {
-        devLog(false, active, over);
-
         if (!over) return;
 
         const activeId = active.id;
-        const overId = over.id;
-        const activeContainer = calculateContainerId(active.data.current);
-        const overContainer = calculateContainerId(over.data.current);
 
-        if (!overContainer) return;
+        const activeContainer = calculateContainerId(active.data.current);
         if (!activeContainer) return;
+
+        const overContainer = calculateContainerId(over.data.current);
+        if (!overContainer) return;
 
         // Active and Over are in the same container
         if (activeContainer === overContainer) {
-          setMap((prev) => {
-            const nextMap = new Map(prev);
-
-            const activeItems = nextMap.get(activeContainer) || [];
-            const fromIndex = activeItems.indexOf(activeId);
-            const toIndex = activeItems.indexOf(overId);
-
-            nextMap.set(
-              activeContainer,
-              arrayMove(activeItems, fromIndex, toIndex),
-            );
-
-            return nextMap;
-          });
-
           return;
         }
 
         /**
-         * Over is a container, not an element within the container
-         * Only move Active to the end of Over, the order of other elements does not change
-         */
-        if (overId === overContainer) {
-          setMap((prev) => {
-            const nextMap = new Map(prev);
-
-            const activeItems = map.get(activeContainer) || [];
-
-            nextMap.set(
-              activeContainer,
-              activeItems.filter((id) => !Object.is(id, activeId)),
-            );
-
-            const oldOverItems = map.get(overContainer) || [];
-            const nextOverItems = [...oldOverItems, activeId];
-
-            nextMap.set(overContainer, nextOverItems);
-
-            return nextMap;
-          });
-
-          return;
-        }
-
-        /**
-         * Over is an element within the container
          * Move Active to the target container
-         * Insert Active at the position of the Over element
-         * Over and all elements after it shift backward by one position
          */
         setMap((prev) => {
           const nextMap = new Map(prev);
@@ -147,28 +107,30 @@ export const Component = () => {
           );
 
           const overItems = map.get(overContainer) || [];
-          const fromIndex = overItems.length;
-          const toIndex = overItems.indexOf(overId);
 
           nextMap.set(
             overContainer,
-            arrayMove([...overItems, activeId], fromIndex, toIndex),
+            Array.from(new Set([...overItems, activeId])),
           );
 
           return nextMap;
         });
       }}
       onDragEnd={({ active, over }) => {
-        devLog(false, "drag end", active, over);
         if (!over) return;
+
+        const activeContainer = calculateContainerId(active.data.current);
+        if (!activeContainer) return;
+
+        const overContainer = calculateContainerId(over.data.current);
+        if (!overContainer) return;
+
+        if (activeContainer !== overContainer) {
+          return;
+        }
 
         setMap((prev) => {
           const nextMap = new Map(prev);
-          const activeContainer = calculateContainerId(active.data.current);
-          const overContainer = calculateContainerId(over.data.current);
-
-          if (!activeContainer) return prev;
-          if (!overContainer) return prev;
 
           const activeItems = nextMap.get(activeContainer) || [];
           const fromIndex = activeItems.indexOf(active.id);
@@ -187,7 +149,12 @@ export const Component = () => {
         setMap(backupMap);
         setWidth(0);
       }}
-      modifiers={[restrictToWindowEdges, snapCenterToCursor]}
+      modifiers={[
+        restrictToWindowEdges,
+        restrictToFirstScrollableAncestor,
+        snapCenterToCursor,
+      ]}
+      collisionDetection={pointerWithin}
       sensors={sensors}
       measuring={{
         droppable: {
@@ -339,7 +306,7 @@ const DroppableContainer = (props: DroppableContainerProps) => {
         display: "grid",
         gridTemplateColumns: "repeat(4,minmax(0,1fr))",
         gap: 1.5,
-        minBlockSize: 100,
+        minBlockSize: 200,
         borderColor: "primary.main",
         borderWidth: 2,
         borderStyle: "solid",
