@@ -34,17 +34,15 @@ import {
   FormControl,
   FormGroup,
   Slider as MuiSlider,
+  IconButton,
 } from "@mui/material";
-import { grey } from "@mui/material/colors";
-import React from "react";
-import { Camera } from "@/components/shared/Camera";
-import { Slider } from "./Slider";
-import { useTestEffect } from "@/hooks/useTestEffect";
 import {
   closestCenter,
   DndContext,
   KeyboardSensor,
+  MouseSensor,
   PointerSensor,
+  TouchSensor,
   useSensor,
   useSensors,
 } from "@dnd-kit/core";
@@ -55,9 +53,6 @@ import {
   useSortable,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { DragIndicatorOutlined } from "@mui/icons-material";
-import bg from "@/assets/images/justHer.jpg";
 import {
   createColumnHelper,
   flexRender,
@@ -65,9 +60,49 @@ import {
   getPaginationRowModel,
   useReactTable,
 } from "@tanstack/react-table";
+import React from "react";
+import { CSS } from "@dnd-kit/utilities";
+import { restrictToParentElement } from "@dnd-kit/modifiers";
+import { grey } from "@mui/material/colors";
+import { DragIndicatorOutlined } from "@mui/icons-material";
+import bg from "@/assets/images/justHer.jpg";
+import { Camera } from "@/components/shared/Camera";
+import { useTestEffect } from "@/hooks/useTestEffect";
+import { Slider } from "./Slider";
 import "./border.css";
 
-const getBgImgHref = () => new URL(bg, import.meta.url).href;
+const calculateAssetsHref = (path: string) => {
+  return new URL(path, import.meta.url).href;
+};
+
+const mockDataInitializer = () => {
+  return Array.from({ length: 100 }, (_, i) => ({
+    id: i + 1,
+    title: `Row ${i + 1}`,
+    description: `Description ${i + 1}`,
+  }));
+};
+
+const columnHelper = createColumnHelper<{
+  id: number;
+  title: string;
+  description: string;
+}>();
+
+const columns = [
+  columnHelper.accessor("id", {
+    header: "ID",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+  columnHelper.accessor("title", {
+    header: "Title",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+  columnHelper.accessor("description", {
+    header: "Description",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+];
 
 const WebSocketCard = () => {
   const [data, setData] = React.useState("");
@@ -142,6 +177,13 @@ const SortableItem = (props: SortableItemProps) => {
 
   return (
     <ListItem
+      ref={(el) => {
+        sort.setNodeRef(el);
+
+        return () => {
+          sort.setNodeRef(null);
+        };
+      }}
       style={{
         transition: sort.transition,
         transform: CSS.Transform.toString(sort.transform),
@@ -157,16 +199,23 @@ const SortableItem = (props: SortableItemProps) => {
         position: "relative",
         zIndex: (t) => (sort.isDragging ? t.zIndex.speedDial : void 0),
         touchAction: "none",
-        cursor: "pointer",
       }}
       secondaryAction={
         <ListItemIcon>
-          <DragIndicatorOutlined />
+          <IconButton
+            ref={(el) => {
+              sort.setActivatorNodeRef(el);
+              return () => {
+                sort.setActivatorNodeRef(null);
+              };
+            }}
+            {...sort.attributes}
+            {...sort.listeners}
+          >
+            <DragIndicatorOutlined />
+          </IconButton>
         </ListItemIcon>
       }
-      ref={sort.setNodeRef}
-      {...sort.attributes}
-      {...sort.listeners}
     >
       {props.children}
     </ListItem>
@@ -175,7 +224,10 @@ const SortableItem = (props: SortableItemProps) => {
 
 const SortableDnd = () => {
   const [items, setItems] = React.useState([1, 2, 3]);
+
   const sensors = useSensors(
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
@@ -188,7 +240,9 @@ const SortableDnd = () => {
       collisionDetection={closestCenter}
       onDragEnd={(e) => {
         setItems((items) => {
-          if (!e.over) return items;
+          if (!e.over) {
+            return items;
+          }
 
           if (e.active.id === e.over.id) {
             return items;
@@ -200,6 +254,7 @@ const SortableDnd = () => {
           return arrayMove(items, oldIndex, newIndex);
         });
       }}
+      modifiers={[restrictToParentElement]}
     >
       <SortableContext items={items} strategy={verticalListSortingStrategy}>
         <List>
@@ -236,13 +291,6 @@ const Counter = () => {
   );
 };
 
-const initMockData = () =>
-  Array.from({ length: 100 }, (_, i) => ({
-    id: i + 1,
-    title: `Row ${i + 1}`,
-    description: `Description ${i + 1}`,
-  }));
-
 const Cell = (props: React.PropsWithChildren) => {
   const [editable, setEditable] = React.useState(false);
 
@@ -265,27 +313,6 @@ const Cell = (props: React.PropsWithChildren) => {
     <ButtonBase onClick={() => setEditable(true)}>{props.children}</ButtonBase>
   );
 };
-
-const columnHelper = createColumnHelper<{
-  id: number;
-  title: string;
-  description: string;
-}>();
-
-const columns = [
-  columnHelper.accessor("id", {
-    header: "ID",
-    cell: (info) => <Cell>{info.getValue()}</Cell>,
-  }),
-  columnHelper.accessor("title", {
-    header: "Title",
-    cell: (info) => <Cell>{info.getValue()}</Cell>,
-  }),
-  columnHelper.accessor("description", {
-    header: "Description",
-    cell: (info) => <Cell>{info.getValue()}</Cell>,
-  }),
-];
 
 const AnimateBorderButton = () => {
   const theme = useTheme();
@@ -399,7 +426,7 @@ const GoogleButton = (props: React.PropsWithChildren) => {
 
 const EditableTable = () => {
   "use no memo";
-  const [data] = React.useState(initMockData);
+  const [data] = React.useState(mockDataInitializer);
 
   const table = useReactTable({
     getCoreRowModel: getCoreRowModel(),
@@ -539,10 +566,41 @@ const StackContextDemo = () => {
   );
 };
 
+const ActivityDemo = () => {
+  const [show, setShow] = React.useState(false);
+
+  return (
+    <>
+      <Switch
+        checked={show}
+        onChange={(e) => {
+          setShow(e.target.checked);
+        }}
+      />
+      <React.Activity mode={show ? "visible" : "hidden"}>
+        <iframe src="https://www.bilibili.com/" height={500}></iframe>
+        <h1>Activity</h1>
+        <OtherComponent />
+      </React.Activity>
+    </>
+  );
+};
+
+const OtherComponent = () => {
+  return (
+    <span>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit
+      provident voluptates dolores veritatis omnis sed pariatur porro, nihil
+      fugit tempore odio odit maxime ex modi dolorum nesciunt nulla neque
+      molestias.
+    </span>
+  );
+};
+
 export const Component = () => {
   const id = React.useId();
 
-  const bgImgHref = getBgImgHref();
+  const bgImgHref = calculateAssetsHref(bg);
 
   const handleCutImage = () => {
     const video = document.getElementById(id);
@@ -683,42 +741,5 @@ export const Component = () => {
       <StackContextDemo />
       <ActivityDemo />
     </Stack>
-  );
-};
-
-const ActivityDemo = () => {
-  const [show, setShow] = React.useState(false);
-
-  return (
-    <>
-      <Switch
-        checked={show}
-        onChange={(e) => {
-          setShow(e.target.checked);
-        }}
-      />
-      <React.Activity mode={show ? "visible" : "hidden"}>
-        <iframe
-          src="https://www.bilibili.com/"
-          frameBorder="0"
-          height={500}
-        ></iframe>
-        <h1>Activity</h1>
-        <OtherComponent />
-      </React.Activity>
-    </>
-  );
-};
-
-const OtherComponent = () => {
-  return (
-    <>
-      <span>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit
-        provident voluptates dolores veritatis omnis sed pariatur porro, nihil
-        fugit tempore odio odit maxime ex modi dolorum nesciunt nulla neque
-        molestias.
-      </span>
-    </>
   );
 };

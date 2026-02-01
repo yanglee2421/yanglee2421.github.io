@@ -27,7 +27,7 @@ export default defineConfig(() => {
     css: {
       preprocessorOptions: {},
       modules: {
-        localsConvention: "camelCaseOnly",
+        // localsConvention: "camelCaseOnly",
       },
     },
     // experimental: { enableNativePlugin: true },
@@ -146,11 +146,6 @@ export default defineConfig(() => {
           rewrite(path) {
             return path.replace(/^\/dev/, "");
           },
-          changeOrigin: true,
-          ws: true,
-        },
-        "/v1/chat/completions": {
-          target: "https://spark-api-open.xf-yun.com",
           changeOrigin: true,
           ws: true,
         },

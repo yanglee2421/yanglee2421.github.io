@@ -11,9 +11,9 @@ export const useLocaleDate = (locales?: Intl.LocalesArgument) => {
 
 const getDateString = (locales?: Intl.LocalesArgument) => {
   return new Date().toLocaleDateString(locales, {
-    weekday: "short",
+    weekday: "long",
     year: "numeric",
-    month: "2-digit",
+    month: "numeric",
     day: "numeric",
   });
 };

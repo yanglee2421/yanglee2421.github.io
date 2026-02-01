@@ -10,8 +10,10 @@ import {
   useTheme,
 } from "@mui/material";
 import React from "react";
-import { useSize } from "@/hooks/dom/useSize";
 import { minmax } from "@/lib/utils";
+import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
+
+const { inlineSize, blockSize } = useResizeObserver;
 
 const drawLine = (
   canvasCtx: CanvasRenderingContext2D,
@@ -64,8 +66,50 @@ const drawText = (
   canvasCtx.closePath();
 };
 
-const getY = (val: number, max: number, height: number) =>
-  Math.floor(height - (val / max) * height);
+const getY = (val: number, max: number, height: number) => {
+  return Math.floor(height - (val / max) * height);
+};
+
+const createEchoDelayEffect = (audioContext: AudioContext) => {
+  const delay = audioContext.createDelay(1);
+  const dryNode = audioContext.createGain();
+  const wetNode = audioContext.createGain();
+  const mixer = audioContext.createGain();
+  const filter = audioContext.createBiquadFilter();
+
+  delay.delayTime.value = 0.75;
+  dryNode.gain.value = 1;
+  wetNode.gain.value = 0;
+  filter.frequency.value = 1100;
+  filter.type = "highpass";
+
+  return {
+    apply() {
+      wetNode.gain.setValueAtTime(0.75, audioContext.currentTime);
+    },
+    discard() {
+      wetNode.gain.setValueAtTime(0, audioContext.currentTime);
+    },
+    isApplied() {
+      return wetNode.gain.value > 0;
+    },
+    placeBetween(inputNode: AudioNode, outputNode: AudioNode) {
+      inputNode.connect(delay);
+      delay.connect(wetNode);
+      wetNode.connect(filter);
+      filter.connect(delay);
+
+      inputNode.connect(dryNode);
+      dryNode.connect(mixer);
+      wetNode.connect(mixer);
+      mixer.connect(outputNode);
+    },
+  };
+};
+
+const streamInitializer = () => {
+  return navigator.mediaDevices.getUserMedia({ audio: true });
+};
 
 type MicrophoneProps = {
   stream: Promise<MediaStream>;
@@ -75,11 +119,12 @@ const Microphone = (props: MicrophoneProps) => {
   const audio = React.use(props.stream);
 
   const elRef = React.useRef<HTMLCanvasElement>(null);
-  const divRef = React.useRef<HTMLDivElement>(null);
   const cursorRef = React.useRef<null | number>(null);
 
   const theme = useTheme();
-  const [width, height] = useSize(divRef);
+  const [divRef, entry] = useResizeObserver<HTMLDivElement>();
+  const width = inlineSize(entry?.borderBoxSize);
+  const height = blockSize(entry?.borderBoxSize);
 
   React.useEffect(() => {
     const canvas = elRef.current;
@@ -209,43 +254,6 @@ const Microphone = (props: MicrophoneProps) => {
   );
 };
 
-const createEchoDelayEffect = (audioContext: AudioContext) => {
-  const delay = audioContext.createDelay(1);
-  const dryNode = audioContext.createGain();
-  const wetNode = audioContext.createGain();
-  const mixer = audioContext.createGain();
-  const filter = audioContext.createBiquadFilter();
-
-  delay.delayTime.value = 0.75;
-  dryNode.gain.value = 1;
-  wetNode.gain.value = 0;
-  filter.frequency.value = 1100;
-  filter.type = "highpass";
-
-  return {
-    apply() {
-      wetNode.gain.setValueAtTime(0.75, audioContext.currentTime);
-    },
-    discard() {
-      wetNode.gain.setValueAtTime(0, audioContext.currentTime);
-    },
-    isApplied() {
-      return wetNode.gain.value > 0;
-    },
-    placeBetween(inputNode: AudioNode, outputNode: AudioNode) {
-      inputNode.connect(delay);
-      delay.connect(wetNode);
-      wetNode.connect(filter);
-      filter.connect(delay);
-
-      inputNode.connect(dryNode);
-      dryNode.connect(mixer);
-      wetNode.connect(mixer);
-      mixer.connect(outputNode);
-    },
-  };
-};
-
 type SinewaveProps = {
   stream: Promise<MediaStream>;
 };
@@ -253,11 +261,12 @@ type SinewaveProps = {
 const Sinewave = (props: SinewaveProps) => {
   const stream = React.use(props.stream);
 
-  const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
 
   const theme = useTheme();
-  const [width, height] = useSize(divRef);
+  const [divRef, entry] = useResizeObserver<HTMLDivElement>();
+  const width = inlineSize(entry?.borderBoxSize);
+  const height = blockSize(entry?.borderBoxSize);
 
   React.useEffect(() => {
     const canvas = ref.current;
@@ -376,11 +385,12 @@ type FrequencybarsProps = {
 const Frequencybars = (props: FrequencybarsProps) => {
   const stream = React.use(props.stream);
 
-  const divRef = React.useRef<HTMLDivElement>(null);
   const ref = React.useRef<HTMLCanvasElement>(null);
 
   const theme = useTheme();
-  const [width, height] = useSize(divRef);
+  const [divRef, entry] = useResizeObserver<HTMLDivElement>();
+  const width = inlineSize(entry?.borderBoxSize);
+  const height = blockSize(entry?.borderBoxSize);
 
   React.useEffect(() => {
     const canvas = ref.current;
@@ -525,10 +535,11 @@ type RenderNode = {
 const SvgCard = () => {
   const [renderNodes, setRenderNodes] = React.useState<RenderNode[]>([]);
 
-  const divRef = React.useRef<HTMLDivElement>(null);
   const seed = React.useRef(1);
 
-  const [width, height] = useSize(divRef);
+  const [divRef, entry] = useResizeObserver<HTMLDivElement>();
+  const width = inlineSize(entry?.borderBoxSize);
+  const height = blockSize(entry?.borderBoxSize);
   const theme = useTheme();
 
   React.useEffect(() => {
@@ -616,10 +627,8 @@ const SvgCard = () => {
   );
 };
 
-const initStream = () => navigator.mediaDevices.getUserMedia({ audio: true });
-
 export const Component = () => {
-  const [stream, setStream] = React.useState(initStream);
+  const [stream, setStream] = React.useState(streamInitializer);
 
   return (
     <Grid container spacing={3}>

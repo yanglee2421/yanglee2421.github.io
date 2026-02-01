@@ -1,46 +1,10 @@
+import React from "react";
+import { useQuery } from "@tanstack/react-query";
+import { Outlet } from "react-router";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { fetchUserByFirebase, netlify } from "@/api/netlify";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { getMatchedLang } from "@/lib/utils";
-import { useQuery } from "@tanstack/react-query";
-import React from "react";
-import { useTranslation } from "react-i18next";
-import { useParams, useLocation, Navigate, Outlet } from "react-router";
-import { NavigateToHome, NavigateToLogin } from "./navigate";
-
-export const LangGuard = () => {
-  const params = useParams();
-  const location = useLocation();
-  const { i18n } = useTranslation();
-  const setStoreLang = useLocalStore.setState;
-  const storeLang = useLocalStore((s) => s.fallbackLang);
-  const matchedLang = getMatchedLang(params.lang, storeLang);
-
-  const changeLanguage = React.useEffectEvent((matchedLang: string) => {
-    i18n.changeLanguage(matchedLang);
-    setStoreLang({ fallbackLang: matchedLang });
-  });
-
-  React.useEffect(() => {
-    changeLanguage(matchedLang);
-  }, [matchedLang]);
-
-  if (matchedLang !== params.lang) {
-    return (
-      <Navigate
-        to={{
-          pathname: `/${matchedLang + location.pathname}`,
-          search: location.search,
-          hash: location.hash,
-        }}
-        state={location.state}
-        replace
-      />
-    );
-  }
-
-  return <Outlet />;
-};
+import { NavigateToHome, NavigateToLogin } from "./nav";
 
 export const GuestGuard = () =>
   useCurrentUser() ? <NavigateToHome /> : <Outlet />;

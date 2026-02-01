@@ -19,6 +19,26 @@
 | **ci**       | CI/CD 配置相关         | `ci(github): fix build pipeline trigger`          |
 | **revert**   | 回滚之前的提交         | `revert: revert "feat(auth): add JWT validation"` |
 
+### Statistics
+
+统计项目文件数和代码行数（不包括 git 忽略的部分）：
+
+```powershell
+(git ls-files | ForEach-Object { (Get-Content $_ | Measure-Object -Line).Lines }) | Measure-Object -Sum
+```
+
+## TypeScript
+
+### Interface & Type
+
+| 功能       | type | interface |
+| ---------- | ---- | --------- |
+| 联合类型   | ✅   | ❎        |
+| 类型别名   | ✅   | ❎        |
+| 继承       | ❎   | ✅        |
+| 声明合并   | ❎   | ✅        |
+| 自引用定义 | ❎   | ✅        |
+
 ## Awesome
 
 ### Data Fetching
@@ -89,9 +109,18 @@
 
 ### Database
 
-- [dexie](https://www.npmjs.com/package/dexie)
-- [dexie-react-hooks](https://www.npmjs.com/package/dexie-react-hooks)
-- [better-sqlite3](https://www.npmjs.com/package/better-sqlite3)
 - [drizzle-orm](https://www.npmjs.com/package/drizzle-orm)
 - [drizzle-kit](https://www.npmjs.com/package/drizzle-kit)
+- [better-sqlite3](https://www.npmjs.com/package/better-sqlite3)
+- [dexie](https://www.npmjs.com/package/dexie)
+- [dexie-react-hooks](https://www.npmjs.com/package/dexie-react-hooks)
 - [localforage](https://www.npmjs.com/package/localforage)
+- [mdb-reader](https://www.npmjs.com/package/mdb-reader)
+
+### Chat
+
+- [openai](https://www.npmjs.com/package/openai)
+
+### PLC
+
+- [modbus-serial](https://www.npmjs.com/package/modbus-serial)

@@ -1,5 +1,3 @@
-import { Router } from "@/router";
-import { useIsDark } from "@/hooks/dom/useIsDark";
 import {
   createTheme,
   CssBaseline,
@@ -7,14 +5,15 @@ import {
   ThemeProvider,
 } from "@mui/material";
 import React from "react";
+import { useTranslation } from "react-i18next";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { type Mode, useLocalStore } from "@/hooks/store/useLocalStore";
-import "dayjs/locale/zh";
-import "dayjs/locale/en";
-import { useTranslation } from "react-i18next";
+import { AppRouter } from "@/router";
+import { useIsDark } from "@/hooks/dom/useIsDark";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { SnackbarProvider } from "@/components/ui/snackbar";
 import { QueryProvider } from "./components/query";
+import type { Mode } from "@/hooks/store/useLocalStore";
 
 const lightTheme = createTheme({
   palette: { mode: "light" },
@@ -40,7 +39,7 @@ const darkTheme = createTheme({
   },
 });
 
-const modeToHasSelector = (mode: Mode, isDark: boolean) => {
+const enableDark = (mode: Mode, isDark: boolean) => {
   switch (mode) {
     case "dark":
       return true;
@@ -54,10 +53,10 @@ const modeToHasSelector = (mode: Mode, isDark: boolean) => {
 
 const MuiProvider = (props: React.PropsWithChildren) => {
   const isDark = useIsDark();
-  const [, i18n] = useTranslation();
+  const { i18n } = useTranslation();
   const mode = useLocalStore((s) => s.mode);
 
-  const hasDarkSelector = modeToHasSelector(mode, isDark);
+  const hasDarkSelector = enableDark(mode, isDark);
   const theme = hasDarkSelector ? darkTheme : lightTheme;
   const themeColor = hasDarkSelector
     ? theme.palette.background.default
@@ -110,7 +109,7 @@ export const App = () => {
   return (
     <QueryProvider>
       <MuiProvider>
-        <Router />
+        <AppRouter />
       </MuiProvider>
     </QueryProvider>
   );

@@ -1,18 +1,41 @@
-import {
-  DashboardOutlined,
-  CalendarMonthOutlined,
-  ChatOutlined,
-  ScienceOutlined,
-  HandshakeOutlined,
-  AppsOutlined,
-  ChevronRightOutlined,
-  TokenOutlined,
-  ViewDayRounded,
-  MessageOutlined,
-  AlignHorizontalLeftOutlined,
-} from "@mui/icons-material";
-import { styled, alpha, Typography } from "@mui/material";
 import { useParams, NavLink } from "react-router";
+import { styled, alpha, Typography } from "@mui/material";
+import { useSearchParams, Navigate, useLocation } from "react-router";
+import { ChevronRightOutlined, DashboardOutlined } from "@mui/icons-material";
+import { HOME_PATH, LOGIN_PATH } from "@/lib/constants";
+
+export const NavigateToHome = () => {
+  const [searchParams] = useSearchParams();
+  const search = new URLSearchParams(searchParams);
+  search.delete("redirect_uri");
+
+  return (
+    <Navigate
+      to={{
+        pathname: searchParams.get("redirect_uri") || HOME_PATH,
+        search: search.toString(),
+      }}
+      replace
+    />
+  );
+};
+
+export const NavigateToLogin = () => {
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+  const search = new URLSearchParams(searchParams);
+  search.set("redirect_uri", location.pathname);
+
+  return (
+    <Navigate
+      to={{
+        pathname: LOGIN_PATH,
+        search: search.toString(),
+      }}
+      replace
+    />
+  );
+};
 
 const LinkWrapper = styled("div")(({ theme }) => ({
   display: "flex",
@@ -48,55 +71,9 @@ const LinkWrapper = styled("div")(({ theme }) => ({
 
 const list = [
   {
-    to: "/dashboard",
-    label: "Dashboard",
+    to: "/dnd/core/Draggable/hooks/useDraggable/basic-setup",
+    label: "basic setup",
     icon: <DashboardOutlined />,
-  },
-  {
-    to: "/overtime",
-    label: "Overtime",
-    icon: <CalendarMonthOutlined />,
-  },
-  {
-    to: "/overtime/new",
-    label: "Overtime New",
-    icon: <CalendarMonthOutlined />,
-  },
-  {
-    to: "/handbook",
-    label: "Handbook",
-    icon: <HandshakeOutlined />,
-  },
-  {
-    to: "/snackbar",
-    label: "Snackbar",
-    icon: <MessageOutlined />,
-  },
-  {
-    to: "/lab",
-    label: "Lab",
-    icon: <ScienceOutlined />,
-  },
-  {
-    to: "/rank",
-    label: "Rank",
-    icon: <AlignHorizontalLeftOutlined />,
-  },
-  {
-    to: "/app",
-    label: "App",
-    icon: <AppsOutlined />,
-  },
-  { to: "/chat", label: "Chat", icon: <ChatOutlined /> },
-  {
-    to: "/scrollbar",
-    label: "Scrollbar",
-    icon: <TokenOutlined />,
-  },
-  {
-    to: "/virtual",
-    label: "Virtual",
-    icon: <ViewDayRounded />,
   },
 ];
 

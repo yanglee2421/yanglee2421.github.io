@@ -3,9 +3,8 @@
   "editor.formatOnSave": true,
   "editor.linkedEditing": true,
   "editor.tabSize": 2,
-  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "workbench.iconTheme": "vscode-icons",
   "git.confirmSync": false,
   "git.enableSmartCommit": true,
-  "git.autofetch": true,
+  "git.autofetch": true
 }

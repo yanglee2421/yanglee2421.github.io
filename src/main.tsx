@@ -1,12 +1,14 @@
 import React from "react";
+import { enableMapSet } from "immer";
 import { createRoot } from "react-dom/client";
-import "@/locales/i18n";
-import { App } from "./App";
+import "dayjs/locale/en";
+import "dayjs/locale/zh";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
 import "@fontsource/roboto/500.css";
 import "@fontsource/roboto/700.css";
-import { enableMapSet } from "immer";
+import { App } from "./App";
+import "@/locales/i18n";
 
 enableMapSet();
 createRoot(document.getElementById("root")!).render(

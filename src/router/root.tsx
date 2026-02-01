@@ -1,57 +1,134 @@
-import { auth } from "@/api/firebase/app";
-import { NprogressBar } from "@/components/layout/nprogress";
-import { ParticlesUI } from "@/components/layout/particles";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { ReactRouterAppProvider } from "@toolpad/core/react-router";
-import { signOut } from "firebase/auth";
-import React from "react";
-import { useParams, Outlet, ScrollRestoration } from "react-router";
-import type { Navigation } from "@toolpad/core";
+import {
+  useParams,
+  Outlet,
+  ScrollRestoration,
+  Link,
+  useRouteError,
+  isRouteErrorResponse,
+} from "react-router";
+import {
+  Alert,
+  AlertTitle,
+  Box,
+  Button,
+  CircularProgress,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import {
   DashboardOutlined,
   CalendarMonthOutlined,
   TokenOutlined,
-  HandshakeOutlined,
   MessageOutlined,
   ScienceOutlined,
-  AppsOutlined,
-  ChatOutlined,
   ViewDayRounded,
   AddOutlined,
   ListOutlined,
   AlignHorizontalLeftOutlined,
+  HomeOutlined,
+  DragIndicator,
 } from "@mui/icons-material";
-import { Box, useTheme } from "@mui/material";
+import React from "react";
+import { signOut } from "firebase/auth";
+import { ReactRouterAppProvider } from "@toolpad/core/react-router";
 import { NotificationsProvider, DialogsProvider } from "@toolpad/core";
+import { auth } from "@/api/firebase/app";
+import { ParticlesUI } from "@/components/layout/particles";
+import { NprogressBar } from "@/components/layout/nprogress";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import type { Navigation } from "@toolpad/core";
+
+const renderError = (error: unknown) => {
+  if (isRouteErrorResponse(error)) {
+    return (
+      <Alert severity="error" variant="outlined">
+        <AlertTitle>{error.status}</AlertTitle>
+        <Typography>{error.statusText}</Typography>
+        <Link to="/">
+          <Button startIcon={<HomeOutlined />}>Take me to home</Button>
+        </Link>
+      </Alert>
+    );
+  }
+
+  if (error instanceof Error) {
+    return (
+      <Alert severity="error" variant="outlined">
+        <AlertTitle>Error</AlertTitle>
+        <Typography>{error.message}</Typography>
+        <Typography variant="body2">{error.stack}</Typography>
+        <Link to="/">
+          <Button startIcon={<HomeOutlined />} color="error">
+            Take me to home
+          </Button>
+        </Link>
+      </Alert>
+    );
+  }
+
+  return (
+    <Alert severity="error" variant="outlined">
+      <AlertTitle>Error</AlertTitle>
+      <Typography>Unknown error please contact support</Typography>
+      <Link to="/">
+        <Button startIcon={<HomeOutlined />} color="error">
+          Take me to home
+        </Button>
+      </Link>
+    </Alert>
+  );
+};
+
+export const RootErrorBoundary = () => {
+  const error = useRouteError();
+
+  return <Box sx={{ padding: 6 }}>{renderError(error)}</Box>;
+};
+
+export const RootHydrateFallback = () => {
+  return (
+    <Box
+      sx={{
+        position: "fixed",
+        inset: 0,
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+      }}
+    >
+      <CircularProgress size={64} />
+    </Box>
+  );
+};
 
 const BRANDING = {
   title: "GitHub IO",
 };
 
-const path = (...args: unknown[]) => args.join("/");
+const path = (...args: unknown[]) => {
+  const [lang, ...restPath] = args;
 
-const langToNavition = (lang: string): Navigation => [
-  {
-    kind: "header",
-    title: "Fontend",
-  },
+  if (!lang) {
+    return restPath.join("/");
+  }
+
+  return args.join("/");
+};
+
+const createNavition = (lang?: string): Navigation => [
+  { kind: "header", title: "Fontend" },
   {
     segment: path(lang, "dashboard"),
     title: "Dashboard",
     icon: <DashboardOutlined />,
   },
   {
-    segment: path(lang, "handbook"),
-    title: "Handbook",
-    icon: <HandshakeOutlined />,
+    segment: path(lang, "dnd"),
+    title: "Drag & Drop",
+    icon: <DragIndicator />,
   },
-  {
-    kind: "divider",
-  },
-  {
-    kind: "header",
-    title: "Table",
-  },
+  { kind: "divider" },
+  { kind: "header", title: "Table" },
   {
     title: "Overtime",
     icon: <CalendarMonthOutlined />,
@@ -68,16 +145,18 @@ const langToNavition = (lang: string): Navigation => [
       },
     ],
   },
-  {
-    kind: "divider",
-  },
+  { kind: "divider" },
   { kind: "header", title: "App" },
   {
     segment: path(lang, "snackbar"),
     title: "Snackbar",
     icon: <MessageOutlined />,
   },
-  { segment: path(lang, "lab"), title: "Lab", icon: <ScienceOutlined /> },
+  {
+    segment: path(lang, "lab"),
+    title: "Lab",
+    icon: <ScienceOutlined />,
+  },
   {
     segment: path(lang, "rank"),
     title: "Rank",
@@ -85,8 +164,6 @@ const langToNavition = (lang: string): Navigation => [
   },
   { kind: "divider" },
   { kind: "header", title: "Custom layout" },
-  { segment: path(lang, "app"), title: "App", icon: <AppsOutlined /> },
-  { segment: path(lang, "chat"), title: "Chat", icon: <ChatOutlined /> },
   {
     segment: path(lang, "scrollbar"),
     title: "Scrollbar",
@@ -99,15 +176,15 @@ const langToNavition = (lang: string): Navigation => [
   },
 ];
 
-const useNavigtion = () => {
+const useNavigation = () => {
   const params = useParams();
   const lang = params.lang;
-  return React.useMemo<Navigation>(() => langToNavition(String(lang)), [lang]);
+  return React.useMemo<Navigation>(() => createNavition(lang), [lang]);
 };
 
 export const RootRoute = () => {
   const theme = useTheme();
-  const navigation = useNavigtion();
+  const navigation = useNavigation();
   const user = useCurrentUser();
 
   const session = user
@@ -128,8 +205,8 @@ export const RootRoute = () => {
       theme={theme}
       session={session}
       authentication={{
-        signIn() {},
-        async signOut() {
+        signIn: () => {},
+        signOut: async () => {
           await signOut(auth);
         },
       }}
