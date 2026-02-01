@@ -9,6 +9,9 @@ import {
   useDroppable,
   useSensor,
   useSensors,
+  pointerWithin,
+  rectIntersection,
+  defaultDropAnimation,
 } from "@dnd-kit/core";
 import {
   useSortable,
@@ -16,25 +19,22 @@ import {
   rectSortingStrategy,
   sortableKeyboardCoordinates,
   arrayMove,
+  defaultAnimateLayoutChanges,
 } from "@dnd-kit/sortable";
+import {
+  restrictToFirstScrollableAncestor,
+  restrictToWindowEdges,
+  snapCenterToCursor,
+} from "@dnd-kit/modifiers";
 import React from "react";
 import { createPortal } from "react-dom";
 import { CSS } from "@dnd-kit/utilities";
-import { Box, Stack, useTheme } from "@mui/material";
-import { indigo } from "@mui/material/colors";
-import { restrictToWindowEdges, snapCenterToCursor } from "@dnd-kit/modifiers";
-import { devLog } from "@/lib/utils";
+import { Delete } from "@mui/icons-material";
+import { indigo, red } from "@mui/material/colors";
+import { alpha, Box, Stack, useTheme } from "@mui/material";
 import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
-import type { UniqueIdentifier } from "@dnd-kit/core";
-
-const mapInitializer = () => {
-  const map = new Map<UniqueIdentifier, UniqueIdentifier[]>();
-
-  map.set("one", [1, 2, 3, 4, 5, 6]);
-  map.set("two", [11, 12, 13, 14, 15, 16]);
-
-  return map;
-};
+import type { CollisionDetection, UniqueIdentifier } from "@dnd-kit/core";
+import type { AnimateLayoutChanges } from "@dnd-kit/sortable";
 
 const calculateContainerId = (data: unknown) => {
   const containerId = Reflect.get(Object(data), "containerId");
@@ -46,205 +46,51 @@ const calculateContainerId = (data: unknown) => {
   return containerId;
 };
 
-export const Component = () => {
-  const [map, setMap] = React.useState(mapInitializer);
-  const [backupMap, setBackupMap] = React.useState(mapInitializer);
-  const [activatedId, setActivatedId] = React.useState<UniqueIdentifier>(0);
-  const [width, setWidth] = React.useState(0);
-
-  const sensors = useSensors(
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(PointerSensor),
-  );
-
-  return (
-    <DndContext
-      onDragStart={(e) => {
-        devLog(false, e);
-        if (!e.active) return;
-
-        setActivatedId(e.active.id);
-        setBackupMap(map);
-        setWidth(e.active.data.current?.width || 0);
-      }}
-      onDragOver={({ active, over }) => {
-        devLog(false, active, over);
-
-        if (!over) return;
-
-        const activeId = active.id;
-        const overId = over.id;
-        const activeContainer = calculateContainerId(active.data.current);
-        const overContainer = calculateContainerId(over.data.current);
-
-        if (!overContainer) return;
-        if (!activeContainer) return;
-
-        // Active and Over are in the same container
-        if (activeContainer === overContainer) {
-          setMap((prev) => {
-            const nextMap = new Map(prev);
-
-            const activeItems = nextMap.get(activeContainer) || [];
-            const fromIndex = activeItems.indexOf(activeId);
-            const toIndex = activeItems.indexOf(overId);
-
-            nextMap.set(
-              activeContainer,
-              arrayMove(activeItems, fromIndex, toIndex),
-            );
-
-            return nextMap;
-          });
-
-          return;
-        }
-
-        /**
-         * Over is a container, not an element within the container
-         * Only move Active to the end of Over, the order of other elements does not change
-         */
-        if (overId === overContainer) {
-          setMap((prev) => {
-            const nextMap = new Map(prev);
-
-            const activeItems = map.get(activeContainer) || [];
-
-            nextMap.set(
-              activeContainer,
-              activeItems.filter((id) => !Object.is(id, activeId)),
-            );
-
-            const oldOverItems = map.get(overContainer) || [];
-            const nextOverItems = [...oldOverItems, activeId];
-
-            nextMap.set(overContainer, nextOverItems);
-
-            return nextMap;
-          });
-
-          return;
-        }
-
-        /**
-         * Over is an element within the container
-         * Move Active to the target container
-         * Insert Active at the position of the Over element
-         * Over and all elements after it shift backward by one position
-         */
-        setMap((prev) => {
-          const nextMap = new Map(prev);
-
-          const activeItems = map.get(activeContainer) || [];
-
-          nextMap.set(
-            activeContainer,
-            activeItems.filter((id) => !Object.is(id, activeId)),
-          );
-
-          const overItems = map.get(overContainer) || [];
-          const fromIndex = overItems.length;
-          const toIndex = overItems.indexOf(overId);
-
-          nextMap.set(
-            overContainer,
-            arrayMove([...overItems, activeId], fromIndex, toIndex),
-          );
-
-          return nextMap;
-        });
-      }}
-      onDragEnd={({ active, over }) => {
-        devLog(false, "drag end", active, over);
-        if (!over) return;
-
-        setMap((prev) => {
-          const nextMap = new Map(prev);
-          const activeContainer = calculateContainerId(active.data.current);
-          const overContainer = calculateContainerId(over.data.current);
-
-          if (!activeContainer) return prev;
-          if (!overContainer) return prev;
-
-          const activeItems = nextMap.get(activeContainer) || [];
-          const fromIndex = activeItems.indexOf(active.id);
-          const toIndex = activeItems.indexOf(over.id);
-
-          nextMap.set(
-            activeContainer,
-            arrayMove(activeItems, fromIndex, toIndex),
-          );
-
-          return nextMap;
-        });
-      }}
-      onDragCancel={() => {
-        setActivatedId(0);
-        setMap(backupMap);
-        setWidth(0);
-      }}
-      modifiers={[restrictToWindowEdges, snapCenterToCursor]}
-      sensors={sensors}
-      measuring={{
-        droppable: {
-          strategy: MeasuringStrategy.Always,
-        },
-      }}
-    >
-      <Stack spacing={3}>
-        {Array.from(map.keys(), (containerId) => {
-          const items = Array.from(map.get(containerId) || []);
-
-          return (
-            <DroppableContainer key={containerId} id={containerId}>
-              <SortableContext items={items} strategy={rectSortingStrategy}>
-                {items.map((id) => (
-                  <SortableItem key={id} id={id} containerId={containerId} />
-                ))}
-              </SortableContext>
-            </DroppableContainer>
-          );
-        })}
-      </Stack>
-      {createPortal(
-        <DragOverlay>
-          {activatedId ? (
-            <Box
-              sx={{
-                bgcolor: indigo[500],
-                aspectRatio: "1/1",
-                borderRadius: 1,
-                width,
-                borderStyle: "solid",
-                borderColor: (theme) => theme.palette.action.active,
-                borderWidth: 2,
-                "&:focus-visible": {
-                  borderColor: (theme) => theme.palette.action.focus,
-                  borderWidth: 2,
-                },
-              }}
-            >
-              {activatedId}
-            </Box>
-          ) : null}
-        </DragOverlay>,
-        document.body,
-      )}
-    </DndContext>
-  );
-};
-
 const calculateIsHTMLEl = (el: unknown): el is HTMLElement => {
   return el instanceof HTMLElement;
 };
 
+const collisionDetection: CollisionDetection = (args) => {
+  if (args.pointerCoordinates) {
+    return pointerWithin(args);
+  }
+
+  return rectIntersection(args);
+};
+
+const mapInitializer = () => {
+  const map = new Map<UniqueIdentifier, UniqueIdentifier[]>();
+
+  map.set("one", [1, 2, 3, 4, 5, 6]);
+  map.set("two", [11, 12, 13, 14, 15, 16]);
+  map.set("three", [21, 22, 23, 24, 25, 26]);
+
+  return map;
+};
+
+/**
+ * If remove cause is not dragging need this function
+ */
+// const animateLayoutChanges: AnimateLayoutChanges = (args) => {
+//   return defaultAnimateLayoutChanges({ ...args, wasDragging: true });
+// };
+
+const arrayDelete = (array: UniqueIdentifier[], id: UniqueIdentifier) => {
+  return array.filter((el) => !Object.is(el, id));
+};
+
+const animateLayoutChanges: AnimateLayoutChanges = (args) => {
+  const result = defaultAnimateLayoutChanges({ ...args, wasDragging: true });
+
+  return result;
+};
+
+const TRASH_ID = "TRASH_ID";
+
 type SortableItemProps = {
   id: UniqueIdentifier;
   containerId: UniqueIdentifier;
+  onRemove?: () => void;
 };
 
 const SortableItem = (props: SortableItemProps) => {
@@ -259,6 +105,7 @@ const SortableItem = (props: SortableItemProps) => {
       width: width,
       containerId: props.containerId,
     },
+    animateLayoutChanges,
   });
 
   return (
@@ -283,6 +130,8 @@ const SortableItem = (props: SortableItemProps) => {
         transition: sortable.transition,
       }}
       sx={{
+        touchAction: "none",
+
         bgcolor: indigo[500],
         aspectRatio: "1/1",
         borderRadius: 1,
@@ -302,6 +151,10 @@ const SortableItem = (props: SortableItemProps) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        props.onRemove?.();
       }}
     >
       {props.id}
@@ -339,7 +192,7 @@ const DroppableContainer = (props: DroppableContainerProps) => {
         display: "grid",
         gridTemplateColumns: "repeat(4,minmax(0,1fr))",
         gap: 1.5,
-        minBlockSize: 100,
+        minBlockSize: 200,
         borderColor: "primary.main",
         borderWidth: 2,
         borderStyle: "solid",
@@ -350,5 +203,244 @@ const DroppableContainer = (props: DroppableContainerProps) => {
     >
       {props.children}
     </Box>
+  );
+};
+
+type TrashProps = {
+  id: string;
+};
+
+const Trash = (props: TrashProps) => {
+  const theme = useTheme();
+
+  const droppable = useDroppable({
+    id: props.id,
+    data: {
+      containerId: props.id,
+    },
+  });
+
+  return createPortal(
+    <div
+      ref={(el) => {
+        droppable.setNodeRef(el);
+
+        return () => {
+          droppable.setNodeRef(null);
+        };
+      }}
+      style={{
+        position: "fixed",
+        insetInline: 0,
+        top: 0,
+        zIndex: 9999,
+
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+
+        height: 200,
+
+        backgroundColor: droppable.isOver
+          ? alpha(red[500], 1 - theme.palette.action.activatedOpacity)
+          : alpha(red[500], 1 - theme.palette.action.disabledOpacity),
+      }}
+    >
+      <Delete fontSize="large" color="inherit" />
+    </div>,
+    document.body,
+  );
+};
+
+export const Component = () => {
+  const [map, setMap] = React.useState(mapInitializer);
+  const [backupMap, setBackupMap] = React.useState(mapInitializer);
+  const [activatedId, setActivatedId] = React.useState<UniqueIdentifier>(0);
+  const [width, setWidth] = React.useState(0);
+  const [enableDropAnimation, setEnableDropAnimation] = React.useState(false);
+
+  const timerRef = React.useRef(0);
+
+  const sensors = useSensors(
+    useSensor(KeyboardSensor, {
+      coordinateGetter: sortableKeyboardCoordinates,
+    }),
+    useSensor(MouseSensor),
+    useSensor(TouchSensor),
+    useSensor(PointerSensor),
+  );
+
+  const handleRemove = (
+    activeContainer: UniqueIdentifier,
+    id: UniqueIdentifier,
+  ) => {
+    cancelAnimationFrame(timerRef.current);
+    timerRef.current = requestAnimationFrame(() => {
+      setMap((prev) => {
+        const nextMap = new Map(prev);
+        const activeItems = nextMap.get(activeContainer) || [];
+
+        nextMap.set(activeContainer, arrayDelete(activeItems, id));
+
+        return nextMap;
+      });
+    });
+  };
+
+  return (
+    <DndContext
+      onDragStart={(e) => {
+        if (!e.active) return;
+
+        setActivatedId(e.active.id);
+        setWidth(e.active.data.current?.width || 0);
+        setBackupMap(map);
+        setEnableDropAnimation(true);
+      }}
+      onDragOver={({ active, over }) => {
+        if (!over) return;
+
+        const activeId = active.id;
+        const activeContainer = calculateContainerId(active.data.current);
+        if (!activeContainer) return;
+
+        const overContainer = calculateContainerId(over.data.current);
+        if (!overContainer) return;
+
+        if (overContainer === TRASH_ID) {
+          return;
+        }
+
+        // Active and Over are in the same container
+        if (activeContainer === overContainer) {
+          return;
+        }
+
+        /**
+         * Move Active to the target container
+         */
+        setMap((prev) => {
+          const nextMap = new Map(prev);
+
+          const activeItems = map.get(activeContainer) || [];
+
+          nextMap.set(
+            activeContainer,
+            activeItems.filter((id) => !Object.is(id, activeId)),
+          );
+
+          const overItems = map.get(overContainer) || [];
+
+          nextMap.set(
+            overContainer,
+            Array.from(new Set([...overItems, activeId])),
+          );
+
+          return nextMap;
+        });
+      }}
+      onDragEnd={({ active, over }) => {
+        setActivatedId(0);
+
+        if (!over) return;
+
+        const activeContainer = calculateContainerId(active.data.current);
+        if (!activeContainer) return;
+
+        const overContainer = calculateContainerId(over.data.current);
+        if (!overContainer) return;
+
+        if (overContainer === TRASH_ID) {
+          handleRemove(activeContainer, activatedId);
+          setEnableDropAnimation(false);
+          return;
+        }
+
+        if (activeContainer !== overContainer) {
+          return;
+        }
+
+        setMap((prev) => {
+          const nextMap = new Map(prev);
+
+          const activeItems = nextMap.get(activeContainer) || [];
+          const fromIndex = activeItems.indexOf(active.id);
+          const toIndex = activeItems.indexOf(over.id);
+
+          nextMap.set(
+            activeContainer,
+            arrayMove(activeItems, fromIndex, toIndex),
+          );
+
+          return nextMap;
+        });
+      }}
+      onDragCancel={() => {
+        setActivatedId(0);
+        setMap(backupMap);
+        setWidth(0);
+      }}
+      modifiers={[
+        restrictToWindowEdges,
+        restrictToFirstScrollableAncestor,
+        snapCenterToCursor,
+      ]}
+      collisionDetection={collisionDetection}
+      sensors={sensors}
+      measuring={{
+        droppable: {
+          strategy: MeasuringStrategy.Always,
+        },
+      }}
+    >
+      {!!activatedId && <Trash id={TRASH_ID} />}
+      <Stack spacing={3}>
+        <div style={{ height: 50 }}></div>
+        {Array.from(map.keys(), (containerId) => {
+          const items = Array.from(map.get(containerId) || []);
+
+          return (
+            <DroppableContainer key={containerId} id={containerId}>
+              <SortableContext items={items} strategy={rectSortingStrategy}>
+                {items.map((id) => (
+                  <SortableItem
+                    key={id}
+                    id={id}
+                    containerId={containerId}
+                    onRemove={() => {
+                      handleRemove(containerId, id);
+                    }}
+                  />
+                ))}
+              </SortableContext>
+            </DroppableContainer>
+          );
+        })}
+      </Stack>
+      {createPortal(
+        <DragOverlay
+          dropAnimation={enableDropAnimation ? defaultDropAnimation : null}
+        >
+          <Box
+            sx={{
+              bgcolor: indigo[500],
+              aspectRatio: "1/1",
+              borderRadius: 1,
+              width,
+              borderStyle: "solid",
+              borderColor: (theme) => theme.palette.action.active,
+              borderWidth: 2,
+              "&:focus-visible": {
+                borderColor: (theme) => theme.palette.action.focus,
+                borderWidth: 2,
+              },
+            }}
+          >
+            {activatedId}
+          </Box>
+        </DragOverlay>,
+        document.body,
+      )}
+    </DndContext>
   );
 };

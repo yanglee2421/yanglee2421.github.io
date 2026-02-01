@@ -62,7 +62,7 @@ import {
 } from "@tanstack/react-table";
 import React from "react";
 import { CSS } from "@dnd-kit/utilities";
-import {restrictToParentElement}from '@dnd-kit/modifiers'
+import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { grey } from "@mui/material/colors";
 import { DragIndicatorOutlined } from "@mui/icons-material";
 import bg from "@/assets/images/justHer.jpg";
@@ -71,7 +71,38 @@ import { useTestEffect } from "@/hooks/useTestEffect";
 import { Slider } from "./Slider";
 import "./border.css";
 
-const bgImgHrefInitializer = () => new URL(bg, import.meta.url).href;
+const calculateAssetsHref = (path: string) => {
+  return new URL(path, import.meta.url).href;
+};
+
+const mockDataInitializer = () => {
+  return Array.from({ length: 100 }, (_, i) => ({
+    id: i + 1,
+    title: `Row ${i + 1}`,
+    description: `Description ${i + 1}`,
+  }));
+};
+
+const columnHelper = createColumnHelper<{
+  id: number;
+  title: string;
+  description: string;
+}>();
+
+const columns = [
+  columnHelper.accessor("id", {
+    header: "ID",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+  columnHelper.accessor("title", {
+    header: "Title",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+  columnHelper.accessor("description", {
+    header: "Description",
+    cell: (info) => <Cell>{info.getValue()}</Cell>,
+  }),
+];
 
 const WebSocketCard = () => {
   const [data, setData] = React.useState("");
@@ -260,13 +291,6 @@ const Counter = () => {
   );
 };
 
-const mockDataInitializer = () =>
-  Array.from({ length: 100 }, (_, i) => ({
-    id: i + 1,
-    title: `Row ${i + 1}`,
-    description: `Description ${i + 1}`,
-  }));
-
 const Cell = (props: React.PropsWithChildren) => {
   const [editable, setEditable] = React.useState(false);
 
@@ -289,27 +313,6 @@ const Cell = (props: React.PropsWithChildren) => {
     <ButtonBase onClick={() => setEditable(true)}>{props.children}</ButtonBase>
   );
 };
-
-const columnHelper = createColumnHelper<{
-  id: number;
-  title: string;
-  description: string;
-}>();
-
-const columns = [
-  columnHelper.accessor("id", {
-    header: "ID",
-    cell: (info) => <Cell>{info.getValue()}</Cell>,
-  }),
-  columnHelper.accessor("title", {
-    header: "Title",
-    cell: (info) => <Cell>{info.getValue()}</Cell>,
-  }),
-  columnHelper.accessor("description", {
-    header: "Description",
-    cell: (info) => <Cell>{info.getValue()}</Cell>,
-  }),
-];
 
 const AnimateBorderButton = () => {
   const theme = useTheme();
@@ -563,10 +566,41 @@ const StackContextDemo = () => {
   );
 };
 
+const ActivityDemo = () => {
+  const [show, setShow] = React.useState(false);
+
+  return (
+    <>
+      <Switch
+        checked={show}
+        onChange={(e) => {
+          setShow(e.target.checked);
+        }}
+      />
+      <React.Activity mode={show ? "visible" : "hidden"}>
+        <iframe src="https://www.bilibili.com/" height={500}></iframe>
+        <h1>Activity</h1>
+        <OtherComponent />
+      </React.Activity>
+    </>
+  );
+};
+
+const OtherComponent = () => {
+  return (
+    <span>
+      Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit
+      provident voluptates dolores veritatis omnis sed pariatur porro, nihil
+      fugit tempore odio odit maxime ex modi dolorum nesciunt nulla neque
+      molestias.
+    </span>
+  );
+};
+
 export const Component = () => {
   const id = React.useId();
 
-  const bgImgHref = bgImgHrefInitializer();
+  const bgImgHref = calculateAssetsHref(bg);
 
   const handleCutImage = () => {
     const video = document.getElementById(id);
@@ -707,38 +741,5 @@ export const Component = () => {
       <StackContextDemo />
       <ActivityDemo />
     </Stack>
-  );
-};
-
-const ActivityDemo = () => {
-  const [show, setShow] = React.useState(false);
-
-  return (
-    <>
-      <Switch
-        checked={show}
-        onChange={(e) => {
-          setShow(e.target.checked);
-        }}
-      />
-      <React.Activity mode={show ? "visible" : "hidden"}>
-        <iframe src="https://www.bilibili.com/" height={500}></iframe>
-        <h1>Activity</h1>
-        <OtherComponent />
-      </React.Activity>
-    </>
-  );
-};
-
-const OtherComponent = () => {
-  return (
-    <>
-      <span>
-        Lorem ipsum dolor sit amet consectetur adipisicing elit. Reprehenderit
-        provident voluptates dolores veritatis omnis sed pariatur porro, nihil
-        fugit tempore odio odit maxime ex modi dolorum nesciunt nulla neque
-        molestias.
-      </span>
-    </>
   );
 };
