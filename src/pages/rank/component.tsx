@@ -10,6 +10,7 @@ import {
   useSensor,
   useSensors,
   pointerWithin,
+  rectIntersection,
 } from "@dnd-kit/core";
 import {
   useSortable,
@@ -30,7 +31,7 @@ import {
 } from "@dnd-kit/modifiers";
 import { devLog } from "@/lib/utils";
 import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
-import type { UniqueIdentifier } from "@dnd-kit/core";
+import type { CollisionDetection, UniqueIdentifier } from "@dnd-kit/core";
 
 const calculateContainerId = (data: unknown) => {
   const containerId = Reflect.get(Object(data), "containerId");
@@ -44,6 +45,14 @@ const calculateContainerId = (data: unknown) => {
 
 const calculateIsHTMLEl = (el: unknown): el is HTMLElement => {
   return el instanceof HTMLElement;
+};
+
+const collisionDetection: CollisionDetection = (args) => {
+  if (args.pointerCoordinates) {
+    return pointerWithin(args);
+  }
+
+  return rectIntersection(args);
 };
 
 const mapInitializer = () => {
@@ -97,6 +106,8 @@ const SortableItem = (props: SortableItemProps) => {
         transition: sortable.transition,
       }}
       sx={{
+        touchAction: "none",
+
         bgcolor: indigo[500],
         aspectRatio: "1/1",
         borderRadius: 1,
@@ -269,7 +280,7 @@ export const Component = () => {
         restrictToFirstScrollableAncestor,
         snapCenterToCursor,
       ]}
-      collisionDetection={pointerWithin}
+      collisionDetection={collisionDetection}
       sensors={sensors}
       measuring={{
         droppable: {
