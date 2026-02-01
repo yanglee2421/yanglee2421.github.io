@@ -22,8 +22,8 @@ import {
 import React from "react";
 import { createPortal } from "react-dom";
 import { CSS } from "@dnd-kit/utilities";
-import { Box, Stack, useTheme } from "@mui/material";
-import { indigo } from "@mui/material/colors";
+import { alpha, Box, Stack, useTheme } from "@mui/material";
+import { indigo, red } from "@mui/material/colors";
 import {
   restrictToFirstScrollableAncestor,
   restrictToWindowEdges,
@@ -32,6 +32,7 @@ import {
 import { devLog } from "@/lib/utils";
 import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 import type { CollisionDetection, UniqueIdentifier } from "@dnd-kit/core";
+import { Delete } from "@mui/icons-material";
 
 const calculateContainerId = (data: unknown) => {
   const containerId = Reflect.get(Object(data), "containerId");
@@ -64,6 +65,19 @@ const mapInitializer = () => {
 
   return map;
 };
+
+/**
+ * If remove cause is not dragging need this function
+ */
+// const animateLayoutChanges: AnimateLayoutChanges = (args) => {
+//   return defaultAnimateLayoutChanges({ ...args, wasDragging: true });
+// };
+
+const arrayDelete = (array: UniqueIdentifier[], id: UniqueIdentifier) => {
+  return array.filter((el) => !Object.is(el, id));
+};
+
+const TRASH_ID = "TRASH_ID";
 
 type SortableItemProps = {
   id: UniqueIdentifier;
@@ -178,6 +192,52 @@ const DroppableContainer = (props: DroppableContainerProps) => {
   );
 };
 
+type TrashProps = {
+  id: string;
+};
+
+const Trash = (props: TrashProps) => {
+  const theme = useTheme();
+
+  const droppable = useDroppable({
+    id: props.id,
+    data: {
+      containerId: props.id,
+    },
+  });
+
+  return createPortal(
+    <div
+      ref={(el) => {
+        droppable.setNodeRef(el);
+
+        return () => {
+          droppable.setNodeRef(null);
+        };
+      }}
+      style={{
+        position: "fixed",
+        insetInline: 0,
+        top: 0,
+        zIndex: 9999,
+
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "center",
+
+        height: 200,
+
+        backgroundColor: droppable.isOver
+          ? alpha(red[500], 1 - theme.palette.action.activatedOpacity)
+          : alpha(red[500], 1 - theme.palette.action.disabledOpacity),
+      }}
+    >
+      <Delete fontSize="large" color="inherit" />
+    </div>,
+    document.body,
+  );
+};
+
 export const Component = () => {
   const [map, setMap] = React.useState(mapInitializer);
   const [backupMap, setBackupMap] = React.useState(mapInitializer);
@@ -214,6 +274,10 @@ export const Component = () => {
         const overContainer = calculateContainerId(over.data.current);
         if (!overContainer) return;
 
+        if (overContainer === TRASH_ID) {
+          return;
+        }
+
         // Active and Over are in the same container
         if (activeContainer === overContainer) {
           return;
@@ -243,6 +307,8 @@ export const Component = () => {
         });
       }}
       onDragEnd={({ active, over }) => {
+        setActivatedId(0);
+
         if (!over) return;
 
         const activeContainer = calculateContainerId(active.data.current);
@@ -250,6 +316,20 @@ export const Component = () => {
 
         const overContainer = calculateContainerId(over.data.current);
         if (!overContainer) return;
+
+        if (overContainer === TRASH_ID) {
+          setMap((prev) => {
+            const nextMap = new Map(prev);
+
+            const activeItems = nextMap.get(activeContainer) || [];
+
+            nextMap.set(activeContainer, arrayDelete(activeItems, active.id));
+
+            return nextMap;
+          });
+
+          return;
+        }
 
         if (activeContainer !== overContainer) {
           return;
@@ -288,7 +368,9 @@ export const Component = () => {
         },
       }}
     >
+      {!!activatedId && <Trash id={TRASH_ID} />}
       <Stack spacing={3}>
+        <div style={{ height: 50 }}></div>
         {Array.from(map.keys(), (containerId) => {
           const items = Array.from(map.get(containerId) || []);
 
