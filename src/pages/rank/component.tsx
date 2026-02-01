@@ -11,6 +11,7 @@ import {
   useSensors,
   pointerWithin,
   rectIntersection,
+  defaultDropAnimation,
 } from "@dnd-kit/core";
 import {
   useSortable,
@@ -18,21 +19,22 @@ import {
   rectSortingStrategy,
   sortableKeyboardCoordinates,
   arrayMove,
+  defaultAnimateLayoutChanges,
 } from "@dnd-kit/sortable";
-import React from "react";
-import { createPortal } from "react-dom";
-import { CSS } from "@dnd-kit/utilities";
-import { alpha, Box, Stack, useTheme } from "@mui/material";
-import { indigo, red } from "@mui/material/colors";
 import {
   restrictToFirstScrollableAncestor,
   restrictToWindowEdges,
   snapCenterToCursor,
 } from "@dnd-kit/modifiers";
-import { devLog } from "@/lib/utils";
+import React from "react";
+import { createPortal } from "react-dom";
+import { CSS } from "@dnd-kit/utilities";
+import { Delete } from "@mui/icons-material";
+import { indigo, red } from "@mui/material/colors";
+import { alpha, Box, Stack, useTheme } from "@mui/material";
 import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 import type { CollisionDetection, UniqueIdentifier } from "@dnd-kit/core";
-import { Delete } from "@mui/icons-material";
+import type { AnimateLayoutChanges } from "@dnd-kit/sortable";
 
 const calculateContainerId = (data: unknown) => {
   const containerId = Reflect.get(Object(data), "containerId");
@@ -77,11 +79,18 @@ const arrayDelete = (array: UniqueIdentifier[], id: UniqueIdentifier) => {
   return array.filter((el) => !Object.is(el, id));
 };
 
+const animateLayoutChanges: AnimateLayoutChanges = (args) => {
+  const result = defaultAnimateLayoutChanges({ ...args, wasDragging: true });
+
+  return result;
+};
+
 const TRASH_ID = "TRASH_ID";
 
 type SortableItemProps = {
   id: UniqueIdentifier;
   containerId: UniqueIdentifier;
+  onRemove?: () => void;
 };
 
 const SortableItem = (props: SortableItemProps) => {
@@ -96,6 +105,7 @@ const SortableItem = (props: SortableItemProps) => {
       width: width,
       containerId: props.containerId,
     },
+    animateLayoutChanges,
   });
 
   return (
@@ -141,6 +151,10 @@ const SortableItem = (props: SortableItemProps) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+      }}
+      onContextMenu={(e) => {
+        e.preventDefault();
+        props.onRemove?.();
       }}
     >
       {props.id}
@@ -243,6 +257,9 @@ export const Component = () => {
   const [backupMap, setBackupMap] = React.useState(mapInitializer);
   const [activatedId, setActivatedId] = React.useState<UniqueIdentifier>(0);
   const [width, setWidth] = React.useState(0);
+  const [enableDropAnimation, setEnableDropAnimation] = React.useState(false);
+
+  const timerRef = React.useRef(0);
 
   const sensors = useSensors(
     useSensor(KeyboardSensor, {
@@ -253,21 +270,37 @@ export const Component = () => {
     useSensor(PointerSensor),
   );
 
+  const handleRemove = (
+    activeContainer: UniqueIdentifier,
+    id: UniqueIdentifier,
+  ) => {
+    cancelAnimationFrame(timerRef.current);
+    timerRef.current = requestAnimationFrame(() => {
+      setMap((prev) => {
+        const nextMap = new Map(prev);
+        const activeItems = nextMap.get(activeContainer) || [];
+
+        nextMap.set(activeContainer, arrayDelete(activeItems, id));
+
+        return nextMap;
+      });
+    });
+  };
+
   return (
     <DndContext
       onDragStart={(e) => {
-        devLog(false, e);
         if (!e.active) return;
 
         setActivatedId(e.active.id);
-        setBackupMap(map);
         setWidth(e.active.data.current?.width || 0);
+        setBackupMap(map);
+        setEnableDropAnimation(true);
       }}
       onDragOver={({ active, over }) => {
         if (!over) return;
 
         const activeId = active.id;
-
         const activeContainer = calculateContainerId(active.data.current);
         if (!activeContainer) return;
 
@@ -318,16 +351,8 @@ export const Component = () => {
         if (!overContainer) return;
 
         if (overContainer === TRASH_ID) {
-          setMap((prev) => {
-            const nextMap = new Map(prev);
-
-            const activeItems = nextMap.get(activeContainer) || [];
-
-            nextMap.set(activeContainer, arrayDelete(activeItems, active.id));
-
-            return nextMap;
-          });
-
+          handleRemove(activeContainer, activatedId);
+          setEnableDropAnimation(false);
           return;
         }
 
@@ -378,7 +403,14 @@ export const Component = () => {
             <DroppableContainer key={containerId} id={containerId}>
               <SortableContext items={items} strategy={rectSortingStrategy}>
                 {items.map((id) => (
-                  <SortableItem key={id} id={id} containerId={containerId} />
+                  <SortableItem
+                    key={id}
+                    id={id}
+                    containerId={containerId}
+                    onRemove={() => {
+                      handleRemove(containerId, id);
+                    }}
+                  />
                 ))}
               </SortableContext>
             </DroppableContainer>
@@ -386,26 +418,26 @@ export const Component = () => {
         })}
       </Stack>
       {createPortal(
-        <DragOverlay>
-          {activatedId ? (
-            <Box
-              sx={{
-                bgcolor: indigo[500],
-                aspectRatio: "1/1",
-                borderRadius: 1,
-                width,
-                borderStyle: "solid",
-                borderColor: (theme) => theme.palette.action.active,
+        <DragOverlay
+          dropAnimation={enableDropAnimation ? defaultDropAnimation : null}
+        >
+          <Box
+            sx={{
+              bgcolor: indigo[500],
+              aspectRatio: "1/1",
+              borderRadius: 1,
+              width,
+              borderStyle: "solid",
+              borderColor: (theme) => theme.palette.action.active,
+              borderWidth: 2,
+              "&:focus-visible": {
+                borderColor: (theme) => theme.palette.action.focus,
                 borderWidth: 2,
-                "&:focus-visible": {
-                  borderColor: (theme) => theme.palette.action.focus,
-                  borderWidth: 2,
-                },
-              }}
-            >
-              {activatedId}
-            </Box>
-          ) : null}
+              },
+            }}
+          >
+            {activatedId}
+          </Box>
         </DragOverlay>,
         document.body,
       )}
