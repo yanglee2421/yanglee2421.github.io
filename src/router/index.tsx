@@ -14,13 +14,9 @@ const createAppRouter = (routes: RouteObject[]) => {
   return router;
 };
 
-export const AppRouter = () => {
-  /**
-   * Already memoized by react compiler
-   * So no need to wrap with useMemo
-   */
-  const routes = createRoutes();
-  const router = createAppRouter(routes);
+const routes = createRoutes();
+const router = createAppRouter(routes);
 
+export const AppRouter = () => {
   return <RouterProvider router={router} />;
 };

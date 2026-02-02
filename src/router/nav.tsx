@@ -3,6 +3,7 @@ import { styled, alpha, Typography } from "@mui/material";
 import { useSearchParams, Navigate, useLocation } from "react-router";
 import { ChevronRightOutlined, DashboardOutlined } from "@mui/icons-material";
 import { HOME_PATH, LOGIN_PATH } from "@/lib/constants";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
 
 export const NavigateToHome = () => {
   const [searchParams] = useSearchParams();
@@ -71,7 +72,7 @@ const LinkWrapper = styled("div")(({ theme }) => ({
 
 const list = [
   {
-    to: "/dnd/core/Draggable/hooks/useDraggable/basic-setup",
+    to: "/dnd/basic-setup",
     label: "basic setup",
     icon: <DashboardOutlined />,
   },
@@ -79,11 +80,15 @@ const list = [
 
 export const NavMenu = () => {
   const params = useParams();
+  const fallbackLang = useLocalStore((store) => store.fallbackLang);
+  const lang = params.lang || fallbackLang;
+
+  console.log(params, lang);
 
   return (
     <LinkWrapper>
       {list.map((i) => (
-        <NavLink key={i.to} to={`/${params.lang + i.to}`} end>
+        <NavLink key={i.to} to={`/${lang + i.to}`} end>
           {i.icon}
           <Typography variant="body1" component="span">
             {i.label}
