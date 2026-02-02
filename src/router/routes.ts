@@ -66,6 +66,10 @@ export const createRoutes = (): RouteObject[] => {
               lazy: () => import("@/pages/lab/component"),
             },
             {
+              path: "animate",
+              lazy: () => import("@/pages/animate/component"),
+            },
+            {
               path: "invoices",
               children: [
                 {

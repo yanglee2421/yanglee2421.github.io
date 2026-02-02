@@ -27,6 +27,7 @@ import {
   AlignHorizontalLeftOutlined,
   HomeOutlined,
   DragIndicator,
+  Animation,
 } from "@mui/icons-material";
 import React from "react";
 import { signOut } from "firebase/auth";
@@ -91,6 +92,11 @@ const createNavition = (lang?: string): Navigation => [
     segment: calculatePath(lang, "lab"),
     title: "Lab",
     icon: <ScienceOutlined />,
+  },
+  {
+    segment: calculatePath(lang, "Animate"),
+    title: "Animate",
+    icon: <Animation />,
   },
   {
     segment: calculatePath(lang, "rank"),
