@@ -177,7 +177,6 @@ const DroppableContainer = (props: DroppableContainerProps) => {
     <Box
       ref={(el) => {
         const isEl = calculateIsHTMLEl(el);
-
         if (!isEl) return;
 
         droppable.setNodeRef(el);
@@ -196,7 +195,7 @@ const DroppableContainer = (props: DroppableContainerProps) => {
           xl: "repeat(6,minmax(0,1fr))",
         },
         gap: 1.5,
-        minBlockSize: 200,
+        minBlockSize: 160,
         borderColor: "primary.main",
         borderWidth: 2,
         borderStyle: "solid",
@@ -261,10 +260,9 @@ export const Component = () => {
   const [backupMap, setBackupMap] = React.useState(mapInitializer);
   const [activatedId, setActivatedId] = React.useState<UniqueIdentifier>(0);
   const [width, setWidth] = React.useState(0);
-  const [pendingDeleteId, setPendingDeleteId] =
-    React.useState<UniqueIdentifier>(0);
+  const [enableDropAnimation, setEnableDropAnimation] = React.useState(false);
 
-  const trashContainerIdRef = React.useRef<UniqueIdentifier>(0);
+  const timerRef = React.useRef(0);
 
   const sensors = useSensors(
     useSensor(PointerSensor),
@@ -277,34 +275,22 @@ export const Component = () => {
     activeContainer: UniqueIdentifier,
     id: UniqueIdentifier,
   ) => {
-    setPendingDeleteId(id);
-    trashContainerIdRef.current = activeContainer;
-  };
+    cancelAnimationFrame(timerRef.current);
+    timerRef.current = requestAnimationFrame(() => {
+      timerRef.current = requestAnimationFrame(() => {
+        timerRef.current = requestAnimationFrame(() => {
+          setMap((prev) => {
+            const nextMap = new Map(prev);
+            const activeItems = nextMap.get(activeContainer) || [];
 
-  React.useEffect(() => {
-    if (!pendingDeleteId) return;
+            nextMap.set(activeContainer, arrayDelete(activeItems, id));
 
-    const activeContainer = trashContainerIdRef.current;
-    if (!activeContainer) return;
-
-    const raf = requestAnimationFrame(() => {
-      setMap((prev) => {
-        const nextMap = new Map(prev);
-        const activeItems = nextMap.get(activeContainer) || [];
-
-        nextMap.set(activeContainer, arrayDelete(activeItems, pendingDeleteId));
-
-        return nextMap;
+            return nextMap;
+          });
+        });
       });
-      setPendingDeleteId(0);
-
-      trashContainerIdRef.current = 0;
     });
-
-    return () => {
-      cancelAnimationFrame(raf);
-    };
-  }, [pendingDeleteId]);
+  };
 
   return (
     <DndContext
@@ -314,6 +300,7 @@ export const Component = () => {
         setActivatedId(e.active.id);
         setWidth(e.active.data.current?.width || 0);
         setBackupMap(map);
+        setEnableDropAnimation(true);
       }}
       onDragOver={({ active, over }) => {
         if (!over) return;
@@ -370,7 +357,7 @@ export const Component = () => {
 
         if (overContainer === TRASH_ID) {
           handleRemove(activeContainer, activatedId);
-
+          setEnableDropAnimation(false);
           return;
         }
 
@@ -437,7 +424,7 @@ export const Component = () => {
       </Stack>
       {createPortal(
         <DragOverlay
-          dropAnimation={pendingDeleteId ? null : defaultDropAnimation}
+          dropAnimation={enableDropAnimation ? defaultDropAnimation : null}
         >
           <Box
             sx={{
