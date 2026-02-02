@@ -3,9 +3,7 @@ import {
   DragOverlay,
   KeyboardSensor,
   MeasuringStrategy,
-  MouseSensor,
   PointerSensor,
-  TouchSensor,
   useDroppable,
   useSensor,
   useSensors,
@@ -269,12 +267,10 @@ export const Component = () => {
   const trashContainerIdRef = React.useRef<UniqueIdentifier>(0);
 
   const sensors = useSensors(
+    useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
       coordinateGetter: sortableKeyboardCoordinates,
     }),
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(PointerSensor),
   );
 
   const handleRemove = (
