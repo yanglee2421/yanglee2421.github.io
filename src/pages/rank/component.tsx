@@ -78,7 +78,7 @@ const arrayDelete = (array: UniqueIdentifier[], id: UniqueIdentifier) => {
 };
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) => {
-  const result = defaultAnimateLayoutChanges({ ...args, wasDragging: true });
+  const result = defaultAnimateLayoutChanges(args);
 
   return result;
 };
@@ -108,6 +108,8 @@ const SortableItem = (props: SortableItemProps) => {
 
   return (
     <Box
+      id={props.id + ""}
+      data-container={props.containerId}
       ref={(el) => {
         const isHTMLEl = calculateIsHTMLEl(el);
         if (!isHTMLEl) return;
@@ -262,8 +264,6 @@ export const Component = () => {
   const [width, setWidth] = React.useState(0);
   const [enableDropAnimation, setEnableDropAnimation] = React.useState(false);
 
-  const timerRef = React.useRef(0);
-
   const sensors = useSensors(
     useSensor(PointerSensor),
     useSensor(KeyboardSensor, {
@@ -271,24 +271,49 @@ export const Component = () => {
     }),
   );
 
-  const handleRemove = (
+  const handleRemove = async (
     activeContainer: UniqueIdentifier,
     id: UniqueIdentifier,
   ) => {
-    cancelAnimationFrame(timerRef.current);
-    timerRef.current = requestAnimationFrame(() => {
-      timerRef.current = requestAnimationFrame(() => {
-        timerRef.current = requestAnimationFrame(() => {
-          setMap((prev) => {
-            const nextMap = new Map(prev);
-            const activeItems = nextMap.get(activeContainer) || [];
+    const el = document.getElementById(id + "");
+    if (!el) return;
 
-            nextMap.set(activeContainer, arrayDelete(activeItems, id));
+    const alEls = document.querySelectorAll(
+      `[data-container=${activeContainer}]`,
+    );
 
-            return nextMap;
-          });
-        });
-      });
+    const fisrtPositions = Array.from(alEls, (el) =>
+      el.getBoundingClientRect(),
+    );
+
+    el.style.display = "none";
+
+    const lastPositions = Array.from(alEls, (el) => el.getBoundingClientRect());
+
+    await Promise.allSettled(
+      Array.from(alEls, async (item, index) => {
+        if (item === el) {
+          return;
+        }
+
+        const xTranslation = fisrtPositions[index].x - lastPositions[index].x;
+        const yTranslation = fisrtPositions[index].y - lastPositions[index].y;
+
+        await item.animate(
+          [
+            { transform: `translate3d(${xTranslation}px,${yTranslation}px,0)` },
+            { transform: "translate3d(0,0,0)" },
+          ],
+          { duration: 200 },
+        ).finished;
+      }),
+    );
+
+    setMap((prev) => {
+      const nextMap = new Map(prev);
+      const activeItems = nextMap.get(activeContainer) || [];
+      nextMap.set(activeContainer, arrayDelete(activeItems, id));
+      return nextMap;
     });
   };
 
