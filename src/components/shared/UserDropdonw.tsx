@@ -19,9 +19,12 @@ import { auth } from "@/api/firebase/app";
 import { Link } from "react-router";
 
 export const UserDropdown = () => {
+  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+
   const user = useCurrentUser();
   const isOnline = useOnlineStatus();
-  const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+
+  console.log("user", user);
 
   const handleClose = () => {
     setAnchor(null);

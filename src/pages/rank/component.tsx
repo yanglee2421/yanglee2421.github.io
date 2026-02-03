@@ -280,6 +280,8 @@ export const Component = () => {
     const el = document.getElementById(id + "");
     if (!el) return;
 
+    setEnableDropAnimation(false);
+
     const alEls = document.querySelectorAll(
       `[data-container=${activeContainer}]`,
     );
@@ -388,7 +390,7 @@ export const Component = () => {
 
         if (overContainer === TRASH_ID) {
           handleRemove(activeContainer, activatedId);
-          setEnableDropAnimation(false);
+
           return;
         }
 

@@ -38,20 +38,14 @@ import { ParticlesUI } from "@/components/layout/particles";
 import { NprogressBar } from "@/components/layout/nprogress";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import type { Navigation } from "@toolpad/core";
-import { useTranslation } from "react-i18next";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { calculateLanguage } from "@/lib/utils";
 
 const calculatePath = (...args: unknown[]) => {
-  const [lang, ...restPath] = args;
-
-  if (!lang) {
-    return restPath.join("/");
-  }
-
   return args.join("/");
 };
 
-const createNavition = (lang?: string): Navigation => [
+const createNavition = (lang: string): Navigation => [
   { kind: "header", title: "Fontend" },
   {
     segment: calculatePath(lang, "dashboard"),
@@ -123,7 +117,12 @@ const BRANDING = {
 
 const useNavigation = () => {
   const params = useParams();
-  const lang = params.lang;
+  const fallbackLang = useLocalStore((store) => store.fallbackLang);
+
+  const langInPath = params.lang;
+  if (!langInPath) throw new Error("Invalid lang params");
+
+  const lang = calculateLanguage(fallbackLang, langInPath);
 
   return React.useMemo<Navigation>(() => createNavition(lang), [lang]);
 };
@@ -202,23 +201,6 @@ export const RootRoute = () => {
   const theme = useTheme();
   const navigation = useNavigation();
   const user = useCurrentUser();
-  const params = useParams();
-  const { i18n } = useTranslation();
-  const fallbackLang = useLocalStore((store) => store.fallbackLang);
-
-  const changeLanguage = React.useEffectEvent((paramLang?: string) => {
-    i18n.changeLanguage(paramLang || fallbackLang);
-
-    if (!paramLang) return;
-
-    useLocalStore.setState((draft) => {
-      draft.fallbackLang = paramLang;
-    });
-  });
-
-  React.useEffect(() => {
-    changeLanguage(params.lang);
-  }, [params.lang]);
 
   const session = user
     ? {

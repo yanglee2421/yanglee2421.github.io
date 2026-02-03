@@ -19,33 +19,6 @@ export const android_ripple = (color: string) => ({
   borderless: false,
 });
 
-export const modeToIsDark = (
-  mode: "dark" | "light" | "system",
-  inDark: boolean,
-) => {
-  switch (mode) {
-    case "dark":
-      return true;
-    case "light":
-      return false;
-    case "system":
-    default:
-      return inDark;
-  }
-};
-
-export const getMatchedLang = (path = "", state: string) => {
-  if (LANGS.has(path)) {
-    return path;
-  }
-
-  if (LANGS.has(state)) {
-    return state;
-  }
-
-  return FALLBACK_LANG;
-};
-
 export class AnimateController {
   private readonly animate: () => void;
 
@@ -340,4 +313,48 @@ export const devError = (
   }
 
   console.error(...args);
+};
+
+export const calculateLanguage = (
+  fallbackLocale: string,
+  localeSegment: string,
+) => {
+  if (LANGS.has(localeSegment)) {
+    return localeSegment;
+  }
+
+  if (LANGS.has(fallbackLocale)) {
+    return fallbackLocale;
+  }
+
+  return FALLBACK_LANG;
+};
+
+export const calculateLocalePathname = (pathname: string, locale: string) => {
+  const isStartWithSlash = pathname.startsWith("/");
+
+  if (!isStartWithSlash) {
+    throw new Error("pathname must start with slash!");
+  }
+
+  const segments = pathname.split("/");
+  const localeSegment = segments.at(1) || "";
+
+  if (locale === localeSegment) {
+    return pathname;
+  }
+
+  /**
+   * Locale segment already exists
+   * just replace it
+   */
+  if (LANGS.has(localeSegment)) {
+    return segments.with(1, locale).join("/");
+  }
+
+  /**
+   * Locale segment does not exist
+   * add it
+   */
+  return ["", ...segments].with(1, locale).join("/");
 };

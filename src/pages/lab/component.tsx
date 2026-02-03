@@ -1,16 +1,10 @@
 import {
-  Avatar,
   Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   Grid,
-  List,
-  ListItem,
-  ListItemAvatar,
-  ListItemIcon,
-  ListItemText,
   Stack,
   TextField,
   Box,
@@ -34,25 +28,7 @@ import {
   FormControl,
   FormGroup,
   Slider as MuiSlider,
-  IconButton,
 } from "@mui/material";
-import {
-  closestCenter,
-  DndContext,
-  KeyboardSensor,
-  MouseSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  verticalListSortingStrategy,
-} from "@dnd-kit/sortable";
 import {
   createColumnHelper,
   flexRender,
@@ -61,10 +37,7 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
-import { CSS } from "@dnd-kit/utilities";
-import { restrictToParentElement } from "@dnd-kit/modifiers";
 import { grey } from "@mui/material/colors";
-import { DragIndicatorOutlined } from "@mui/icons-material";
 import bg from "@/assets/images/justHer.jpg";
 import { Camera } from "@/components/shared/Camera";
 import { useTestEffect } from "@/hooks/useTestEffect";
@@ -167,108 +140,6 @@ const WebSocketCard = () => {
         <Button>reset</Button>
       </CardActions>
     </Card>
-  );
-};
-
-type SortableItemProps = React.PropsWithChildren<{ id: number }>;
-
-const SortableItem = (props: SortableItemProps) => {
-  const sort = useSortable({ id: props.id });
-
-  return (
-    <ListItem
-      ref={(el) => {
-        sort.setNodeRef(el);
-
-        return () => {
-          sort.setNodeRef(null);
-        };
-      }}
-      style={{
-        transition: sort.transition,
-        transform: CSS.Transform.toString(sort.transform),
-      }}
-      sx={{
-        boxShadow: (t) => (sort.isDragging ? t.shadows[1] : t.shadows[0]),
-        backgroundColor: (t) =>
-          sort.isDragging ? t.palette.background.paper : void 0,
-        borderRadius: (t) =>
-          sort.isDragging
-            ? parseFloat(t.shape.borderRadius as string) / 2
-            : void 0,
-        position: "relative",
-        zIndex: (t) => (sort.isDragging ? t.zIndex.speedDial : void 0),
-        touchAction: "none",
-      }}
-      secondaryAction={
-        <ListItemIcon>
-          <IconButton
-            ref={(el) => {
-              sort.setActivatorNodeRef(el);
-              return () => {
-                sort.setActivatorNodeRef(null);
-              };
-            }}
-            {...sort.attributes}
-            {...sort.listeners}
-          >
-            <DragIndicatorOutlined />
-          </IconButton>
-        </ListItemIcon>
-      }
-    >
-      {props.children}
-    </ListItem>
-  );
-};
-
-const SortableDnd = () => {
-  const [items, setItems] = React.useState([1, 2, 3]);
-
-  const sensors = useSensors(
-    useSensor(MouseSensor),
-    useSensor(TouchSensor),
-    useSensor(PointerSensor),
-    useSensor(KeyboardSensor, {
-      coordinateGetter: sortableKeyboardCoordinates,
-    }),
-  );
-
-  return (
-    <DndContext
-      sensors={sensors}
-      collisionDetection={closestCenter}
-      onDragEnd={(e) => {
-        setItems((items) => {
-          if (!e.over) {
-            return items;
-          }
-
-          if (e.active.id === e.over.id) {
-            return items;
-          }
-
-          const oldIndex = items.indexOf(+e.active.id);
-          const newIndex = items.indexOf(+e.over.id);
-
-          return arrayMove(items, oldIndex, newIndex);
-        });
-      }}
-      modifiers={[restrictToParentElement]}
-    >
-      <SortableContext items={items} strategy={verticalListSortingStrategy}>
-        <List>
-          {items.map((i) => (
-            <SortableItem key={i} id={i}>
-              <ListItemAvatar>
-                <Avatar>{i}</Avatar>
-              </ListItemAvatar>
-              <ListItemText primary={i} secondary="sec" />
-            </SortableItem>
-          ))}
-        </List>
-      </SortableContext>
-    </DndContext>
   );
 };
 
@@ -729,12 +600,6 @@ export const Component = () => {
           <Button onClick={handleCutImage}>cut image</Button>
           <Counter />
         </CardActions>
-      </Card>
-      <Card>
-        <CardHeader title="DnD" subheader="Drag and drop" />
-        <CardContent>
-          <SortableDnd />
-        </CardContent>
       </Card>
       <WebSocketCard />
       <EditableTable />

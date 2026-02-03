@@ -6,16 +6,17 @@ import { HOME_PATH, LOGIN_PATH } from "@/lib/constants";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 
 export const NavigateToHome = () => {
+  const location = useLocation();
   const [searchParams] = useSearchParams();
-  const search = new URLSearchParams(searchParams);
-  search.delete("redirect_uri");
 
   return (
     <Navigate
       to={{
         pathname: searchParams.get("redirect_uri") || HOME_PATH,
-        search: search.toString(),
+        search: location.search,
+        hash: location.hash,
       }}
+      state={location.state}
       replace
     />
   );
@@ -24,6 +25,7 @@ export const NavigateToHome = () => {
 export const NavigateToLogin = () => {
   const location = useLocation();
   const [searchParams] = useSearchParams();
+
   const search = new URLSearchParams(searchParams);
   search.set("redirect_uri", location.pathname);
 
@@ -32,7 +34,9 @@ export const NavigateToLogin = () => {
       to={{
         pathname: LOGIN_PATH,
         search: search.toString(),
+        hash: location.hash,
       }}
+      state={location.state}
       replace
     />
   );
@@ -82,8 +86,6 @@ export const NavMenu = () => {
   const params = useParams();
   const fallbackLang = useLocalStore((store) => store.fallbackLang);
   const lang = params.lang || fallbackLang;
-
-  console.log(params, lang);
 
   return (
     <LinkWrapper>
