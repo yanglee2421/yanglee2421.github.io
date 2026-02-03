@@ -151,6 +151,8 @@ const SortableItem = (props: SortableItemProps) => {
         display: "flex",
         justifyContent: "center",
         alignItems: "center",
+
+        transformOrigin: "0 0",
       }}
       onContextMenu={(e) => {
         e.preventDefault();
@@ -282,13 +284,11 @@ export const Component = () => {
       `[data-container=${activeContainer}]`,
     );
 
-    const fisrtPositions = Array.from(alEls, (el) =>
-      el.getBoundingClientRect(),
-    );
+    const fisrtRects = Array.from(alEls, (el) => el.getBoundingClientRect());
 
     el.style.display = "none";
 
-    const lastPositions = Array.from(alEls, (el) => el.getBoundingClientRect());
+    const lastRects = Array.from(alEls, (el) => el.getBoundingClientRect());
 
     await Promise.allSettled(
       Array.from(alEls, async (item, index) => {
@@ -296,15 +296,21 @@ export const Component = () => {
           return;
         }
 
-        const xTranslation = fisrtPositions[index].x - lastPositions[index].x;
-        const yTranslation = fisrtPositions[index].y - lastPositions[index].y;
+        const firstRect = fisrtRects[index];
+        const lastRect = lastRects[index];
+        const translationX = firstRect.x - lastRect.x;
+        const translationY = firstRect.y - lastRect.y;
+        const scaleX = firstRect.width / lastRect.width;
+        const scaleY = firstRect.height / lastRect.height;
 
         await item.animate(
           [
-            { transform: `translate3d(${xTranslation}px,${yTranslation}px,0)` },
-            { transform: "translate3d(0,0,0)" },
+            {
+              transform: `translate3d(${translationX}px,${translationY}px,0) scaleX(${scaleX}) scaleY(${scaleY})`,
+            },
+            { transform: "translate3d(0,0,0) scaleX(1) scaleY(1)" },
           ],
-          { duration: 200 },
+          { duration: 200 * 50 },
         ).finished;
       }),
     );
