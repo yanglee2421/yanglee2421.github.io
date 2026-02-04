@@ -1,7 +1,7 @@
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
-import { DEFAULT_MODE, FALLBACK_LANG } from "@/lib/constants";
+import { DEFAULT_MODE, DEFAULT_LANG } from "@/lib/constants";
 
 export type Mode = "light" | "dark" | "system";
 
@@ -13,7 +13,7 @@ export type State = {
 
 const storeInitializer = (): State => ({
   mode: DEFAULT_MODE,
-  fallbackLang: FALLBACK_LANG,
+  fallbackLang: DEFAULT_LANG,
   netlifyToken: "",
 });
 

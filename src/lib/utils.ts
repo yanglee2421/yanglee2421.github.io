@@ -1,4 +1,4 @@
-import { FALLBACK_LANG, LANGS } from "./constants";
+import { DEFAULT_LANG, LOCALES } from "./constants";
 
 export const onAnimationFrame = (cb: () => void) => {
   let animate = 0;
@@ -315,30 +315,42 @@ export const devError = (
   console.error(...args);
 };
 
-export const calculateLanguage = (
+export const calculateLocale = (
   fallbackLocale: string,
   localeSegment: string,
 ) => {
-  if (LANGS.has(localeSegment)) {
+  if (LOCALES.has(localeSegment)) {
     return localeSegment;
   }
 
-  if (LANGS.has(fallbackLocale)) {
+  if (LOCALES.has(fallbackLocale)) {
     return fallbackLocale;
   }
 
-  return FALLBACK_LANG;
+  return DEFAULT_LANG;
+};
+
+export const normalizePathname = (pathname: string) => {
+  let result = pathname;
+  const isStartWithSlash = pathname.startsWith("/");
+  const isEndWithSlash = pathname.endsWith("/");
+
+  if (!isStartWithSlash) {
+    result = "/" + result;
+  }
+
+  if (isEndWithSlash) {
+    result = result.replace(/\/$/, "");
+  }
+
+  return result;
 };
 
 export const calculateLocalePathname = (pathname: string, locale: string) => {
-  const isStartWithSlash = pathname.startsWith("/");
-
-  if (!isStartWithSlash) {
-    throw new Error("pathname must start with slash!");
-  }
-
-  const segments = pathname.split("/");
+  const segments = normalizePathname(pathname).split("/");
   const localeSegment = segments.at(1) || "";
+
+  console.log(segments);
 
   if (locale === localeSegment) {
     return pathname;
@@ -348,7 +360,7 @@ export const calculateLocalePathname = (pathname: string, locale: string) => {
    * Locale segment already exists
    * just replace it
    */
-  if (LANGS.has(localeSegment)) {
+  if (LOCALES.has(localeSegment)) {
     return segments.with(1, locale).join("/");
   }
 

@@ -1,24 +1,9 @@
-import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { TranslateOutlined } from "@mui/icons-material";
-import { IconButton, Menu, MenuItem } from "@mui/material";
 import React from "react";
 import { Link, useLocation, useParams } from "react-router";
-import type { Params, Location } from "react-router";
-
-const calculatePathname = (
-  params: Params<string>,
-  location: Location,
-  locale: string,
-) => {
-  if (!params.lang) {
-    return "/" + locale + location.pathname;
-  }
-
-  return location.pathname.replace(
-    new RegExp(`^/${params.lang}`),
-    `/${locale}`,
-  );
-};
+import { IconButton, Menu, MenuItem } from "@mui/material";
+import { TranslateOutlined } from "@mui/icons-material";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { calculateLocale, calculateLocalePathname } from "@/lib/utils";
 
 type LangLinkProps = React.PropsWithChildren<{
   locale: string;
@@ -29,9 +14,12 @@ const LangLink = (props: LangLinkProps) => {
   const location = useLocation();
   const fallbackLang = useLocalStore((store) => store.fallbackLang);
 
-  const pathname = calculatePathname(params, location, props.locale);
-  const lang = params.lang || fallbackLang;
-  const selected = lang === props.locale;
+  const langSegment = params.lang;
+  if (!langSegment) throw new Error("Invalid lang params");
+
+  const locale = calculateLocale(fallbackLang, langSegment);
+  const pathname = calculateLocalePathname(location.pathname, props.locale);
+  const selected = locale === props.locale;
 
   return (
     <MenuItem

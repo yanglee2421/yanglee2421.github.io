@@ -4,7 +4,7 @@ import { AuthGuard, GuestGuard, LangRoute } from "./guard";
 import { RootRoute, RootErrorBoundary, RootHydrateFallback } from "./root";
 import { redirect } from "react-router";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { calculateLanguage, calculateLocalePathname } from "@/lib/utils";
+import { calculateLocale, calculateLocalePathname } from "@/lib/utils";
 import type { RouteObject } from "react-router";
 
 export const createRoutes = (): RouteObject[] => {
@@ -28,7 +28,7 @@ export const createRoutes = (): RouteObject[] => {
             if (!langInPath) throw new Error("Invalid params lang");
 
             const fallbackLang = useLocalStore.getState().fallbackLang;
-            const lang = calculateLanguage(fallbackLang, langInPath);
+            const lang = calculateLocale(fallbackLang, langInPath);
 
             if (lang === langInPath) {
               return;

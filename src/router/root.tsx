@@ -39,21 +39,21 @@ import { NprogressBar } from "@/components/layout/nprogress";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import type { Navigation } from "@toolpad/core";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { calculateLanguage } from "@/lib/utils";
+import { calculateLocale } from "@/lib/utils";
 
-const calculatePath = (...args: unknown[]) => {
+const calculateSegment = (...args: unknown[]) => {
   return args.join("/");
 };
 
 const createNavition = (lang: string): Navigation => [
   { kind: "header", title: "Fontend" },
   {
-    segment: calculatePath(lang, "dashboard"),
+    segment: calculateSegment(lang, "dashboard"),
     title: "Dashboard",
     icon: <DashboardOutlined />,
   },
   {
-    segment: calculatePath(lang, "dnd"),
+    segment: calculateSegment(lang, "dnd"),
     title: "Drag & Drop",
     icon: <DragIndicator />,
   },
@@ -64,12 +64,12 @@ const createNavition = (lang: string): Navigation => [
     icon: <CalendarMonthOutlined />,
     children: [
       {
-        segment: calculatePath(lang, "overtime"),
+        segment: calculateSegment(lang, "overtime"),
         title: "List",
         icon: <ListOutlined />,
       },
       {
-        segment: calculatePath(lang, "overtime", "new"),
+        segment: calculateSegment(lang, "overtime", "new"),
         title: "Add",
         icon: <AddOutlined />,
       },
@@ -78,34 +78,34 @@ const createNavition = (lang: string): Navigation => [
   { kind: "divider" },
   { kind: "header", title: "App" },
   {
-    segment: calculatePath(lang, "snackbar"),
+    segment: calculateSegment(lang, "snackbar"),
     title: "Snackbar",
     icon: <MessageOutlined />,
   },
   {
-    segment: calculatePath(lang, "lab"),
+    segment: calculateSegment(lang, "lab"),
     title: "Lab",
     icon: <ScienceOutlined />,
   },
   {
-    segment: calculatePath(lang, "Animate"),
+    segment: calculateSegment(lang, "Animate"),
     title: "Animate",
     icon: <Animation />,
   },
   {
-    segment: calculatePath(lang, "rank"),
+    segment: calculateSegment(lang, "rank"),
     title: "Rank",
     icon: <AlignHorizontalLeftOutlined />,
   },
   { kind: "divider" },
   { kind: "header", title: "Custom layout" },
   {
-    segment: calculatePath(lang, "scrollbar"),
+    segment: calculateSegment(lang, "scrollbar"),
     title: "Scrollbar",
     icon: <TokenOutlined />,
   },
   {
-    segment: calculatePath(lang, "virtual"),
+    segment: calculateSegment(lang, "virtual"),
     title: "Virtual",
     icon: <ViewDayRounded />,
   },
@@ -122,7 +122,7 @@ const useNavigation = () => {
   const langInPath = params.lang;
   if (!langInPath) throw new Error("Invalid lang params");
 
-  const lang = calculateLanguage(fallbackLang, langInPath);
+  const lang = calculateLocale(fallbackLang, langInPath);
 
   return React.useMemo<Navigation>(() => createNavition(lang), [lang]);
 };

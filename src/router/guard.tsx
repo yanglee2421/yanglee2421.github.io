@@ -5,7 +5,7 @@ import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { fetchUserByFirebase, netlify } from "@/api/netlify";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { NavigateToHome, NavigateToLogin } from "./nav";
-import { calculateLanguage, calculateLocalePathname } from "@/lib/utils";
+import { calculateLocale, calculateLocalePathname } from "@/lib/utils";
 import { useTranslation } from "react-i18next";
 
 const useSyncLanguage = () => {
@@ -16,7 +16,7 @@ const useSyncLanguage = () => {
   const langInPath = params.lang;
   if (!langInPath) throw new Error("Invalid lang params");
 
-  const lang = calculateLanguage(fallbackLang, langInPath);
+  const lang = calculateLocale(fallbackLang, langInPath);
 
   const changeLanguage = React.useEffectEvent((lang: string) => {
     if (!lang) return;
@@ -41,7 +41,7 @@ export const LangRoute = () => {
   const langInPath = params.lang;
   if (!langInPath) throw new Error("Invalid params lang");
 
-  const lang = calculateLanguage(fallbackLang, langInPath);
+  const lang = calculateLocale(fallbackLang, langInPath);
 
   if (lang === langInPath) {
     return <Outlet />;

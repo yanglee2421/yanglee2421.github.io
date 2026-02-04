@@ -9,37 +9,45 @@ import { useTranslation } from "react-i18next";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import { AppRouter } from "@/router";
-import { useIsDark } from "@/hooks/dom/useIsDark";
+import { useColorScheme } from "@/hooks/dom/useColorScheme";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { SnackbarProvider } from "@/components/ui/snackbar";
 import { QueryProvider } from "./components/query";
 import type { Mode } from "@/hooks/store/useLocalStore";
 
-const lightTheme = createTheme({
-  palette: { mode: "light" },
-  components: {
-    MuiAlert: {
-      defaultProps: {
-        variant: "filled",
+const calculateTheme = (isDark: boolean) => {
+  if (isDark) {
+    const darkTheme = createTheme({
+      palette: {
+        mode: "dark",
+      },
+      components: {
+        MuiAlert: {
+          defaultProps: {
+            variant: "filled",
+          },
+        },
+      },
+    });
+
+    return darkTheme;
+  }
+
+  const lightTheme = createTheme({
+    palette: { mode: "light" },
+    components: {
+      MuiAlert: {
+        defaultProps: {
+          variant: "filled",
+        },
       },
     },
-  },
-});
+  });
 
-const darkTheme = createTheme({
-  palette: {
-    mode: "dark",
-  },
-  components: {
-    MuiAlert: {
-      defaultProps: {
-        variant: "filled",
-      },
-    },
-  },
-});
+  return lightTheme;
+};
 
-const enableDark = (mode: Mode, isDark: boolean) => {
+const calculateIsDark = (mode: Mode, colorSchema: boolean) => {
   switch (mode) {
     case "dark":
       return true;
@@ -47,18 +55,18 @@ const enableDark = (mode: Mode, isDark: boolean) => {
       return false;
     case "system":
     default:
-      return isDark;
+      return colorSchema;
   }
 };
 
 const MuiProvider = (props: React.PropsWithChildren) => {
-  const isDark = useIsDark();
   const { i18n } = useTranslation();
+  const colorSchema = useColorScheme();
   const mode = useLocalStore((s) => s.mode);
 
-  const hasDarkSelector = enableDark(mode, isDark);
-  const theme = hasDarkSelector ? darkTheme : lightTheme;
-  const themeColor = hasDarkSelector
+  const isDark = calculateIsDark(mode, colorSchema);
+  const theme = calculateTheme(isDark);
+  const themeColor = isDark
     ? theme.palette.background.default
     : theme.palette.primary.main;
 
