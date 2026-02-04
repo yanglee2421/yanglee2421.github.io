@@ -312,7 +312,7 @@ export const Component = () => {
             },
             { transform: "translate3d(0,0,0) scaleX(1) scaleY(1)" },
           ],
-          { duration: 200 * 50 },
+          { duration: 200 },
         ).finished;
       }),
     );
