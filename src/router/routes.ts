@@ -52,6 +52,10 @@ export const createRoutes = (): RouteObject[] => {
                   path: "login",
                   lazy: () => import("@/pages/login/component"),
                 },
+                {
+                  path: "login_demo",
+                  lazy: () => import("@/pages/login_demo/component"),
+                },
               ],
             },
             {
