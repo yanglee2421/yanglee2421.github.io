@@ -1,14 +1,19 @@
 import { useLocaleDate } from "@/hooks/dom/useLocaleDate";
 import { useLocaleTime } from "@/hooks/dom/useLocaleTime";
 import {
+  Box,
   Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
+  Grid,
   Paper,
   Stack,
+  styled,
+  TextField,
   Typography,
+  useTheme,
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
@@ -19,6 +24,77 @@ const createToday = () => {
   const time = today.format("HH:mm:ss");
 
   return [date, time] as const;
+};
+
+const StyledInput = styled("input")({
+  paddingInline: 12,
+  paddingBlock: 4,
+  margin: 0,
+
+  boxSizing: "border-box",
+  height: 40,
+
+  border: 0,
+
+  backgroundColor: "transparent",
+
+  outline: "none",
+});
+
+const FluentInput = () => {
+  const theme = useTheme();
+
+  return (
+    <Box
+      sx={{
+        position: "relative",
+
+        boxSizing: "border-box",
+        display: "inline-block",
+
+        border: `1px solid ${theme.palette.text.secondary}`,
+        borderBottomColor: theme.palette.text.primary,
+        borderRadius: theme.shape.borderRadius + "px",
+
+        "&::after": {
+          content: '""',
+          display: "block",
+
+          position: "absolute",
+          inset: -1,
+          insetBlockStart: "auto",
+
+          boxSizing: "border-box",
+          width: "auto",
+          height: 4,
+
+          padding: 0,
+          margin: 0,
+
+          borderWidth: 0,
+          borderStyle: "solid",
+          borderColor: theme.palette.primary.main,
+          borderBottomWidth: 2,
+          borderRadius: `0 0 ${theme.shape.borderRadius}px ${theme.shape.borderRadius}px`,
+          // borderRadius: theme.shape.borderRadius + "px",
+
+          // backgroundColor: theme.palette.primary.main,
+          clipPath: `inset(calc(100% - ${2}px) 0 0)`,
+
+          transform: "scaleX(0)",
+          transition: theme.transitions.create("transform"),
+        },
+
+        "&:focus-within": {
+          "&::after": {
+            transform: "scaleX(1)",
+          },
+        },
+      }}
+    >
+      <StyledInput placeholder="Fluent Input" />
+    </Box>
+  );
 };
 
 export const Component = () => {
@@ -56,60 +132,67 @@ export const Component = () => {
       <Card>
         <CardHeader title="Snackbar" />
         <CardContent>
-          <Stack spacing={1.5} useFlexGap flexWrap={"wrap"} direction={"row"}>
-            <Button
-              onClick={() => {
-                snackbar.enqueueSnackbar("This is a default snackbar", {
-                  variant: "default",
-                  persist: true,
-                });
-              }}
-            >
-              default
-            </Button>
-            <Button
-              onClick={() => {
-                snackbar.enqueueSnackbar("This is a success snackbar", {
-                  variant: "success",
-                });
-              }}
-              color="success"
-            >
-              success
-            </Button>
-            <Button
-              onClick={() => {
-                snackbar.enqueueSnackbar("This is an error snackbar", {
-                  variant: "error",
-                });
-              }}
-              color="error"
-            >
-              error
-            </Button>
-            <Button
-              onClick={() => {
-                snackbar.enqueueSnackbar("This is a warning snackbar", {
-                  variant: "warning",
-                });
-              }}
-              color="warning"
-            >
-              warning
-            </Button>
-            <Button
-              onClick={() => {
-                snackbar.enqueueSnackbar("This is an info snackbar", {
-                  variant: "info",
-                });
-              }}
-              color="info"
-            >
-              info
-            </Button>
-          </Stack>
+          <Grid container spacing={3}>
+            <Grid size={6}>
+              <FluentInput />
+            </Grid>
+            <Grid size={6}>
+              <TextField variant="standard" fullWidth />
+            </Grid>
+          </Grid>
         </CardContent>
-        <CardActions></CardActions>
+        <CardActions>
+          <Button
+            onClick={() => {
+              snackbar.enqueueSnackbar("This is a default snackbar", {
+                variant: "default",
+                persist: true,
+              });
+            }}
+          >
+            default
+          </Button>
+          <Button
+            onClick={() => {
+              snackbar.enqueueSnackbar("This is a success snackbar", {
+                variant: "success",
+              });
+            }}
+            color="success"
+          >
+            success
+          </Button>
+          <Button
+            onClick={() => {
+              snackbar.enqueueSnackbar("This is an error snackbar", {
+                variant: "error",
+              });
+            }}
+            color="error"
+          >
+            error
+          </Button>
+          <Button
+            onClick={() => {
+              snackbar.enqueueSnackbar("This is a warning snackbar", {
+                variant: "warning",
+              });
+            }}
+            color="warning"
+          >
+            warning
+          </Button>
+          <Button
+            onClick={() => {
+              snackbar.enqueueSnackbar("This is an info snackbar", {
+                variant: "info",
+              });
+            }}
+            color="info"
+          >
+            info
+          </Button>
+        </CardActions>
       </Card>
     </Stack>
   );
