@@ -1,5 +1,9 @@
+packages:
+  - packages/*
+
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@tsparticles/engine'
   - esbuild
   - protobufjs
+  - vue-demi
