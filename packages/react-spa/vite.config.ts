@@ -54,7 +54,7 @@ export default defineConfig(() => {
       target: "baseline-widely-available",
       minify: "esbuild",
 
-      cssTarget: "baseline-widely-available",
+      // cssTarget: "baseline-widely-available",
       cssMinify: "esbuild",
       cssCodeSplit: true,
       // lib: { cssFileName: "style.css" },
