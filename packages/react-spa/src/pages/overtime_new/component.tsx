@@ -20,14 +20,13 @@ import { useNotifications } from "@toolpad/core";
 import { z } from "zod";
 import { CloseOutlined, PlusOneOutlined } from "@mui/icons-material";
 import { useNavigate, useParams } from "react-router";
+import { zodResolver } from "@hookform/resolvers/zod";
 
 const schema = z.object({
   hours: z.number().int(),
   date: z.date(),
   reason: z.string(),
 });
-
-void schema;
 
 type FormValues = z.infer<typeof schema>;
 
@@ -38,6 +37,8 @@ const useAddForm = () =>
       date: new Date(),
       reason: "",
     },
+
+    resolver: zodResolver(schema),
   });
 
 export const Component = () => {

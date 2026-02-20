@@ -4,7 +4,8 @@ import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
 const ReactCompilerConfig = {
-  target: "19", // '17' | '18' | '19'
+  // '17' | '18' | '19'
+  target: "19",
 };
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
@@ -53,7 +54,7 @@ export default defineConfig(() => {
       target: "baseline-widely-available",
       minify: "esbuild",
 
-      cssTarget: ["edge107", "firefox107", "chrome107", "safari16"],
+      cssTarget: "baseline-widely-available",
       cssMinify: "esbuild",
       cssCodeSplit: true,
       // lib: { cssFileName: "style.css" },
