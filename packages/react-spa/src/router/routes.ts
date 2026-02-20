@@ -101,19 +101,6 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/animate/component"),
                 },
                 {
-                  path: "invoices",
-                  children: [
-                    {
-                      index: true,
-                      lazy: () => import("@/pages/invoices/component"),
-                    },
-                    {
-                      path: "new",
-                      lazy: () => import("@/pages/invoices_new/component"),
-                    },
-                  ],
-                },
-                {
                   index: true,
                   lazy: () => import("@/pages/lab/component"),
                 },

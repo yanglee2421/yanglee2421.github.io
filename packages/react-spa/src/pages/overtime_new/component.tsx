@@ -16,7 +16,6 @@ import dayjs from "dayjs";
 import { Controller, useForm } from "react-hook-form";
 import React from "react";
 import { useOvertime } from "@/api/netlify";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { useNotifications } from "@toolpad/core";
 import { z } from "zod";
 import { CloseOutlined, PlusOneOutlined } from "@mui/icons-material";
@@ -28,6 +27,8 @@ const schema = z.object({
   reason: z.string(),
 });
 
+void schema;
+
 type FormValues = z.infer<typeof schema>;
 
 const useAddForm = () =>
@@ -37,7 +38,6 @@ const useAddForm = () =>
       date: new Date(),
       reason: "",
     },
-    resolver: zodResolver(schema),
   });
 
 export const Component = () => {
