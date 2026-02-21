@@ -3,6 +3,7 @@ import * as Vue from "vue";
 
 const props = defineProps<{
   modelValue: string;
+  disabled?: boolean;
 }>();
 
 const emits = defineEmits<{
@@ -24,249 +25,99 @@ const inputText = Vue.computed({
     <input
       v-model="inputText"
       type="text"
-      placeholder="ssss"
+      placeholder="placeholder text"
       class="fui-Input__input"
+      :disabled="props.disabled"
     />
   </span>
 </template>
 
 <style scoped>
-/* -------------------------------------------------------------------------
-   Root Container (.fui-Input)
-   ------------------------------------------------------------------------- */
 .fui-Input {
-  display: inline-flex;
-  align-items: center;
-  flex-wrap: nowrap;
-  gap: var(--spacingHorizontalXXS);
-  border-radius: var(--borderRadiusMedium);
   position: relative;
-  box-sizing: border-box;
-  vertical-align: middle;
 
-  /* Default Typography (Body1) */
-  font-family: "Segoe UI", sans-serif;
-  font-size: 14px;
-  font-weight: 400;
-  line-height: 20px;
+  display: flex;
 
-  /* Default Appearance: Outline */
-  background-color: var(--colorNeutralBackground1);
   border: 1px solid var(--colorNeutralStroke1);
   border-bottom-color: var(--colorNeutralStrokeAccessible);
+  border-radius: var(--borderRadiusMedium);
 
-  /* Default Size: Medium */
-  min-height: 32px;
-}
+  background-color: var(--colorNeutralBackground1);
 
-/* -------------------------------------------------------------------------
-   Focus Indicator (The bottom line animation)
-   ------------------------------------------------------------------------- */
-.fui-Input::after {
-  box-sizing: border-box;
-  content: "";
-  position: absolute;
-  left: -1px;
-  bottom: -1px;
-  right: -1px;
+  font-family: var(--fontFamilyBase);
+  font-size: var(--fontSizeBase300);
+  font-weight: var(--fontWeightRegular);
+  line-height: var(--lineHeightBase300);
 
-  /* Height logic: max(2px, radius) */
-  height: max(2px, var(--borderRadiusMedium));
+  vertical-align: middle;
 
-  border-bottom-left-radius: var(--borderRadiusMedium);
-  border-bottom-right-radius: var(--borderRadiusMedium);
-
-  border-bottom: 2px solid var(--colorCompoundBrandStroke);
-  clip-path: inset(calc(100% - 2px) 0 0 0);
-
-  /* Animation: Scale X from 0 to 1 */
-  transform: scaleX(0);
-  transition-property: transform;
+  transition-property: border-color;
   transition-duration: var(--durationUltraFast);
   transition-delay: var(--curveAccelerateMid);
-}
 
-.fui-Input:focus-within::after {
-  transform: scaleX(1);
-  transition-duration: var(--durationNormal);
-  transition-delay: var(--curveDecelerateMid);
-}
+  &::after {
+    content: "";
 
-.fui-Input:focus-within:active::after {
-  border-bottom-color: var(--colorCompoundBrandStrokePressed);
-}
+    position: absolute;
+    inset-inline: 0;
+    inset-block-end: 0;
 
-.fui-Input:focus-within {
-  outline: 2px solid transparent;
-}
+    display: block;
+    height: calc(var(--borderRadiusMedium) * 2);
 
-/* -------------------------------------------------------------------------
-   Input Element (.fui-Input__input)
-   ------------------------------------------------------------------------- */
+    margin: -1px;
+
+    border-bottom: 2px solid var(--colorCompoundBrandStroke);
+    border-bottom-right-radius: var(--borderRadiusMedium);
+    border-bottom-left-radius: var(--borderRadiusMedium);
+
+    clip-path: inset(calc(100% - 2px) 0 0);
+
+    transform: scaleX(0);
+    transition: transform var(--durationFast) var(--curveDecelerateMid);
+  }
+  &:focus-within {
+    border: 1px solid var(--colorNeutralStroke1Pressed);
+    border-bottom-color: var(--colorNeutralStrokeAccessible);
+
+    &::after {
+      transform: scaleX(1);
+    }
+  }
+  &:has(:disabled) {
+    border: 1px solid var(--colorNeutralStrokeDisabled);
+
+    cursor: not-allowed;
+  }
+}
 .fui-Input__input {
-  align-self: stretch;
   box-sizing: border-box;
-  flex-grow: 1;
-  min-width: 0;
-  border-style: none; /* No border for the actual input, wrapper handles it */
-  padding: 0;
+  display: block;
+  width: 100%;
+  min-height: 32px;
 
-  /* Default Padding for Medium Combined (Root + Input) logic calculated below */
-  padding-left: var(--spacingHorizontalMNudge); /* default fallback */
-  padding-right: var(--spacingHorizontalMNudge);
+  padding-inline: var(--spacingHorizontalM);
+
+  border: none;
+  outline: none;
+
+  background-color: var(--colorTransparentBackground);
 
   color: var(--colorNeutralForeground1);
-  background-color: transparent;
-  outline-style: none;
 
-  font-family: inherit;
-  font-size: inherit;
-  font-weight: inherit;
-  line-height: inherit;
-}
+  &::placeholder {
+    color: var(--colorNeutralForeground4);
+    opacity: 1;
+  }
 
-.fui-Input__input::placeholder {
-  color: var(--colorNeutralForeground4);
-  opacity: 1;
-}
+  &:disabled {
+    color: var(--colorNeutralForegroundDisabled);
 
-/* -------------------------------------------------------------------------
-   Icons / Content (.fui-Input__contentBefore, .fui-Input__contentAfter)
-   ------------------------------------------------------------------------- */
-.fui-Input__contentBefore,
-.fui-Input__contentAfter {
-  box-sizing: border-box;
-  color: var(--colorNeutralForeground3);
-  display: flex;
-  align-items: center; /* Generally centering is good */
-}
+    cursor: not-allowed;
 
-.fui-Input__contentBefore > svg,
-.fui-Input__contentAfter > svg {
-  font-size: 20px; /* Default Medium Size */
-}
-
-/* -------------------------------------------------------------------------
-   Sizes
-   ------------------------------------------------------------------------- */
-
-/* Small */
-.fui-Input.small {
-  min-height: 24px;
-  font-size: 12px; /* Caption1 */
-  line-height: 16px;
-}
-.fui-Input.small .fui-Input__input {
-  padding-left: var(--spacingHorizontalS);
-  padding-right: var(--spacingHorizontalS);
-}
-.fui-Input.small .fui-Input__contentBefore > svg,
-.fui-Input.small .fui-Input__contentAfter > svg {
-  font-size: 16px;
-}
-
-/* Large */
-.fui-Input.large {
-  min-height: 40px;
-  font-size: 16px; /* Body2 */
-  line-height: 22px;
-  gap: var(--spacingHorizontalSNudge);
-}
-.fui-Input.large .fui-Input__input {
-  padding-left: calc(
-    var(--spacingHorizontalM) + var(--spacingHorizontalSNudge)
-  );
-  padding-right: calc(
-    var(--spacingHorizontalM) + var(--spacingHorizontalSNudge)
-  );
-}
-.fui-Input.large .fui-Input__contentBefore > svg,
-.fui-Input.large .fui-Input__contentAfter > svg {
-  font-size: 24px;
-}
-
-/* -------------------------------------------------------------------------
-   Appearances
-   ------------------------------------------------------------------------- */
-
-/* Outline (Standard) Interactive States */
-.fui-Input.outline:not(.disabled):hover {
-  border-color: var(--colorNeutralStroke1Hover);
-  border-bottom-color: var(--colorNeutralStrokeAccessibleHover);
-}
-.fui-Input.outline:not(.disabled):active,
-.fui-Input.outline:not(.disabled):focus-within {
-  border-color: var(--colorNeutralStroke1Pressed);
-  border-bottom-color: var(--colorNeutralStrokeAccessiblePressed);
-}
-
-/* Underline */
-.fui-Input.underline {
-  background-color: var(--colorTransparentBackground);
-  border-radius: 0;
-  border-top: none;
-  border-left: none;
-  border-right: none;
-  border-bottom-color: var(--colorNeutralStrokeAccessible);
-}
-.fui-Input.underline::after {
-  left: 0;
-  right: 0;
-  border-radius: 0; /* Remove corners for underline focus */
-}
-.fui-Input.underline:not(.disabled):hover {
-  border-bottom-color: var(--colorNeutralStrokeAccessibleHover);
-}
-.fui-Input.underline:not(.disabled):active,
-.fui-Input.underline:not(.disabled):focus-within {
-  border-bottom-color: var(--colorNeutralStrokeAccessiblePressed);
-}
-
-/* Filled (Darker / Lighter) */
-.fui-Input.filled-darker {
-  background-color: var(--colorNeutralBackground3);
-  border-color: var(--colorTransparentStroke);
-}
-.fui-Input.filled-lighter {
-  background-color: var(--colorNeutralBackground1);
-  border-color: var(--colorTransparentStroke);
-}
-.fui-Input[class*="filled"]:not(.disabled):hover,
-.fui-Input[class*="filled"]:not(.disabled):focus-within {
-  border-color: var(--colorTransparentStrokeInteractive);
-}
-
-/* Invalid State */
-.fui-Input.invalid:not(:focus-within),
-.fui-Input.invalid:hover:not(:focus-within) {
-  border-color: var(--colorPaletteRedBorder2);
-}
-
-/* -------------------------------------------------------------------------
-   Disabled State
-   ------------------------------------------------------------------------- */
-.fui-Input.disabled {
-  cursor: not-allowed;
-  background-color: var(--colorTransparentBackground);
-  border-color: var(--colorNeutralStrokeDisabled);
-}
-
-.fui-Input.disabled .fui-Input__input {
-  color: var(--colorNeutralForegroundDisabled);
-  cursor: not-allowed;
-}
-
-.fui-Input.disabled .fui-Input__input::placeholder {
-  color: var(--colorNeutralForegroundDisabled);
-}
-
-.fui-Input.disabled .fui-Input__contentBefore,
-.fui-Input.disabled .fui-Input__contentAfter {
-  color: var(--colorNeutralForegroundDisabled);
-}
-
-/* Remove focus border in disabled state */
-.fui-Input.disabled::after {
-  content: unset;
+    &::placeholder {
+      color: var(--colorNeutralForegroundDisabled);
+    }
+  }
 }
 </style>
