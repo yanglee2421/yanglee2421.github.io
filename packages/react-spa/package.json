@@ -9,6 +9,8 @@
     "typescript",
     "react-router"
   ],
+  "license": "MIT",
+  "author": "yanglee2421",
   "repository": {
     "type": "git",
     "url": "https://github.com/yanglee2421/yanglee2421.github.io",
@@ -23,12 +25,12 @@
   "files": [
     "dist"
   ],
+  "type": "module",
   "exports": {
     "types": "./dist/main.d.ts",
     "import": "./dist/main.mjs",
     "require": "./dist/main.cjs"
   },
-  "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
