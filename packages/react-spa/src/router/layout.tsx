@@ -1,8 +1,8 @@
-import { Outlet, useParams } from "react-router";
-import { DashboardLayout, PageContainer, useActivePage } from "@toolpad/core";
 import { LangToggle } from "@/components/shared/LangToggle";
 import { ModeToggle } from "@/components/shared/ModeToggle";
 import { UserDropdown } from "@/components/shared/UserDropdonw";
+import { DashboardLayout, PageContainer, useActivePage } from "@toolpad/core";
+import { Outlet, useParams } from "react-router";
 
 const ToolbarActions = () => {
   return (

@@ -1,9 +1,14 @@
-import { useParams, NavLink } from "react-router";
-import { styled, alpha, Typography } from "@mui/material";
-import { useSearchParams, Navigate, useLocation } from "react-router";
-import { ChevronRightOutlined, DashboardOutlined } from "@mui/icons-material";
-import { HOME_PATH, LOGIN_PATH } from "@/lib/constants";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { HOME_PATH, LOGIN_PATH } from "@/lib/constants";
+import { ChevronRightOutlined, DashboardOutlined } from "@mui/icons-material";
+import { alpha, styled, Typography } from "@mui/material";
+import {
+  Navigate,
+  NavLink,
+  useLocation,
+  useParams,
+  useSearchParams,
+} from "react-router";
 
 export const NavigateToHome = () => {
   const location = useLocation();

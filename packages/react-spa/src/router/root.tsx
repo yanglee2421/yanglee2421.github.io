@@ -1,11 +1,23 @@
+import { auth } from "@/api/firebase/app";
+import { NprogressBar } from "@/components/layout/nprogress";
+import { ParticlesUI } from "@/components/layout/particles";
+import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { calculateLocale } from "@/lib/utils";
 import {
-  useParams,
-  Outlet,
-  ScrollRestoration,
-  Link,
-  useRouteError,
-  isRouteErrorResponse,
-} from "react-router";
+  AddOutlined,
+  AlignHorizontalLeftOutlined,
+  Animation,
+  CalendarMonthOutlined,
+  DashboardOutlined,
+  DragIndicator,
+  HomeOutlined,
+  ListOutlined,
+  MessageOutlined,
+  ScienceOutlined,
+  TokenOutlined,
+  ViewDayRounded,
+} from "@mui/icons-material";
 import {
   Alert,
   AlertTitle,
@@ -15,31 +27,19 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import {
-  DashboardOutlined,
-  CalendarMonthOutlined,
-  TokenOutlined,
-  MessageOutlined,
-  ScienceOutlined,
-  ViewDayRounded,
-  AddOutlined,
-  ListOutlined,
-  AlignHorizontalLeftOutlined,
-  HomeOutlined,
-  DragIndicator,
-  Animation,
-} from "@mui/icons-material";
-import React from "react";
-import { signOut } from "firebase/auth";
-import { ReactRouterAppProvider } from "@toolpad/core/react-router";
-import { NotificationsProvider, DialogsProvider } from "@toolpad/core";
-import { auth } from "@/api/firebase/app";
-import { ParticlesUI } from "@/components/layout/particles";
-import { NprogressBar } from "@/components/layout/nprogress";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import type { Navigation } from "@toolpad/core";
-import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { calculateLocale } from "@/lib/utils";
+import { DialogsProvider, NotificationsProvider } from "@toolpad/core";
+import { ReactRouterAppProvider } from "@toolpad/core/react-router";
+import { signOut } from "firebase/auth";
+import React from "react";
+import {
+  isRouteErrorResponse,
+  Link,
+  Outlet,
+  ScrollRestoration,
+  useParams,
+  useRouteError,
+} from "react-router";
 
 const calculateSegment = (...args: unknown[]) => {
   return args.join("/");
