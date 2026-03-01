@@ -9,9 +9,12 @@ import {
   Link,
   styled,
 } from "@mui/material";
-import { useVirtualizer, elementScroll } from "@tanstack/react-virtual";
+import {
+  elementScroll,
+  useVirtualizer,
+  type VirtualizerOptions,
+} from "@tanstack/react-virtual";
 import React from "react";
-import type { VirtualizerOptions } from "@tanstack/react-virtual";
 
 const StyledItemDiv = styled("div")({
   height: 340,

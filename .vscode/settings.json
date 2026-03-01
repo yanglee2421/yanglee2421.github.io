@@ -1,8 +1,6 @@
 {
   "editor.codeActionsOnSave": {
-    "source.fixAll": "explicit",
-    "source.organizeImports": "explicit",
-    "source.sortMembers": "explicit"
+    "source.organizeImports": "explicit"
   },
   "editor.fontSize": 20,
   "editor.formatOnSave": true,

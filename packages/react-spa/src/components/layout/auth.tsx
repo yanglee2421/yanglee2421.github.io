@@ -1,22 +1,22 @@
-import { GitHub, CloseOutlined, MenuOutlined } from "@mui/icons-material";
+import { Logo as AppLogo } from "@/components/Logo";
+import * as consts from "@/lib/constants";
+import { NavMenu } from "@/router/nav";
+import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";
 import {
-  styled,
+  alpha,
+  AppBar,
   Box,
   IconButton,
-  AppBar,
-  alpha,
-  Toolbar,
   Link as MuiLink,
+  styled,
+  Toolbar,
 } from "@mui/material";
 import React from "react";
-import { useLocation, Link, Outlet } from "react-router";
-import { NavMenu } from "@/router/nav";
+import { Link, Outlet, useLocation } from "react-router";
 import { ScrollView } from "../scrollbar";
 import { LangToggle } from "../shared/LangToggle";
 import { ModeToggle } from "../shared/ModeToggle";
 import { UserDropdown } from "../shared/UserDropdonw";
-import * as consts from "@/lib/constants";
-import { Logo as AppLogo } from "@/components/Logo";
 
 const AuthLayoutWrapper = styled("div")(({ theme }) => ({
   blockSize: "100dvh",

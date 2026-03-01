@@ -1,8 +1,3 @@
-import React from "react";
-import { SignInPage } from "@toolpad/core";
-import { LinearProgress } from "@mui/material";
-import { useNavigation } from "react-router";
-import { getAuth, signInWithPopup } from "firebase/auth";
 import {
   app,
   auth,
@@ -10,7 +5,11 @@ import {
   googleAuthProvider,
 } from "@/api/firebase/app";
 import { devLog } from "@/lib/utils";
-import type { AuthProvider } from "@toolpad/core";
+import { LinearProgress } from "@mui/material";
+import { SignInPage, type AuthProvider } from "@toolpad/core";
+import { getAuth, signInWithPopup } from "firebase/auth";
+import React from "react";
+import { useNavigation } from "react-router";
 
 const createAuthProviders = (): AuthProvider[] => {
   devLog(false, "run auth create");

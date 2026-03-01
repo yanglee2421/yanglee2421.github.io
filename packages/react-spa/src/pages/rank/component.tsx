@@ -1,38 +1,38 @@
+import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
+import type { CollisionDetection, UniqueIdentifier } from "@dnd-kit/core";
 import {
+  defaultDropAnimation,
   DndContext,
   DragOverlay,
   KeyboardSensor,
   MeasuringStrategy,
   PointerSensor,
+  pointerWithin,
+  rectIntersection,
   useDroppable,
   useSensor,
   useSensors,
-  pointerWithin,
-  rectIntersection,
-  defaultDropAnimation,
 } from "@dnd-kit/core";
-import {
-  useSortable,
-  SortableContext,
-  rectSortingStrategy,
-  sortableKeyboardCoordinates,
-  arrayMove,
-  defaultAnimateLayoutChanges,
-} from "@dnd-kit/sortable";
 import {
   restrictToFirstScrollableAncestor,
   restrictToWindowEdges,
   snapCenterToCursor,
 } from "@dnd-kit/modifiers";
-import React from "react";
-import { createPortal } from "react-dom";
+import {
+  arrayMove,
+  defaultAnimateLayoutChanges,
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  type AnimateLayoutChanges,
+} from "@dnd-kit/sortable";
 import { CSS } from "@dnd-kit/utilities";
 import { Delete } from "@mui/icons-material";
-import { indigo, red } from "@mui/material/colors";
 import { alpha, Box, Stack, useTheme } from "@mui/material";
-import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
-import type { CollisionDetection, UniqueIdentifier } from "@dnd-kit/core";
-import type { AnimateLayoutChanges } from "@dnd-kit/sortable";
+import { indigo, red } from "@mui/material/colors";
+import React from "react";
+import { createPortal } from "react-dom";
 
 const calculateContainerId = (data: unknown) => {
   const containerId = Reflect.get(Object(data), "containerId");
