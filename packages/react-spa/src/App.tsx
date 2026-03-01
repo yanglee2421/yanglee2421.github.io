@@ -1,19 +1,19 @@
+import { SnackbarProvider } from "@/components/ui/snackbar";
+import { useColorScheme } from "@/hooks/dom/useColorScheme";
+import type { Mode } from "@/hooks/store/useLocalStore";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { AppRouter } from "@/router";
 import {
   createTheme,
   CssBaseline,
   GlobalStyles,
   ThemeProvider,
 } from "@mui/material";
-import React from "react";
-import { useTranslation } from "react-i18next";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
-import { AppRouter } from "@/router";
-import { useColorScheme } from "@/hooks/dom/useColorScheme";
-import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { SnackbarProvider } from "@/components/ui/snackbar";
+import React from "react";
+import { useTranslation } from "react-i18next";
 import { QueryProvider } from "./components/query";
-import type { Mode } from "@/hooks/store/useLocalStore";
 
 const calculateTheme = (isDark: boolean) => {
   if (isDark) {
