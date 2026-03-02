@@ -1,3 +1,4 @@
+import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 import { StopOutlined } from "@mui/icons-material";
 import {
   Box,
@@ -9,9 +10,8 @@ import {
   Grid,
   useTheme,
 } from "@mui/material";
+import { clamp } from "@yotulee/run";
 import React from "react";
-import { minmax } from "@/lib/utils";
-import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
 
 const { inlineSize, blockSize } = useResizeObserver;
 
@@ -190,7 +190,7 @@ const Microphone = (props: MicrophoneProps) => {
 
       if (typeof cursor !== "number") return;
 
-      const x = Math.floor(minmax(cursor, { min: 0, max: canvasWidth }));
+      const x = Math.floor(clamp(cursor, 0, canvasWidth));
       const val = renderData[x]?.value || 0;
 
       drawLine(canvasCtx, x, 0, x, canvasHeight, 1, theme.palette.error.main);

@@ -118,21 +118,6 @@ export const stringToColor = (string: string) => {
   return color;
 };
 
-export const minmax = (
-  value: number,
-  {
-    min = Number.NEGATIVE_INFINITY,
-    max = Number.POSITIVE_INFINITY,
-  }: Partial<Option> = {},
-) => {
-  return Math.min(max, Math.max(min, value));
-};
-
-type Option = {
-  min: number;
-  max: number;
-};
-
 export const jsonClone = <TData>(params: TData) => {
   try {
     return JSON.parse(JSON.stringify(params)) as TData;
@@ -261,10 +246,6 @@ export const error: typeof console.error = (...args) => {
   if (import.meta.env.DEV) {
     console.error(...args);
   }
-};
-
-export const clamp = (value: number, min: number, max: number) => {
-  return Math.max(min, Math.min(max, value));
 };
 
 export const chunk = <TData>(list: TData[], size: number) => {
