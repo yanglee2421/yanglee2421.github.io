@@ -17,6 +17,7 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
+import { SocketDemo } from "./SocketDemo";
 
 const createToday = () => {
   const today = dayjs();
@@ -194,6 +195,7 @@ export const Component = () => {
           </Button>
         </CardActions>
       </Card>
+      <SocketDemo />
     </Stack>
   );
 };
