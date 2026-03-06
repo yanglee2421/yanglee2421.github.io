@@ -143,6 +143,10 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () =>
                     import("@/pages/stories/2 - Presets/Sortable/4-MultipleContainers.story"),
                 },
+                {
+                  path: "qrcode",
+                  lazy: () => import("@/pages/qrcode/component"),
+                },
               ],
             },
             {
