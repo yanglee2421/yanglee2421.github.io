@@ -1,45 +1,96 @@
 import { Box, Button, useTheme } from "@mui/material";
 import React from "react";
-import { prepareZXingModule, readBarcodes } from "zxing-wasm";
-import zxingWasmPath from "zxing-wasm/full/zxing_full.wasm?url";
+import ZXingWorker from "./zxing.worker?worker";
 
-prepareZXingModule({
-  overrides: {
-    locateFile: (path: string, prefix: string) => {
-      if (path.endsWith(".wasm")) {
-        return new URL(zxingWasmPath, import.meta.url).href;
-      }
-      return prefix + path;
-    },
-  },
-  fireImmediately: true,
-});
+class QRCodeScanner {
+  #listeners: Set<(_: string) => void> = new Set();
+  #running = false;
+  #worker: InstanceType<typeof ZXingWorker> | null = null;
+  #controller: AbortController | null = null;
+  video: HTMLVideoElement;
 
-export const Component = () => {
-  const [frontCamera, setFrontCamera] = React.useState(false);
+  constructor(video: HTMLVideoElement) {
+    this.video = video;
+  }
 
-  const videoRef = React.useRef<HTMLVideoElement>(null);
-  const canvasRef = React.useRef<HTMLCanvasElement>(null);
-  const streamRef = React.useRef<MediaStream>(null);
-  const abortControllerRef = React.useRef<AbortController>(null);
-  const animationFrameIdRef = React.useRef<number>(null);
+  on(fn: (_: string) => void) {
+    this.#listeners.add(fn);
 
-  const theme = useTheme();
+    return () => {
+      this.off(fn);
+    };
+  }
+  off(fn: (_: string) => void) {
+    this.#listeners.delete(fn);
+  }
+  start() {
+    this.#running = true;
+    this.#worker = new ZXingWorker();
+    this.#controller = new AbortController();
 
-  const handleDrawer = () => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+    this.#worker.addEventListener(
+      "message",
+      (event) => {
+        this.#listeners.forEach((listener) => {
+          listener(event.data);
+        });
+      },
+      this.#controller,
+    );
 
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-  };
+    this.loop();
+  }
+  stop() {
+    this.#listeners.clear();
+    this.#running = false;
+    this.#worker?.terminate();
+    this.#worker = null;
+    this.#controller?.abort();
+    this.#controller = null;
+  }
+  async loop() {
+    if (!this.#running) return;
 
-  const handlePlayVideo = async (frontCamera: boolean) => {
-    const video = videoRef.current;
-    if (!video) return;
+    try {
+      const blob = await window.createImageBitmap(this.video);
+      this.#worker?.postMessage(blob, [blob]);
+    } finally {
+      requestAnimationFrame(this.loop.bind(this));
+    }
+  }
+}
 
-    const videoSize = video.getBoundingClientRect();
-    streamRef.current = await navigator.mediaDevices.getUserMedia({
+class Camera {
+  #listeners: Set<(_: Error) => void> = new Set();
+  #stream: MediaStream | null = null;
+  #controller: AbortController | null = null;
+  video: HTMLVideoElement;
+
+  constructor(video: HTMLVideoElement) {
+    this.video = video;
+  }
+
+  on(fn: (_: Error) => void) {
+    this.#listeners.add(fn);
+    return () => {
+      this.off(fn);
+    };
+  }
+  off(fn: (_: Error) => void) {
+    this.#listeners.delete(fn);
+  }
+  async play(frontCamera: boolean) {
+    const canPlay = await this.canPlay();
+
+    if (!canPlay) {
+      this.#listeners.forEach((listener) => {
+        listener(new Error("No video input devices found."));
+      });
+      return;
+    }
+
+    const videoSize = this.video.getBoundingClientRect();
+    this.#stream = await navigator.mediaDevices.getUserMedia({
       video: {
         width: videoSize.width,
         height: videoSize.height,
@@ -48,80 +99,78 @@ export const Component = () => {
       audio: false,
     });
 
-    video.srcObject = streamRef.current;
-    abortControllerRef.current = new AbortController();
-    video.addEventListener(
+    this.video.srcObject = this.#stream;
+    this.#controller = new AbortController();
+
+    this.video.addEventListener(
       "loadedmetadata",
       () => {
-        video.play();
+        this.video.play();
       },
-      abortControllerRef.current,
+      this.#controller,
     );
-  };
-
-  const handleStopVideo = () => {
-    streamRef.current?.getTracks().forEach((track) => {
+  }
+  stop() {
+    this.#listeners.clear();
+    this.#stream?.getTracks().forEach((track) => {
       track.stop();
     });
-    abortControllerRef.current?.abort();
-    streamRef.current = null;
-    abortControllerRef.current = null;
-  };
+    this.#stream = null;
+    this.#controller?.abort();
+    this.#controller = null;
+    this.video.srcObject = null;
+  }
+  async canPlay() {
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const canPlay = devices.some((device) => device.kind === "videoinput");
 
-  const handleScan = async () => {
+    return canPlay;
+  }
+}
+
+export const Component = () => {
+  const [frontCamera, setFrontCamera] = React.useState(false);
+  const [error, setError] = React.useState<Error | null>(null);
+
+  const videoRef = React.useRef<HTMLVideoElement>(null);
+  const canvasRef = React.useRef<HTMLCanvasElement>(null);
+
+  const theme = useTheme();
+
+  React.useEffect(() => {
     const video = videoRef.current;
     if (!video) return;
 
-    const canvas = new OffscreenCanvas(video.videoWidth, video.videoHeight);
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-
-    try {
-      ctx.drawImage(video, 0, 0, canvas.width, canvas.height);
-      const blob = await canvas.convertToBlob();
-      const result = await readBarcodes(blob);
-      if (result.length) {
-        console.log(result);
-        cancelAnimationFrame(animationFrameIdRef.current || 0);
-      } else {
-        animationFrameIdRef.current = requestAnimationFrame(handleScan);
-      }
-    } catch {
-      animationFrameIdRef.current = requestAnimationFrame(handleScan);
-    }
-  };
-
-  const handleStopScan = () => {
-    cancelAnimationFrame(animationFrameIdRef.current || 0);
-  };
-
-  React.useEffect(() => {
-    handlePlayVideo(frontCamera);
+    const camera = new Camera(video);
+    camera.play(frontCamera);
+    camera.on((error) => {
+      setError(error);
+    });
 
     return () => {
-      handleStopVideo();
+      camera.stop();
     };
   }, [frontCamera]);
 
   React.useEffect(() => {
-    handleScan();
+    const video = videoRef.current;
+    if (!video) return;
+    if (error) return;
+
+    const scanner = new QRCodeScanner(video);
+    scanner.start();
+    scanner.on((result) => {
+      console.log(result);
+      scanner.stop();
+    });
 
     return () => {
-      handleStopScan();
+      scanner.stop();
     };
-  }, []);
+  }, [error]);
 
   return (
     <>
-      <Button
-        onClick={() => {
-          streamRef.current?.getTracks().forEach((track) => {
-            track.stop();
-          });
-        }}
-      >
-        STOP
-      </Button>
       <Button
         onClick={() => {
           setFrontCamera((previous) => !previous);
@@ -130,7 +179,16 @@ export const Component = () => {
         toggle
       </Button>
 
-      <Box sx={{ position: "relative" }}>
+      <Box
+        sx={{
+          position: "relative",
+          border: 1,
+          borderColor: theme.palette.divider,
+          borderStyle: "solid",
+        }}
+        width={375}
+        height={667}
+      >
         <canvas
           ref={canvasRef}
           width={375}
@@ -143,16 +201,11 @@ export const Component = () => {
             backgroundColor: "transparent",
           }}
         ></canvas>
-        <video
-          ref={videoRef}
-          width={375}
-          height={667}
-          style={{
-            border: 1,
-            borderColor: theme.palette.divider,
-            borderStyle: "solid",
-          }}
-        ></video>
+        {error ? (
+          <div>{error.message}</div>
+        ) : (
+          <video ref={videoRef} width={375} height={667}></video>
+        )}
       </Box>
     </>
   );
