@@ -96,12 +96,31 @@ class Camera {
         width: videoSize.width,
         height: videoSize.height,
         facingMode: frontCamera ? "user" : "environment",
-        frameRate: { ideal: 10, max: 15 },
+        frameRate: { ideal: 30, max: 30 },
       },
       audio: false,
     });
+    const tracks = this.#stream.getVideoTracks();
 
-    this.video.srcObject = this.#stream;
+    await Promise.allSettled(
+      tracks.map(async (track) => {
+        const capabilities = track.getCapabilities();
+
+        if (!Reflect.get(capabilities, "focusMode")) {
+          return;
+        }
+
+        await track.applyConstraints({
+          advanced: [
+            {
+              focusMode: "continuous",
+              focusDistance: 0.5,
+            },
+          ] as unknown as MediaTrackConstraintSet[],
+        });
+      }),
+    );
+
     this.#controller = new AbortController();
 
     this.video.addEventListener(
@@ -111,6 +130,8 @@ class Camera {
       },
       this.#controller,
     );
+
+    this.video.srcObject = this.#stream;
   }
   stop() {
     this.#listeners.clear();
