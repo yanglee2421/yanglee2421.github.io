@@ -1,5 +1,5 @@
-import QRCode from "qrcode";
 import { chunk } from "@/lib/utils";
+import QRCode from "qrcode";
 
 export const generateMatrix = (value: string) => {
   const unit8Array = QRCode.create(value).modules.data;

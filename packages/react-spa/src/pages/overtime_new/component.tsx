@@ -1,6 +1,5 @@
 import { useOvertime } from "@/api/netlify";
 import { NumberField } from "@/components/form/number";
-import { error } from "@/lib/utils";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { CloseOutlined, PlusOneOutlined } from "@mui/icons-material";
 import {
@@ -92,7 +91,7 @@ export const Component = () => {
                 },
               },
             );
-          }, error)}
+          }, console.error)}
           onReset={() => form.reset()}
         >
           <Grid container spacing={3} sx={{ mt: 2 }}>

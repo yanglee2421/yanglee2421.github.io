@@ -230,24 +230,6 @@ export const compact = <TData>(list: Array<TData | Falsey>) => {
   return list.filter(Boolean) as TData;
 };
 
-export const log: typeof console.log = (...args) => {
-  if (import.meta.env.DEV) {
-    console.log(...args);
-  }
-};
-
-export const warn: typeof console.warn = (...args) => {
-  if (import.meta.env.DEV) {
-    console.warn(...args);
-  }
-};
-
-export const error: typeof console.error = (...args) => {
-  if (import.meta.env.DEV) {
-    console.error(...args);
-  }
-};
-
 export const chunk = <TData>(list: TData[], size: number) => {
   const chunked: TData[][] = [];
 
@@ -265,36 +247,6 @@ export type ElementOf<TList> = TList extends (infer TElement)[]
 export type ParamsOf<TFunc> = TFunc extends (...args: infer TParams) => void
   ? TParams
   : never;
-
-export const devLog = (
-  enable: boolean,
-  ...args: Parameters<typeof console.log>
-) => {
-  if (import.meta.env.PROD) {
-    return;
-  }
-
-  if (!enable) {
-    return;
-  }
-
-  console.log(...args);
-};
-
-export const devError = (
-  enable: boolean,
-  ...args: Parameters<typeof console.error>
-) => {
-  if (import.meta.env.PROD) {
-    return;
-  }
-
-  if (!enable) {
-    return;
-  }
-
-  console.error(...args);
-};
 
 export const calculateLocale = (
   fallbackLocale: string,
@@ -330,8 +282,6 @@ export const normalizePathname = (pathname: string) => {
 export const calculateLocalePathname = (pathname: string, locale: string) => {
   const segments = normalizePathname(pathname).split("/");
   const localeSegment = segments.at(1) || "";
-
-  console.log(segments);
 
   if (locale === localeSegment) {
     return pathname;
