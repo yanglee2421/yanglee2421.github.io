@@ -1,7 +1,7 @@
 import { fetchUserByFirebase, netlify } from "@/api/netlify";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { calculateLocale, calculateLocalePathname } from "@/lib/utils";
+import { LocaleContext, useLocale } from "@/shared/LocaleContext";
 import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useTranslation } from "react-i18next";
@@ -9,14 +9,8 @@ import { Navigate, Outlet, useLocation, useParams } from "react-router";
 import { NavigateToHome, NavigateToLogin } from "./nav";
 
 const useSyncLanguage = () => {
-  const params = useParams();
+  const locale = useLocale();
   const { i18n } = useTranslation();
-  const fallbackLang = useLocalStore((store) => store.fallbackLang);
-
-  const langInPath = params.lang;
-  if (!langInPath) throw new Error("Invalid lang params");
-
-  const lang = calculateLocale(fallbackLang, langInPath);
 
   const changeLanguage = React.useEffectEvent((lang: string) => {
     if (!lang) return;
@@ -28,29 +22,30 @@ const useSyncLanguage = () => {
   });
 
   React.useEffect(() => {
-    changeLanguage(lang);
-  }, [lang]);
+    changeLanguage(locale);
+  }, [locale]);
 };
 
 export const LangRoute = () => {
+  useSyncLanguage();
+  const localeService = React.use(LocaleContext);
+
   const params = useParams();
   const location = useLocation();
   const fallbackLang = useLocalStore((store) => store.fallbackLang);
-  useSyncLanguage();
 
-  const langInPath = params.lang;
-  if (!langInPath) throw new Error("Invalid params lang");
+  localeService.setLocale(fallbackLang);
+  localeService.setLocale(params.lang || "");
+  const localePathname = localeService.resolvePathname(location.pathname);
 
-  const lang = calculateLocale(fallbackLang, langInPath);
-
-  if (lang === langInPath) {
+  if (location.pathname === localePathname) {
     return <Outlet />;
   }
 
   return (
     <Navigate
       to={{
-        pathname: calculateLocalePathname(location.pathname, lang),
+        pathname: localePathname,
         search: location.search,
         hash: location.hash,
       }}

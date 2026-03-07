@@ -138,8 +138,8 @@ importers:
         specifier: ^3.9.1
         version: 3.9.1
       '@yotulee/run':
-        specifier: jsr:^0.0.11
-        version: '@jsr/yotulee__run@0.0.11'
+        specifier: jsr:^0.0.15
+        version: '@jsr/yotulee__run@0.0.15'
       axios:
         specifier: ^1.13.2
         version: 1.13.2
@@ -921,8 +921,8 @@ packages:
   '@jridgewell/trace-mapping@0.3.31':
     resolution: {integrity: sha512-zzNR+SdQSDJzc8joaeP8QQoCQr8NuYx2dIIytl1QeBEZHJ9uW6hebsrYgbz8hJwUQao3TWCMtmfV8Nu1twOLAw==}
 
-  '@jsr/yotulee__run@0.0.11':
-    resolution: {integrity: sha512-otzO5Fk8gVaO/Q3j3CzsG/I5QXPbkUFHP/BjfhKsr6jCOVbczeUmvCegrWHRIUxxeBMMTQFAARe0+9mYo5nqpA==, tarball: https://npm.jsr.io/~/11/@jsr/yotulee__run/0.0.11.tgz}
+  '@jsr/yotulee__run@0.0.15':
+    resolution: {integrity: sha512-2+4eFM4zpA2haY9VpmfrCgFic8vpek5CS1qILMwv0qoAGsc0dKyDnKxf+1DxX7cMBvig/W491QE7ewv8t6tMZA==, tarball: https://npm.jsr.io/~/11/@jsr/yotulee__run/0.0.15.tgz}
 
   '@mui/core-downloads-tracker@7.3.6':
     resolution: {integrity: sha512-QaYtTHlr8kDFN5mE1wbvVARRKH7Fdw1ZuOjBJcFdVpfNfRYKF3QLT4rt+WaB6CKJvpqxRsmEo0kpYinhH5GeHg==}
@@ -2670,8 +2670,8 @@ packages:
   immer@11.0.1:
     resolution: {integrity: sha512-naDCyggtcBWANtIrjQEajhhBEuL9b0Zg4zmlWK2CzS6xCWSE39/vvf4LqnMjUAWHBhot4m9MHCM/Z+mfWhUkiA==}
 
-  immutable@4.3.7:
-    resolution: {integrity: sha512-1hqclzwYwjRDFLjcFxOM5AYkkG0rpFPpr1RLPMEuGczoS7YA8gLhy8SWXYRAA/XwfEHpfo3cw5JGioS32fnMRw==}
+  immutable@4.3.8:
+    resolution: {integrity: sha512-d/Ld9aLbKpNwyl0KiM2CT1WYvkitQ1TSvmRtkcV8FKStiDoA7Slzgjmb/1G2yhKM1p0XeNOieaTbFZmU1d3Xuw==}
 
   import-fresh@3.3.1:
     resolution: {integrity: sha512-TR3KfrTZTYLPB6jUjfx6MF9WcWrHL9su5TObK4ZkYgBdWKPOFoSoQIdEuTuR82pmtxH2spWG9h6etwfr1pLBqQ==}
@@ -4536,7 +4536,7 @@ snapshots:
       '@jridgewell/resolve-uri': 3.1.2
       '@jridgewell/sourcemap-codec': 1.5.5
 
-  '@jsr/yotulee__run@0.0.11': {}
+  '@jsr/yotulee__run@0.0.15': {}
 
   '@mui/core-downloads-tracker@7.3.6': {}
 
@@ -6432,7 +6432,7 @@ snapshots:
 
   immer@11.0.1: {}
 
-  immutable@4.3.7:
+  immutable@4.3.8:
     optional: true
 
   import-fresh@3.3.1:
@@ -7036,7 +7036,7 @@ snapshots:
   sass@1.77.8:
     dependencies:
       chokidar: 3.6.0
-      immutable: 4.3.7
+      immutable: 4.3.8
       source-map-js: 1.2.1
     optional: true
 

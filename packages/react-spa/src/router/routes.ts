@@ -1,6 +1,6 @@
 import { AuthLayout } from "@/components/layout/auth";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { calculateLocale, calculateLocalePathname } from "@/lib/utils";
+import { localeService } from "@/shared/LocaleContext";
 import type { RouteObject } from "react-router";
 import { redirect } from "react-router";
 import { AuthGuard, GuestGuard, LangRoute } from "./guard";
@@ -18,24 +18,27 @@ export const createRoutes = (): RouteObject[] => {
           index: true,
           middleware: [],
           loader: async () => {
-            throw redirect(`/${useLocalStore.getState().fallbackLang}`);
+            const fallbackLang = useLocalStore.getState().fallbackLang;
+            localeService.setLocale(fallbackLang);
+
+            throw redirect(`/${localeService.getLocale()}`);
           },
         },
         {
           path: ":lang",
           loader: async ({ params, request }) => {
             const langInPath = params.lang;
-            if (!langInPath) throw new Error("Invalid params lang");
-
             const fallbackLang = useLocalStore.getState().fallbackLang;
-            const lang = calculateLocale(fallbackLang, langInPath);
+            localeService.setLocale(fallbackLang);
+            localeService.setLocale(langInPath || "");
+            const lang = localeService.getLocale();
 
             if (lang === langInPath) {
               return;
             }
 
             const url = new URL(request.url);
-            url.pathname = calculateLocalePathname(url.pathname, lang);
+            url.pathname = localeService.resolvePathname(url.pathname);
 
             throw redirect(url.href);
           },

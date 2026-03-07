@@ -2,8 +2,7 @@ import { auth } from "@/api/firebase/app";
 import { NprogressBar } from "@/components/layout/nprogress";
 import { ParticlesUI } from "@/components/layout/particles";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { calculateLocale } from "@/lib/utils";
+import { useLocale } from "@/shared/LocaleContext";
 import {
   AddOutlined,
   AlignHorizontalLeftOutlined,
@@ -38,7 +37,6 @@ import {
   Link,
   Outlet,
   ScrollRestoration,
-  useParams,
   useRouteError,
 } from "react-router";
 
@@ -122,15 +120,9 @@ const BRANDING = {
 };
 
 const useNavigation = () => {
-  const params = useParams();
-  const fallbackLang = useLocalStore((store) => store.fallbackLang);
+  const locale = useLocale();
 
-  const langInPath = params.lang;
-  if (!langInPath) throw new Error("Invalid lang params");
-
-  const lang = calculateLocale(fallbackLang, langInPath);
-
-  return React.useMemo<Navigation>(() => createNavition(lang), [lang]);
+  return React.useMemo<Navigation>(() => createNavition(locale), [locale]);
 };
 
 type ErrorContentProps = {
