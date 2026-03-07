@@ -1,9 +1,10 @@
-import { Box, Button, useTheme } from "@mui/material";
+import { Box, Button, Typography, useTheme } from "@mui/material";
 import React from "react";
+import { type ReadResult } from "zxing-wasm";
 import ZXingWorker from "./zxing.worker?worker";
 
 class QRCodeScanner {
-  #listeners: Set<(_: string) => void> = new Set();
+  #listeners: Set<(_: ReadResult[]) => void> = new Set();
   #running = false;
   #worker: InstanceType<typeof ZXingWorker> | null = null;
   #controller: AbortController | null = null;
@@ -13,14 +14,14 @@ class QRCodeScanner {
     this.video = video;
   }
 
-  on(fn: (_: string) => void) {
+  on(fn: (_: ReadResult[]) => void) {
     this.#listeners.add(fn);
 
     return () => {
       this.off(fn);
     };
   }
-  off(fn: (_: string) => void) {
+  off(fn: (_: ReadResult[]) => void) {
     this.#listeners.delete(fn);
   }
   start() {
@@ -95,6 +96,7 @@ class Camera {
         width: videoSize.width,
         height: videoSize.height,
         facingMode: frontCamera ? "user" : "environment",
+        frameRate: { ideal: 10, max: 15 },
       },
       audio: false,
     });
@@ -131,6 +133,7 @@ class Camera {
 export const Component = () => {
   const [frontCamera, setFrontCamera] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);
+  const [result, setResult] = React.useState<string | null>(null);
 
   const videoRef = React.useRef<HTMLVideoElement>(null);
   const canvasRef = React.useRef<HTMLCanvasElement>(null);
@@ -161,6 +164,7 @@ export const Component = () => {
     scanner.start();
     scanner.on((result) => {
       console.log(result);
+      setResult(result[0]?.text || null);
       scanner.stop();
     });
 
@@ -178,7 +182,7 @@ export const Component = () => {
       >
         toggle
       </Button>
-
+      <Typography>{result}</Typography>
       <Box
         sx={{
           position: "relative",
