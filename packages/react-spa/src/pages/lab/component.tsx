@@ -1,5 +1,4 @@
 import bg from "@/assets/images/justHer.jpg";
-import { useTestEffect } from "@/hooks/useTestEffect";
 import {
   alpha,
   Box,
@@ -139,25 +138,6 @@ const WebSocketCard = () => {
         <Button>reset</Button>
       </CardActions>
     </Card>
-  );
-};
-
-const ChildEffect = () => {
-  useTestEffect("child");
-  return null;
-};
-
-const Counter = () => {
-  const [count, setCount] = React.useState(0);
-
-  useTestEffect("parent");
-  useTestEffect("parent 2");
-
-  return (
-    <Button onClick={() => setCount((prev) => prev + 1)}>
-      {count}
-      <ChildEffect />
-    </Button>
   );
 };
 
@@ -468,44 +448,7 @@ const OtherComponent = () => {
 };
 
 export const Component = () => {
-  const id = React.useId();
-
   const bgImgHref = calculateAssetsHref(bg);
-
-  const handleCutImage = () => {
-    const video = document.getElementById(id);
-
-    if (!(video instanceof HTMLVideoElement)) {
-      return;
-    }
-
-    const cvs = document.createElement("canvas");
-    const ctx = cvs.getContext("2d");
-    if (!ctx) {
-      return;
-    }
-
-    const size = video.getBoundingClientRect();
-    cvs.width = size.width;
-    cvs.height = size.height;
-    ctx.drawImage(
-      video,
-      0,
-      0,
-      size.width,
-      size.height,
-      0,
-      0,
-      cvs.width,
-      cvs.height,
-    );
-
-    const link = document.createElement("a");
-    link.href = cvs.toDataURL();
-    link.download = Date.now() + ".png";
-    link.click();
-    link.remove();
-  };
 
   return (
     <Stack spacing={3}>
