@@ -255,6 +255,9 @@ importers:
       '@tanstack/vue-query-devtools':
         specifier: ^6.1.5
         version: 6.1.5(@tanstack/vue-query@5.92.9(vue@3.5.28(typescript@5.9.3)))(vue@3.5.28(typescript@5.9.3))
+      '@yotulee/run':
+        specifier: jsr:^0.0.15
+        version: '@jsr/yotulee__run@0.0.15'
       pinia:
         specifier: ^3.0.4
         version: 3.0.4(typescript@5.9.3)(vue@3.5.28(typescript@5.9.3))
