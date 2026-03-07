@@ -1,3 +1,4 @@
+import snowVillage from "@/assets/images/snowVillage.jpg";
 import {
   Box,
   Button,
@@ -9,7 +10,6 @@ import {
   useTheme,
 } from "@mui/material";
 import { Link, useNavigate } from "react-router";
-import snowVillage from "@/assets/images/snowVillage.jpg";
 
 const calculateAssetsHref = (path: string) => {
   return new URL(path, import.meta.url).href;

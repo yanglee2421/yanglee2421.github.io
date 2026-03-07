@@ -1,10 +1,10 @@
 import { createApp } from "vue";
 import { createPinia } from "pinia";
 import { QueryClient, VueQueryPlugin } from "@tanstack/vue-query";
-import "virtual:uno.css";
 import App from "@/App.vue";
 import { router } from "@/router";
 import "@/assets/fluent.css";
+import "@/assets/style.css";
 
 const queryClient = new QueryClient({
   defaultOptions: {

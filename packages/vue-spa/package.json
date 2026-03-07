@@ -1,8 +1,36 @@
 {
   "name": "vue-spa",
-  "private": true,
   "version": "0.0.0",
+  "description": "Single page application template built with Vite, Vue and TypeScript.",
+  "keywords": [
+    "spa",
+    "vite",
+    "vue",
+    "typescript",
+    "vue-router"
+  ],
+  "license": "MIT",
+  "author": "yanglee2421",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yanglee2421/yanglee2421.github.io",
+    "directory": "/packages/vue-spa"
+  },
+  "bugs": {
+    "url": "https://github.com/yanglee2421/yanglee2421.github.io/issues",
+    "email": "yanglee2421@outlook.com"
+  },
+  "homepage": "https://github.com/yanglee2421/yanglee2421.github.io/blob/main/README.md",
+  "private": true,
+  "files": [
+    "dist"
+  ],
   "type": "module",
+  "exports": {
+    "types": "./dist/main.d.ts",
+    "import": "./dist/main.mjs",
+    "require": "./dist/main.cjs"
+  },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
@@ -13,12 +41,14 @@
     "@tanstack/vue-query": "^5.92.9",
     "@tanstack/vue-query-devtools": "^6.1.5",
     "pinia": "^3.0.4",
-    "unocss": "^66.6.0",
     "vue": "^3.5.25",
-    "vue-router": "^5.0.3"
+    "vue-router": "^5.0.3",
+    "zod": "^4.1.13"
   },
   "devDependencies": {
+    "@tailwindcss/vite": "^4.2.1",
     "@vitejs/plugin-vue": "^6.0.2",
+    "tailwindcss": "^4.2.1",
     "vite": "^7.3.1",
     "vue-tsc": "^3.1.5"
   }

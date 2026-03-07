@@ -1,10 +1,10 @@
+import type { RouteObject } from "react-router";
 import {
   createBrowserRouter,
   createHashRouter,
   RouterProvider,
 } from "react-router";
 import { createRoutes } from "./routes";
-import type { RouteObject } from "react-router";
 
 const createAppRouter = (routes: RouteObject[]) => {
   const router = import.meta.env.PROD

@@ -1,7 +1,3 @@
-import React from "react";
-import { SnackbarProvider as NotistackProvider, useSnackbar } from "notistack";
-import type { CustomContentProps, SnackbarProviderProps } from "notistack";
-import { Box, IconButton, SnackbarContent } from "@mui/material";
 import {
   Cancel,
   CheckCircle,
@@ -9,6 +5,14 @@ import {
   Info,
   Warning,
 } from "@mui/icons-material";
+import { Box, IconButton, SnackbarContent } from "@mui/material";
+import {
+  SnackbarProvider as NotistackProvider,
+  useSnackbar,
+  type CustomContentProps,
+  type SnackbarProviderProps,
+} from "notistack";
+import React from "react";
 
 type CustomSnackbarProps = CustomContentProps & {
   ref?: React.Ref<HTMLDivElement>;

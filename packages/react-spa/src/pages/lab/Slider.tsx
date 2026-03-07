@@ -1,7 +1,7 @@
-import React from "react";
-import { clamp, devLog } from "@/lib/utils";
-import { alpha, styled } from "@mui/material";
 import { useResizeObserver } from "@/hooks/dom/useResizeObserver";
+import { alpha, styled } from "@mui/material";
+import { clamp } from "@yotulee/run";
+import React from "react";
 
 const Track = styled("div")(({ theme: t }) => ({
   position: "relative",
@@ -106,8 +106,7 @@ export const Slider = () => {
           type="range"
           tabIndex={0}
           value={value}
-          onChange={(e) => {
-            devLog(true, e.target.value);
+          onChange={() => {
             dotRef.current?.focus();
           }}
         />

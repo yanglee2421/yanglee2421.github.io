@@ -1,34 +1,37 @@
+import bg from "@/assets/images/justHer.jpg";
+import { useTestEffect } from "@/hooks/useTestEffect";
 import {
+  alpha,
+  Box,
   Button,
+  ButtonBase,
   Card,
   CardActions,
   CardContent,
   CardHeader,
-  Grid,
-  Stack,
-  TextField,
-  Box,
-  alpha,
-  LinearProgress,
-  TableContainer,
-  Table,
-  TableHead,
-  TableBody,
-  TableFooter,
-  TableRow,
-  TableCell,
-  TablePagination,
   Divider,
-  ButtonBase,
-  useTheme,
-  Switch,
-  FormControlLabel,
-  Typography,
-  FormLabel,
   FormControl,
+  FormControlLabel,
   FormGroup,
+  FormLabel,
+  Grid,
+  LinearProgress,
   Slider as MuiSlider,
+  Stack,
+  Switch,
+  Table,
+  TableBody,
+  TableCell,
+  TableContainer,
+  TableFooter,
+  TableHead,
+  TablePagination,
+  TableRow,
+  TextField,
+  Typography,
+  useTheme,
 } from "@mui/material";
+import { grey } from "@mui/material/colors";
 import {
   createColumnHelper,
   flexRender,
@@ -37,10 +40,6 @@ import {
   useReactTable,
 } from "@tanstack/react-table";
 import React from "react";
-import { grey } from "@mui/material/colors";
-import bg from "@/assets/images/justHer.jpg";
-import { Camera } from "@/components/shared/Camera";
-import { useTestEffect } from "@/hooks/useTestEffect";
 import { Slider } from "./Slider";
 import "./border.css";
 
@@ -590,16 +589,6 @@ export const Component = () => {
             </Grid>
           </Grid>
         </CardContent>
-      </Card>
-      <Card>
-        <CardHeader title="Camera" subheader="Camera" />
-        <CardContent>
-          <Camera id={id} />
-        </CardContent>
-        <CardActions>
-          <Button onClick={handleCutImage}>cut image</Button>
-          <Counter />
-        </CardActions>
       </Card>
       <WebSocketCard />
       <EditableTable />

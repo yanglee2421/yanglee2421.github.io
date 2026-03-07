@@ -1,11 +1,11 @@
 import { AuthLayout } from "@/components/layout/auth";
-import { DashLayout } from "./layout";
-import { AuthGuard, GuestGuard, LangRoute } from "./guard";
-import { RootRoute, RootErrorBoundary, RootHydrateFallback } from "./root";
-import { redirect } from "react-router";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { calculateLocale, calculateLocalePathname } from "@/lib/utils";
 import type { RouteObject } from "react-router";
+import { redirect } from "react-router";
+import { AuthGuard, GuestGuard, LangRoute } from "./guard";
+import { DashLayout } from "./layout";
+import { RootErrorBoundary, RootHydrateFallback, RootRoute } from "./root";
 
 export const createRoutes = (): RouteObject[] => {
   return [
@@ -142,6 +142,10 @@ export const createRoutes = (): RouteObject[] => {
                   path: "sortable-multiple-containers/:tab?",
                   lazy: () =>
                     import("@/pages/stories/2 - Presets/Sortable/4-MultipleContainers.story"),
+                },
+                {
+                  path: "qrcode",
+                  lazy: () => import("@/pages/qrcode/component"),
                 },
               ],
             },

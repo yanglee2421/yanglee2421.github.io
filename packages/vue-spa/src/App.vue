@@ -5,9 +5,34 @@ import { RouterView } from "vue-router";
 <template>
   <RouterView>
     <template #default="{ Component }">
-      <component :is="Component" />
+      <Transition name="fade">
+        <component :is="Component" />
+      </Transition>
     </template>
   </RouterView>
 </template>
 
-<style scoped></style>
+<style scoped>
+:global(:root) {
+  padding: 0;
+  margin: 0;
+}
+
+:global(body) {
+  padding: 0;
+  margin: 0;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.3s ease;
+}
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+.fade-enter-to,
+.fade-leave-from {
+  opacity: 1;
+}
+</style>

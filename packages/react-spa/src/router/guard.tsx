@@ -1,12 +1,12 @@
-import React from "react";
-import { useQuery } from "@tanstack/react-query";
-import { Navigate, Outlet, useLocation, useParams } from "react-router";
-import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { fetchUserByFirebase, netlify } from "@/api/netlify";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { NavigateToHome, NavigateToLogin } from "./nav";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { calculateLocale, calculateLocalePathname } from "@/lib/utils";
+import { useQuery } from "@tanstack/react-query";
+import React from "react";
 import { useTranslation } from "react-i18next";
+import { Navigate, Outlet, useLocation, useParams } from "react-router";
+import { NavigateToHome, NavigateToLogin } from "./nav";
 
 const useSyncLanguage = () => {
   const params = useParams();
