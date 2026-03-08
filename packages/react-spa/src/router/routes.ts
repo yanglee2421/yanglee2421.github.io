@@ -1,4 +1,5 @@
 import { AuthLayout } from "@/components/layout/auth";
+import { QueryProvider } from "@/components/query";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { localeService } from "@/shared/LocaleContext";
 import type { RouteObject } from "react-router";
@@ -10,9 +11,6 @@ import { RootErrorBoundary, RootHydrateFallback, RootRoute } from "./root";
 export const createRoutes = (): RouteObject[] => {
   return [
     {
-      Component: RootRoute,
-      ErrorBoundary: RootErrorBoundary,
-      HydrateFallback: RootHydrateFallback,
       children: [
         {
           index: true,
@@ -21,35 +19,17 @@ export const createRoutes = (): RouteObject[] => {
             const fallbackLang = useLocalStore.getState().fallbackLang;
             localeService.setLocale(fallbackLang);
 
-            throw redirect(`/${localeService.getLocale()}`);
+            throw redirect(localeService.resolvePathname("/"));
           },
         },
         {
           path: ":lang",
-          loader: async ({ params, request }) => {
-            const langInPath = params.lang;
-            const fallbackLang = useLocalStore.getState().fallbackLang;
-            localeService.setLocale(fallbackLang);
-            localeService.setLocale(langInPath || "");
-            const lang = localeService.getLocale();
-
-            if (lang === langInPath) {
-              return;
-            }
-
-            const url = new URL(request.url);
-            url.pathname = localeService.resolvePathname(url.pathname);
-
-            throw redirect(url.href);
-          },
-          Component: LangRoute,
           children: [
             {
               path: "*",
               lazy: () => import("@/pages/not-fount/component"),
             },
             {
-              Component: GuestGuard,
               children: [
                 {
                   path: "login",
@@ -60,12 +40,52 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/login_demo/component"),
                 },
               ],
+              Component: GuestGuard,
+              loader: async () => {
+                if (import.meta.env.MODE !== "STG") {
+                  return;
+                }
+
+                const accessToken = useLocalStore.getState().accessToken;
+                const refreshToken = useLocalStore.getState().refreshToken;
+                const queryClient = QueryProvider.queryClient;
+
+                if (!refreshToken) {
+                  return;
+                }
+
+                const loaderData = await queryClient
+                  .ensureQueryData({
+                    queryKey: ["me"],
+                    queryFn: async () => {
+                      const res = await fetch("/api/me", {
+                        headers: {
+                          Authorization: `Bearer ${accessToken}`,
+                        },
+                      });
+
+                      if (!res.ok) {
+                        throw new Error("API Failed");
+                      }
+
+                      return res.json();
+                    },
+                    staleTime: Infinity,
+                    gcTime: Infinity,
+                  })
+                  // If the API call fails (e.g., token expired),
+                  // we consider the user as guest and let them visit the guest pages,
+                  // DO NOT throw any error here
+                  // Throwing an error here would cause ErrorBoundary to capture it and render a fallback UI,
+                  // which is not the result we want.
+                  .catch(Boolean);
+
+                return loaderData;
+              },
             },
             {
-              Component: AuthGuard,
               children: [
                 {
-                  Component: DashLayout,
                   children: [
                     {
                       path: "overtime",
@@ -81,8 +101,44 @@ export const createRoutes = (): RouteObject[] => {
                       ],
                     },
                   ],
+                  Component: DashLayout,
                 },
               ],
+              Component: AuthGuard,
+              loader: async () => {
+                if (import.meta.env.MODE !== "STG") {
+                  return;
+                }
+
+                const accessToken = useLocalStore.getState().accessToken;
+                const refreshToken = useLocalStore.getState().refreshToken;
+                const queryClient = QueryProvider.queryClient;
+
+                if (!refreshToken) {
+                  throw redirect(localeService.resolvePathname("/login"));
+                }
+
+                const loaderData = await queryClient.ensureQueryData({
+                  queryKey: ["me"],
+                  queryFn: async () => {
+                    const res = await fetch("/api/me", {
+                      headers: {
+                        Authorization: `Bearer ${accessToken}`,
+                      },
+                    });
+
+                    if (!res.ok) {
+                      throw redirect(localeService.resolvePathname("/login"));
+                    }
+
+                    return res.json();
+                  },
+                  staleTime: Infinity,
+                  gcTime: Infinity,
+                });
+
+                return loaderData;
+              },
             },
             {
               Component: DashLayout,
@@ -170,8 +226,28 @@ export const createRoutes = (): RouteObject[] => {
               ],
             },
           ],
+          Component: LangRoute,
+          loader: async ({ params, request }) => {
+            const langInPath = params.lang!;
+            const fallbackLang = useLocalStore.getState().fallbackLang;
+            localeService.setLocale(fallbackLang);
+            localeService.setLocale(langInPath);
+            const lang = localeService.getLocale();
+
+            if (Object.is(lang, langInPath)) {
+              return;
+            }
+
+            const url = new URL(request.url);
+            url.pathname = localeService.resolvePathname(url.pathname);
+
+            throw redirect(url.href);
+          },
         },
       ],
+      Component: RootRoute,
+      ErrorBoundary: RootErrorBoundary,
+      HydrateFallback: RootHydrateFallback,
     },
   ];
 };

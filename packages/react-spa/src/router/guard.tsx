@@ -34,18 +34,19 @@ export const LangRoute = () => {
   const location = useLocation();
   const fallbackLang = useLocalStore((store) => store.fallbackLang);
 
+  const langInPath = params.lang!;
   localeService.setLocale(fallbackLang);
-  localeService.setLocale(params.lang || "");
-  const localePathname = localeService.resolvePathname(location.pathname);
+  localeService.setLocale(langInPath);
+  const locale = localeService.getLocale();
 
-  if (location.pathname === localePathname) {
+  if (Object.is(langInPath, locale)) {
     return <Outlet />;
   }
 
   return (
     <Navigate
       to={{
-        pathname: localePathname,
+        pathname: localeService.resolvePathname(location.pathname),
         search: location.search,
         hash: location.hash,
       }}
