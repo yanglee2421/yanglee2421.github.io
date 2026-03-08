@@ -5,7 +5,6 @@ import {
   Button,
   ButtonBase,
   Card,
-  CardActions,
   CardContent,
   CardHeader,
   Divider,
@@ -74,72 +73,6 @@ const columns = [
     cell: (info) => <Cell>{info.getValue()}</Cell>,
   }),
 ];
-
-const WebSocketCard = () => {
-  const [data, setData] = React.useState("");
-  const [input, setInput] = React.useState("");
-
-  const ref = React.useRef<WebSocket | null>(null);
-
-  React.useEffect(() => {
-    const controller = new AbortController();
-    const connect = () => {
-      ref.current = new WebSocket("ws://localhost:8080");
-
-      ref.current.addEventListener("open", () => {}, controller);
-      ref.current.addEventListener(
-        "close",
-        async () => {
-          connect();
-        },
-        controller,
-      );
-      ref.current.addEventListener(
-        "message",
-        (e) => {
-          setData(String(e.data));
-        },
-        controller,
-      );
-      ref.current.addEventListener("error", () => {}, controller);
-    };
-
-    connect();
-
-    return () => {
-      controller.abort();
-      ref.current?.close();
-      ref.current = null;
-    };
-  }, [setData]);
-
-  return (
-    <Card>
-      <CardHeader title="WebSocket" subheader={data || "Placeholder"} />
-      <CardContent>
-        <Grid container spacing={3}>
-          <Grid size={{ xs: 12, sm: 6 }}>
-            <TextField
-              value={input}
-              onChange={(e) => setInput(e.target.value)}
-              fullWidth
-            />
-          </Grid>
-        </Grid>
-      </CardContent>
-      <CardActions>
-        <Button
-          onClick={() => {
-            ref.current?.send(input);
-          }}
-        >
-          send
-        </Button>
-        <Button>reset</Button>
-      </CardActions>
-    </Card>
-  );
-};
 
 const Cell = (props: React.PropsWithChildren) => {
   const [editable, setEditable] = React.useState(false);
@@ -533,7 +466,6 @@ export const Component = () => {
           </Grid>
         </CardContent>
       </Card>
-      <WebSocketCard />
       <EditableTable />
       <StackContextDemo />
       <ActivityDemo />
