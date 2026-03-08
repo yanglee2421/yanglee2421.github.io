@@ -1,3 +1,4 @@
+import { useLocalStorage } from "@vueuse/core";
 import type { RouteRecordRaw } from "vue-router";
 import { localeService } from "../shared/locale";
 
@@ -8,6 +9,9 @@ export const routes: RouteRecordRaw[] = [
       {
         path: "",
         redirect: (to) => {
+          const storedLocaleRef = useLocalStorage("locale", "en");
+          localeService.setLocale(storedLocaleRef.value);
+          storedLocaleRef.value = localeService.getLocale();
           return localeService.resolvePathname(to.path);
         },
       },
@@ -16,9 +20,11 @@ export const routes: RouteRecordRaw[] = [
         component: () => import("./LangGuard.vue"),
         beforeEnter: (to, _, next) => {
           const lang = to.params.lang as string;
+          const storedLocaleRef = useLocalStorage("locale", "en");
+          localeService.setLocale(storedLocaleRef.value);
           localeService.setLocale(lang);
-
           const locale = localeService.getLocale();
+          storedLocaleRef.value = locale;
 
           if (locale === lang) {
             next();
