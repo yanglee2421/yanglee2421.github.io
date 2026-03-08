@@ -1,4 +1,4 @@
-import { DEFAULT_LANG, DEFAULT_MODE } from "@/lib/constants";
+import { DEFAULT_MODE } from "@/lib/constants";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -16,7 +16,7 @@ export type State = {
 const storeInitializer = (): State => {
   return {
     mode: DEFAULT_MODE,
-    fallbackLang: DEFAULT_LANG,
+    fallbackLang: "",
     netlifyToken: "",
     accessToken: "",
     refreshToken: "",
