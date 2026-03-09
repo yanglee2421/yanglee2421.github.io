@@ -59,6 +59,34 @@ export const createRoutes = (): RouteRecordRaw[] => {
               path: "about",
               component: () => import("../pages/AboutPage.vue"),
             },
+            {
+              path: "",
+              children: [
+                {
+                  path: "",
+                  children: [
+                    {
+                      name: "dashboard",
+                      path: "dashboard",
+                      component: () => import("@/pages/DashboardPage.vue"),
+                    },
+                  ],
+                  component: () => import("@/components/guard/AuthGuard.vue"),
+                },
+                {
+                  path: "",
+                  children: [
+                    {
+                      name: "login",
+                      path: "login",
+                      component: () => import("../pages/LoginPage.vue"),
+                    },
+                  ],
+                  component: () => import("@/components/guard/GuestGuard.vue"),
+                },
+              ],
+              component: () => import("@/components/guard/GuardProvider.vue"),
+            },
           ],
         },
       ],

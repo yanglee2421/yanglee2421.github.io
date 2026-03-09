@@ -11,12 +11,6 @@ export const onAnimationFrame = (cb: () => void) => {
   return () => cancelAnimationFrame(animate);
 };
 
-export const android_ripple = (color: string) => ({
-  color,
-  foreground: true,
-  borderless: false,
-});
-
 export class AnimateController {
   private readonly animate: () => void;
 
@@ -92,12 +86,6 @@ export const toStringTag = (target: unknown) => {
     .toLocaleLowerCase();
 };
 
-export const timeout = (time = 0) => {
-  return new Promise<void>((res) => {
-    setTimeout(res, time);
-  });
-};
-
 export const stringToColor = (string: string) => {
   let hash = 0;
 
@@ -138,36 +126,6 @@ export const json2CsvLink = <TRow extends NonNullable<unknown>>(
         Object.keys(rows[0]).join(","),
         ...rows.map(Object.values).join(","),
       ].join("\n"),
-  );
-};
-
-type TreeRow<TRow> = TRow & {
-  children: Array<TreeRow<TRow>>;
-};
-
-export const list2Tree = <
-  TRow extends {
-    id: number;
-    parentId: number;
-  },
->(
-  list: TRow[],
-) => {
-  const allIds = list.map((item) => item.id);
-  const clonedList = structuredClone(list);
-
-  clonedList.forEach((item, idx, arr) => {
-    void idx;
-
-    Reflect.set(
-      item,
-      "children",
-      arr.filter((el) => Object.is(el.parentId, item.id)),
-    );
-  });
-
-  return clonedList.filter(
-    (item): item is TreeRow<TRow> => !allIds.includes(item.parentId),
   );
 };
 

@@ -1,12 +1,16 @@
-import { fetchUserByFirebase, netlify } from "@/api/netlify";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { HOME_PATH, LOGIN_PATH } from "@/lib/constants";
 import { LocaleContext, useLocale } from "@/shared/LocaleContext";
-import { useQuery } from "@tanstack/react-query";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { Navigate, Outlet, useLocation, useParams } from "react-router";
-import { NavigateToHome, NavigateToLogin } from "./nav";
+import {
+  Navigate,
+  Outlet,
+  useLocation,
+  useParams,
+  useSearchParams,
+} from "react-router";
 
 const useSyncLanguage = () => {
   const locale = useLocale();
@@ -56,6 +60,43 @@ export const LangRoute = () => {
   );
 };
 
+export const NavigateToHome = () => {
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  return (
+    <Navigate
+      to={{
+        pathname: searchParams.get("redirect_uri") || HOME_PATH,
+        search: location.search,
+        hash: location.hash,
+      }}
+      state={location.state}
+      replace
+    />
+  );
+};
+
+export const NavigateToLogin = () => {
+  const location = useLocation();
+  const [searchParams] = useSearchParams();
+
+  const search = new URLSearchParams(searchParams);
+  search.set("redirect_uri", location.pathname);
+
+  return (
+    <Navigate
+      to={{
+        pathname: LOGIN_PATH,
+        search: search.toString(),
+        hash: location.hash,
+      }}
+      state={location.state}
+      replace
+    />
+  );
+};
+
 export const GuestGuard = () => {
   const user = useCurrentUser();
 
@@ -64,36 +105,6 @@ export const GuestGuard = () => {
 
 export const AuthGuard = () => {
   const user = useCurrentUser();
-  const netlifyToken = useLocalStore((s) => s.netlifyToken);
-  const setNetlifyToken = useLocalStore.setState;
-
-  const auth = useQuery({
-    ...fetchUserByFirebase({
-      data: {
-        firebaseId: user?.uid || "",
-        name: user?.displayName || "",
-      },
-    }),
-    enabled: !!user?.uid,
-  });
-
-  React.useInsertionEffect(() => {
-    if (!auth.data?.data.token) return;
-    setNetlifyToken({ netlifyToken: auth.data.data.token });
-  }, [auth.data?.data.token]);
-
-  React.useInsertionEffect(() => {
-    if (!netlifyToken) return;
-
-    const id = netlify.interceptors.request.use((config) => {
-      config.headers.setAuthorization(`Bearer ${netlifyToken}`, false);
-      return config;
-    });
-
-    return () => {
-      netlify.interceptors.request.eject(id);
-    };
-  }, [netlifyToken]);
 
   return user ? <Outlet /> : <NavigateToLogin />;
 };

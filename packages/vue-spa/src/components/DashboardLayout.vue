@@ -37,6 +37,26 @@
             </RouterLink>
           </li>
           <li
+            class="border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
+          >
+            <RouterLink
+              :to="{ name: 'dashboard' }"
+              class="text-indigo-500 hover:text-indigo-600 hover:underline [&.router-link-active]:text-indigo-700"
+            >
+              <span class="body2">Dashboard</span>
+            </RouterLink>
+          </li>
+          <li
+            class="border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
+          >
+            <RouterLink
+              :to="{ name: 'login' }"
+              class="text-indigo-500 hover:text-indigo-600 hover:underline [&.router-link-active]:text-indigo-700"
+            >
+              <span class="body2">Login</span>
+            </RouterLink>
+          </li>
+          <li
             v-for="value in 20"
             :key="value"
             class="border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
