@@ -39,27 +39,27 @@ export default defineConfig(() => {
       outDir: resolve(__dirname, "./dist"),
       emptyOutDir: true,
 
-      rollupOptions: {
+      rolldownOptions: {
         input: {
           index: resolve(__dirname, "./index.html"),
         },
         external: [],
         output: {
-          entryFileNames: "assets/[name]-[hash].js",
-          chunkFileNames: "assets/[name]-[hash].js",
+          entryFileNames: "[name]-[hash].js",
+          chunkFileNames: "[name]-[hash].js",
           assetFileNames: "assets/[name]-[hash][extname]",
         },
       },
 
       target: "baseline-widely-available",
-      minify: "esbuild",
+      minify: "oxc",
 
       // cssTarget: "baseline-widely-available",
-      cssMinify: "esbuild",
+      cssMinify: "lightningcss",
       cssCodeSplit: true,
       // lib: { cssFileName: "style.css" },
 
-      manifest: true,
+      manifest: false,
       sourcemap: false,
       chunkSizeWarningLimit: 500,
       assetsInlineLimit: 4096,

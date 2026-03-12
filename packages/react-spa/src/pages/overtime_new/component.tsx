@@ -1,6 +1,5 @@
 import { useOvertime } from "@/api/netlify";
 import { NumberField } from "@/components/form/number";
-import { zodResolver } from "@hookform/resolvers/zod";
 import { CloseOutlined, PlusOneOutlined } from "@mui/icons-material";
 import {
   Button,
@@ -17,7 +16,7 @@ import { DatePicker } from "@mui/x-date-pickers";
 import { useNotifications } from "@toolpad/core";
 import dayjs from "dayjs";
 import React from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "@tanstack/react-form";
 import { useNavigate, useParams } from "react-router";
 import { z } from "zod";
 
@@ -29,25 +28,49 @@ const schema = z.object({
 
 type FormValues = z.infer<typeof schema>;
 
-const useAddForm = () =>
-  useForm<FormValues>({
-    defaultValues: {
-      hours: 8,
-      date: new Date(),
-      reason: "",
-    },
-
-    resolver: zodResolver(schema),
-  });
-
 export const Component = () => {
   const formId = React.useId();
 
   const params = useParams();
   const navigate = useNavigate();
   const add = useOvertime();
-  const form = useAddForm();
   const snackbar = useNotifications();
+  const form = useForm({
+    defaultValues: {
+      hours: 8,
+      date: new Date(),
+      reason: "",
+    } as FormValues,
+    validators: {
+      onChange: schema,
+    },
+    onSubmit: async ({ value: data }) => {
+      await add.mutateAsync(
+        {
+          data: {
+            rows: [
+              {
+                hours: data.hours,
+                date: data.date.toISOString(),
+                reason: data.reason,
+              },
+            ],
+          },
+        },
+        {
+          onSuccess: () => {
+            form.reset();
+            handleNavigateToOvertime();
+          },
+          onError: () => {
+            snackbar.show("Some error", {
+              severity: "error",
+            });
+          },
+        },
+      );
+    },
+  });
 
   const handleNavigateToOvertime = () => {
     navigate(`/${params.lang}/overtime`);
@@ -66,110 +89,97 @@ export const Component = () => {
       <CardContent>
         <form
           id={formId}
-          onSubmit={form.handleSubmit((data) => {
-            add.mutate(
-              {
-                data: {
-                  rows: [
-                    {
-                      hours: data.hours,
-                      date: data.date.toISOString(),
-                      reason: data.reason,
-                    },
-                  ],
-                },
-              },
-              {
-                onSuccess: () => {
-                  form.reset();
-                  handleNavigateToOvertime();
-                },
-                onError: () => {
-                  snackbar.show("Some error", {
-                    severity: "error",
-                  });
-                },
-              },
-            );
-          }, console.error)}
+          onSubmit={(e) => {
+            e.preventDefault();
+            form.handleSubmit();
+          }}
           onReset={() => form.reset()}
         >
           <Grid container spacing={3} sx={{ mt: 2 }}>
             <Grid size={{ xs: 12 }}>
-              <Controller
-                control={form.control}
-                name="date"
-                render={({ field, fieldState }) => (
+              <form.Field name="date">
+                {(field) => (
                   <DatePicker
-                    value={dayjs(field.value)}
+                    value={dayjs(field.state.value)}
                     onChange={(e) => {
-                      field.onChange(e?.toDate());
+                      const date = e?.toDate();
+                      if (!date) return;
+
+                      field.handleChange(date);
                     }}
                     slotProps={{
                       textField: {
-                        onBlur: field.onBlur,
-                        error: !!fieldState.error,
-                        helperText: fieldState.error?.message,
+                        onBlur: field.handleBlur,
+                        error: !!field.state.meta.errors.length,
+                        helperText: field.state.meta.errors.at(0)?.message,
                         fullWidth: true,
                       },
                     }}
                     label="Date"
                   />
                 )}
-              />
+              </form.Field>
             </Grid>
             <Grid size={{ xs: 12 }}>
-              <Controller
-                control={form.control}
-                name="hours"
-                render={({ field, fieldState }) => (
+              <form.Field name="hours">
+                {(field) => (
                   <NumberField
-                    field={field}
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
+                    field={{
+                      value: field.state.value,
+                      onChange: field.handleChange,
+                      onBlur: field.handleBlur,
+                    }}
+                    error={!!field.state.meta.errors.length}
+                    helperText={field.state.meta.errors.at(0)?.message}
                     fullWidth
                     label="Hours"
                   />
                 )}
-              />
+              </form.Field>
             </Grid>
             <Grid size={{ xs: 12 }}>
-              <Controller
-                control={form.control}
-                name="reason"
-                render={({ field, fieldState }) => (
+              <form.Field name="reason">
+                {(field) => (
                   <TextField
-                    value={field.value}
-                    onChange={(e) => field.onChange(e.target.value)}
-                    onBlur={field.onBlur}
-                    error={!!fieldState.error}
-                    helperText={fieldState.error?.message}
+                    value={field.state.value}
+                    onChange={(e) => field.handleChange(e.target.value)}
+                    onBlur={field.handleBlur}
+                    error={!!field.state.meta.errors.length}
+                    helperText={field.state.meta.errors.at(0)?.message}
                     fullWidth
                     label="Reason"
                     multiline
                     minRows={2}
                   />
                 )}
-              />
+              </form.Field>
             </Grid>
           </Grid>
         </form>
       </CardContent>
       <CardActions>
-        <Button
-          form={formId}
-          startIcon={
-            add.isPending ? (
-              <CircularProgress size={16} color="inherit" />
-            ) : (
-              <PlusOneOutlined />
-            )
-          }
-          disabled={add.isPending}
-          type="submit"
+        <form.Subscribe
+          selector={(state) => [state.canSubmit, state.isSubmitting]}
         >
-          add
-        </Button>
+          {([canSubmit, isSubmitting]) => {
+            return (
+              <Button
+                form={formId}
+                startIcon={
+                  isSubmitting ? (
+                    <CircularProgress size={16} color="inherit" />
+                  ) : (
+                    <PlusOneOutlined />
+                  )
+                }
+                disabled={canSubmit}
+                type="submit"
+              >
+                add
+              </Button>
+            );
+          }}
+        </form.Subscribe>
         <Button form={formId} type="reset">
           reset
         </Button>
