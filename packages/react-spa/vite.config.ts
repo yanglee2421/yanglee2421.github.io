@@ -1,22 +1,23 @@
+import babel from "@rolldown/plugin-babel";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-const ReactCompilerConfig = {
-  // '17' | '18' | '19'
-  target: "19",
-};
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
   return {
     plugins: [
-      react({
-        babel: {
-          plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
-        },
+      react(),
+      babel({
+        presets: [
+          reactCompilerPreset({
+            // '17' | '18' | '19'
+            target: "19",
+          }),
+        ],
       }),
     ],
     resolve: {
