@@ -37,12 +37,14 @@
     "preview": "vite preview"
   },
   "dependencies": {
+    "@esmjs/geo": "^1.0.0",
     "@tanstack/vue-form": "^1.28.5",
     "@tanstack/vue-query": "^5.92.9",
     "@tanstack/vue-query-devtools": "^6.1.5",
     "@vueuse/core": "^14.2.1",
     "@yotulee/run": "jsr:^0.0.15",
     "axios": "^1.13.6",
+    "echarts": "^6.0.0",
     "pinia": "^3.0.4",
     "vue": "^3.5.30",
     "vue-router": "^5.0.3",
