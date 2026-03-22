@@ -141,7 +141,6 @@ export const createRoutes = (): RouteObject[] => {
               },
             },
             {
-              Component: DashLayout,
               children: [
                 {
                   path: "dashboard",
@@ -207,9 +206,9 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/qrcode/component"),
                 },
               ],
+              Component: DashLayout,
             },
             {
-              Component: AuthLayout,
               children: [
                 {
                   path: "scrollbar",
@@ -224,6 +223,7 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/electric/component"),
                 },
               ],
+              Component: AuthLayout,
             },
           ],
           Component: LangRoute,
