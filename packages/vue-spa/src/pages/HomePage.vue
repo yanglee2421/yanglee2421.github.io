@@ -1,28 +1,106 @@
 <script lang="ts" setup>
+import { useQuery } from "@tanstack/vue-query";
 import * as echarts from "echarts";
 import * as Vue from "vue";
 
 const container = Vue.ref<HTMLDivElement | null>(null);
 
-Vue.onMounted(async () => {
-  const containerElement = container.value;
+const { data, isPending, isError, isRefetching, isSuccess, error } = useQuery({
+  queryKey: ["china-geojson"],
+  queryFn: async () => {
+    const response = await fetch(
+      "https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000_full_city",
+    );
+    if (!response.ok) {
+      throw new Error("Failed to fetch China GeoJSON");
+    }
+    return response.json() as Promise<ChinaGeoJSON>;
+  },
+});
+
+interface ChinaGeoJSON {
+  type: "FeatureCollection";
+  features: CityFeature[];
+}
+
+interface CityFeature {
+  type: "Feature";
+  properties: {
+    name: string;
+    center: [number, number];
+  };
+  geometry: {
+    type: "MultiPolygon";
+    coordinates: [];
+  };
+}
+
+interface GraphDataItem {
+  name: string;
+  value: [number, number];
+}
+
+Vue.watchPostEffect(async () => {
+  const containerElement = Vue.toValue(container);
+  const china = Vue.toValue(data);
+  const isLoading = Vue.toValue(isPending);
+  const isFailed = Vue.toValue(isError);
+  const refetching = Vue.toValue(isRefetching);
   if (!containerElement) return;
 
-  const china = await fetch(
-    "https://geo.datav.aliyun.com/areas_v3/bound/geojson?code=100000_full_city",
-  ).then((res) => res.json());
-
-  // 提取城市坐标映射
-  const cityGeoMap: Record<string, number[]> = {};
-  china.features.forEach((feature: any) => {
-    if (feature.properties && feature.properties.center) {
-      cityGeoMap[feature.properties.name] = feature.properties.center;
-    }
+  const myChart = echarts.init(containerElement);
+  const observer = new ResizeObserver(() => {
+    myChart.resize();
   });
-  console.log("所有城市坐标映射:", cityGeoMap);
+
+  observer.observe(containerElement);
+
+  if (refetching) {
+    myChart.showLoading();
+  } else {
+    myChart.hideLoading();
+  }
+
+  if (isLoading) {
+    return;
+  }
+
+  if (isFailed) {
+    // Do Error Handling Here
+    return;
+  }
+
+  if (!china) {
+    // Do Empty State Handling Here
+    return;
+  }
 
   echarts.registerMap("china", china);
-  const myChart = echarts.init(containerElement);
+  // 提取城市坐标映射
+  const cityGeoMap = china.features.reduce((map, feature) => {
+    map.set(feature.properties.name, feature.properties.center);
+    return map;
+  }, new Map<string, [number, number]>());
+  console.log("所有城市坐标映射:", cityGeoMap);
+
+  const graphaData = [
+    {
+      name: "武汉市",
+      value: cityGeoMap.get("武汉市"),
+    },
+    {
+      name: "广州市",
+      value: cityGeoMap.get("广州市"),
+    },
+  ].filter((item): item is GraphDataItem => {
+    const itemValue = item.value;
+
+    if (!Array.isArray(itemValue)) {
+      return false;
+    }
+
+    return itemValue.length === 2;
+  });
 
   myChart.setOption({
     geo: {
@@ -77,25 +155,15 @@ Vue.onMounted(async () => {
         map: "china",
         geoIndex: 0,
         data: [
-          {
-            name: "包头市",
-            value: 423,
-          },
-          {
-            name: "武汉市",
-            value: 256,
-          },
-          { name: "广州市", value: 489 },
+          { name: "包头市", value: 500 },
+          { name: "武汉市", value: 500 },
+          { name: "广州市", value: 500 },
         ],
       },
       {
         type: "graph",
         coordinateSystem: "geo",
-        data: [
-          { name: "包头市", value: cityGeoMap["包头市"] },
-          { name: "武汉市", value: cityGeoMap["武汉市"] },
-          { name: "广州市", value: cityGeoMap["广州市"] },
-        ],
+        data: graphaData,
         edges: [
           {
             source: "包头市",
@@ -119,13 +187,22 @@ Vue.onMounted(async () => {
       },
     ],
   });
-
-  myChart.resize();
 });
 </script>
 
 <template>
-  <div ref="container" class="fixed inset-0 h-dvh w-dvw"></div>
+  <div v-if="isPending" class="fixed inset-0 z-20 grid place-items-center">
+    <h1 class="animate-bounce">Loading...</h1>
+  </div>
+  <div v-else-if="isError" class="fixed inset-0 z-20 grid place-items-center">
+    <h1>Error Occurred</h1>
+    <p>{{ error?.message }}</p>
+  </div>
+  <div
+    ref="container"
+    :aria-hidden="!isSuccess"
+    class="fixed inset-0 h-dvh w-dvw aria-hidden:hidden"
+  ></div>
 </template>
 
 <style scoped></style>

@@ -8,7 +8,7 @@ const handleLogout = useLogout();
 <template>
   <DashboardLayout>
     <div>
-      <button @click="handleLogout">LOGOUT</button>
+      <button @click="handleLogout" class="btn-error btn">LOGOUT</button>
     </div>
   </DashboardLayout>
 </template>

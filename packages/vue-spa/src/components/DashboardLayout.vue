@@ -1,24 +1,20 @@
 <script lang="ts" setup></script>
 
 <template>
-  <div
-    class="TeamsDark min-h-screen bg-(--colorNeutralBackground1) text-(--colorNeutralForeground1)"
-  >
+  <div class="min-h-screen">
     <header
-      class="fixed inset-x-0 inset-bs-0 z-20 box-border flex h-12 items-center justify-start border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
+      class="fixed inset-x-0 inset-bs-0 z-20 box-border flex h-12 items-center justify-start border-0 border-b border-solid p-3"
     >
       <h1 class="title3">header</h1>
     </header>
     <aside
-      class="fixed inset-s-0 inset-bs-0 z-10 h-dvh w-full bg-(--colorNeutralBackground1) pbs-12 md:block md:w-64"
+      class="fixed inset-s-0 inset-bs-0 z-10 h-dvh w-full pbs-12 md:block md:w-64"
     >
       <nav
-        class="box-border h-full overflow-auto border-0 border-e border-solid border-(--colorNeutralStroke1)"
+        class="box-border h-full overflow-auto border-0 border-e border-solid"
       >
         <ul class="aside-nav__list h-200">
-          <li
-            class="border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
-          >
+          <li class="border-0 border-b border-solid p-3">
             <RouterLink
               :to="{ name: 'home' }"
               class="text-indigo-500 hover:text-indigo-600 hover:underline [&.router-link-active]:text-indigo-700"
@@ -26,9 +22,7 @@
               <span class="body2">Home</span>
             </RouterLink>
           </li>
-          <li
-            class="border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
-          >
+          <li class="border-0 border-b border-solid p-3">
             <RouterLink
               :to="{ name: 'about' }"
               class="text-indigo-500 hover:text-indigo-600 hover:underline [&.router-link-active]:text-indigo-700"
@@ -36,9 +30,7 @@
               <span class="body2">About</span>
             </RouterLink>
           </li>
-          <li
-            class="border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
-          >
+          <li class="border-0 border-b border-solid p-3">
             <RouterLink
               :to="{ name: 'dashboard' }"
               class="text-indigo-500 hover:text-indigo-600 hover:underline [&.router-link-active]:text-indigo-700"
@@ -46,9 +38,7 @@
               <span class="body2">Dashboard</span>
             </RouterLink>
           </li>
-          <li
-            class="border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
-          >
+          <li class="border-0 border-b border-solid p-3">
             <RouterLink
               :to="{ name: 'login' }"
               class="text-indigo-500 hover:text-indigo-600 hover:underline [&.router-link-active]:text-indigo-700"
@@ -59,7 +49,7 @@
           <li
             v-for="value in 20"
             :key="value"
-            class="border-0 border-b border-solid border-(--colorNeutralStroke1) p-3"
+            class="border-0 border-b border-solid p-3"
           >
             <span class="body2">{{ value }}</span>
           </li>

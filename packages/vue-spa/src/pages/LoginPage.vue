@@ -8,7 +8,7 @@ const handleLogin = useLogin();
 <template>
   <DashboardLayout>
     <div>
-      <button @click="handleLogin">LOGIN</button>
+      <button @click="handleLogin" class="btn-primary btn">LOGIN</button>
     </div>
   </DashboardLayout>
 </template>

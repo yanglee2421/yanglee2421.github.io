@@ -1,6 +1,5 @@
 <script lang="ts" setup>
 import DashboardLayout from "@/components/DashboardLayout.vue";
-import FluentInput from "@/components/form/FluentInput.vue";
 import * as Vue from "vue";
 
 const msg = Vue.ref("hello about");
@@ -9,7 +8,8 @@ const msg = Vue.ref("hello about");
 <template>
   <DashboardLayout>
     <h1>about</h1>
-    <FluentInput v-model="msg" />
+    <input class="input" v-model="msg" />
+    <button class="btn btn-primary">click me</button>
   </DashboardLayout>
 </template>
 

@@ -1,21 +1,19 @@
 <script lang="ts" setup>
 import { useUser } from "@/shared/auth";
-import { toValue, watchEffect } from "vue";
-import { RouterView, useRouter } from "vue-router";
+import * as Vue from "vue";
+import { RouterView } from "vue-router";
+import NavigateToLogin from "./NavigateToLogin.vue";
 
-const router = useRouter();
 const user = useUser();
 
-watchEffect(() => {
-  const userValue = toValue(user);
-  if (userValue) return;
-
-  router.push({ name: "login" });
+const shouldRedirect = Vue.computed(() => {
+  return !Vue.toValue(user);
 });
 </script>
 
 <template>
-  <RouterView></RouterView>
+  <NavigateToLogin v-if="shouldRedirect" />
+  <RouterView v-else></RouterView>
 </template>
 
 <style scoped></style>

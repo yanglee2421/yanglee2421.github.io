@@ -22,27 +22,6 @@ export const createRoutes = (): RouteRecordRaw[] => {
         },
         {
           path: ":lang",
-          component: () => import("./LangGuard.vue"),
-          beforeEnter: (to, _, next) => {
-            const lang = to.params.lang as string;
-            const storedLocaleRef = useLocalStorage(
-              "locale",
-              localeService.getLocale(),
-            );
-            localeService.setLocale(storedLocaleRef.value);
-            localeService.setLocale(lang);
-            const locale = localeService.getLocale();
-            storedLocaleRef.value = locale;
-
-            if (locale === lang) {
-              next();
-              return;
-            }
-
-            next({
-              path: localeService.resolvePathname(to.path),
-            });
-          },
           children: [
             {
               name: "not-found",
@@ -88,6 +67,26 @@ export const createRoutes = (): RouteRecordRaw[] => {
               component: () => import("@/components/guard/GuardProvider.vue"),
             },
           ],
+          component: () => import("./LangGuard.vue"),
+          beforeEnter: (to, _) => {
+            const lang = to.params.lang as string;
+            const storedLocaleRef = useLocalStorage(
+              "locale",
+              localeService.getLocale(),
+            );
+            localeService.setLocale(storedLocaleRef.value);
+            localeService.setLocale(lang);
+            const locale = localeService.getLocale();
+            storedLocaleRef.value = locale;
+
+            if (locale === lang) {
+              return true;
+            }
+
+            return {
+              path: localeService.resolvePathname(to.path),
+            };
+          },
         },
       ],
     },

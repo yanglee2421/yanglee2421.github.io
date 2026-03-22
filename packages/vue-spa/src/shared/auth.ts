@@ -1,60 +1,73 @@
-import { queryOptions, useQuery, useQueryClient } from "@tanstack/vue-query";
+import {
+  keepPreviousData,
+  queryOptions,
+  useQuery,
+  useQueryClient,
+} from "@tanstack/vue-query";
 import { useLocalStorage } from "@vueuse/core";
-import { computed, toValue, type Ref } from "vue";
+import * as Vue from "vue";
 import { queryClient } from "./query";
 
-export const pageRoleSymbol = Symbol("pageRole");
+interface User {
+  id: number;
+}
 
-export const fetchAuthStatus = (enabled: Ref<boolean>) => {
+export const fetchAuthStatus = (enabled: Vue.Ref<boolean>) => {
   return queryOptions({
     queryKey: ["authStatus"],
-    queryFn: async () => {
+    queryFn: async (): Promise<User> => {
       await new Promise((resolve) => {
         setTimeout(() => {
           resolve(true);
         }, 1000);
       });
 
-      return true;
+      return { id: 1 };
     },
-    staleTime: Infinity,
-    gcTime: Infinity,
+    placeholderData: keepPreviousData,
     enabled,
+    // staleTime: Infinity,
+    // gcTime: Infinity,
   });
 };
 
 export const useAuthQuery = () => {
   const refreshTokenRef = useRefreshToken();
-  return useQuery(fetchAuthStatus(computed(() => !!toValue(refreshTokenRef))));
+  const enabled = Vue.computed(() => !!Vue.toValue(refreshTokenRef));
+
+  return useQuery(fetchAuthStatus(enabled));
+};
+
+const USER_SYMBOL = Symbol("user");
+
+export const useProvideUser = (user: Vue.Ref<User | undefined>) => {
+  Vue.provide(USER_SYMBOL, user);
 };
 
 export const useUser = () => {
-  const { status, data } = useAuthQuery();
-  const refreshToken = useRefreshToken();
+  const user = Vue.inject<Vue.Ref<User | undefined>>(USER_SYMBOL);
+  const refreshTokenRef = useRefreshToken();
 
-  const user = computed(() => {
-    const dataValue = toValue(data);
-    const statusValue = toValue(status);
-    const refreshTokenValue = toValue(refreshToken);
+  if (typeof user === "undefined") {
+    throw new Error("useUser must be used within a provider");
+  }
 
-    if (!refreshTokenValue) return null;
+  return Vue.computed(() => {
+    const rt = Vue.toValue(refreshTokenRef);
+    const u = Vue.toValue(user);
 
-    switch (statusValue) {
-      case "pending":
-      case "error":
-        return null;
-      case "success":
-        return dataValue ?? null;
+    if (!rt) {
+      return null;
     }
-  });
 
-  return user;
+    return u || null;
+  });
 };
 
 export const ensureAuth = () => {
   const refreshTokenRef = useRefreshToken();
   return queryClient.ensureQueryData(
-    fetchAuthStatus(computed(() => !!toValue(refreshTokenRef))),
+    fetchAuthStatus(Vue.computed(() => !!Vue.toValue(refreshTokenRef))),
   );
 };
 
@@ -67,7 +80,7 @@ export const useLogin = () => {
   const refreshToken = useRefreshToken();
 
   return async () => {
-    queryClient.setQueryData(["authStatus"], true);
+    queryClient.setQueryData(["authStatus"], { id: 1 });
 
     refreshToken.value = "xxxx";
   };

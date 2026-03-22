@@ -1,13 +1,21 @@
 <script lang="ts" setup>
-import { useAuthQuery, useRefreshToken } from "@/shared/auth";
-import { computed, toValue } from "vue";
+import { useAuthQuery, useProvideUser, useRefreshToken } from "@/shared/auth";
+import * as Vue from "vue";
 import { RouterView } from "vue-router";
 
-const { isPending } = useAuthQuery();
+const { isPending, data } = useAuthQuery();
 const refreshToken = useRefreshToken();
+useProvideUser(data);
 
-const showLoading = computed(() => {
-  return toValue(refreshToken) && toValue(isPending);
+const showLoading = Vue.computed(() => {
+  const rt = Vue.toValue(refreshToken);
+  const pending = Vue.toValue(isPending);
+
+  if (!rt) {
+    return false;
+  }
+
+  return pending;
 });
 </script>
 
@@ -15,5 +23,3 @@ const showLoading = computed(() => {
   <div v-if="showLoading">Loading...</div>
   <RouterView v-else></RouterView>
 </template>
-
-<style scoped></style>
