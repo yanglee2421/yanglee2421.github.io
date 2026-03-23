@@ -16,6 +16,8 @@ const { data, isPending, isError, isRefetching, isSuccess, error } = useQuery({
     }
     return response.json() as Promise<ChinaGeoJSON>;
   },
+  refetchOnReconnect: false,
+  refetchOnWindowFocus: false,
 });
 
 interface ChinaGeoJSON {
@@ -83,24 +85,73 @@ Vue.watchPostEffect(async () => {
   }, new Map<string, [number, number]>());
   console.log("所有城市坐标映射:", cityGeoMap);
 
-  const graphaData = [
-    {
-      name: "武汉市",
-      value: cityGeoMap.get("武汉市"),
-    },
-    {
-      name: "广州市",
-      value: cityGeoMap.get("广州市"),
-    },
-  ].filter((item): item is GraphDataItem => {
-    const itemValue = item.value;
+  const cities = [
+    "武汉市",
+    "广州市",
+    "湛江市",
+    "柳州市",
+    "怀化市",
+    "贵阳市",
+    "成都市",
+    "杭州市",
+    "南京市",
+    "徐州市",
+    "济南市",
+    "潍坊市",
+    "淮北市",
+    "淮南市",
+  ];
 
-    if (!Array.isArray(itemValue)) {
-      return false;
-    }
+  const mapData = cities
+    .map((city) => {
+      if (cityGeoMap.has(city)) {
+        return { name: city, value: 500 };
+      }
+      return null;
+    })
+    .filter((item): item is { name: string; value: number } => item !== null);
 
-    return itemValue.length === 2;
-  });
+  const graphaData = cities
+    .map((city) => {
+      if (cityGeoMap.has(city)) {
+        return {
+          name: city,
+          value: cityGeoMap.get(city),
+        };
+      }
+
+      return null;
+    })
+    .filter((item): item is GraphDataItem => {
+      if (!item) {
+        return false;
+      }
+
+      const itemValue = item.value;
+
+      if (!Array.isArray(itemValue)) {
+        return false;
+      }
+
+      return itemValue.length === 2;
+    });
+
+  const edges = cities
+    .map((city, index) => {
+      const nextCity = cities.at(index + 1);
+
+      if (!nextCity) {
+        return null;
+      }
+
+      return {
+        source: city,
+        target: nextCity,
+      };
+    })
+    .filter(
+      (item): item is { source: string; target: string } => item !== null,
+    );
 
   myChart.setOption({
     geo: {
@@ -154,26 +205,13 @@ Vue.watchPostEffect(async () => {
         type: "map",
         map: "china",
         geoIndex: 0,
-        data: [
-          { name: "包头市", value: 500 },
-          { name: "武汉市", value: 500 },
-          { name: "广州市", value: 500 },
-        ],
+        data: mapData,
       },
       {
         type: "graph",
         coordinateSystem: "geo",
         data: graphaData,
-        edges: [
-          {
-            source: "包头市",
-            target: "武汉市",
-          },
-          {
-            source: "武汉市",
-            target: "广州市",
-          },
-        ],
+        edges,
         edgeSymbol: ["none", "arrow"],
         edgeSymbolSize: 5,
         lineStyle: {
