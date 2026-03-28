@@ -1,0 +1,13 @@
+.article {
+  display: none;
+}
+
+@media print {
+  .article {
+    display: block;
+  }
+}
+
+.section {
+  break-after: page;
+}

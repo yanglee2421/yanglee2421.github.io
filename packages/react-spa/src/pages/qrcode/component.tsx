@@ -4,10 +4,10 @@ import { type ReadResult } from "zxing-wasm";
 import ZXingWorker from "./zxing.worker?worker";
 
 class QRCodeScanner {
-  #listeners: Set<(_: ReadResult[]) => void> = new Set();
-  #running = false;
-  #worker: InstanceType<typeof ZXingWorker> | null = null;
-  #controller: AbortController | null = null;
+  listeners: Set<(_: ReadResult[]) => void> = new Set();
+  running = false;
+  worker: InstanceType<typeof ZXingWorker> | null = null;
+  controller: AbortController | null = null;
   video: HTMLVideoElement;
 
   constructor(video: HTMLVideoElement) {
@@ -15,46 +15,46 @@ class QRCodeScanner {
   }
 
   on(fn: (_: ReadResult[]) => void) {
-    this.#listeners.add(fn);
+    this.listeners.add(fn);
 
     return () => {
       this.off(fn);
     };
   }
   off(fn: (_: ReadResult[]) => void) {
-    this.#listeners.delete(fn);
+    this.listeners.delete(fn);
   }
   start() {
-    this.#running = true;
-    this.#worker = new ZXingWorker();
-    this.#controller = new AbortController();
+    this.running = true;
+    this.worker = new ZXingWorker();
+    this.controller = new AbortController();
 
-    this.#worker.addEventListener(
+    this.worker.addEventListener(
       "message",
       (event) => {
-        this.#listeners.forEach((listener) => {
+        this.listeners.forEach((listener) => {
           listener(event.data);
         });
       },
-      this.#controller,
+      this.controller,
     );
 
     this.loop();
   }
   stop() {
-    this.#listeners.clear();
-    this.#running = false;
-    this.#worker?.terminate();
-    this.#worker = null;
-    this.#controller?.abort();
-    this.#controller = null;
+    this.listeners.clear();
+    this.running = false;
+    this.worker?.terminate();
+    this.worker = null;
+    this.controller?.abort();
+    this.controller = null;
   }
   async loop() {
-    if (!this.#running) return;
+    if (!this.running) return;
 
     try {
       const blob = await window.createImageBitmap(this.video);
-      this.#worker?.postMessage(blob, [blob]);
+      this.worker?.postMessage(blob, [blob]);
     } finally {
       requestAnimationFrame(this.loop.bind(this));
     }

@@ -1,4 +1,5 @@
 import { AuthLayout } from "@/components/layout/auth";
+import { BlankLayout } from "@/components/layout/blank";
 import { QueryProvider } from "@/components/query";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { localeService } from "@/shared/LocaleContext";
@@ -205,6 +206,10 @@ export const createRoutes = (): RouteObject[] => {
                   path: "qrcode",
                   lazy: () => import("@/pages/qrcode/component"),
                 },
+                {
+                  path: "print",
+                  lazy: () => import("@/pages/print/component"),
+                },
               ],
               Component: DashLayout,
             },
@@ -224,6 +229,10 @@ export const createRoutes = (): RouteObject[] => {
                 },
               ],
               Component: AuthLayout,
+            },
+            {
+              children: [],
+              Component: BlankLayout,
             },
           ],
           Component: LangRoute,

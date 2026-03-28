@@ -1,3 +1,4 @@
+import "@/assets/style.css";
 import "@/locales/i18n";
 import "@fontsource/roboto/300.css";
 import "@fontsource/roboto/400.css";
