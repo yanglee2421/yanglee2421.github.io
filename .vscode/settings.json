@@ -11,5 +11,6 @@
   "workbench.iconTheme": "vscode-icons",
   "workbench.colorTheme": "Dark Modern",
 
-  "css.lint.unknownAtRules": "ignore"
+  "css.lint.unknownAtRules": "ignore",
+  "js/ts.experimental.useTsgo": true
 }
