@@ -10,6 +10,9 @@ import {
   CalendarMonthOutlined,
   DashboardOutlined,
   DragIndicator,
+  Grid3x3,
+  Grid4x4,
+  GridOn,
   HomeOutlined,
   ListOutlined,
   MessageOutlined,
@@ -102,10 +105,26 @@ const createNavition = (lang: string): Navigation => [
     title: "QR Code",
     icon: <QrCodeScanner />,
   },
-    {
-    segment: calculateSegment(lang, "print"),
+  {
     title: "Print",
     icon: <Print />,
+    children: [
+      {
+        segment: calculateSegment(lang, "print", "501"),
+        icon: <Grid3x3 />,
+        title: "日常校验",
+      },
+      {
+        segment: calculateSegment(lang, "print", "502"),
+        icon: <Grid4x4 />,
+        title: "季度校验",
+      },
+      {
+        segment: calculateSegment(lang, "print", "503"),
+        icon: <GridOn />,
+        title: "年度校验",
+      },
+    ],
   },
   { kind: "divider" },
   { kind: "header", title: "Custom layout" },

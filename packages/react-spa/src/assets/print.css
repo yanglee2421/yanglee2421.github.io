@@ -10,6 +10,8 @@
   padding: 14mm;
   margin: 0;
 
+  border:1px dashed red;
+
   break-after: page;
 
   text-align: center;

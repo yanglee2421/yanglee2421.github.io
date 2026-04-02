@@ -208,7 +208,20 @@ export const createRoutes = (): RouteObject[] => {
                 },
                 {
                   path: "print",
-                  lazy: () => import("@/pages/print/component"),
+                  children: [
+                    {
+                      path: "501",
+                      lazy: () => import("@/pages/print/component"),
+                    },
+                    {
+                      path: "502",
+                      lazy: () => import("@/pages/502/component"),
+                    },
+                    {
+                      path: "503",
+                      lazy: () => import("@/pages/503/component"),
+                    },
+                  ],
                 },
               ],
               Component: DashLayout,

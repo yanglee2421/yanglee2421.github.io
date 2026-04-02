@@ -2,7 +2,6 @@ import { Print } from "@mui/icons-material";
 import { Button, styled } from "@mui/material";
 import dayjs from "dayjs";
 import { createPortal } from "react-dom";
-import "./print.css";
 
 const StyledCol = styled("col")({});
 const StyledP = styled("p")({
