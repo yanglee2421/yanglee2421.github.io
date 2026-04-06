@@ -40,7 +40,6 @@
     "@tanstack/vue-form": "^1.28.5",
     "@tanstack/vue-query": "^5.92.9",
     "@tanstack/vue-query-devtools": "^6.1.5",
-    "@vue/tsconfig": "^0.9.0",
     "@vueuse/core": "^14.2.1",
     "@yotulee/run": "jsr:^0.0.15",
     "axios": "^1.13.6",
@@ -50,13 +49,5 @@
     "vue": "^3.5.30",
     "vue-router": "^5.0.3",
     "zod": "^4.3.6"
-  },
-  "devDependencies": {
-    "@tailwindcss/vite": "^4.2.1",
-    "@types/node": "^25.5.0",
-    "@vitejs/plugin-vue": "^6.0.4",
-    "tailwindcss": "^4.2.1",
-    "vite": "^8.0.0",
-    "vue-tsc": "^3.2.5"
   }
 }

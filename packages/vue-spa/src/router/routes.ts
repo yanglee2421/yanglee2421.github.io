@@ -39,6 +39,11 @@ export const createRoutes = (): RouteRecordRaw[] => {
               component: () => import("../pages/AboutPage.vue"),
             },
             {
+              name: "map",
+              path: "map",
+              component: () => import("../pages/MapPage.vue"),
+            },
+            {
               path: "",
               children: [
                 {
