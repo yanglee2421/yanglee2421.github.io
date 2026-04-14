@@ -1,15 +1,14 @@
-import React from "react";
+import type { DraggableSyntheticListeners } from "@dnd-kit/core";
+import type { Transform } from "@dnd-kit/utilities";
 import classNames from "classnames";
-import { devLog } from "@/lib/utils";
-import styles from "./Draggable.module.css";
+import React from "react";
 import { Handle } from "../Item";
 import {
   draggable,
   draggableHorizontal,
   draggableVertical,
 } from "./draggable-svg";
-import type { DraggableSyntheticListeners } from "@dnd-kit/core";
-import type { Transform } from "@dnd-kit/utilities";
+import styles from "./Draggable.module.css";
 
 export const Axis = Object.freeze({
   All: "all",
@@ -85,5 +84,3 @@ export const Draggable = ({
     </div>
   );
 };
-
-devLog(false, styles);

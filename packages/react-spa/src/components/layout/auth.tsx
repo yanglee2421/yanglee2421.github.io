@@ -1,7 +1,13 @@
 import { Logo as AppLogo } from "@/components/Logo";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
 import * as consts from "@/lib/constants";
-import { NavMenu } from "@/router/nav";
-import { CloseOutlined, GitHub, MenuOutlined } from "@mui/icons-material";
+import {
+  ChevronRightOutlined,
+  CloseOutlined,
+  DashboardOutlined,
+  GitHub,
+  MenuOutlined,
+} from "@mui/icons-material";
 import {
   alpha,
   AppBar,
@@ -10,13 +16,76 @@ import {
   Link as MuiLink,
   styled,
   Toolbar,
+  Typography,
 } from "@mui/material";
 import React from "react";
-import { Link, Outlet, useLocation } from "react-router";
+import { Link, NavLink, Outlet, useLocation, useParams } from "react-router";
 import { ScrollView } from "../scrollbar";
 import { LangToggle } from "../shared/LangToggle";
 import { ModeToggle } from "../shared/ModeToggle";
 import { UserDropdown } from "../shared/UserDropdonw";
+
+const LinkWrapper = styled("div")(({ theme }) => ({
+  display: "flex",
+  flexDirection: "column",
+  gap: theme.spacing(1),
+
+  "& a": {
+    textDecoration: "none",
+    color: theme.palette.text.primary,
+
+    display: "flex",
+    gap: theme.spacing(1.5),
+    alignItem: "center",
+
+    padding: theme.spacing(2.5),
+
+    [theme.breakpoints.up("sm")]: {
+      paddingInline: theme.spacing(1.5),
+      paddingBlock: theme.spacing(1.5),
+    },
+  },
+  "& a:hover": {
+    backgroundColor: theme.palette.action.hover,
+  },
+  "& a[aria-current=page]": {
+    color: theme.palette.primary.main,
+    backgroundColor: alpha(
+      theme.palette.primary.main,
+      theme.palette.action.activatedOpacity,
+    ),
+  },
+}));
+
+const list = [
+  {
+    to: "/dnd/basic-setup",
+    label: "basic setup",
+    icon: <DashboardOutlined />,
+  },
+];
+
+export const NavMenu = () => {
+  const params = useParams();
+  const fallbackLang = useLocalStore((store) => store.fallbackLang);
+  const lang = params.lang || fallbackLang;
+
+  return (
+    <LinkWrapper>
+      {list.map((i) => (
+        <NavLink key={i.to} to={`/${lang + i.to}`} end>
+          {i.icon}
+          <Typography variant="body1" component="span">
+            {i.label}
+          </Typography>
+          <ChevronRightOutlined sx={{ marginInlineStart: "auto" }} />
+        </NavLink>
+      ))}
+    </LinkWrapper>
+  );
+};
+
+NavMenu.list = list;
 
 const AuthLayoutWrapper = styled("div")(({ theme }) => ({
   blockSize: "100dvh",

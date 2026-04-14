@@ -1,34 +1,3 @@
-import React from "react";
-import { createPortal } from "react-dom";
-import {
-  closestCenter,
-  pointerWithin,
-  rectIntersection,
-  DndContext,
-  DragOverlay,
-  getFirstCollision,
-  KeyboardSensor,
-  MouseSensor,
-  TouchSensor,
-  useDroppable,
-  useSensors,
-  useSensor,
-  MeasuringStrategy,
-  defaultDropAnimationSideEffects,
-} from "@dnd-kit/core";
-import {
-  SortableContext,
-  useSortable,
-  arrayMove,
-  defaultAnimateLayoutChanges,
-  verticalListSortingStrategy,
-  horizontalListSortingStrategy,
-} from "@dnd-kit/sortable";
-import { CSS } from "@dnd-kit/utilities";
-import { devLog } from "@/lib/utils";
-import { createRange } from "../../utilities";
-import { Item, Container } from "../../components";
-import { coordinateGetter as multipleContainersCoordinateGetter } from "./multipleContainersKeyboardCoordinates";
 import type {
   CancelDrop,
   CollisionDetection,
@@ -37,8 +6,38 @@ import type {
   Modifiers,
   UniqueIdentifier,
 } from "@dnd-kit/core";
+import {
+  closestCenter,
+  defaultDropAnimationSideEffects,
+  DndContext,
+  DragOverlay,
+  getFirstCollision,
+  KeyboardSensor,
+  MeasuringStrategy,
+  MouseSensor,
+  pointerWithin,
+  rectIntersection,
+  TouchSensor,
+  useDroppable,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
 import type { AnimateLayoutChanges, SortingStrategy } from "@dnd-kit/sortable";
+import {
+  arrayMove,
+  defaultAnimateLayoutChanges,
+  horizontalListSortingStrategy,
+  SortableContext,
+  useSortable,
+  verticalListSortingStrategy,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import React from "react";
+import { createPortal } from "react-dom";
 import type { ContainerProps } from "../../components";
+import { Container, Item } from "../../components";
+import { createRange } from "../../utilities";
+import { coordinateGetter as multipleContainersCoordinateGetter } from "./multipleContainersKeyboardCoordinates";
 
 const animateLayoutChanges: AnimateLayoutChanges = (args) =>
   defaultAnimateLayoutChanges({ ...args, wasDragging: true });
@@ -398,7 +397,7 @@ export const MultipleContainers = ({
         setClonedItems(items);
       }}
       onDragOver={({ active, over }) => {
-        devLog(true, "drag onDragOver", active.id, over?.id);
+        console.log(true, "drag onDragOver", active.id, over?.id);
         const overId = over?.id;
 
         if (overId == null || overId === TRASH_ID || active.id in items) {
@@ -456,7 +455,7 @@ export const MultipleContainers = ({
         }
       }}
       onDragEnd={({ active, over }) => {
-        devLog(true, "drag end", active.id, over?.id);
+        console.log(true, "drag end", active.id, over?.id);
 
         if (active.id in items && over?.id) {
           setContainers((containers) => {
@@ -508,7 +507,7 @@ export const MultipleContainers = ({
         }
 
         const overContainer = findContainer(overId);
-        devLog(true, overContainer);
+        console.log(true, overContainer);
 
         if (overContainer) {
           const activeIndex = items[activeContainer].indexOf(active.id);

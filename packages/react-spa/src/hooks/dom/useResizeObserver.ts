@@ -1,4 +1,3 @@
-import { devError } from "@/lib/utils";
 import React from "react";
 
 const calculateIsEl = (el: unknown): el is Element => {
@@ -15,7 +14,7 @@ export const useResizeObserver = <TEl extends Element>() => {
     const isEl = calculateIsEl(el);
 
     if (!isEl) {
-      devError(true, "useResizeObserver: ref.current is not a valid Element");
+      console.error("useResizeObserver: ref.current is not a valid Element");
       return;
     }
 

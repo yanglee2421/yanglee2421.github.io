@@ -19,7 +19,7 @@ type CustomSnackbarProps = CustomContentProps & {
 };
 
 const CustomSnackbar = (props: CustomSnackbarProps) => {
-  const { id, message, action, ...rest } = props;
+  const { ref, id, message, action, ...rest } = props;
 
   const snackbar = useSnackbar();
 
@@ -45,31 +45,14 @@ const CustomSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div
-      role="alert"
-      style={rest.style}
-      className={rest.className}
-      ref={(el) => {
-        if (typeof rest.ref === "function") {
-          rest.ref(el);
-        } else if (rest.ref) {
-          rest.ref.current = el;
-        }
-      }}
-    >
+    <div role="alert" style={rest.style} className={rest.className} ref={ref}>
       <SnackbarContent message={message} action={renderAction()} />
     </div>
   );
 };
 
 const SuccessSnackbar = (props: CustomSnackbarProps) => {
-  const {
-    message,
-
-    action,
-
-    ...rest
-  } = props;
+  const { ref, message, action, ...rest } = props;
 
   const snackbar = useSnackbar();
 
@@ -95,18 +78,7 @@ const SuccessSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div
-      role="alert"
-      style={rest.style}
-      className={rest.className}
-      ref={(el) => {
-        if (typeof rest.ref === "function") {
-          rest.ref(el);
-        } else if (rest.ref) {
-          rest.ref.current = el;
-        }
-      }}
-    >
+    <div role="alert" style={rest.style} className={rest.className} ref={ref}>
       <SnackbarContent
         message={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -128,13 +100,7 @@ const SuccessSnackbar = (props: CustomSnackbarProps) => {
 };
 
 const ErrorSnackbar = (props: CustomSnackbarProps) => {
-  const {
-    message,
-
-    action,
-
-    ...rest
-  } = props;
+  const { ref, message, action, ...rest } = props;
 
   const snackbar = useSnackbar();
 
@@ -160,18 +126,7 @@ const ErrorSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div
-      role="alert"
-      style={rest.style}
-      className={rest.className}
-      ref={(el) => {
-        if (typeof rest.ref === "function") {
-          rest.ref(el);
-        } else if (rest.ref) {
-          rest.ref.current = el;
-        }
-      }}
-    >
+    <div role="alert" style={rest.style} className={rest.className} ref={ref}>
       <SnackbarContent
         message={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -193,7 +148,7 @@ const ErrorSnackbar = (props: CustomSnackbarProps) => {
 };
 
 const WarningSnackbar = (props: CustomSnackbarProps) => {
-  const { message, action, ...rest } = props;
+  const { ref, message, action, ...rest } = props;
 
   const snackbar = useSnackbar();
 
@@ -219,18 +174,7 @@ const WarningSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div
-      role="alert"
-      style={rest.style}
-      className={rest.className}
-      ref={(el) => {
-        if (typeof rest.ref === "function") {
-          rest.ref(el);
-        } else if (rest.ref) {
-          rest.ref.current = el;
-        }
-      }}
-    >
+    <div role="alert" style={rest.style} className={rest.className} ref={ref}>
       <SnackbarContent
         message={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>
@@ -252,7 +196,7 @@ const WarningSnackbar = (props: CustomSnackbarProps) => {
 };
 
 const InfoSnackbar = (props: CustomSnackbarProps) => {
-  const { message, action, ...rest } = props;
+  const { ref, message, action, ...rest } = props;
 
   const snackbar = useSnackbar();
 
@@ -278,18 +222,7 @@ const InfoSnackbar = (props: CustomSnackbarProps) => {
   };
 
   return (
-    <div
-      role="alert"
-      style={rest.style}
-      className={rest.className}
-      ref={(el) => {
-        if (typeof rest.ref === "function") {
-          rest.ref(el);
-        } else if (rest.ref) {
-          rest.ref.current = el;
-        }
-      }}
-    >
+    <div role="alert" style={rest.style} className={rest.className} ref={ref}>
       <SnackbarContent
         message={
           <Box sx={{ display: "flex", alignItems: "center", gap: 1.5 }}>

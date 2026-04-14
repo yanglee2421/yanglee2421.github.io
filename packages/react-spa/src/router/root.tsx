@@ -2,18 +2,22 @@ import { auth } from "@/api/firebase/app";
 import { NprogressBar } from "@/components/layout/nprogress";
 import { ParticlesUI } from "@/components/layout/particles";
 import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { calculateLocale } from "@/lib/utils";
+import { useLocale } from "@/shared/LocaleContext";
 import {
   AddOutlined,
   AlignHorizontalLeftOutlined,
   Animation,
   CalendarMonthOutlined,
+  CalendarToday,
   DashboardOutlined,
   DragIndicator,
+  Grid3x3,
+  Grid4x4,
+  GridOn,
   HomeOutlined,
   ListOutlined,
   MessageOutlined,
+  Print,
   QrCodeScanner,
   ScienceOutlined,
   TokenOutlined,
@@ -38,7 +42,6 @@ import {
   Link,
   Outlet,
   ScrollRestoration,
-  useParams,
   useRouteError,
 } from "react-router";
 
@@ -79,6 +82,11 @@ const createNavition = (lang: string): Navigation => [
   { kind: "divider" },
   { kind: "header", title: "App" },
   {
+    segment: calculateSegment(lang, "calendar"),
+    title: "Calendar",
+    icon: <CalendarToday />,
+  },
+  {
     segment: calculateSegment(lang, "snackbar"),
     title: "Snackbar",
     icon: <MessageOutlined />,
@@ -103,6 +111,27 @@ const createNavition = (lang: string): Navigation => [
     title: "QR Code",
     icon: <QrCodeScanner />,
   },
+  {
+    title: "Print",
+    icon: <Print />,
+    children: [
+      {
+        segment: calculateSegment(lang, "print", "501"),
+        icon: <Grid3x3 />,
+        title: "日常校验",
+      },
+      {
+        segment: calculateSegment(lang, "print", "502"),
+        icon: <Grid4x4 />,
+        title: "季度校验",
+      },
+      {
+        segment: calculateSegment(lang, "print", "503"),
+        icon: <GridOn />,
+        title: "年度校验",
+      },
+    ],
+  },
   { kind: "divider" },
   { kind: "header", title: "Custom layout" },
   {
@@ -122,15 +151,9 @@ const BRANDING = {
 };
 
 const useNavigation = () => {
-  const params = useParams();
-  const fallbackLang = useLocalStore((store) => store.fallbackLang);
+  const locale = useLocale();
 
-  const langInPath = params.lang;
-  if (!langInPath) throw new Error("Invalid lang params");
-
-  const lang = calculateLocale(fallbackLang, langInPath);
-
-  return React.useMemo<Navigation>(() => createNavition(lang), [lang]);
+  return React.useMemo<Navigation>(() => createNavition(locale), [locale]);
 };
 
 type ErrorContentProps = {

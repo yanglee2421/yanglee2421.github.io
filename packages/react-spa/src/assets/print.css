@@ -1,0 +1,42 @@
+[data-print-container] {
+  display: none;
+}
+
+[data-a4] {
+  box-sizing: border-box;
+  width: 210mm;
+  height: 297mm;
+
+  padding: 14mm;
+  margin: 0;
+
+  border:1px dashed red;
+
+  break-after: page;
+
+  text-align: center;
+  color: black;
+  font-family: "SimSun", "宋体", serif;
+  font-size: 10pt;
+
+  &::before,
+  &::after {
+    content: "";
+    display: table;
+    clear: both;
+  }
+}
+
+@media print {
+  #root {
+    display: none;
+  }
+  [data-print-container] {
+    display: block;
+  }
+}
+
+@page {
+  size: A4 portrait;
+  margin: 0;
+}

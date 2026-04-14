@@ -3,6 +3,7 @@ import { useColorScheme } from "@/hooks/dom/useColorScheme";
 import type { Mode } from "@/hooks/store/useLocalStore";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { AppRouter } from "@/router";
+import type { ThemeOptions } from "@mui/material";
 import {
   createTheme,
   CssBaseline,
@@ -15,36 +16,43 @@ import React from "react";
 import { useTranslation } from "react-i18next";
 import { QueryProvider } from "./components/query";
 
-const calculateTheme = (isDark: boolean) => {
-  if (isDark) {
-    const darkTheme = createTheme({
-      palette: {
-        mode: "dark",
-      },
-      components: {
-        MuiAlert: {
-          defaultProps: {
-            variant: "filled",
-          },
-        },
-      },
-    });
+class MuiThemeBuilder {
+  private options?: ThemeOptions;
 
-    return darkTheme;
+  constructor(options?: ThemeOptions) {
+    this.options = options;
   }
 
-  const lightTheme = createTheme({
-    palette: { mode: "light" },
+  light() {
+    return createTheme({
+      ...this.options,
+      palette: {
+        ...this.options?.palette,
+        mode: "light",
+      },
+    });
+  }
+  dark() {
+    return createTheme({
+      ...this.options,
+      palette: {
+        ...this.options?.palette,
+        mode: "dark",
+      },
+    });
+  }
+}
+
+const calculateTheme = (isDark: boolean) => {
+  const builder = new MuiThemeBuilder({
     components: {
       MuiAlert: {
-        defaultProps: {
-          variant: "filled",
-        },
+        defaultProps: { variant: "filled" },
       },
     },
   });
 
-  return lightTheme;
+  return isDark ? builder.dark() : builder.light();
 };
 
 const calculateIsDark = (mode: Mode, colorSchema: boolean) => {

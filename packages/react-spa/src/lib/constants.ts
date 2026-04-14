@@ -3,9 +3,7 @@ import { createOnigurumaEngine } from "shiki/engine/oniguruma";
 
 export const GITHUB_URL =
   "https://github.com/yanglee2421/yanglee2421.github.io";
-export const DEFAULT_LANG = "en";
 export const DEFAULT_MODE = "system";
-export const LOCALES = new Set(["en", "zh"]);
 export const HOME_PATH = "/";
 export const LOGIN_PATH = "/login";
 export const HEADER_SIZE_XS = 7;

@@ -1,22 +1,23 @@
+import babel from "@rolldown/plugin-babel";
+import react, { reactCompilerPreset } from "@vitejs/plugin-react";
 import { dirname, resolve } from "node:path";
 import { fileURLToPath } from "node:url";
-import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite";
 
-const ReactCompilerConfig = {
-  // '17' | '18' | '19'
-  target: "19",
-};
 const __dirname = dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
   return {
     plugins: [
-      react({
-        babel: {
-          plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
-        },
+      react(),
+      babel({
+        presets: [
+          reactCompilerPreset({
+            // '17' | '18' | '19'
+            target: "19",
+          }),
+        ],
       }),
     ],
     resolve: {
@@ -39,27 +40,27 @@ export default defineConfig(() => {
       outDir: resolve(__dirname, "./dist"),
       emptyOutDir: true,
 
-      rollupOptions: {
+      rolldownOptions: {
         input: {
           index: resolve(__dirname, "./index.html"),
         },
         external: [],
         output: {
-          entryFileNames: "assets/[name]-[hash].js",
-          chunkFileNames: "assets/[name]-[hash].js",
+          entryFileNames: "[name]-[hash].js",
+          chunkFileNames: "[name]-[hash].js",
           assetFileNames: "assets/[name]-[hash][extname]",
         },
       },
 
       target: "baseline-widely-available",
-      minify: "esbuild",
+      minify: "oxc",
 
       // cssTarget: "baseline-widely-available",
-      cssMinify: "esbuild",
+      cssMinify: "lightningcss",
       cssCodeSplit: true,
       // lib: { cssFileName: "style.css" },
 
-      manifest: true,
+      manifest: false,
       sourcemap: false,
       chunkSizeWarningLimit: 500,
       assetsInlineLimit: 4096,

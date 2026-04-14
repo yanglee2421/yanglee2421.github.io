@@ -1,40 +1,9 @@
-import React from "react";
-import { Link, useLocation, useParams } from "react-router";
-import { IconButton, Menu, MenuItem } from "@mui/material";
-import { TranslateOutlined } from "@mui/icons-material";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
-import { calculateLocale, calculateLocalePathname } from "@/lib/utils";
-
-type LangLinkProps = React.PropsWithChildren<{
-  locale: string;
-}>;
-
-const LangLink = (props: LangLinkProps) => {
-  const params = useParams();
-  const location = useLocation();
-  const fallbackLang = useLocalStore((store) => store.fallbackLang);
-
-  const langSegment = params.lang;
-  if (!langSegment) throw new Error("Invalid lang params");
-
-  const locale = calculateLocale(fallbackLang, langSegment);
-  const pathname = calculateLocalePathname(location.pathname, props.locale);
-  const selected = locale === props.locale;
-
-  return (
-    <MenuItem
-      component={Link}
-      to={{
-        pathname,
-        search: location.search,
-        hash: location.hash,
-      }}
-      selected={selected}
-    >
-      {props.children}
-    </MenuItem>
-  );
-};
+import { LocaleContext, useLocale } from "@/shared/LocaleContext";
+import { TranslateOutlined } from "@mui/icons-material";
+import { IconButton, Menu, MenuItem } from "@mui/material";
+import React from "react";
+import { useLocation, useNavigate } from "react-router";
 
 const locales = [
   {
@@ -49,6 +18,12 @@ const locales = [
 
 export const LangToggle = () => {
   const [anchor, setAnchor] = React.useState<HTMLElement | null>(null);
+
+  const localeService = React.use(LocaleContext);
+
+  const locale = useLocale();
+  const navigate = useNavigate();
+  const location = useLocation();
 
   const handleClose = () => {
     setAnchor(null);
@@ -66,9 +41,29 @@ export const LangToggle = () => {
         onClick={handleClose}
       >
         {locales.map((i) => (
-          <LangLink key={i.locale} locale={i.locale}>
+          <MenuItem
+            key={i.locale}
+            onClick={() => {
+              console.log("clicked");
+
+              localeService.setLocale(i.locale);
+              useLocalStore.setState((draft) => {
+                draft.fallbackLang = i.locale;
+              });
+
+              navigate({
+                pathname: localeService.resolvePathname(
+                  location.pathname,
+                  true,
+                ),
+                search: location.search,
+                hash: location.hash,
+              });
+            }}
+            selected={i.locale === locale}
+          >
             {i.label}
-          </LangLink>
+          </MenuItem>
         ))}
       </Menu>
     </>

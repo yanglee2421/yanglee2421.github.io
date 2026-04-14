@@ -1,5 +1,3 @@
-import { DEFAULT_LANG, LOCALES } from "./constants";
-
 export const onAnimationFrame = (cb: () => void) => {
   let animate = 0;
 
@@ -12,12 +10,6 @@ export const onAnimationFrame = (cb: () => void) => {
 
   return () => cancelAnimationFrame(animate);
 };
-
-export const android_ripple = (color: string) => ({
-  color,
-  foreground: true,
-  borderless: false,
-});
 
 export class AnimateController {
   private readonly animate: () => void;
@@ -94,12 +86,6 @@ export const toStringTag = (target: unknown) => {
     .toLocaleLowerCase();
 };
 
-export const timeout = (time = 0) => {
-  return new Promise<void>((res) => {
-    setTimeout(res, time);
-  });
-};
-
 export const stringToColor = (string: string) => {
   let hash = 0;
 
@@ -140,36 +126,6 @@ export const json2CsvLink = <TRow extends NonNullable<unknown>>(
         Object.keys(rows[0]).join(","),
         ...rows.map(Object.values).join(","),
       ].join("\n"),
-  );
-};
-
-type TreeRow<TRow> = TRow & {
-  children: Array<TreeRow<TRow>>;
-};
-
-export const list2Tree = <
-  TRow extends {
-    id: number;
-    parentId: number;
-  },
->(
-  list: TRow[],
-) => {
-  const allIds = list.map((item) => item.id);
-  const clonedList = structuredClone(list);
-
-  clonedList.forEach((item, idx, arr) => {
-    void idx;
-
-    Reflect.set(
-      item,
-      "children",
-      arr.filter((el) => Object.is(el.parentId, item.id)),
-    );
-  });
-
-  return clonedList.filter(
-    (item): item is TreeRow<TRow> => !allIds.includes(item.parentId),
   );
 };
 
@@ -230,24 +186,6 @@ export const compact = <TData>(list: Array<TData | Falsey>) => {
   return list.filter(Boolean) as TData;
 };
 
-export const log: typeof console.log = (...args) => {
-  if (import.meta.env.DEV) {
-    console.log(...args);
-  }
-};
-
-export const warn: typeof console.warn = (...args) => {
-  if (import.meta.env.DEV) {
-    console.warn(...args);
-  }
-};
-
-export const error: typeof console.error = (...args) => {
-  if (import.meta.env.DEV) {
-    console.error(...args);
-  }
-};
-
 export const chunk = <TData>(list: TData[], size: number) => {
   const chunked: TData[][] = [];
 
@@ -265,89 +203,3 @@ export type ElementOf<TList> = TList extends (infer TElement)[]
 export type ParamsOf<TFunc> = TFunc extends (...args: infer TParams) => void
   ? TParams
   : never;
-
-export const devLog = (
-  enable: boolean,
-  ...args: Parameters<typeof console.log>
-) => {
-  if (import.meta.env.PROD) {
-    return;
-  }
-
-  if (!enable) {
-    return;
-  }
-
-  console.log(...args);
-};
-
-export const devError = (
-  enable: boolean,
-  ...args: Parameters<typeof console.error>
-) => {
-  if (import.meta.env.PROD) {
-    return;
-  }
-
-  if (!enable) {
-    return;
-  }
-
-  console.error(...args);
-};
-
-export const calculateLocale = (
-  fallbackLocale: string,
-  localeSegment: string,
-) => {
-  if (LOCALES.has(localeSegment)) {
-    return localeSegment;
-  }
-
-  if (LOCALES.has(fallbackLocale)) {
-    return fallbackLocale;
-  }
-
-  return DEFAULT_LANG;
-};
-
-export const normalizePathname = (pathname: string) => {
-  let result = pathname;
-  const isStartWithSlash = pathname.startsWith("/");
-  const isEndWithSlash = pathname.endsWith("/");
-
-  if (!isStartWithSlash) {
-    result = "/" + result;
-  }
-
-  if (isEndWithSlash) {
-    result = result.replace(/\/$/, "");
-  }
-
-  return result;
-};
-
-export const calculateLocalePathname = (pathname: string, locale: string) => {
-  const segments = normalizePathname(pathname).split("/");
-  const localeSegment = segments.at(1) || "";
-
-  console.log(segments);
-
-  if (locale === localeSegment) {
-    return pathname;
-  }
-
-  /**
-   * Locale segment already exists
-   * just replace it
-   */
-  if (LOCALES.has(localeSegment)) {
-    return segments.with(1, locale).join("/");
-  }
-
-  /**
-   * Locale segment does not exist
-   * add it
-   */
-  return ["", ...segments].with(1, locale).join("/");
-};

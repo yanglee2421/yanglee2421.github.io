@@ -4,7 +4,6 @@ import {
   githubAuthProvider,
   googleAuthProvider,
 } from "@/api/firebase/app";
-import { devLog } from "@/lib/utils";
 import { LinearProgress } from "@mui/material";
 import { SignInPage, type AuthProvider } from "@toolpad/core";
 import { getAuth, signInWithPopup } from "firebase/auth";
@@ -12,7 +11,7 @@ import React from "react";
 import { useNavigation } from "react-router";
 
 const createAuthProviders = (): AuthProvider[] => {
-  devLog(false, "run auth create");
+  console.log(false, "run auth create");
 
   return [
     { id: "google", name: "Google" },

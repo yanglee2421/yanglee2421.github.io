@@ -5,6 +5,7 @@ import {
   InputAdornment,
   TextField,
 } from "@mui/material";
+import { clamp } from "@yotulee/run";
 import React from "react";
 
 const numberToInputText = (value: number) => {
@@ -47,7 +48,7 @@ export const NumberField = (props: NumberFieldProps) => {
   // Shared Logic
 
   const changeValue = (num: number) => {
-    const nextValue = minmax(num, _min, _max);
+    const nextValue = clamp(num, _min, _max);
     field.onChange(nextValue);
     return nextValue;
   };
@@ -150,15 +151,3 @@ export const NumberField = (props: NumberFieldProps) => {
     />
   );
 };
-
-const minmax = (
-  num: number,
-  min: number = Number.NEGATIVE_INFINITY,
-  max: number = Number.POSITIVE_INFINITY,
-) => {
-  return Math.min(max, Math.max(min, num));
-};
-
-// const interval = (num: number, min: number, max: number) => {
-//   return Object.is(num, minmax(num, min, max));
-// };
