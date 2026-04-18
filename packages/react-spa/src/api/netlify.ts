@@ -1,9 +1,10 @@
-import axios, { type AxiosRequestConfig } from "axios";
 import {
   queryOptions,
   useMutation,
   useQueryClient,
 } from "@tanstack/react-query";
+import type { AxiosRequestConfig } from "axios";
+import axios from "axios";
 
 export const netlify = axios.create({
   baseURL: import.meta.env.VITE_NETLIFY_API_URL,
@@ -93,7 +94,7 @@ type OvertimeGetConf = AxiosRequestConfig & {
 };
 
 export type Overtime = {
-  id: string;
+  _id: string;
   userId: string;
   date: string;
   hours: number;
