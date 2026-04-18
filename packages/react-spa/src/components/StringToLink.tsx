@@ -1,10 +1,10 @@
 const reg =
   /^(?<prefix>.*)(?<link>https?:\/\/.+\.\w{2,3}(:\d{2,5})?(\/\w+)*)(?<suffix>.*)$/gis;
 
-type StringToLinkProps = {
+interface StringToLinkProps {
   str: string;
   msg?: string;
-};
+}
 
 export const StringToLink = ({ str, msg = "" }: StringToLinkProps) => {
   if (typeof str !== "string") {

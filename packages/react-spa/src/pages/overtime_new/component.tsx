@@ -13,10 +13,10 @@ import {
   TextField,
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
+import { useForm } from "@tanstack/react-form";
 import { useNotifications } from "@toolpad/core";
 import dayjs from "dayjs";
 import React from "react";
-import { useForm } from "@tanstack/react-form";
 import { useNavigate, useParams } from "react-router";
 import { z } from "zod";
 
@@ -172,7 +172,7 @@ export const Component = () => {
                     <PlusOneOutlined />
                   )
                 }
-                disabled={canSubmit}
+                disabled={!canSubmit}
                 type="submit"
               >
                 add

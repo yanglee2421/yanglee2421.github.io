@@ -1,12 +1,10 @@
 import {
   fetchOvertime,
-  fetchUserByFirebase,
   useDeleteOvertime,
   useOvertime,
   type Overtime,
 } from "@/api/netlify";
 import { Loading } from "@/components/loading";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import {
   CheckBoxOutlined,
   CheckOutlined,
@@ -70,7 +68,7 @@ const columns = [
       );
     },
   }),
-  columnHelper.accessor("id", {
+  columnHelper.accessor("_id", {
     header: "ID",
     cell({ getValue }) {
       return (
@@ -112,19 +110,9 @@ export const Component = () => {
   const [pageIndex, setPageIndex] = React.useState(0);
   const [pageSize, setPageSize] = React.useState(20);
 
-  const user = useCurrentUser();
   const update = useOvertime();
   const dialogs = useDialogs();
   const deleteOvertime = useDeleteOvertime();
-  const auth = useQuery({
-    ...fetchUserByFirebase({
-      data: {
-        firebaseId: user?.uid || "",
-        name: user?.displayName || "",
-      },
-    }),
-    enabled: !!user?.uid,
-  });
 
   const overtime = useQuery({
     ...fetchOvertime({
@@ -133,7 +121,6 @@ export const Component = () => {
         pageSize,
       },
     }),
-    enabled: !!auth.data?.data.token,
     placeholderData: keepPreviousData,
   });
 
@@ -145,7 +132,7 @@ export const Component = () => {
     getCoreRowModel: getCoreRowModel(),
     columns,
     data,
-    getRowId: (originalRow) => originalRow.id,
+    getRowId: (originalRow) => originalRow._id,
     rowCount: overtime.data?.data.count,
   });
 
@@ -157,7 +144,7 @@ export const Component = () => {
       data: {
         rows: table
           .getSelectedRowModel()
-          .rows.map((r) => ({ id: r.original.id, redeemed: true })),
+          .rows.map((r) => ({ id: r.original._id, redeemed: true })),
       },
     });
   };
@@ -168,7 +155,7 @@ export const Component = () => {
 
     deleteOvertime.mutate({
       data: {
-        id: table.getSelectedRowModel().rows.map((r) => r.original.id),
+        id: table.getSelectedRowModel().rows.map((r) => r.original._id),
       },
     });
   };
@@ -188,7 +175,12 @@ export const Component = () => {
       return (
         <TableRow>
           <TableCell colSpan={table.getAllLeafColumns().length}>
-            <Typography color="error" textAlign={"center"}>
+            <Typography
+              color="error"
+              sx={{
+                textAlign: "center",
+              }}
+            >
               Error loading data
             </Typography>
           </TableCell>
@@ -200,7 +192,13 @@ export const Component = () => {
       return (
         <TableRow>
           <TableCell colSpan={table.getAllLeafColumns().length}>
-            <Typography textAlign={"center"}>No data available</Typography>
+            <Typography
+              sx={{
+                textAlign: "center",
+              }}
+            >
+              No data available
+            </Typography>
           </TableCell>
         </TableRow>
       );

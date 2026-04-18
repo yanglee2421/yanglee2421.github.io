@@ -17,12 +17,12 @@ type BaseShapeOptions =
   | "triangle"
   | "star";
 
-type ShapeOptions = {
+interface ShapeOptions {
   shape?: BaseShapeOptions;
   eyePatternShape?: BaseShapeOptions;
   gap?: number;
   eyePatternGap?: number;
-};
+}
 
 export const transformMatrixIntoPath = (
   matrix: number[][],

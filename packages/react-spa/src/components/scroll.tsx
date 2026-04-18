@@ -13,11 +13,11 @@ const renderBackgroundColor = (isActive: boolean, isHover: boolean) => {
   return "rgba(255, 255, 255, 0.1)";
 };
 
-export type ScrollProps = {
+export interface ScrollProps {
   children?: React.ReactNode;
   className?: string;
   style?: React.CSSProperties;
-};
+}
 
 export const Scroll = ({ children, className, style }: ScrollProps) => {
   const [scrollInfo, setScrollInfo] = React.useState({
