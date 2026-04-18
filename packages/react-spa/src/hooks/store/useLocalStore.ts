@@ -5,13 +5,13 @@ import { immer } from "zustand/middleware/immer";
 
 export type Mode = "light" | "dark" | "system";
 
-export type State = {
+export interface State {
   fallbackLang: string;
   mode: Mode;
   netlifyToken: string;
   accessToken: string;
   refreshToken: string;
-};
+}
 
 const storeInitializer = (): State => {
   return {

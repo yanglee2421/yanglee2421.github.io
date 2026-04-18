@@ -11,9 +11,7 @@ export const TextProvider = (props: TextProviderProps) => {
   return <TextContext value={props.value}>{props.children}</TextContext>;
 };
 
-type TextProps = React.PropsWithChildren;
-
-export const Text = (props: TextProps) => {
+export const Text = (props: React.PropsWithChildren) => {
   const ns = React.use(TextContext);
 
   const [t] = useTranslation(ns);

@@ -1,7 +1,7 @@
 import { getAnalytics } from "firebase/analytics";
 import { initializeApp } from "firebase/app";
-import { getAuth, GoogleAuthProvider, GithubAuthProvider } from "firebase/auth";
-import { getFirestore, collection } from "firebase/firestore";
+import { getAuth, GithubAuthProvider, GoogleAuthProvider } from "firebase/auth";
+import { getFirestore } from "firebase/firestore";
 import { getStorage } from "firebase/storage";
 
 export const app = initializeApp({
@@ -23,7 +23,3 @@ export const storage = getStorage(app);
 // Auth Provider
 export const githubAuthProvider = new GithubAuthProvider();
 export const googleAuthProvider = new GoogleAuthProvider();
-
-// Firestore
-export const jokeCollection = collection(firestore, "joke");
-export const overtimeCollection = collection(firestore, "overtime");

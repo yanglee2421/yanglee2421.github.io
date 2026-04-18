@@ -12,7 +12,7 @@ const queryClient = new QueryClient({
       refetchOnWindowFocus: true,
 
       retry: 1,
-      retryDelay(attemptIndex) {
+      retryDelay: (attemptIndex) => {
         return Math.min(1000 * 2 ** attemptIndex, 1000 * 8);
       },
 

@@ -1,19 +1,19 @@
-import Dexie from "dexie";
 import type { EntityTable } from "dexie";
+import Dexie from "dexie";
 
-export type Completion = {
+export interface Completion {
   id: number;
   name: string;
-};
+}
 
-export type MessageInAPI = {
+export interface MessageInAPI {
   role: "user" | "assistant" | "system";
   content: string;
-};
+}
 
 export type MessageStatus = "pending" | "success" | "error" | "loading";
 
-export type Message = {
+export interface Message {
   id: number;
   // Foreign key to the Completion table
   completionId: number;
@@ -24,9 +24,9 @@ export type Message = {
   answerDate: null | string;
   status: MessageStatus;
   thumb: "up" | "down" | null;
-};
+}
 
-export type Invoice = {
+export interface Invoice {
   id: number;
   amount: number;
   staff: string[];
@@ -34,14 +34,14 @@ export type Invoice = {
   // ISO 8601 date format
   // e.g., "2023-10-01T12:00:00Z" or "2023-10-01"
   date: string;
-};
+}
 
-export type Staff = {
+export interface Staff {
   id: number;
   name: string;
   alias: string;
   enable: boolean;
-};
+}
 
 export const db = new Dexie("ChatDatabase") as Dexie & {
   completions: EntityTable<Completion, "id">;
