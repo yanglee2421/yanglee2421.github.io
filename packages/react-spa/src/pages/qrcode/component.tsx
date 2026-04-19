@@ -210,9 +210,9 @@ export const Component = () => {
           border: 1,
           borderColor: theme.palette.divider,
           borderStyle: "solid",
+          width: 375,
+          height: 667,
         }}
-        width={375}
-        height={667}
       >
         <canvas
           ref={canvasRef}

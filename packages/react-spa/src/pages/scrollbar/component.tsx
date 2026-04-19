@@ -4,7 +4,13 @@ import { Box, Button } from "@mui/material";
 
 const Content = () => {
   return (
-    <Box height={1920} width={500} padding={6}>
+    <Box
+      sx={{
+        height: 1920,
+        width: 500,
+        padding: 6,
+      }}
+    >
       Lorem ipsum dolor sit amet consectetur adipisicing elit. Possimus vitae
       quos repudiandae voluptate magnam molestias, aspernatur tempora?
       Distinctio, cupiditate perspiciatis temporibus repellendus iste, quo
