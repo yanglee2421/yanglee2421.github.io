@@ -1,4 +1,4 @@
-import { styled, alpha, Box, useTheme } from "@mui/material";
+import { alpha, Box, styled, useTheme } from "@mui/material";
 import React from "react";
 import { Outlet } from "react-router";
 
@@ -132,10 +132,12 @@ export const GuestLayout = () => {
                 display={"none"}
               />
               <Box
-                display={"flex"}
-                border="1px red dash"
-                width={IMAGE_SIZE}
-                height={IMAGE_SIZE}
+                sx={{
+                  display: "flex",
+                  border: "1px red dashed",
+                  width: IMAGE_SIZE,
+                  height: IMAGE_SIZE,
+                }}
               >
                 <canvas
                   ref={cvsRef}
