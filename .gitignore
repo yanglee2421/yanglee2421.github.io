@@ -3,3 +3,7 @@ dist/
 # docs/
 *.tsbuildinfo
 .env.development
+
+# newtab
+.output
+.wxt

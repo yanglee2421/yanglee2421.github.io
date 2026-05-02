@@ -6,4 +6,5 @@ onlyBuiltDependencies:
   - '@tsparticles/engine'
   - esbuild
   - protobufjs
+  - spawn-sync
   - vue-demi
