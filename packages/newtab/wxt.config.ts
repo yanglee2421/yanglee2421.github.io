@@ -1,7 +1,19 @@
+import babel from "@rolldown/plugin-babel";
+import { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "wxt";
 
-const ReactCompilerConfig = {
-  target: "19", // '17' | '18' | '19'
+const reactDevtoolsPlugin = () => {
+  return {
+    name: "vite-plugin-react-devtools-injector",
+    transformIndexHtml: () => [
+      {
+        tag: "script",
+        attrs: { src: "http://localhost:8097" },
+        injectTo: "head-prepend",
+      },
+    ],
+    apply: "serve",
+  };
 };
 
 // See https://wxt.dev/api/config.html
@@ -17,11 +29,10 @@ export default defineConfig({
     },
   },
   react: {
-    vite: {
-      babel: {
-        plugins: [["babel-plugin-react-compiler", ReactCompilerConfig]],
-      },
-    },
+    vitePluginsBefore: [
+      babel({ presets: [reactCompilerPreset({ target: "19" })] }),
+      reactDevtoolsPlugin(),
+    ],
   },
   srcDir: "src",
 });
