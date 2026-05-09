@@ -130,6 +130,16 @@ const createNavition = (lang: string): Navigation => [
         icon: <GridOn />,
         title: "年度校验",
       },
+      {
+        segment: calculateSegment(lang, "print", "pdf"),
+        icon: <GridOn />,
+        title: "PDF",
+      },
+      {
+        segment: calculateSegment(lang, "print", "pdf-report"),
+        icon: <GridOn />,
+        title: "PDF Report",
+      },
     ],
   },
   { kind: "divider" },

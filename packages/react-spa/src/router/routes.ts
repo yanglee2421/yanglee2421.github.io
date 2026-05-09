@@ -225,6 +225,14 @@ export const createRoutes = (): RouteObject[] => {
                       path: "503",
                       lazy: () => import("@/pages/503/component"),
                     },
+                    {
+                      path: "pdf",
+                      lazy: () => import("@/pages/pdf/component"),
+                    },
+                    {
+                      path: "pdf-report",
+                      lazy: () => import("@/pages/pdf-report/component"),
+                    },
                   ],
                 },
               ],
