@@ -174,6 +174,8 @@ const styles = StyleSheet.create({
   },
 });
 
+const CellHeightContext = React.createContext(22);
+
 const of = (count: number) => {
   return Array.from({ length: count }, (_, index) => index + 1);
 };
@@ -212,6 +214,13 @@ const Col = (props: ColProps) => {
   );
 };
 
+const resolveCellHeight = (contextHeight: number, propsHeight?: number) => {
+  if (typeof propsHeight === "number") {
+    return propsHeight;
+  }
+  return contextHeight;
+};
+
 interface CellProps {
   children?: React.ReactNode;
   tr?: boolean;
@@ -225,7 +234,10 @@ interface CellProps {
 }
 
 const Cell = (props: CellProps) => {
-  const { height = 18, tr = true, bl, t, r, b, l, font12 } = props;
+  const { height: propsHeight, tr = true, bl, t, r, b, l, font12 } = props;
+
+  const cellHeight = React.use(CellHeightContext);
+  const height = resolveCellHeight(cellHeight, propsHeight);
 
   return (
     <View
@@ -320,27 +332,21 @@ const EquipmentTable = () => (
       <Cell font12>实物试块型号</Cell>
     </Col>
     <Col>
-      <Cell>
-        <Text></Text>
-      </Cell>
+      <Cell></Cell>
     </Col>
   </Row>
 );
 
 const LZInfoTable = () => {
-  const BASIC_ROW_HEIGHT = { height: 18 };
+  const BASIC_ROW_HEIGHT = React.use(CellHeightContext);
 
   return (
     <>
+      <Cell>左轮座探头晶片编号及灵敏度</Cell>
       <Row>
-        <Col>
-          <Cell>左轮座探头晶片编号及灵敏度</Cell>
-        </Col>
-      </Row>
-      <Row>
-        <View style={[styles.width40]}>
+        <Col width={"40%"}>
           <Cell>通道编号</Cell>
-        </View>
+        </Col>
         <Col>
           <Cell>左外</Cell>
         </Col>
@@ -352,84 +358,42 @@ const LZInfoTable = () => {
         </Col>
       </Row>
       <Row>
-        <View
-          style={[
-            styles.borderTR,
-            styles.width40,
-            styles.justifyCenter,
-            styles.itemsCenter,
-          ]}
-        >
-          <Text>折射角（度）</Text>
-        </View>
-        <View style={[styles.borderTR, styles.flex1, styles.padding4]}>
-          <Text>51</Text>
-        </View>
-        <View style={[styles.borderTR, styles.flex1, styles.padding4]}>
-          <Text>44</Text>
-        </View>
-        <View style={[styles.borderTR, styles.flex1, styles.padding4]}>
-          <Text>22.5</Text>
-        </View>
+        <Col width={"40%"}>
+          <Cell>折射角（度）</Cell>
+        </Col>
+        <Col>
+          <Cell>51</Cell>
+        </Col>
+        <Col>
+          <Cell>44</Cell>
+        </Col>
+        <Col>
+          <Cell>22.5</Cell>
+        </Col>
       </Row>
       <Row>
-        <View style={[styles.flexRow, styles.width40]}>
-          <View
-            style={[
-              styles.borderTR,
-              styles.flex1,
-              styles.justifyCenter,
-              styles.itemsCenter,
-            ]}
-          >
-            <Text>灵敏度{"\n"}（dB）</Text>
-          </View>
-          <View style={[styles.flex1]}>
-            <View
-              style={[
-                styles.borderTR,
-                styles.flex1,
-                styles.justifyCenter,
-                styles.itemsCenter,
-                BASIC_ROW_HEIGHT,
-              ]}
-            >
-              <Text>校验{"\n"}（80%）</Text>
-            </View>
-            <View
-              style={[
-                styles.borderTR,
-                styles.flex1,
-                styles.justifyCenter,
-                styles.itemsCenter,
-                BASIC_ROW_HEIGHT,
-              ]}
-            >
-              <Text>补偿</Text>
-            </View>
-            <View
-              style={[
-                styles.borderTR,
-                styles.flex1,
-                styles.justifyCenter,
-                styles.itemsCenter,
-                BASIC_ROW_HEIGHT,
-              ]}
-            >
-              <Text>探伤</Text>
-            </View>
-          </View>
-        </View>
-        <View style={[styles.flex1]}>
+        <Col width={"40%"}>
           <Row>
             <Col>
-              <Cell></Cell>
+              <Cell height={BASIC_ROW_HEIGHT * 4}>灵敏度{"\n"}（dB）</Cell>
             </Col>
             <Col>
-              <Cell></Cell>
+              <Cell height={BASIC_ROW_HEIGHT * 2}>校验{"\n"}（80%）</Cell>
+              <Cell>补偿</Cell>
+              <Cell>探伤</Cell>
+            </Col>
+          </Row>
+        </Col>
+        <Col>
+          <Row>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 2}></Cell>
             </Col>
             <Col>
-              <Cell></Cell>
+              <Cell height={BASIC_ROW_HEIGHT * 2}></Cell>
+            </Col>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 2}></Cell>
             </Col>
           </Row>
           <Row>
@@ -454,215 +418,184 @@ const LZInfoTable = () => {
               <Cell></Cell>
             </Col>
           </Row>
-        </View>
+        </Col>
       </Row>
     </>
   );
 };
 
 const XHCTable = () => {
-  const BASIC_ROW_HEIGHT = { height: 18 };
-  const LG_ROW_HEIGHT = { height: 28 };
+  const BASIC_ROW_HEIGHT = React.use(CellHeightContext);
 
   return (
     <>
-      <View style={[styles.flexRow]}>
-        <View style={[styles.flexRow, styles.flex1]}>
-          <View style={[styles.borderTR, styles.flex1]}>
-            <Text>左</Text>
-          </View>
-          <View style={[styles.borderTR, styles.flex1]}>
-            <Text>通道{"\n"}编号</Text>
-          </View>
-          <View style={[styles.borderTR, styles.flex1]}>
-            <Text>拆射{"\n"}角度</Text>
-          </View>
-        </View>
-        <View style={[styles.flex1]}>
-          <View style={[styles.borderTR, BASIC_ROW_HEIGHT]}>
-            <Text>灵敏度(dB)</Text>
-          </View>
-          <View style={[styles.flexRow]}>
-            <View style={[styles.borderTR, styles.flex1, LG_ROW_HEIGHT]}>
-              <Text>{"校验\n(80%)"}</Text>
-            </View>
-            <View style={[styles.borderTR, styles.flex1, LG_ROW_HEIGHT]}>
-              <Text>补偿</Text>
-            </View>
-            <View style={[styles.borderTR, styles.flex1, LG_ROW_HEIGHT]}>
-              <Text>探伤</Text>
-            </View>
-          </View>
-        </View>
-        <View style={[styles.flex1]}>
-          <View style={[styles.borderTR, BASIC_ROW_HEIGHT]}>
-            <Text>缺陷编号</Text>
-          </View>
-          <View style={[styles.flexRow]}>
-            <View style={[styles.borderTR, styles.flex1, LG_ROW_HEIGHT]}>
-              <Text>1</Text>
-            </View>
-            <View style={[styles.borderTR, styles.flex1, LG_ROW_HEIGHT]}>
-              <Text>2</Text>
-            </View>
-            <View style={[styles.borderTR, styles.flex1, LG_ROW_HEIGHT]}>
-              <Text>3</Text>
-            </View>
-          </View>
-        </View>
-      </View>
-
-      {/* Body rows */}
-      <View style={[styles.flexRow]}>
-        {/* Column 1 */}
-        <View style={[styles.flex1, styles.flexRow]}>
-          <View style={[styles.flex1]}>
-            <View
-              style={[
-                styles.borderTR,
-                styles.justifyCenter,
-                styles.itemsCenter,
-                { height: BASIC_ROW_HEIGHT.height * 3 },
-              ]}
-            >
-              <Text>轴</Text>
-              <Text>颈</Text>
-            </View>
-          </View>
-          <View style={[styles.flex1]}>
-            <View style={[styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>CT</Text>
-            </View>
-            <View style={[styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>A1</Text>
-            </View>
-            <View style={[styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>A2</Text>
-            </View>
-          </View>
-          <View style={[styles.flex1]}>
-            <View style={[styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>0</Text>
-            </View>
-            <View style={[styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>225</Text>
-            </View>
-            <View style={[styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>260</Text>
-            </View>
-          </View>
-        </View>
-        {/* Column 2 */}
-        <View style={[styles.flex1, styles.flexRow]}>
-          <View style={[styles.flex1]}>
-            <View style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>24</Text>
-            </View>
-            <View style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>9</Text>
-            </View>
-            <View style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}>
-              <Text>33</Text>
-            </View>
-          </View>
-          <View style={[styles.flex1]}>
-            <View
-              style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}
-            ></View>
-            <View
-              style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}
-            ></View>
-            <View
-              style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}
-            ></View>
-          </View>
-          <View style={[styles.flex1]}>
-            <View
-              style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}
-            ></View>
-            <View
-              style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}
-            ></View>
-            <View
-              style={[styles.flex1, styles.borderTR, BASIC_ROW_HEIGHT]}
-            ></View>
-          </View>
-        </View>
-        {/* Column 3 */}
-        <View style={[styles.flex1]}>
-          <View style={[styles.flex1]}>
-            <View style={[styles.borderTR, styles.flex1]}></View>
-          </View>
-          <View style={[styles.flex1, styles.flexRow]}>
-            <View style={[styles.borderTR, styles.flex1]}></View>
-            <View style={[styles.borderTR, styles.flex1]}></View>
-            <View style={[styles.borderTR, styles.flex1]}></View>
-          </View>
-          <View style={[styles.flex1, styles.flexRow]}>
-            <View style={[styles.borderTR, styles.flex1]}></View>
-            <View style={[styles.borderTR, styles.flex1]}></View>
-            <View style={[styles.borderTR, styles.flex1]}></View>
-          </View>
-        </View>
-      </View>
+      <Row>
+        <Col>
+          <Row>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 3}>左</Cell>
+            </Col>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 3}>通道{"\n"}编号</Cell>
+            </Col>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 3}>拆射{"\n"}角度</Cell>
+            </Col>
+          </Row>
+        </Col>
+        <Col>
+          <Cell>灵敏度(dB)</Cell>
+          <Row>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 2}>{"校验\n(80%)"}</Cell>
+            </Col>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 2}>补偿</Cell>
+            </Col>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 2}>探伤</Cell>
+            </Col>
+          </Row>
+        </Col>
+        <Col>
+          <Cell>缺陷编号</Cell>
+          <Row>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 2}>1</Cell>
+            </Col>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 2}>2</Cell>
+            </Col>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 2}>3</Cell>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
+      <Row>
+        <Col>
+          <Row>
+            <Col>
+              <Cell height={BASIC_ROW_HEIGHT * 3}>{"轴\n颈"}</Cell>
+            </Col>
+            <Col>
+              <Cell>CT</Cell>
+              <Cell>A1</Cell>
+              <Cell>A2</Cell>
+            </Col>
+            <Col>
+              <Cell>0</Cell>
+              <Cell>225</Cell>
+              <Cell>260</Cell>
+            </Col>
+          </Row>
+        </Col>
+        <Col>
+          <Row>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+          </Row>
+        </Col>
+        <Col>
+          <Row>
+            <Col>
+              <Cell></Cell>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+          </Row>
+          <Row>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+            <Col>
+              <Cell></Cell>
+            </Col>
+          </Row>
+        </Col>
+      </Row>
     </>
   );
 };
 
-const SignatureTable = () => (
-  <View style={[styles.font12, styles.borderBL]}>
-    <View style={[styles.flexRow]}>
-      <View
-        style={[
-          styles.borderR,
-          styles.width20,
-          styles.justifyCenter,
-          styles.itemsCenter,
-        ]}
-      >
-        <Text>签字签章</Text>
-      </View>
-      <View style={[styles.width80]}>
-        <View style={[styles.flexRow]}>
-          <View style={[styles.flex1, styles.borderR, styles.padding4]}>
-            <Text>探伤工</Text>
-          </View>
-          <View style={[styles.flex1, styles.borderR, styles.padding4]}>
-            <Text></Text>
-          </View>
-          <View style={[styles.flex1, styles.borderR, styles.padding4]}>
-            <Text>探伤工长</Text>
-          </View>
-          <View style={[styles.flex1, styles.borderR, styles.padding4]}>
-            <Text></Text>
-          </View>
-        </View>
-        <View style={[styles.flexRow]}>
-          <View style={[styles.flex1, styles.borderTR, styles.padding4]}>
-            <Text>质检员</Text>
-          </View>
-          <View style={[styles.flex1, styles.borderTR, styles.padding4]}>
-            <Text></Text>
-          </View>
-          <View style={[styles.flex1, styles.borderTR, styles.padding4]}>
-            <Text>验收员</Text>
-          </View>
-          <View style={[styles.flex1, styles.borderTR, styles.padding4]}>
-            <Text></Text>
-          </View>
-        </View>
-      </View>
+const SignatureTable = () => {
+  const BASIC_ROW_HEIGHT = React.use(CellHeightContext);
+
+  return (
+    <View style={[styles.borderBL]}>
+      <Row>
+        <Col>
+          <Cell height={BASIC_ROW_HEIGHT * 2}>签字签章</Cell>
+        </Col>
+        <Col>
+          <Cell>探伤工</Cell>
+          <Cell>质检员</Cell>
+        </Col>
+        <Col>
+          <Cell></Cell>
+          <Cell></Cell>
+        </Col>
+        <Col>
+          <Cell>探伤工长</Cell>
+          <Cell>验收员</Cell>
+        </Col>
+        <Col>
+          <Cell></Cell>
+          <Cell></Cell>
+        </Col>
+      </Row>
+      <Row>
+        <Col width={"20%"}>
+          <Cell>备注</Cell>
+        </Col>
+        <Col>
+          <Cell></Cell>
+        </Col>
+      </Row>
     </View>
-    <View style={[styles.flexRow]}>
-      <View style={[styles.width20, styles.borderTR, styles.padding4]}>
-        <Text>备注</Text>
-      </View>
-      <View style={[styles.width80, styles.borderTR]}>
-        <Text></Text>
-      </View>
-    </View>
-  </View>
-);
+  );
+};
 
 const ReportDoc = () => {
   const IMAGE_HEIGHT = 150;
@@ -678,7 +611,7 @@ const ReportDoc = () => {
         </ReportTitle>
         <TableHeader />
         <EquipmentTable />
-        <View style={[styles.flexRow, styles.borderBL]}>
+        <View style={[styles.flexRow, styles.borderL]}>
           <View
             style={[
               styles.borderTR,
@@ -695,22 +628,20 @@ const ReportDoc = () => {
                 <LZInfoTable />
                 {of13.map((no) => {
                   return (
-                    <View key={no} style={[styles.flexRow]}>
-                      <View
-                        style={[
-                          styles.width40,
-                          styles.borderTR,
-                          styles.padding4,
-                          styles.justifyCenter,
-                          styles.itemsCenter,
-                        ]}
-                      >
-                        <Text>{no}</Text>
-                      </View>
-                      <View style={[styles.borderTR, styles.flex1]}></View>
-                      <View style={[styles.borderTR, styles.flex1]}></View>
-                      <View style={[styles.borderTR, styles.flex1]}></View>
-                    </View>
+                    <Row key={no}>
+                      <Col width={"40%"}>
+                        <Cell>{no}</Cell>
+                      </Col>
+                      <Col>
+                        <Cell></Cell>
+                      </Col>
+                      <Col>
+                        <Cell></Cell>
+                      </Col>
+                      <Col>
+                        <Cell></Cell>
+                      </Col>
+                    </Row>
                   );
                 })}
                 <XHCTable />
@@ -718,7 +649,9 @@ const ReportDoc = () => {
             );
           })}
         </View>
-        <SignatureTable />
+        <CellHeightContext value={26}>
+          <SignatureTable />
+        </CellHeightContext>
         <PageFooter>第 1 页</PageFooter>
       </Page>
 
@@ -771,7 +704,10 @@ const ReportDoc = () => {
 
 export const Component = () => {
   return (
-    <PDFViewer style={{ width: "100%", height: "100vh" }}>
+    <PDFViewer
+      showToolbar={true}
+      style={{ width: "100%", height: "100vh", border: 0 }}
+    >
       <ReportDoc />
     </PDFViewer>
   );
