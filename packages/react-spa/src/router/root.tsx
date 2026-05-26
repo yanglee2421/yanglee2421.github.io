@@ -11,10 +11,12 @@ import {
   CalendarToday,
   DashboardOutlined,
   DragIndicator,
+  ElectricBolt,
   Grid3x3,
   Grid4x4,
   GridOn,
   HomeOutlined,
+  Javascript,
   ListOutlined,
   MessageOutlined,
   Print,
@@ -153,6 +155,16 @@ const createNavition = (lang: string): Navigation => [
     segment: calculateSegment(lang, "virtual"),
     title: "Virtual",
     icon: <ViewDayRounded />,
+  },
+  {
+    segment: calculateSegment(lang, "electric"),
+    title: "Electric",
+    icon: <ElectricBolt />,
+  },
+  {
+    segment: calculateSegment(lang, "rxjs"),
+    title: "Javascript",
+    icon: <Javascript />,
   },
 ];
 

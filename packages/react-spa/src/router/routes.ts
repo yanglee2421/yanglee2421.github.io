@@ -1,4 +1,3 @@
-import { AuthLayout } from "@/components/layout/auth";
 import { BlankLayout } from "@/components/layout/blank";
 import { QueryProvider } from "@/components/query";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
@@ -235,11 +234,6 @@ export const createRoutes = (): RouteObject[] => {
                     },
                   ],
                 },
-              ],
-              Component: DashLayout,
-            },
-            {
-              children: [
                 {
                   path: "scrollbar",
                   lazy: () => import("@/pages/scrollbar/component"),
@@ -252,8 +246,12 @@ export const createRoutes = (): RouteObject[] => {
                   path: "electric",
                   lazy: () => import("@/pages/electric/component"),
                 },
+                {
+                  path: "rxjs",
+                  lazy: () => import("@/pages/rxjs/component"),
+                },
               ],
-              Component: AuthLayout,
+              Component: DashLayout,
             },
             {
               children: [],

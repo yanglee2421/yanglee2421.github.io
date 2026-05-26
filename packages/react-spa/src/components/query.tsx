@@ -25,7 +25,7 @@ export const QueryProvider = (props: React.PropsWithChildren) => {
   return (
     <QueryClientProvider client={queryClient}>
       {props.children}
-      <ReactQueryDevtools buttonPosition="bottom-left" />
+      <ReactQueryDevtools />
     </QueryClientProvider>
   );
 };
