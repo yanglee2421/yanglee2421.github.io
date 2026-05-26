@@ -5,23 +5,35 @@ import {
   Card,
   CardContent,
   CardHeader,
+  Grid,
   IconButton,
+  MenuItem,
+  TextField,
 } from "@mui/material";
 import React from "react";
-import { NEVER, shareReplay, startWith, using } from "rxjs";
+import {
+  BehaviorSubject,
+  NEVER,
+  shareReplay,
+  startWith,
+  switchMap,
+  using,
+} from "rxjs";
 
 class DemoStore {
-  value = 0;
+  value: number;
+  path: string;
 
-  constructor() {
+  constructor(path: string) {
     this.value = Math.floor(Math.random() * 100);
+    this.path = path;
   }
 
   open() {
     console.log("start");
 
     const id = setInterval(() => {
-      console.log("run", this.value);
+      console.log("run", this.value, this.path);
     }, 1000 * 2);
 
     return id;
@@ -34,23 +46,31 @@ class DemoStore {
   }
 }
 
-const shareTest$ = using(
-  () => {
-    const store = new DemoStore();
-    const id = store.open();
+const path$ = new BehaviorSubject<string>("com1");
 
-    return {
-      unsubscribe: () => {
-        store.close(id);
+const shareTest$ = path$.pipe(
+  switchMap((path) =>
+    using(
+      () => {
+        const store = new DemoStore(path);
+        console.log("open", store.path, store.value);
+        const id = store.open();
+
+        return {
+          unsubscribe: () => {
+            console.log("unsubscribe", store.path, store.value);
+            store.close(id);
+          },
+          store,
+        };
       },
-      store,
-    };
-  },
-  (c) => NEVER.pipe(startWith(Reflect.get(Object(c), "store").value as number)),
-).pipe(
+      (c) =>
+        NEVER.pipe(startWith(Reflect.get(Object(c), "store").value as number)),
+    ),
+  ),
   shareReplay({
-    refCount: true,
     bufferSize: 1,
+    refCount: true,
   }),
 );
 
@@ -80,6 +100,11 @@ const TestItem = (props: TestItemProps) => {
 
 export const Component = () => {
   const [list, setList] = React.useState<string[]>([]);
+  const [path, setPath] = React.useState<string>("com1");
+
+  React.useEffect(() => {
+    path$.next(path);
+  }, [path]);
 
   return (
     <Card>
@@ -96,16 +121,34 @@ export const Component = () => {
         }
       />
       <CardContent>
-        <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-          {list.map((item) => (
-            <TestItem
-              onClick={() => {
-                setList((prev) => prev.filter((i) => !Object.is(i, item)));
+        <Grid container spacing={1.5}>
+          <Grid size={12}>
+            <TextField
+              value={path}
+              onChange={(e) => {
+                setPath(e.target.value);
               }}
-              key={item}
-            ></TestItem>
-          ))}
-        </Box>
+              fullWidth
+              select
+            >
+              <MenuItem value="com1">COM1</MenuItem>
+              <MenuItem value="com2">COM2</MenuItem>
+              <MenuItem value="com3">COM3</MenuItem>
+            </TextField>
+          </Grid>
+          <Grid size={12}>
+            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+              {list.map((item) => (
+                <TestItem
+                  onClick={() => {
+                    setList((prev) => prev.filter((i) => !Object.is(i, item)));
+                  }}
+                  key={item}
+                ></TestItem>
+              ))}
+            </Box>
+          </Grid>
+        </Grid>
       </CardContent>
     </Card>
   );
