@@ -1,4 +1,4 @@
-import { Add } from "@mui/icons-material";
+import { Add, Stop } from "@mui/icons-material";
 import {
   Box,
   Button,
@@ -13,10 +13,12 @@ import {
 import React from "react";
 import {
   BehaviorSubject,
+  last,
   NEVER,
   shareReplay,
   startWith,
   switchMap,
+  takeUntil,
   using,
 } from "rxjs";
 
@@ -48,31 +50,35 @@ class DemoStore {
 
 const path$ = new BehaviorSubject<string>("com1");
 
-const shareTest$ = path$.pipe(
-  switchMap((path) =>
-    using(
-      () => {
-        const store = new DemoStore(path);
-        console.log("open", store.path, store.value);
-        const id = store.open();
+const shareTest$ = path$
+  .pipe(
+    switchMap((path) => {
+      return using(
+        () => {
+          const store = new DemoStore(path);
+          console.log("open", store.path, store.value);
+          const id = store.open();
 
-        return {
-          unsubscribe: () => {
-            console.log("unsubscribe", store.path, store.value);
-            store.close(id);
-          },
-          store,
-        };
-      },
-      (c) =>
-        NEVER.pipe(startWith(Reflect.get(Object(c), "store").value as number)),
-    ),
-  ),
-  shareReplay({
-    bufferSize: 1,
-    refCount: true,
-  }),
-);
+          return {
+            unsubscribe: () => {
+              console.log("unsubscribe", store.path, store.value);
+              store.close(id);
+            },
+            store,
+          };
+        },
+        (c) => {
+          const store = Reflect.get(Object(c), "store");
+
+          return NEVER.pipe(startWith(store.value));
+        },
+      );
+    }),
+  )
+  .pipe(
+    takeUntil(path$.pipe(last())),
+    shareReplay({ bufferSize: 1, refCount: true }),
+  );
 
 interface TestItemProps {
   onClick: () => void;
@@ -122,6 +128,17 @@ export const Component = () => {
       />
       <CardContent>
         <Grid container spacing={1.5}>
+          <Grid size={12}>
+            <Button
+              variant="outlined"
+              startIcon={<Stop />}
+              onClick={() => {
+                path$.complete();
+              }}
+            >
+              stop
+            </Button>
+          </Grid>
           <Grid size={12}>
             <TextField
               value={path}
