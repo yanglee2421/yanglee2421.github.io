@@ -8,8 +8,10 @@ import {
   Grid,
   IconButton,
   MenuItem,
+  Stack,
   TextField,
 } from "@mui/material";
+import { useNotifications } from "@toolpad/core";
 import React from "react";
 import {
   BehaviorSubject,
@@ -104,6 +106,58 @@ const TestItem = (props: TestItemProps) => {
   );
 };
 
+interface AutoSubmitFormProps {
+  enabled?: boolean;
+}
+
+const AutoSubmitForm = (props: AutoSubmitFormProps) => {
+  const [inputValue, setInputValue] = React.useState("");
+
+  const formRef = React.useRef<HTMLFormElement>(null);
+
+  const toast = useNotifications();
+
+  React.useEffect(() => {
+    if (!props.enabled) return;
+    if (!inputValue) return;
+
+    const timer = setTimeout(() => {
+      formRef.current?.requestSubmit();
+    }, 1000 * 2);
+
+    return () => {
+      clearTimeout(timer);
+    };
+  }, [props.enabled, inputValue]);
+
+  return (
+    <Card>
+      <CardHeader />
+      <CardContent>
+        <form
+          noValidate
+          ref={formRef}
+          onSubmit={(e) => {
+            e.preventDefault();
+            e.stopPropagation();
+
+            toast.show("form submited");
+            setInputValue("");
+          }}
+        >
+          <TextField
+            fullWidth
+            value={inputValue}
+            onChange={(e) => {
+              setInputValue(e.target.value);
+            }}
+          />
+        </form>
+      </CardContent>
+    </Card>
+  );
+};
+
 export const Component = () => {
   const [list, setList] = React.useState<string[]>([]);
   const [path, setPath] = React.useState<string>("com1");
@@ -113,60 +167,65 @@ export const Component = () => {
   }, [path]);
 
   return (
-    <Card>
-      <CardHeader
-        title="RxJS"
-        action={
-          <IconButton
-            onClick={() => {
-              setList((prev) => [...prev, crypto.randomUUID()]);
-            }}
-          >
-            <Add />
-          </IconButton>
-        }
-      />
-      <CardContent>
-        <Grid container spacing={1.5}>
-          <Grid size={12}>
-            <Button
-              variant="outlined"
-              startIcon={<Stop />}
+    <Stack spacing={3}>
+      <Card>
+        <CardHeader
+          title="RxJS"
+          action={
+            <IconButton
               onClick={() => {
-                path$.complete();
+                setList((prev) => [...prev, crypto.randomUUID()]);
               }}
             >
-              stop
-            </Button>
+              <Add />
+            </IconButton>
+          }
+        />
+        <CardContent>
+          <Grid container spacing={1.5}>
+            <Grid size={12}>
+              <Button
+                variant="outlined"
+                startIcon={<Stop />}
+                onClick={() => {
+                  path$.complete();
+                }}
+              >
+                stop
+              </Button>
+            </Grid>
+            <Grid size={12}>
+              <TextField
+                value={path}
+                onChange={(e) => {
+                  setPath(e.target.value);
+                }}
+                fullWidth
+                select
+              >
+                <MenuItem value="com1">COM1</MenuItem>
+                <MenuItem value="com2">COM2</MenuItem>
+                <MenuItem value="com3">COM3</MenuItem>
+              </TextField>
+            </Grid>
+            <Grid size={12}>
+              <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
+                {list.map((item) => (
+                  <TestItem
+                    onClick={() => {
+                      setList((prev) =>
+                        prev.filter((i) => !Object.is(i, item)),
+                      );
+                    }}
+                    key={item}
+                  ></TestItem>
+                ))}
+              </Box>
+            </Grid>
           </Grid>
-          <Grid size={12}>
-            <TextField
-              value={path}
-              onChange={(e) => {
-                setPath(e.target.value);
-              }}
-              fullWidth
-              select
-            >
-              <MenuItem value="com1">COM1</MenuItem>
-              <MenuItem value="com2">COM2</MenuItem>
-              <MenuItem value="com3">COM3</MenuItem>
-            </TextField>
-          </Grid>
-          <Grid size={12}>
-            <Box sx={{ display: "flex", gap: 1, flexWrap: "wrap" }}>
-              {list.map((item) => (
-                <TestItem
-                  onClick={() => {
-                    setList((prev) => prev.filter((i) => !Object.is(i, item)));
-                  }}
-                  key={item}
-                ></TestItem>
-              ))}
-            </Box>
-          </Grid>
-        </Grid>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+      <AutoSubmitForm enabled />
+    </Stack>
   );
 };
