@@ -254,7 +254,12 @@ export const createRoutes = (): RouteObject[] => {
               Component: DashLayout,
             },
             {
-              children: [],
+              children: [
+                {
+                  path: "drawer",
+                  lazy: () => import("@/pages/drawer/component"),
+                },
+              ],
               Component: BlankLayout,
             },
           ],
