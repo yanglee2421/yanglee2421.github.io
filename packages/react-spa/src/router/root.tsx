@@ -11,12 +11,8 @@ import {
   CalendarToday,
   DashboardOutlined,
   DragIndicator,
-  ElectricBolt,
-  Grid3x3,
-  Grid4x4,
   GridOn,
   HomeOutlined,
-  Javascript,
   ListOutlined,
   MessageOutlined,
   Print,
@@ -118,21 +114,6 @@ const createNavition = (lang: string): Navigation => [
     icon: <Print />,
     children: [
       {
-        segment: calculateSegment(lang, "print", "501"),
-        icon: <Grid3x3 />,
-        title: "日常校验",
-      },
-      {
-        segment: calculateSegment(lang, "print", "502"),
-        icon: <Grid4x4 />,
-        title: "季度校验",
-      },
-      {
-        segment: calculateSegment(lang, "print", "503"),
-        icon: <GridOn />,
-        title: "年度校验",
-      },
-      {
         segment: calculateSegment(lang, "print", "pdf"),
         icon: <GridOn />,
         title: "PDF",
@@ -155,16 +136,6 @@ const createNavition = (lang: string): Navigation => [
     segment: calculateSegment(lang, "virtual"),
     title: "Virtual",
     icon: <ViewDayRounded />,
-  },
-  {
-    segment: calculateSegment(lang, "electric"),
-    title: "Electric",
-    icon: <ElectricBolt />,
-  },
-  {
-    segment: calculateSegment(lang, "rxjs"),
-    title: "Javascript",
-    icon: <Javascript />,
   },
 ];
 

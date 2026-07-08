@@ -292,7 +292,10 @@ const styles = StyleSheet.create({
 
 export const Component = () => {
   return (
-    <PDFViewer>
+    <PDFViewer
+      showToolbar={true}
+      style={{ width: "100%", height: "100%", border: 0 }}
+    >
       <Quixote />
     </PDFViewer>
   );

@@ -213,18 +213,6 @@ export const createRoutes = (): RouteObject[] => {
                   path: "print",
                   children: [
                     {
-                      path: "501",
-                      lazy: () => import("@/pages/print/component"),
-                    },
-                    {
-                      path: "502",
-                      lazy: () => import("@/pages/502/component"),
-                    },
-                    {
-                      path: "503",
-                      lazy: () => import("@/pages/503/component"),
-                    },
-                    {
                       path: "pdf",
                       lazy: () => import("@/pages/pdf/component"),
                     },
@@ -241,14 +229,6 @@ export const createRoutes = (): RouteObject[] => {
                 {
                   path: "virtual",
                   lazy: () => import("@/pages/virtual/component"),
-                },
-                {
-                  path: "electric",
-                  lazy: () => import("@/pages/electric/component"),
-                },
-                {
-                  path: "rxjs",
-                  lazy: () => import("@/pages/rxjs/component"),
                 },
               ],
               Component: DashLayout,
