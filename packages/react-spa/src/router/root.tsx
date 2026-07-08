@@ -18,8 +18,6 @@ import {
   Print,
   QrCodeScanner,
   ScienceOutlined,
-  TokenOutlined,
-  ViewDayRounded,
 } from "@mui/icons-material";
 import {
   Alert,
@@ -124,18 +122,6 @@ const createNavition = (lang: string): Navigation => [
         title: "PDF Report",
       },
     ],
-  },
-  { kind: "divider" },
-  { kind: "header", title: "Custom layout" },
-  {
-    segment: calculateSegment(lang, "scrollbar"),
-    title: "Scrollbar",
-    icon: <TokenOutlined />,
-  },
-  {
-    segment: calculateSegment(lang, "virtual"),
-    title: "Virtual",
-    icon: <ViewDayRounded />,
   },
 ];
 

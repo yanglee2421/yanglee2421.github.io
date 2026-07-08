@@ -4,12 +4,7 @@ import type { Mode } from "@/hooks/store/useLocalStore";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { AppRouter } from "@/router";
 import type { ThemeOptions } from "@mui/material";
-import {
-  createTheme,
-  CssBaseline,
-  GlobalStyles,
-  ThemeProvider,
-} from "@mui/material";
+import { createTheme, GlobalStyles, ThemeProvider } from "@mui/material";
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import React from "react";
@@ -96,7 +91,6 @@ const MuiProvider = (props: React.PropsWithChildren) => {
           {props.children}
         </SnackbarProvider>
       </LocalizationProvider>
-      <CssBaseline />
       <GlobalStyles
         styles={{
           ".animate-spin": {
