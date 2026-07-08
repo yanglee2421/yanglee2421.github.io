@@ -17,7 +17,6 @@ import {
 } from "@mui/material";
 import dayjs from "dayjs";
 import { useSnackbar } from "notistack";
-import { SocketDemo } from "./SocketDemo";
 
 const createToday = () => {
   const today = dayjs();
@@ -51,7 +50,7 @@ const FluentInput = () => {
         position: "relative",
 
         boxSizing: "border-box",
-        display: "inline-block",
+        display: "block",
 
         border: `1px solid ${theme.palette.text.secondary}`,
         borderBottomColor: theme.palette.text.primary,
@@ -114,7 +113,7 @@ export const Component = () => {
     <Stack spacing={3}>
       <Paper sx={{ padding: 2.5 }}>
         <Typography
-          variant="h1"
+          variant="h4"
           component={"time"}
           dateTime={timeString}
           sx={{ display: "block" }}
@@ -122,10 +121,11 @@ export const Component = () => {
           {time}
         </Typography>
         <Typography
-          variant="subtitle1"
+          variant="body2"
           component={"time"}
           dateTime={dateString}
           sx={{ display: "block" }}
+          color="textSecondary"
         >
           {date}
         </Typography>
@@ -195,7 +195,6 @@ export const Component = () => {
           </Button>
         </CardActions>
       </Card>
-      <SocketDemo />
     </Stack>
   );
 };

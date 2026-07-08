@@ -143,10 +143,6 @@ export const createRoutes = (): RouteObject[] => {
             {
               children: [
                 {
-                  path: "calendar",
-                  lazy: () => import("@/pages/calendar/component"),
-                },
-                {
                   path: "dashboard",
                   lazy: () => import("@/pages/dashboard/component"),
                 },

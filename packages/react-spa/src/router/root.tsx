@@ -8,7 +8,6 @@ import {
   AlignHorizontalLeftOutlined,
   Animation,
   CalendarMonthOutlined,
-  CalendarToday,
   DashboardOutlined,
   DragIndicator,
   GridOn,
@@ -77,11 +76,6 @@ const createNavition = (lang: string): Navigation => [
   },
   { kind: "divider" },
   { kind: "header", title: "App" },
-  {
-    segment: calculateSegment(lang, "calendar"),
-    title: "Calendar",
-    icon: <CalendarToday />,
-  },
   {
     segment: calculateSegment(lang, "snackbar"),
     title: "Snackbar",
