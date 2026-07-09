@@ -1,4 +1,3 @@
-import { AuthLayout } from "@/components/layout/auth";
 import { BlankLayout } from "@/components/layout/blank";
 import { QueryProvider } from "@/components/query";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
@@ -144,10 +143,6 @@ export const createRoutes = (): RouteObject[] => {
             {
               children: [
                 {
-                  path: "calendar",
-                  lazy: () => import("@/pages/calendar/component"),
-                },
-                {
                   path: "dashboard",
                   lazy: () => import("@/pages/dashboard/component"),
                 },
@@ -214,24 +209,15 @@ export const createRoutes = (): RouteObject[] => {
                   path: "print",
                   children: [
                     {
-                      path: "501",
-                      lazy: () => import("@/pages/print/component"),
+                      path: "pdf",
+                      lazy: () => import("@/pages/pdf/component"),
                     },
                     {
-                      path: "502",
-                      lazy: () => import("@/pages/502/component"),
-                    },
-                    {
-                      path: "503",
-                      lazy: () => import("@/pages/503/component"),
+                      path: "pdf-report",
+                      lazy: () => import("@/pages/pdf-report/component"),
                     },
                   ],
                 },
-              ],
-              Component: DashLayout,
-            },
-            {
-              children: [
                 {
                   path: "scrollbar",
                   lazy: () => import("@/pages/scrollbar/component"),
@@ -240,15 +226,16 @@ export const createRoutes = (): RouteObject[] => {
                   path: "virtual",
                   lazy: () => import("@/pages/virtual/component"),
                 },
-                {
-                  path: "electric",
-                  lazy: () => import("@/pages/electric/component"),
-                },
               ],
-              Component: AuthLayout,
+              Component: DashLayout,
             },
             {
-              children: [],
+              children: [
+                {
+                  path: "drawer",
+                  lazy: () => import("@/pages/drawer/component"),
+                },
+              ],
               Component: BlankLayout,
             },
           ],

@@ -8,11 +8,8 @@ import {
   AlignHorizontalLeftOutlined,
   Animation,
   CalendarMonthOutlined,
-  CalendarToday,
   DashboardOutlined,
   DragIndicator,
-  Grid3x3,
-  Grid4x4,
   GridOn,
   HomeOutlined,
   ListOutlined,
@@ -20,8 +17,6 @@ import {
   Print,
   QrCodeScanner,
   ScienceOutlined,
-  TokenOutlined,
-  ViewDayRounded,
 } from "@mui/icons-material";
 import {
   Alert,
@@ -82,11 +77,6 @@ const createNavition = (lang: string): Navigation => [
   { kind: "divider" },
   { kind: "header", title: "App" },
   {
-    segment: calculateSegment(lang, "calendar"),
-    title: "Calendar",
-    icon: <CalendarToday />,
-  },
-  {
     segment: calculateSegment(lang, "snackbar"),
     title: "Snackbar",
     icon: <MessageOutlined />,
@@ -116,33 +106,16 @@ const createNavition = (lang: string): Navigation => [
     icon: <Print />,
     children: [
       {
-        segment: calculateSegment(lang, "print", "501"),
-        icon: <Grid3x3 />,
-        title: "日常校验",
-      },
-      {
-        segment: calculateSegment(lang, "print", "502"),
-        icon: <Grid4x4 />,
-        title: "季度校验",
-      },
-      {
-        segment: calculateSegment(lang, "print", "503"),
+        segment: calculateSegment(lang, "print", "pdf"),
         icon: <GridOn />,
-        title: "年度校验",
+        title: "PDF",
+      },
+      {
+        segment: calculateSegment(lang, "print", "pdf-report"),
+        icon: <GridOn />,
+        title: "PDF Report",
       },
     ],
-  },
-  { kind: "divider" },
-  { kind: "header", title: "Custom layout" },
-  {
-    segment: calculateSegment(lang, "scrollbar"),
-    title: "Scrollbar",
-    icon: <TokenOutlined />,
-  },
-  {
-    segment: calculateSegment(lang, "virtual"),
-    title: "Virtual",
-    icon: <ViewDayRounded />,
   },
 ];
 

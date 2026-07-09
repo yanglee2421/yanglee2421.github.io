@@ -1,9 +1,18 @@
 packages:
   - packages/*
 
+allowBuilds:
+  '@firebase/util': true
+  '@tsparticles/engine': true
+  esbuild: true
+  protobufjs: true
+  spawn-sync: true
+  vue-demi: true
+
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@tsparticles/engine'
   - esbuild
   - protobufjs
+  - spawn-sync
   - vue-demi

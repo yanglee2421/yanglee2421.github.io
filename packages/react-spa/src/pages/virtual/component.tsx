@@ -137,53 +137,52 @@ export const Component = () => {
   const handleToggleMui = () => setOpen((prev) => !prev);
 
   return (
-    <>
-      <Box
-        data-contentfixed
-        sx={{
-          inlineSize: "100%",
-          blockSize: "100%",
-          position: "relative",
-          zIndex: 1,
-          borderWidth: 1,
-          borderStyle: "solid",
-          borderColor: (t) => t.palette.divider,
+    <Box
+      sx={{
+        width: "100%",
+        height: "100%",
+        position: "relative",
+        zIndex: 1,
+        borderWidth: 1,
+        borderStyle: "solid",
+        borderColor: (t) => t.palette.divider,
+        maxHeight: "100dvh",
+        maxWidth: "100dvw",
+      }}
+    >
+      <ScrollView
+        slotProps={{
+          viewport: {
+            ref: parentRef,
+          },
         }}
       >
-        <ScrollView
-          slotProps={{
-            viewport: {
-              ref: parentRef,
-            },
+        <StyledTotalSizeDiv
+          style={{
+            inlineSize: columnVirtualizer.getTotalSize(),
+            blockSize: rowVirtualizer.getTotalSize(),
           }}
         >
-          <StyledTotalSizeDiv
-            style={{
-              inlineSize: columnVirtualizer.getTotalSize(),
-              blockSize: rowVirtualizer.getTotalSize(),
-            }}
-          >
-            {rowVirtualizer.getVirtualItems().map((virtualRow) => (
-              <React.Fragment key={virtualRow.key}>
-                {columnVirtualizer.getVirtualItems().map((virtualColumn) => (
-                  <StyledDiv
-                    key={virtualColumn.key}
-                    style={{
-                      inlineSize: virtualColumn.size,
-                      blockSize: virtualRow.size,
-                      transform: `translate3d(${virtualColumn.start}px, ${virtualRow.start}px, 0)`,
-                    }}
-                  >
-                    <Item mui={open} onClick={handleToggleMui}>
-                      {virtualRow.index}
-                    </Item>
-                  </StyledDiv>
-                ))}
-              </React.Fragment>
-            ))}
-          </StyledTotalSizeDiv>
-        </ScrollView>
-      </Box>
-    </>
+          {rowVirtualizer.getVirtualItems().map((virtualRow) => (
+            <React.Fragment key={virtualRow.key}>
+              {columnVirtualizer.getVirtualItems().map((virtualColumn) => (
+                <StyledDiv
+                  key={virtualColumn.key}
+                  style={{
+                    inlineSize: virtualColumn.size,
+                    blockSize: virtualRow.size,
+                    transform: `translate3d(${virtualColumn.start}px, ${virtualRow.start}px, 0)`,
+                  }}
+                >
+                  <Item mui={open} onClick={handleToggleMui}>
+                    {virtualRow.index}
+                  </Item>
+                </StyledDiv>
+              ))}
+            </React.Fragment>
+          ))}
+        </StyledTotalSizeDiv>
+      </ScrollView>
+    </Box>
   );
 };
