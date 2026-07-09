@@ -10,7 +10,6 @@ import {
   CalendarMonthOutlined,
   DashboardOutlined,
   DragIndicator,
-  GridOn,
   HomeOutlined,
   ListOutlined,
   MessageOutlined,
@@ -104,18 +103,7 @@ const createNavition = (lang: string): Navigation => [
   {
     title: "Print",
     icon: <Print />,
-    children: [
-      {
-        segment: calculateSegment(lang, "print", "pdf"),
-        icon: <GridOn />,
-        title: "PDF",
-      },
-      {
-        segment: calculateSegment(lang, "print", "pdf-report"),
-        icon: <GridOn />,
-        title: "PDF Report",
-      },
-    ],
+    segment: calculateSegment(lang, "print"),
   },
 ];
 

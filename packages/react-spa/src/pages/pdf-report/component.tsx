@@ -1,3 +1,4 @@
+import SimHei from "@/assets/SimHei.ttf";
 import {
   Document,
   Font,
@@ -12,10 +13,9 @@ import dayjs from "dayjs";
 import React from "react";
 
 // 注意：react-pdf 默认不支持中文字体，必须注册中文字体才能正常显示中文。
-// 这里使用一个可用的思源黑体 TTF 字体链接作为示例。在生产环境中建议将字体文件放到 public 目录并使用本地路径。
 Font.register({
   family: "NotoSansSC",
-  src: "https://cdn.jsdelivr.net/gh/StellarCN/scp_zh@master/fonts/SimHei.ttf",
+  src: SimHei,
 });
 
 const styles = StyleSheet.create({

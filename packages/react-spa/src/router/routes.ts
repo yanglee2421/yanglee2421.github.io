@@ -207,16 +207,7 @@ export const createRoutes = (): RouteObject[] => {
                 },
                 {
                   path: "print",
-                  children: [
-                    {
-                      path: "pdf",
-                      lazy: () => import("@/pages/pdf/component"),
-                    },
-                    {
-                      path: "pdf-report",
-                      lazy: () => import("@/pages/pdf-report/component"),
-                    },
-                  ],
+                  lazy: () => import("@/pages/pdf-report/component"),
                 },
                 {
                   path: "scrollbar",
