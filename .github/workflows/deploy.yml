@@ -36,11 +36,11 @@ jobs:
           node-version: 24
           cache: pnpm
       - run: |
-          pnpm -F react-spa... i
-          pnpm -F react-spa build
+          pnpm -F githubio... i
+          pnpm -F githubio build
       - uses: actions/configure-pages@v6
       - uses: actions/upload-pages-artifact@v5
         with:
-          path: "./packages/react-spa/dist"
+          path: "./apps/githubio/dist"
       - id: deployment
         uses: actions/deploy-pages@v5
