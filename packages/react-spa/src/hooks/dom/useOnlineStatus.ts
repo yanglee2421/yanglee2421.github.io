@@ -1,7 +1,7 @@
 import React from "react";
 
-export const useOnlineStatus = () =>
-  React.useSyncExternalStore(
+export const useOnlineStatus = () => {
+  return React.useSyncExternalStore(
     (onStateChange) => {
       window.addEventListener("online", onStateChange);
       window.addEventListener("offline", onStateChange);
@@ -13,3 +13,4 @@ export const useOnlineStatus = () =>
     },
     () => navigator.onLine,
   );
+};

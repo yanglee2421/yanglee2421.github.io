@@ -2,8 +2,8 @@ import React from "react";
 
 const mediaQuery = matchMedia("(prefers-color-scheme: dark)");
 
-export const useColorScheme = () =>
-  React.useSyncExternalStore(
+export const useColorScheme = () => {
+  return React.useSyncExternalStore(
     (onStoreChange) => {
       mediaQuery.addEventListener("change", onStoreChange);
 
@@ -13,3 +13,4 @@ export const useColorScheme = () =>
     },
     () => mediaQuery.matches,
   );
+};

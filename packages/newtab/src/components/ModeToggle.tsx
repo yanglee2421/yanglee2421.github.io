@@ -12,9 +12,9 @@ const createModes = () => {
   return ["light", "dark", "system"] as const;
 };
 
-type ModeIconProps = {
+interface ModeIconProps {
   mode: Mode;
-};
+}
 
 const ModeIcon = (props: ModeIconProps) => {
   const { mode } = props;
@@ -83,7 +83,9 @@ export const ModeToggle = () => {
                 primary={mode}
                 slotProps={{
                   primary: {
-                    textTransform: "capitalize",
+                    sx: {
+                      textTransform: "capitalize",
+                    },
                   },
                 }}
               />

@@ -16,9 +16,9 @@ const init = async (engine: Engine): Promise<void> => {
   await loadBigCirclesPreset(engine);
 };
 
-type ParticlesUIProps = {
+interface ParticlesUIProps {
   preset: string;
-};
+}
 
 export const ParticlesUI = (props: ParticlesUIProps) => {
   return (

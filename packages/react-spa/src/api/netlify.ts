@@ -11,20 +11,20 @@ export const netlify = axios.create({
   timeout: 1000 * 60,
 });
 
-type SignInResponse = {
+interface SignInResponse {
   token: string;
   user: {
     id: string;
     email: string;
   };
-};
+}
 
 const SIGNIN_FIREBAESE_PATH = "/auth/firebase";
 
-type SignInFirebaseBody = {
+interface SignInFirebaseBody {
   firebaseId: string;
   name: string;
-};
+}
 
 type SignInFirebaseConf = AxiosRequestConfig<SignInFirebaseBody>;
 
@@ -42,10 +42,10 @@ export const fetchUserByFirebase = (conf: SignInFirebaseConf) =>
 
 const SIGNIN_GOOGLE_PATH = "/auth/google";
 
-type SignInGoogleBody = {
+interface SignInGoogleBody {
   googleId: string;
   email: string;
-};
+}
 
 type SignInGoogleConf = AxiosRequestConfig<SignInGoogleBody>;
 
@@ -63,10 +63,10 @@ export const fetchUserByGoogle = (conf: SignInGoogleConf) =>
 
 const SIGNIN_GITHUB_PATH = "/auth/github";
 
-type SignInGithubBody = {
+interface SignInGithubBody {
   githubId: string;
   email: string;
-};
+}
 
 type SignInGithubConf = AxiosRequestConfig<SignInGithubBody>;
 
@@ -84,16 +84,16 @@ export const fetchUserByGithub = (conf: SignInGithubConf) =>
 
 export const OVERTIME_PATH = "/overtime";
 
-type OvertimeParams = {
+interface OvertimeParams {
   pageIndex: number;
   pageSize: number;
-};
+}
 
 type OvertimeGetConf = AxiosRequestConfig & {
   params: OvertimeParams;
 };
 
-export type Overtime = {
+export interface Overtime {
   _id: string;
   userId: string;
   date: string;
@@ -102,12 +102,12 @@ export type Overtime = {
   createdAt: string;
   updatedAt: string;
   redeemed: boolean;
-};
+}
 
-type OvertimeGetResponse = {
+interface OvertimeGetResponse {
   count: number;
   rows: Overtime[];
-};
+}
 
 export const fetchOvertime = (conf: OvertimeGetConf) =>
   queryOptions({
@@ -121,14 +121,16 @@ export const fetchOvertime = (conf: OvertimeGetConf) =>
       }),
   });
 
-type OvertimeUpdateItem = {
+interface OvertimeUpdateItem {
   date?: string;
   hours?: number;
   reason?: string;
   redeemed?: boolean;
-};
+}
 
-type OvertimeBody = { rows: OvertimeUpdateItem[] };
+interface OvertimeBody {
+  rows: OvertimeUpdateItem[];
+}
 type OvertimeConf = AxiosRequestConfig<OvertimeBody>;
 
 export const useOvertime = () => {
@@ -153,9 +155,9 @@ export const useOvertime = () => {
   });
 };
 
-type OvertimeDeleteBody = {
+interface OvertimeDeleteBody {
   id: string[];
-};
+}
 
 type OvertimeDeleteConf = AxiosRequestConfig<OvertimeDeleteBody>;
 

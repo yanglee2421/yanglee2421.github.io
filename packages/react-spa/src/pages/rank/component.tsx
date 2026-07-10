@@ -85,11 +85,11 @@ const animateLayoutChanges: AnimateLayoutChanges = (args) => {
 
 const TRASH_ID = "TRASH_ID";
 
-type SortableItemProps = {
+interface SortableItemProps {
   id: UniqueIdentifier;
   containerId: UniqueIdentifier;
   onRemove?: () => void;
-};
+}
 
 const SortableItem = (props: SortableItemProps) => {
   const theme = useTheme();
@@ -164,10 +164,10 @@ const SortableItem = (props: SortableItemProps) => {
   );
 };
 
-type DroppableContainerProps = {
+interface DroppableContainerProps {
   id: UniqueIdentifier;
   children?: React.ReactNode;
-};
+}
 
 const DroppableContainer = (props: DroppableContainerProps) => {
   const droppable = useDroppable({
@@ -213,9 +213,9 @@ const DroppableContainer = (props: DroppableContainerProps) => {
   );
 };
 
-type TrashProps = {
+interface TrashProps {
   id: string;
-};
+}
 
 const Trash = (props: TrashProps) => {
   const theme = useTheme();

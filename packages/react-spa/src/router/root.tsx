@@ -117,10 +117,10 @@ const useNavigation = () => {
   return React.useMemo<Navigation>(() => createNavition(locale), [locale]);
 };
 
-type ErrorContentProps = {
+interface ErrorContentProps {
   error: unknown;
   children?: React.ReactNode;
-};
+}
 
 const ErrorContent = ({ error, children }: ErrorContentProps) => {
   if (isRouteErrorResponse(error)) {
