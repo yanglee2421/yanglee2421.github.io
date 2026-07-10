@@ -12,5 +12,4 @@ export const useOnlineStatus = () =>
       };
     },
     () => navigator.onLine,
-    () => false,
   );

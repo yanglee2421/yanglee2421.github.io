@@ -11,6 +11,5 @@ export const useColorScheme = () =>
         mediaQuery.removeEventListener("change", onStoreChange);
       };
     },
-
     () => mediaQuery.matches,
   );
