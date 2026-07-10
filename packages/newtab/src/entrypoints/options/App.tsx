@@ -1,7 +1,9 @@
-import { z } from "zod";
-import { browser } from "wxt/browser";
 import { MuiProvider } from "@/components/MuiProvider";
 import { QueryProvider } from "@/components/query";
+import { TooltipProvider } from "@/components/ui/tooltip";
+import "@/styles/global.css";
+import { browser } from "wxt/browser";
+import { z } from "zod";
 import { OptionsRouter } from "./router";
 
 const calculateLocale = (language: string) => {
@@ -24,7 +26,9 @@ export const App = () => {
   return (
     <QueryProvider>
       <MuiProvider>
-        <OptionsRouter />
+        <TooltipProvider>
+          <OptionsRouter />
+        </TooltipProvider>
       </MuiProvider>
     </QueryProvider>
   );

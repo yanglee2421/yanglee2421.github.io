@@ -1,4 +1,5 @@
 import babel from "@rolldown/plugin-babel";
+import tailwindcss from "@tailwindcss/vite";
 import { reactCompilerPreset } from "@vitejs/plugin-react";
 import { defineConfig } from "wxt";
 
@@ -32,6 +33,7 @@ export default defineConfig({
     vitePluginsBefore: [
       babel({ presets: [reactCompilerPreset({ target: "19" })] }),
       reactDevtoolsPlugin(),
+      tailwindcss(),
     ],
   },
   srcDir: "src",
