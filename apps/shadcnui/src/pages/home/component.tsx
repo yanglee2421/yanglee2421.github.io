@@ -14,6 +14,7 @@ import {
   SidebarProvider,
   SidebarTrigger,
 } from "@/components/ui/sidebar";
+import { MenubarDemo } from "./menu";
 
 export const Component = () => {
   return (
@@ -46,11 +47,20 @@ export const Component = () => {
         </header>
         <div className="flex flex-1 flex-col gap-4 p-4 pt-0">
           <div className="grid auto-rows-min gap-4 md:grid-cols-3">
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
-            <div className="bg-muted/50 aspect-video rounded-xl" />
+            <div className="bg-muted/50 aspect-video" />
+            <div className="bg-muted/50 aspect-video" />
+            <div className="bg-muted/50 aspect-video" />
           </div>
-          <div className="bg-muted/50 min-h-[100vh] flex-1 rounded-xl md:min-h-min" />
+          <div className="bg-muted/50 min-h-dvh flex-1 p-6 md:min-h-min">
+            <MenubarDemo />
+            <hr className="my-5" />
+            <span>
+              Lorem ipsum dolor sit, amet consectetur adipisicing elit.
+              Voluptate, quam. Blanditiis delectus facere vero nemo repellendus
+              cupiditate excepturi amet numquam corrupti odio nam reiciendis
+              laudantium eum, nobis eius eligendi soluta.
+            </span>
+          </div>
         </div>
       </SidebarInset>
     </SidebarProvider>

@@ -7,7 +7,7 @@ export const createRoutes = (): RouteObject[] => {
       children: [
         {
           index: true,
-          lazy: () => import("@/pages/home"),
+          lazy: () => import("@/pages/home/component"),
         },
       ],
       Component: RootComponent,
