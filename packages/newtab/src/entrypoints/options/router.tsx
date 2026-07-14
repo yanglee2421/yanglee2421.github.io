@@ -1,3 +1,5 @@
+import { FullScreenProgress } from "@/components/FullScreenProgress";
+import React from "react";
 import {
   createHashRouter,
   Link,
@@ -9,8 +11,6 @@ import {
   useLocation,
   useParams,
 } from "react-router";
-import React from "react";
-import { FullScreenProgress } from "@/components/FullScreenProgress";
 import { MuiLayout } from "./layout";
 
 const DEFAULT_LANG = "en";

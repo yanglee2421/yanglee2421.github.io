@@ -1,26 +1,27 @@
+import { db } from "@/utils/db";
+import { Settings, Wallpaper } from "@mui/icons-material";
 import {
   alpha,
   Box,
-  Typography,
-  useTheme,
-  styled,
-  Menu,
-  MenuItem,
   ListItemIcon,
   ListItemText,
+  Menu,
+  MenuItem,
+  styled,
+  Typography,
+  useTheme,
 } from "@mui/material";
-import { Settings, Wallpaper } from "@mui/icons-material";
-import React from "react";
+import { usePrefetchQuery } from "@tanstack/react-query";
+import type { Engine } from "@tsparticles/engine";
+import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
+import { loadLinksPreset } from "@tsparticles/preset-links";
+import { loadSnowPreset } from "@tsparticles/preset-snow";
+import Particles, { ParticlesProvider } from "@tsparticles/react";
 import { loadSlim } from "@tsparticles/slim";
 import { useLiveQuery } from "dexie-react-hooks";
-import { loadSnowPreset } from "@tsparticles/preset-snow";
-import { loadLinksPreset } from "@tsparticles/preset-links";
-import { loadBubblesPreset } from "@tsparticles/preset-bubbles";
-import Particles, { initParticlesEngine } from "@tsparticles/react";
+import React from "react";
 import { browser } from "wxt/browser";
-import { db } from "@/utils/db";
 import snowVillage from "./snowVillage.jpg";
-import { usePrefetchQuery } from "@tanstack/react-query";
 
 const calculateBackgroundId = (gallery: number[], wallpaperId: number) => {
   const isIncludesWallpaperId = gallery.includes(wallpaperId);
@@ -76,16 +77,13 @@ const calculateIsShowNextImage = (
   return gallery.length > 1;
 };
 
-const particlesInitializer = () => {
-  return initParticlesEngine(async (e) => {
-    await loadSnowPreset(e);
-    await loadLinksPreset(e);
-    await loadBubblesPreset(e);
-    await loadSlim(e);
-  });
+const init = async (engine: Engine): Promise<void> => {
+  await loadSlim(engine);
+  await loadBubblesPreset(engine);
+  await loadSnowPreset(engine);
+  await loadLinksPreset(engine);
+  await loadBubblesPreset(engine);
 };
-
-const particlesPromise = particlesInitializer();
 
 const StyledBackgroundImage = styled("div")({
   position: "fixed",
@@ -214,15 +212,17 @@ const NewTab = () => {
 
   return (
     <>
-      <Background
-        alpha={alpha}
-        blur={blur}
-        backgroundType={backgroundType}
-        backgroundColor={backgroundColor}
-        backgroundImage={backgroundImage}
-        preset={preset}
-        ref={maskRef}
-      />
+      <ParticlesProvider init={init}>
+        <Background
+          alpha={alpha}
+          blur={blur}
+          backgroundType={backgroundType}
+          backgroundColor={backgroundColor}
+          backgroundImage={backgroundImage}
+          preset={preset}
+          ref={maskRef}
+        />
+      </ParticlesProvider>
       <ContentContainer
         onContextMenu={(e) => {
           e.preventDefault();
@@ -264,7 +264,7 @@ const NewTab = () => {
   );
 };
 
-type BackgroundProps = {
+interface BackgroundProps {
   ref: React.Ref<HTMLDivElement>;
   alpha: number;
   blur: number;
@@ -272,7 +272,7 @@ type BackgroundProps = {
   backgroundImage: string;
   backgroundColor: string;
   preset: string;
-};
+}
 
 const Background = (props: BackgroundProps) => {
   const {
@@ -320,8 +320,6 @@ type ParticleMaskProps = {
 };
 
 const ParticleMask = ({ preset }: ParticleMaskProps) => {
-  React.use(particlesPromise);
-
   return <Particles options={{ preset, background: { opacity: 0 } }} />;
 };
 
