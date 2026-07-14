@@ -202,10 +202,6 @@ export const createRoutes = (): RouteObject[] => {
                   path: "print",
                   lazy: () => import("@/pages/pdf-report/component"),
                 },
-                {
-                  path: "virtual",
-                  lazy: () => import("@/pages/virtual/component"),
-                },
               ],
               Component: DashLayout,
             },
