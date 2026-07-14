@@ -1,9 +1,23 @@
-import { MoreVert } from "@mui/icons-material";
+import {
+  Drafts as DraftsIcon,
+  ExpandLess,
+  ExpandMore,
+  Inbox as InboxIcon,
+  MoreVert,
+  Send as SendIcon,
+  StarBorder,
+} from "@mui/icons-material";
 import {
   Avatar,
   Box,
+  Collapse,
   Divider,
   IconButton,
+  List,
+  ListItemButton,
+  ListItemIcon,
+  ListItemText,
+  ListSubheader,
   Paper,
   Toolbar,
   Typography,
@@ -12,7 +26,13 @@ import {
 import React from "react";
 
 export const Sidebar = (props: React.PropsWithChildren) => {
+  const [open, setOpen] = React.useState(false);
+
   const theme = useTheme();
+
+  const handleClick = () => {
+    setOpen((p) => !p);
+  };
 
   return (
     <Paper
@@ -66,47 +86,42 @@ export const Sidebar = (props: React.PropsWithChildren) => {
       </Toolbar>
       <Divider></Divider>
       <Box sx={{ flex: 1, overflow: "auto" }}>
-        <Box sx={{ height: 2000 }}>
-          <Box sx={{ p: 1.5 }}>
-            Lorem, ipsum dolor sit amet consectetur adipisicing elit. Quos,
-            praesentium neque nostrum officiis aliquam ratione illo culpa
-            reprehenderit tempora veniam dolores necessitatibus sed nesciunt
-            magnam incidunt mollitia, amet aut cum. Quia eum natus quod
-            voluptas. Pariatur, enim iste at ipsum deserunt magni facere. Quas
-            repudiandae ducimus quos odit perspiciatis molestiae itaque
-            mollitia, exercitationem autem corrupti ipsa explicabo. Maiores,
-            doloribus nisi? Enim molestiae voluptate, minus aliquam nihil unde
-            a. Voluptates nisi consectetur, totam nobis provident sed laborum
-            odio. Blanditiis aspernatur fugiat accusantium eos consequuntur
-            quae, exercitationem ab ullam? Eligendi, aspernatur? Tempora! Optio,
-            ratione exercitationem temporibus ducimus sed similique facere quam
-            excepturi cum ipsa sint, sit aliquid? Ipsam ab, corporis culpa dolor
-            excepturi, sapiente voluptatum illo ad quaerat officia perspiciatis,
-            quae natus! Voluptatum maxime deserunt, neque praesentium quas id.
-            Ut praesentium tempore ducimus nesciunt fugiat impedit, voluptatum
-            labore ipsam, libero id qui, mollitia sapiente cumque molestiae
-            quam! Harum architecto assumenda debitis temporibus? Quibusdam
-            dolorem consectetur repellendus asperiores corporis ad maxime optio
-            similique. Hic reprehenderit fuga incidunt necessitatibus. Debitis
-            facilis, illum eveniet dolores quidem voluptate reiciendis a
-            corrupti blanditiis ex mollitia, sint amet. Eaque explicabo ab
-            delectus voluptatum atque non rerum impedit at adipisci deleniti
-            inventore consectetur odio nesciunt ut repellendus, molestias
-            sapiente nisi cupiditate illum commodi debitis voluptatem
-            necessitatibus saepe! Aut, consequuntur. Consequuntur dolores
-            officiis ipsa quis ratione sunt libero inventore quo veritatis autem
-            id vero quibusdam debitis tempore placeat quaerat aspernatur harum
-            nesciunt exercitationem excepturi repellat labore, optio
-            perspiciatis eum? Minus? Nam ad reiciendis qui ex cum repudiandae
-            perferendis totam quas doloremque deleniti voluptate molestiae
-            soluta non accusantium dolor distinctio porro, quod fuga veniam sint
-            eius dolorem. Nihil dolorem ea necessitatibus. Ipsam itaque est
-            recusandae omnis, laudantium architecto quibusdam corporis
-            repudiandae, labore quidem porro, quaerat non esse reprehenderit?
-            Voluptatum, blanditiis, ex nam necessitatibus veritatis officiis
-            enim ad placeat saepe, eaque repellendus.
-          </Box>
-        </Box>
+        <List
+          subheader={
+            <ListSubheader disableSticky>Nested List Items</ListSubheader>
+          }
+        >
+          <ListItemButton selected>
+            <ListItemIcon>
+              <SendIcon />
+            </ListItemIcon>
+            <ListItemText primary="Sent mail" />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon>
+              <DraftsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Drafts" />
+          </ListItemButton>
+          <ListItemButton onClick={handleClick}>
+            <ListItemIcon>
+              <InboxIcon />
+            </ListItemIcon>
+            <ListItemText primary="Inbox" />
+            {open ? <ExpandLess /> : <ExpandMore />}
+          </ListItemButton>
+          <Collapse in={open} timeout="auto" unmountOnExit>
+            <List disablePadding>
+              <ListItemButton sx={{ pl: 4 }}>
+                <ListItemIcon>
+                  <StarBorder />
+                </ListItemIcon>
+                <ListItemText primary="Starred" />
+              </ListItemButton>
+            </List>
+          </Collapse>
+        </List>
+        <Box sx={{ height: 2000 }}></Box>
       </Box>
       <Divider></Divider>
       <Box sx={{ display: "flex", p: 1, gap: 1 }}>

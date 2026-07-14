@@ -10,6 +10,7 @@ import {
   IconButton,
   Link,
   Typography,
+  useMediaQuery,
   useTheme,
 } from "@mui/material";
 import React from "react";
@@ -19,13 +20,18 @@ import { Sidebar } from "./sidebar";
 import { LayoutTheme } from "./theme";
 
 export const CustomLayout = () => {
-  const [showSidebar, setShowSidebar] = React.useState(false);
+  const [showSidebarUpSmall, setShowSidebar] = React.useState(true);
+  const [showSidebarDownSmall, setShowSidebarWhenMini] = React.useState(false);
 
   const mode = useLocalStore((s) => s.mode);
   const nativeDark = useColorScheme();
   const theme = useTheme();
+  const isDownSmall = useMediaQuery(theme.breakpoints.down("sm"));
 
   const isDark = LayoutTheme.resolveIsDark(mode, nativeDark);
+  const showAppSidebar = isDownSmall
+    ? showSidebarDownSmall
+    : showSidebarUpSmall;
 
   return (
     <LayoutTheme>
@@ -33,11 +39,15 @@ export const CustomLayout = () => {
         styles={{ html: { colorScheme: isDark ? "dark" : "light" } }}
       />
       <CssBaseline />
-      <Box data-show-sidebar={showSidebar} sx={{ ["--sidebar-width"]: 32 }}>
+      <Box data-show-sidebar={showAppSidebar} sx={{ ["--sidebar-width"]: 32 }}>
         <Sidebar>
           <IconButton
             onClick={() => {
-              setShowSidebar((p) => !p);
+              if (isDownSmall) {
+                setShowSidebarWhenMini((p) => !p);
+              } else {
+                setShowSidebar((p) => !p);
+              }
             }}
             sx={{ display: { sm: "none" } }}
           >
@@ -69,10 +79,14 @@ export const CustomLayout = () => {
           <Header>
             <IconButton
               onClick={() => {
-                setShowSidebar((p) => !p);
+                if (isDownSmall) {
+                  setShowSidebarWhenMini((p) => !p);
+                } else {
+                  setShowSidebar((p) => !p);
+                }
               }}
             >
-              {showSidebar ? <MenuOpen /> : <Menu />}
+              {showSidebarUpSmall ? <MenuOpen /> : <Menu />}
             </IconButton>
             <Breadcrumbs aria-label="breadcrumb">
               <Link underline="hover" color="inherit" href="/">
