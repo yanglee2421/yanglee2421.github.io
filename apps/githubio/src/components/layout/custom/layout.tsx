@@ -61,6 +61,7 @@ export const CustomLayout = () => {
                 duration: theme.transitions.duration.leavingScreen,
               }),
               paddingInlineStart: { sm: 0 },
+              display: { xs: "none", sm: "block" },
             },
           }}
         >
