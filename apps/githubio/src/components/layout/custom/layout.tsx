@@ -54,6 +54,7 @@ export const CustomLayout = () => {
                 duration: theme.transitions.duration.enteringScreen,
               }),
               paddingInlineStart: { sm: "calc(var(--sidebar-width) * 8px)" },
+              display: { xs: "none", sm: "block" },
             },
             ["[data-show-sidebar=false] &"]: {
               transition: theme.transitions.create("padding-inline-start", {
@@ -61,7 +62,7 @@ export const CustomLayout = () => {
                 duration: theme.transitions.duration.leavingScreen,
               }),
               paddingInlineStart: { sm: 0 },
-              display: { xs: "none", sm: "block" },
+              display: { xs: "block", sm: "block" },
             },
           }}
         >
