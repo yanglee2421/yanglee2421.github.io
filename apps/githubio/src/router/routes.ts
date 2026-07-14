@@ -203,10 +203,6 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/pdf-report/component"),
                 },
                 {
-                  path: "scrollbar",
-                  lazy: () => import("@/pages/scrollbar/component"),
-                },
-                {
                   path: "virtual",
                   lazy: () => import("@/pages/virtual/component"),
                 },
