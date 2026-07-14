@@ -4,6 +4,7 @@ import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { localeService } from "@/shared/LocaleContext";
 import type { RouteObject } from "react-router";
 import { redirect } from "react-router";
+import { CustomLayout } from "./custom-layout";
 import { AuthGuard, GuestGuard, LangRoute } from "./guard";
 import { DashLayout } from "./layout";
 import { RootErrorBoundary, RootHydrateFallback, RootRoute } from "./root";
@@ -147,10 +148,6 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/rank/component"),
                 },
                 {
-                  path: "lab",
-                  lazy: () => import("@/pages/lab/component"),
-                },
-                {
                   path: "animate",
                   lazy: () => import("@/pages/animate/component"),
                 },
@@ -224,6 +221,15 @@ export const createRoutes = (): RouteObject[] => {
                 },
               ],
               Component: BlankLayout,
+            },
+            {
+              children: [
+                {
+                  path: "lab",
+                  lazy: () => import("@/pages/lab/component"),
+                },
+              ],
+              Component: CustomLayout,
             },
           ],
           Component: LangRoute,

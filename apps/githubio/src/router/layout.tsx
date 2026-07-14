@@ -1,3 +1,4 @@
+import { MuiProvider } from "@/components/layout/mui";
 import { LangToggle } from "@/components/shared/LangToggle";
 import { ModeToggle } from "@/components/shared/ModeToggle";
 import { UserDropdown } from "@/components/shared/UserDropdonw";
@@ -59,15 +60,17 @@ export const DashLayout = () => {
   };
 
   return (
-    <DashboardLayout
-      slots={{
-        toolbarActions: ToolbarActions,
-        toolbarAccount: UserDropdown,
-      }}
-    >
-      <PageContainer title={renderTitle()} breadcrumbs={renderBreadcrumbs()}>
-        <Outlet />
-      </PageContainer>
-    </DashboardLayout>
+    <MuiProvider>
+      <DashboardLayout
+        slots={{
+          toolbarActions: ToolbarActions,
+          toolbarAccount: UserDropdown,
+        }}
+      >
+        <PageContainer title={renderTitle()} breadcrumbs={renderBreadcrumbs()}>
+          <Outlet />
+        </PageContainer>
+      </DashboardLayout>
+    </MuiProvider>
   );
 };

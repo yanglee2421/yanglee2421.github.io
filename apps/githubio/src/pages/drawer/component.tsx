@@ -3,8 +3,11 @@ import {
   AppBar,
   Box,
   Button,
+  createTheme,
+  CssBaseline,
   Drawer,
   IconButton,
+  ThemeProvider,
   Toolbar,
   useTheme,
 } from "@mui/material";
@@ -18,7 +21,8 @@ export const Component = () => {
   const EXPANDED_WIDTH = theme.spacing(32);
 
   return (
-    <>
+    <ThemeProvider theme={createTheme({ palette: { mode: "dark" } })}>
+      <CssBaseline />
       <AppBar
         sx={{
           zIndex: (t) => t.zIndex.appBar,
@@ -95,6 +99,6 @@ export const Component = () => {
           <h1>68431313</h1>
         </Box>
       </Box>
-    </>
+    </ThemeProvider>
   );
 };

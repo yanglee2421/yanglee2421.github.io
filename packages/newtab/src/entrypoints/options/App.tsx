@@ -1,6 +1,5 @@
 import { MuiProvider } from "@/components/MuiProvider";
 import { QueryProvider } from "@/components/query";
-import { TooltipProvider } from "@/components/ui/tooltip";
 import "@/styles/global.css";
 import { browser } from "wxt/browser";
 import { z } from "zod";
@@ -26,9 +25,7 @@ export const App = () => {
   return (
     <QueryProvider>
       <MuiProvider>
-        <TooltipProvider>
-          <OptionsRouter />
-        </TooltipProvider>
+        <OptionsRouter />
       </MuiProvider>
     </QueryProvider>
   );

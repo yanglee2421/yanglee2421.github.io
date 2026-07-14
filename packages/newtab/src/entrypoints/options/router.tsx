@@ -189,10 +189,6 @@ const createRoutes = (): RouteObject[] => {
                   path: "quotes",
                   lazy: () => import("./quotes"),
                 },
-                {
-                  path: "page",
-                  lazy: () => import("./page"),
-                },
               ],
             },
           ],
