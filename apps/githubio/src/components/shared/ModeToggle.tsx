@@ -1,4 +1,10 @@
-import React from "react";
+import type { Mode } from "@/hooks/store/useLocalStore";
+import { useLocalStore } from "@/hooks/store/useLocalStore";
+import {
+  DarkModeOutlined,
+  DesktopWindowsOutlined,
+  LightModeOutlined,
+} from "@mui/icons-material";
 import {
   IconButton,
   ListItemIcon,
@@ -6,12 +12,7 @@ import {
   Menu,
   MenuItem,
 } from "@mui/material";
-import {
-  DarkModeOutlined,
-  DesktopWindowsOutlined,
-  LightModeOutlined,
-} from "@mui/icons-material";
-import { type Mode, useLocalStore } from "@/hooks/store/useLocalStore";
+import React from "react";
 
 export const ModeToggle = () => {
   const mode = useLocalStore((s) => s.mode);

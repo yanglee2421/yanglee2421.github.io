@@ -1,10 +1,10 @@
 import { BlankLayout } from "@/components/layout/blank";
+import { CustomLayout } from "@/components/layout/custom";
 import { QueryProvider } from "@/components/query";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { localeService } from "@/shared/LocaleContext";
 import type { RouteObject } from "react-router";
 import { redirect } from "react-router";
-import { CustomLayout } from "./custom-layout";
 import { AuthGuard, GuestGuard, LangRoute } from "./guard";
 import { DashLayout } from "./layout";
 import { RootErrorBoundary, RootHydrateFallback, RootRoute } from "./root";
