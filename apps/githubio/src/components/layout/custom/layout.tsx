@@ -39,7 +39,7 @@ export const CustomLayout = () => {
         styles={{ html: { colorScheme: isDark ? "dark" : "light" } }}
       />
       <CssBaseline />
-      <Box data-show-sidebar={showAppSidebar} sx={{ ["--sidebar-width"]: 32 }}>
+      <Box data-show-sidebar={showAppSidebar} sx={{ ["--sidebar-width"]: 36 }}>
         <Sidebar>
           <IconButton
             onClick={() => {

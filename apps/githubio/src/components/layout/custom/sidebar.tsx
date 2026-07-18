@@ -3,6 +3,7 @@ import {
   ExpandLess,
   ExpandMore,
   Inbox as InboxIcon,
+  KeyboardCommandKey,
   MoreVert,
   Send as SendIcon,
   StarBorder,
@@ -79,8 +80,9 @@ export const Sidebar = (props: React.PropsWithChildren) => {
         },
       }}
     >
-      <Toolbar>
-        <Typography variant="h6">4399</Typography>
+      <Toolbar sx={{ gap: 1 }}>
+        <KeyboardCommandKey />
+        <Typography variant="h6">应用标题</Typography>
         <Box sx={{ mx: "auto" }} />
         {props.children}
       </Toolbar>
@@ -120,11 +122,17 @@ export const Sidebar = (props: React.PropsWithChildren) => {
               </ListItemButton>
             </List>
           </Collapse>
+          <ListItemButton>
+            <ListItemIcon>
+              <DraftsIcon />
+            </ListItemIcon>
+            <ListItemText primary="Drafts" />
+          </ListItemButton>
         </List>
         <Box sx={{ height: 2000 }}></Box>
       </Box>
       <Divider></Divider>
-      <Box sx={{ display: "flex", p: 1, gap: 1 }}>
+      <Toolbar sx={{ gap: 1.5 }}>
         <Avatar>S</Avatar>
         <Box>
           <Typography
@@ -141,7 +149,7 @@ export const Sidebar = (props: React.PropsWithChildren) => {
         <IconButton>
           <MoreVert />
         </IconButton>
-      </Box>
+      </Toolbar>
     </Paper>
   );
 };
