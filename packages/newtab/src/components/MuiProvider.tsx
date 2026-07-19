@@ -1,6 +1,6 @@
-import React from "react";
 import { ThemeProvider } from "@emotion/react";
 import { createTheme, CssBaseline } from "@mui/material";
+import React from "react";
 
 const calculateIsDark = (mode: Mode, colorScheme: boolean) => {
   switch (mode) {
@@ -23,16 +23,6 @@ const theme = createTheme({
       dark: "#489541",
     },
   },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backdropFilter: "saturate(3) blur(20px)",
-          backgroundImage: "none",
-        },
-      },
-    },
-  },
 });
 
 const darkTheme = createTheme({
@@ -42,16 +32,6 @@ const darkTheme = createTheme({
       main: "#67D55E",
       light: "#85dd7e",
       dark: "#489541",
-    },
-  },
-  components: {
-    MuiPaper: {
-      styleOverrides: {
-        root: {
-          backdropFilter: "saturate(3) blur(20px)",
-          backgroundImage: "none",
-        },
-      },
     },
   },
 });
