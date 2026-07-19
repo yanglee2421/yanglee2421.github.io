@@ -48,6 +48,7 @@ export const Sidebar = (props: React.PropsWithChildren) => {
 
         borderInlineEnd: "1px solid",
         borderColor: theme.palette.divider,
+        borderRadius: 0,
 
         display: "flex",
         flexDirection: "column",
