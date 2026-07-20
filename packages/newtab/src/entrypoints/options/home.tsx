@@ -1,3 +1,45 @@
+import { ScrollToTopButton } from "@/components/scroll";
+import { useBackground } from "@/hooks/useBackground";
+import { db } from "@/utils/db";
+import {
+  CollisionDetection,
+  defaultDropAnimation,
+  DndContext,
+  DragOverlay,
+  KeyboardSensor,
+  MeasuringStrategy,
+  PointerSensor,
+  pointerWithin,
+  rectIntersection,
+  UniqueIdentifier,
+  useDroppable,
+  useSensor,
+  useSensors,
+} from "@dnd-kit/core";
+import {
+  restrictToFirstScrollableAncestor,
+  restrictToWindowEdges,
+  snapCenterToCursor,
+} from "@dnd-kit/modifiers";
+import {
+  AnimateLayoutChanges,
+  arrayMove,
+  defaultAnimateLayoutChanges,
+  rectSortingStrategy,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+} from "@dnd-kit/sortable";
+import { CSS } from "@dnd-kit/utilities";
+import {
+  AcUnit,
+  AddPhotoAlternate,
+  BubbleChart,
+  Colorize,
+  Delete,
+  DoNotDisturb,
+  LinearScale,
+} from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -24,53 +66,11 @@ import {
   Typography,
   useTheme,
 } from "@mui/material";
-import {
-  AcUnit,
-  AddPhotoAlternate,
-  BubbleChart,
-  Colorize,
-  Delete,
-  DoNotDisturb,
-  LinearScale,
-} from "@mui/icons-material";
-import {
-  CollisionDetection,
-  defaultDropAnimation,
-  DndContext,
-  DragOverlay,
-  KeyboardSensor,
-  MeasuringStrategy,
-  PointerSensor,
-  pointerWithin,
-  rectIntersection,
-  UniqueIdentifier,
-  useDroppable,
-  useSensor,
-  useSensors,
-} from "@dnd-kit/core";
-import {
-  arrayMove,
-  useSortable,
-  SortableContext,
-  rectSortingStrategy,
-  sortableKeyboardCoordinates,
-  defaultAnimateLayoutChanges,
-  AnimateLayoutChanges,
-} from "@dnd-kit/sortable";
-import {
-  snapCenterToCursor,
-  restrictToWindowEdges,
-  restrictToFirstScrollableAncestor,
-} from "@dnd-kit/modifiers";
+import { useQueries } from "@tanstack/react-query";
+import type { IndexableTypeArray } from "dexie";
+import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { createPortal } from "react-dom";
-import { CSS } from "@dnd-kit/utilities";
-import { useLiveQuery } from "dexie-react-hooks";
-import { useQueries } from "@tanstack/react-query";
-import { db } from "@/utils/db";
-import { useBackground } from "@/hooks/useBackground";
-import { ScrollToTopButton } from "@/components/scroll";
-import type { IndexableTypeArray } from "dexie";
 
 const calculatePageCount = (count: number, pageSize: number) => {
   return Math.ceil(count / pageSize);
@@ -923,7 +923,7 @@ export const Component = () => {
   return (
     <>
       <ScrollToTopButton />
-      <Stack spacing={3} sx={{ paddingBlock: 3 }}>
+      <Stack spacing={3}>
         <Card>
           <CardHeader
             title="背景类型"
