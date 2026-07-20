@@ -1,4 +1,3 @@
-import { SnackbarProvider } from "@/components/ui/snackbar";
 import { useColorScheme } from "@/hooks/dom/useColorScheme";
 import type { Mode } from "@/hooks/store/useLocalStore";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
@@ -13,6 +12,7 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import React from "react";
 import { useTranslation } from "react-i18next";
+import { ToastContainer } from "react-toastify";
 
 class MuiThemeBuilder {
   private options?: ThemeOptions;
@@ -41,7 +41,7 @@ class MuiThemeBuilder {
   }
 }
 
-const calculateTheme = (isDark: boolean) => {
+const calcTheme = (isDark: boolean) => {
   const builder = new MuiThemeBuilder({
     components: {
       MuiAlert: {
@@ -53,7 +53,7 @@ const calculateTheme = (isDark: boolean) => {
   return isDark ? builder.dark() : builder.light();
 };
 
-const calculateIsDark = (mode: Mode, colorSchema: boolean) => {
+const calcDarkEnabled = (mode: Mode, colorSchema: boolean) => {
   switch (mode) {
     case "dark":
       return true;
@@ -70,9 +70,9 @@ export const MuiProvider = (props: React.PropsWithChildren) => {
   const colorSchema = useColorScheme();
   const mode = useLocalStore((s) => s.mode);
 
-  const isDark = calculateIsDark(mode, colorSchema);
-  const theme = calculateTheme(isDark);
-  const themeColor = isDark
+  const darkEnabled = calcDarkEnabled(mode, colorSchema);
+  const theme = calcTheme(darkEnabled);
+  const themeColor = darkEnabled
     ? theme.palette.background.default
     : theme.palette.primary.main;
 
@@ -80,21 +80,7 @@ export const MuiProvider = (props: React.PropsWithChildren) => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <meta name="theme-color" content={themeColor} />
-      <LocalizationProvider
-        dateAdapter={AdapterDayjs}
-        adapterLocale={i18n.language}
-      >
-        <SnackbarProvider
-          anchorOrigin={{
-            vertical: "top",
-            horizontal: "center",
-          }}
-          autoHideDuration={1000 * 6}
-          maxSnack={3}
-        >
-          {props.children}
-        </SnackbarProvider>
-      </LocalizationProvider>
+      <ToastContainer theme={darkEnabled ? "dark" : "light"} />
       <GlobalStyles
         styles={{
           ".animate-spin": {
@@ -113,8 +99,15 @@ export const MuiProvider = (props: React.PropsWithChildren) => {
               "ui-monospace,SFMono-Regular,Menlo,Monaco,Consolas,Liberation Mono,Courier New,monospace",
             fontSize: "1.25rem",
           },
+          html: { colorScheme: darkEnabled ? "dark" : "light" },
         }}
       />
+      <LocalizationProvider
+        dateAdapter={AdapterDayjs}
+        adapterLocale={i18n.language}
+      >
+        {props.children}
+      </LocalizationProvider>
     </ThemeProvider>
   );
 };

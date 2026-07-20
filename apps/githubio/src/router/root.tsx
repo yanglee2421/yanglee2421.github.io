@@ -1,8 +1,5 @@
-import { auth } from "@/api/firebase/app";
 import { NprogressBar } from "@/components/layout/nprogress";
 import { ParticlesUI } from "@/components/layout/particles";
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
-import { useLocale } from "@/shared/LocaleContext";
 import {
   AddOutlined,
   AlignHorizontalLeftOutlined,
@@ -24,12 +21,8 @@ import {
   Button,
   CircularProgress,
   Typography,
-  useTheme,
 } from "@mui/material";
-import type { Navigation } from "@toolpad/core";
-import { DialogsProvider, NotificationsProvider } from "@toolpad/core";
-import { ReactRouterAppProvider } from "@toolpad/core/react-router";
-import { signOut } from "firebase/auth";
+import { DialogsProvider } from "@toolpad/core";
 import React from "react";
 import {
   isRouteErrorResponse,
@@ -43,7 +36,7 @@ const calculateSegment = (...args: unknown[]) => {
   return args.join("/");
 };
 
-const createNavition = (lang: string): Navigation => [
+const createNavition = (lang: string) => [
   { kind: "header", title: "Fontend" },
   {
     segment: calculateSegment(lang, "dashboard"),
@@ -106,16 +99,6 @@ const createNavition = (lang: string): Navigation => [
     segment: calculateSegment(lang, "print"),
   },
 ];
-
-const BRANDING = {
-  title: "GitHub IO",
-};
-
-const useNavigation = () => {
-  const locale = useLocale();
-
-  return React.useMemo<Navigation>(() => createNavition(locale), [locale]);
-};
 
 interface ErrorContentProps {
   error: unknown;
@@ -188,51 +171,16 @@ export const RootHydrateFallback = () => {
 };
 
 export const RootRoute = () => {
-  const theme = useTheme();
-  const navigation = useNavigation();
-  const user = useCurrentUser();
-
-  const session = user
-    ? {
-        user: {
-          id: user.uid,
-          image: user.photoURL,
-          name: user.displayName,
-          email: user.email,
-        },
-      }
-    : null;
-
   return (
-    <ReactRouterAppProvider
-      navigation={navigation}
-      branding={BRANDING}
-      theme={theme}
-      session={session}
-      authentication={{
-        signIn: () => {},
-        signOut: async () => {
-          await signOut(auth);
-        },
-      }}
-    >
-      <NotificationsProvider
-        slotProps={{
-          snackbar: {
-            anchorOrigin: { horizontal: "center", vertical: "top" },
-            autoHideDuration: 1000 * 3,
-          },
-        }}
-      >
-        <DialogsProvider>
-          <Outlet />
-        </DialogsProvider>
-      </NotificationsProvider>
+    <>
+      <DialogsProvider>
+        <Outlet />
+      </DialogsProvider>
       <ParticlesUI preset="bubbles" />
       <Box sx={{ pointerEvents: "none" }}>
         <NprogressBar />
       </Box>
       <ScrollRestoration />
-    </ReactRouterAppProvider>
+    </>
   );
 };

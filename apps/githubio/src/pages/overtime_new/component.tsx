@@ -14,10 +14,10 @@ import {
 } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
 import { useForm } from "@tanstack/react-form";
-import { useNotifications } from "@toolpad/core";
 import dayjs from "dayjs";
 import React from "react";
 import { useNavigate, useParams } from "react-router";
+import { toast } from "react-toastify";
 import { z } from "zod";
 
 const schema = z.object({
@@ -34,7 +34,6 @@ export const Component = () => {
   const params = useParams();
   const navigate = useNavigate();
   const add = useOvertime();
-  const snackbar = useNotifications();
   const form = useForm({
     defaultValues: {
       hours: 8,
@@ -62,10 +61,8 @@ export const Component = () => {
             form.reset();
             handleNavigateToOvertime();
           },
-          onError: () => {
-            snackbar.show("Some error", {
-              severity: "error",
-            });
+          onError: (error) => {
+            toast.error(error.message);
           },
         },
       );

@@ -1,45 +1,55 @@
-import { Box, Toolbar, useTheme } from "@mui/material";
+import { LangToggle } from "@/components/shared/LangToggle";
+import { ModeToggle } from "@/components/shared/ModeToggle";
+import { MenuBook } from "@mui/icons-material";
+import {
+  Box,
+  Breadcrumbs,
+  IconButton,
+  Link,
+  Toolbar,
+  Typography,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 
 export const Header = (props: React.PropsWithChildren) => {
   const theme = useTheme();
 
   return (
-    <>
-      <Box
-        sx={{
-          position: "fixed",
-          zIndex: theme.zIndex.appBar,
-          insetInline: 0,
-          insetBlockStart: 0,
+    <Toolbar
+      sx={{
+        position: "sticky",
+        insetBlockStart: 0,
+        zIndex: theme.zIndex.appBar,
 
-          ["[data-show-sidebar=true] &"]: {
-            transition: theme.transitions.create("padding-inline-start", {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.enteringScreen,
-            }),
-            paddingInlineStart: { sm: "calc(var(--sidebar-width) * 8px)" },
-          },
-          ["[data-show-sidebar=false] &"]: {
-            transition: theme.transitions.create("padding-inline-start", {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
-            }),
-            paddingInlineStart: { sm: 0 },
-          },
-        }}
-      >
-        <Toolbar
-          sx={{
-            gap: 1,
+        gap: 1,
 
-            backgroundColor: theme.palette.background.default,
-          }}
+        backgroundColor: theme.palette.background.default,
+      }}
+    >
+      {props.children}
+      <Breadcrumbs sx={{ display: { xs: "none", sm: "flex" } }}>
+        <Link underline="hover" color="inherit" href="/">
+          MUI
+        </Link>
+        <Link
+          underline="hover"
+          color="inherit"
+          href="/material-ui/getting-started/installation/"
         >
-          {props.children}
-        </Toolbar>
-      </Box>
-      <Toolbar sx={{ visibility: "hidden" }} />
-    </>
+          Core
+        </Link>
+        <Typography sx={{ color: "text.primary" }}>Breadcrumbs</Typography>
+      </Breadcrumbs>
+      <Box sx={{ mx: "auto" }} />
+      <IconButton
+        LinkComponent={"a"}
+        href="https://yanglee2421.github.io/yanglee2421"
+      >
+        <MenuBook />
+      </IconButton>
+      <LangToggle />
+      <ModeToggle />
+    </Toolbar>
   );
 };

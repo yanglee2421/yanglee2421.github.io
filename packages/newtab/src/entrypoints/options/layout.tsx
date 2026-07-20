@@ -25,8 +25,6 @@ import {
   useMediaQuery,
   useTheme,
 } from "@mui/material";
-import { DialogsProvider } from "@toolpad/core";
-import { ReactRouterAppProvider } from "@toolpad/core/react-router";
 import React from "react";
 import {
   Link,
@@ -51,14 +49,12 @@ export const MuiLayout = () => {
   const theme = useTheme();
 
   return (
-    <ReactRouterAppProvider theme={theme}>
-      <DialogsProvider>
-        <Layout>
-          <Outlet />
-        </Layout>
-      </DialogsProvider>
+    <>
+      <Layout>
+        <Outlet />
+      </Layout>
       <ScrollRestoration />
-    </ReactRouterAppProvider>
+    </>
   );
 };
 
@@ -76,7 +72,7 @@ const Layout = (props: React.PropsWithChildren) => {
   return (
     <Box sx={{ "--sidebar-width": theme.spacing(32) }}>
       <Paper
-        aria-hidden={showSidebar}
+        aria-hidden={!showSidebar}
         sx={{
           position: "fixed",
           insetBlockStart: 0,
@@ -84,9 +80,6 @@ const Layout = (props: React.PropsWithChildren) => {
 
           blockSize: "100dvh",
 
-          borderInlineEndWidth: 1,
-          borderInlineEndStyle: "solid",
-          borderInlineEndColor: theme.palette.divider,
           borderRadius: 0,
 
           display: "flex",
@@ -96,16 +89,16 @@ const Layout = (props: React.PropsWithChildren) => {
             inlineSize: "100%",
 
             [`&:where([aria-hidden=true])`]: {
-              insetInlineStart: 0,
+              insetInlineStart: `-100%`,
               transition: theme.transitions.create("inset-inline-start", {
-                duration: theme.transitions.duration.enteringScreen,
+                duration: theme.transitions.duration.leavingScreen,
                 easing: theme.transitions.easing.sharp,
               }),
             },
             [`&:where([aria-hidden=false])`]: {
-              insetInlineStart: `-100%`,
+              insetInlineStart: 0,
               transition: theme.transitions.create("inset-inline-start", {
-                duration: theme.transitions.duration.leavingScreen,
+                duration: theme.transitions.duration.enteringScreen,
                 easing: theme.transitions.easing.sharp,
               }),
             },
@@ -115,16 +108,16 @@ const Layout = (props: React.PropsWithChildren) => {
             inlineSize: "var(--sidebar-width)",
 
             [`&:where([aria-hidden=true])`]: {
-              insetInlineStart: 0,
+              insetInlineStart: `calc(-1 * var(--sidebar-width))`,
               transition: theme.transitions.create("inset-inline-start", {
-                duration: theme.transitions.duration.enteringScreen,
+                duration: theme.transitions.duration.leavingScreen,
                 easing: theme.transitions.easing.sharp,
               }),
             },
             [`&:where([aria-hidden=false])`]: {
-              insetInlineStart: `calc(-1 * var(--sidebar-width))`,
+              insetInlineStart: 0,
               transition: theme.transitions.create("inset-inline-start", {
-                duration: theme.transitions.duration.leavingScreen,
+                duration: theme.transitions.duration.enteringScreen,
                 easing: theme.transitions.easing.sharp,
               }),
             },

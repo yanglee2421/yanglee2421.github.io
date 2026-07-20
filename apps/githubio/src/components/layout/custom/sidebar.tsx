@@ -19,71 +19,25 @@ import {
   ListItemIcon,
   ListItemText,
   ListSubheader,
-  Paper,
   Toolbar,
   Typography,
-  useTheme,
 } from "@mui/material";
 import React from "react";
 
 export const Sidebar = (props: React.PropsWithChildren) => {
   const [open, setOpen] = React.useState(false);
 
-  const theme = useTheme();
-
   const handleClick = () => {
     setOpen((p) => !p);
   };
 
   return (
-    <Paper
-      sx={{
-        position: "fixed",
-        zIndex: theme.zIndex.appBar,
-        insetInlineStart: 0,
-        insetBlock: 0,
-
-        blockSize: "100dvh",
-        overflow: "hidden",
-
-        borderInlineEnd: "1px solid",
-        borderColor: theme.palette.divider,
-        borderRadius: 0,
-
-        display: "flex",
-        flexDirection: "column",
-
-        ["[data-show-sidebar=true] &"]: {
-          transition: theme.transitions.create(
-            ["inline-size", "max-inline-size"],
-            {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.enteringScreen,
-            },
-          ),
-          inlineSize: { xs: "100%", sm: "100%" },
-          maxInlineSize: {
-            sm: "calc(var(--sidebar-width) * 8px)",
-          },
-        },
-        ["[data-show-sidebar=false] &"]: {
-          transition: theme.transitions.create(
-            ["inline-size", "max-inline-size"],
-            {
-              easing: theme.transitions.easing.sharp,
-              duration: theme.transitions.duration.leavingScreen,
-            },
-          ),
-          inlineSize: { xs: 0, sm: "100%" },
-          maxInlineSize: {
-            sm: 0,
-          },
-        },
-      }}
-    >
+    <>
       <Toolbar sx={{ gap: 1 }}>
-        <KeyboardCommandKey />
-        <Typography variant="h6">应用标题</Typography>
+        <KeyboardCommandKey color="primary" />
+        <Typography variant="h6" color="primary">
+          应用标题
+        </Typography>
         <Box sx={{ mx: "auto" }} />
         {props.children}
       </Toolbar>
@@ -151,6 +105,6 @@ export const Sidebar = (props: React.PropsWithChildren) => {
           <MoreVert />
         </IconButton>
       </Toolbar>
-    </Paper>
+    </>
   );
 };

@@ -1,50 +1,96 @@
-import { ModeToggle } from "@/components/shared/ModeToggle";
-import { useColorScheme } from "@/hooks/dom/useColorScheme";
-import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { KeyboardArrowLeft, Menu, MenuOpen } from "@mui/icons-material";
 import {
   Box,
-  Breadcrumbs,
-  CssBaseline,
-  GlobalStyles,
+  Container,
   IconButton,
-  Link,
-  Typography,
+  Paper,
   useMediaQuery,
   useTheme,
 } from "@mui/material";
+import { normalizePathname } from "@yotulee/run";
 import React from "react";
-import { Outlet } from "react-router";
+import { useLocation } from "react-router";
+import { Footer } from "./footer";
 import { Header } from "./header";
 import { Sidebar } from "./sidebar";
-import { LayoutTheme } from "./theme";
 
-export const CustomLayout = () => {
+interface CustomLayoutProps {
+  children?: React.ReactNode;
+}
+
+export const CustomLayout = (props: CustomLayoutProps) => {
   const [showSidebarUpSmall, setShowSidebar] = React.useState(true);
-  const [showSidebarDownSmall, setShowSidebarWhenMini] = React.useState(false);
+  const [openDrawerInPath, setOpenDrawerInPath] = React.useState("");
 
-  const mode = useLocalStore((s) => s.mode);
-  const nativeDark = useColorScheme();
   const theme = useTheme();
   const isDownSmall = useMediaQuery(theme.breakpoints.down("sm"));
-
-  const isDark = LayoutTheme.resolveIsDark(mode, nativeDark);
+  const location = useLocation();
+  const showSidebarDownSmall = Object.is(
+    normalizePathname(location.pathname),
+    openDrawerInPath,
+  );
   const showAppSidebar = isDownSmall
     ? showSidebarDownSmall
     : showSidebarUpSmall;
 
   return (
-    <LayoutTheme>
-      <GlobalStyles
-        styles={{ html: { colorScheme: isDark ? "dark" : "light" } }}
-      />
-      <CssBaseline />
-      <Box data-show-sidebar={showAppSidebar} sx={{ ["--sidebar-width"]: 36 }}>
+    <Box sx={{ ["--sidebar-width"]: theme.spacing(36) }}>
+      <Paper
+        aria-hidden={!showAppSidebar}
+        sx={{
+          position: "fixed",
+          insetBlockStart: 0,
+          zIndex: theme.zIndex.drawer,
+
+          blockSize: "100dvh",
+
+          borderRadius: 0,
+
+          [theme.breakpoints.between("xs", "sm")]: {
+            inlineSize: "100%",
+
+            ["&:where([aria-hidden=true])"]: {
+              insetInlineStart: "-100%",
+              transition: theme.transitions.create("inset-inline-start", {
+                duration: theme.transitions.duration.leavingScreen,
+                easing: theme.transitions.easing.sharp,
+              }),
+            },
+            ["&:where([aria-hidden=false])"]: {
+              insetInlineStart: 0,
+              transition: theme.transitions.create("inset-inline-start", {
+                duration: theme.transitions.duration.enteringScreen,
+                easing: theme.transitions.easing.sharp,
+              }),
+            },
+          },
+          [theme.breakpoints.up("sm")]: {
+            inlineSize: "var(--sidebar-width)",
+
+            ["&:where([aria-hidden=true])"]: {
+              insetInlineStart: "calc(-1 * var(--sidebar-width))",
+              transition: theme.transitions.create("inset-inline-start", {
+                duration: theme.transitions.duration.leavingScreen,
+                easing: theme.transitions.easing.sharp,
+              }),
+            },
+            ["&:where([aria-hidden=false])"]: {
+              insetInlineStart: 0,
+              transition: theme.transitions.create("inset-inline-start", {
+                duration: theme.transitions.duration.enteringScreen,
+                easing: theme.transitions.easing.sharp,
+              }),
+            },
+          },
+        }}
+      >
         <Sidebar>
           <IconButton
             onClick={() => {
               if (isDownSmall) {
-                setShowSidebarWhenMini((p) => !p);
+                setOpenDrawerInPath(
+                  showSidebarDownSmall ? "" : location.pathname,
+                );
               } else {
                 setShowSidebar((p) => !p);
               }
@@ -54,63 +100,69 @@ export const CustomLayout = () => {
             <KeyboardArrowLeft />
           </IconButton>
         </Sidebar>
-        <Box
-          sx={{
-            isolation: "isolate",
+      </Paper>
+      <Box
+        sx={{
+          display: "flex",
+          flexDirection: "column",
 
-            ["[data-show-sidebar=true] &"]: {
-              transition: theme.transitions.create("padding-inline-start", {
-                easing: theme.transitions.easing.sharp,
-                duration: theme.transitions.duration.enteringScreen,
-              }),
-              paddingInlineStart: { sm: "calc(var(--sidebar-width) * 8px)" },
-              display: { xs: "none", sm: "block" },
+          minBlockSize: "100dvh",
+
+          [theme.breakpoints.between("xs", "sm")]: {
+            ["[aria-hidden=true] + &"]: {
+              display: "flex",
             },
-            ["[data-show-sidebar=false] &"]: {
+            ["[aria-hidden=false] + &"]: {
+              display: "none",
+            },
+          },
+          [theme.breakpoints.up("sm")]: {
+            ["[aria-hidden=true] + &"]: {
+              paddingInlineStart: 0,
               transition: theme.transitions.create("padding-inline-start", {
-                easing: theme.transitions.easing.sharp,
                 duration: theme.transitions.duration.leavingScreen,
+                easing: theme.transitions.easing.sharp,
               }),
-              paddingInlineStart: { sm: 0 },
-              display: { xs: "block", sm: "block" },
             },
+            ["[aria-hidden=false] + &"]: {
+              paddingInlineStart: "var(--sidebar-width)",
+              transition: theme.transitions.create("padding-inline-start", {
+                duration: theme.transitions.duration.enteringScreen,
+                easing: theme.transitions.easing.sharp,
+              }),
+            },
+          },
+        }}
+      >
+        <Header>
+          <IconButton
+            onClick={() => {
+              if (isDownSmall) {
+                setOpenDrawerInPath(
+                  showSidebarDownSmall ? "" : location.pathname,
+                );
+              } else {
+                setShowSidebar((p) => !p);
+              }
+            }}
+          >
+            {showSidebarUpSmall ? <MenuOpen /> : <Menu />}
+          </IconButton>
+        </Header>
+        <Container
+          sx={{
+            flexGrow: 1,
+            flexShrink: 0,
+            flexBasis: 0,
+
+            display: "flex",
+            flexDirection: "column",
           }}
         >
-          <Header>
-            <IconButton
-              onClick={() => {
-                if (isDownSmall) {
-                  setShowSidebarWhenMini((p) => !p);
-                } else {
-                  setShowSidebar((p) => !p);
-                }
-              }}
-            >
-              {showSidebarUpSmall ? <MenuOpen /> : <Menu />}
-            </IconButton>
-            <Breadcrumbs aria-label="breadcrumb">
-              <Link underline="hover" color="inherit" href="/">
-                MUI
-              </Link>
-              <Link
-                underline="hover"
-                color="inherit"
-                href="/material-ui/getting-started/installation/"
-              >
-                Core
-              </Link>
-              <Typography sx={{ color: "text.primary" }}>
-                Breadcrumbs
-              </Typography>
-            </Breadcrumbs>
-            <Box sx={{ mx: "auto" }} />
-            <ModeToggle />
-          </Header>
-          <Box sx={{ px: 2 }}>
-            <Outlet />
-          </Box>
-        </Box>
+          {props.children}
+          <Footer />
+        </Container>
       </Box>
-    </LayoutTheme>
+    </Box>
   );
 };
