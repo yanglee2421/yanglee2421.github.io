@@ -1,5 +1,4 @@
 import { BlankLayout } from "@/components/layout/blank";
-import { CustomLayout } from "@/components/layout/custom";
 import { QueryProvider } from "@/components/query";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { localeService } from "@/shared/LocaleContext";
@@ -202,6 +201,10 @@ export const createRoutes = (): RouteObject[] => {
                   path: "print",
                   lazy: () => import("@/pages/pdf-report/component"),
                 },
+                {
+                  path: "lab",
+                  lazy: () => import("@/pages/lab/component"),
+                },
               ],
               Component: DashLayout,
             },
@@ -214,33 +217,8 @@ export const createRoutes = (): RouteObject[] => {
               ],
               Component: BlankLayout,
             },
-            {
-              children: [
-                {
-                  path: "lab",
-                  lazy: () => import("@/pages/lab/component"),
-                },
-              ],
-              Component: CustomLayout,
-            },
           ],
           Component: LangRoute,
-          loader: async ({ params, request }) => {
-            const langInPath = params.lang!;
-            const fallbackLang = useLocalStore.getState().fallbackLang;
-            localeService.setLocale(fallbackLang);
-            localeService.setLocale(langInPath);
-            const lang = localeService.getLocale();
-
-            if (Object.is(lang, langInPath)) {
-              return;
-            }
-
-            const url = new URL(request.url);
-            url.pathname = localeService.resolvePathname(url.pathname);
-
-            throw redirect(url.href);
-          },
         },
       ],
       Component: RootRoute,

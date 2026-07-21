@@ -44,8 +44,6 @@ export const LangToggle = () => {
           <MenuItem
             key={i.locale}
             onClick={() => {
-              console.log("clicked");
-
               localeService.setLocale(i.locale);
               useLocalStore.setState((draft) => {
                 draft.fallbackLang = i.locale;

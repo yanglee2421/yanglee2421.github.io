@@ -1,12 +1,19 @@
 import {
-  Drafts as DraftsIcon,
+  AddOutlined,
+  AlignHorizontalLeftOutlined,
+  Animation,
+  CalendarMonthOutlined,
+  DashboardOutlined,
+  DragIndicator,
   ExpandLess,
   ExpandMore,
-  Inbox as InboxIcon,
   KeyboardCommandKey,
+  ListOutlined,
+  MessageOutlined,
   MoreVert,
-  Send as SendIcon,
-  StarBorder,
+  Print,
+  QrCodeScanner,
+  ScienceOutlined,
 } from "@mui/icons-material";
 import {
   Avatar,
@@ -50,41 +57,76 @@ export const Sidebar = (props: React.PropsWithChildren) => {
         >
           <ListItemButton selected>
             <ListItemIcon>
-              <SendIcon />
+              <DashboardOutlined />
             </ListItemIcon>
-            <ListItemText primary="Sent mail" />
+            <ListItemText primary="Dashboard" />
           </ListItemButton>
           <ListItemButton>
             <ListItemIcon>
-              <DraftsIcon />
+              <DragIndicator />
             </ListItemIcon>
-            <ListItemText primary="Drafts" />
+            <ListItemText primary="Drag & Drop" />
           </ListItemButton>
           <ListItemButton onClick={handleClick}>
             <ListItemIcon>
-              <InboxIcon />
+              <CalendarMonthOutlined />
             </ListItemIcon>
-            <ListItemText primary="Inbox" />
+            <ListItemText primary="Overtime" />
             {open ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
           <Collapse in={open} timeout="auto" unmountOnExit>
             <List disablePadding>
               <ListItemButton sx={{ pl: 4 }}>
                 <ListItemIcon>
-                  <StarBorder />
+                  <ListOutlined />
                 </ListItemIcon>
-                <ListItemText primary="Starred" />
+                <ListItemText primary="List" />
+              </ListItemButton>
+              <ListItemButton sx={{ pl: 4 }}>
+                <ListItemIcon>
+                  <AddOutlined />
+                </ListItemIcon>
+                <ListItemText primary="Add" />
               </ListItemButton>
             </List>
           </Collapse>
           <ListItemButton>
             <ListItemIcon>
-              <DraftsIcon />
+              <MessageOutlined />
             </ListItemIcon>
-            <ListItemText primary="Drafts" />
+            <ListItemText primary="Snackbar" />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon>
+              <ScienceOutlined />
+            </ListItemIcon>
+            <ListItemText primary="Lab" />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon>
+              <Animation />
+            </ListItemIcon>
+            <ListItemText primary="Animate" />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon>
+              <AlignHorizontalLeftOutlined />
+            </ListItemIcon>
+            <ListItemText primary="Rank" />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon>
+              <QrCodeScanner />
+            </ListItemIcon>
+            <ListItemText primary="QR Code" />
+          </ListItemButton>
+          <ListItemButton>
+            <ListItemIcon>
+              <Print />
+            </ListItemIcon>
+            <ListItemText primary="Print" />
           </ListItemButton>
         </List>
-        <Box sx={{ height: 2000 }}></Box>
       </Box>
       <Divider></Divider>
       <Toolbar sx={{ gap: 1.5 }}>

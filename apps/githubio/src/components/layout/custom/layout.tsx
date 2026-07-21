@@ -46,6 +46,9 @@ export const CustomLayout = (props: CustomLayoutProps) => {
 
           borderRadius: 0,
 
+          display: "flex",
+          flexDirection: "column",
+
           [theme.breakpoints.between("xs", "sm")]: {
             inlineSize: "100%",
 
