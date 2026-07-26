@@ -61,16 +61,34 @@ export const MuiLayout = () => {
 const Layout = (props: React.PropsWithChildren) => {
   const [showSidebarDownSmall, setShowSidebarDownSmall] = React.useState(false);
   const [showSidebarUpSmall, setShowSidebarUpSmall] = React.useState(true);
+  const [headerDivider, setHeaderDivider] = React.useState(false);
+
+  const scrollCursorRef = React.useRef<HTMLDivElement>(null);
 
   const theme = useTheme();
+  const params = useParams();
+  const location = useLocation();
   const isDownSmall = useMediaQuery(theme.breakpoints.down("sm"));
   const showSidebar = isDownSmall ? showSidebarDownSmall : showSidebarUpSmall;
 
-  const params = useParams();
-  const location = useLocation();
+  React.useEffect(() => {
+    const el = scrollCursorRef.current;
+
+    if (!el) return;
+
+    const observer = new IntersectionObserver(([entry]) => {
+      setHeaderDivider(entry.isIntersecting);
+    });
+    observer.observe(el);
+
+    return () => {
+      observer.unobserve(el);
+      observer.disconnect();
+    };
+  }, []);
 
   return (
-    <Box sx={{ "--sidebar-width": theme.spacing(32) }}>
+    <Box sx={{ "--sidebar-width": theme.spacing(36) }}>
       <Paper
         aria-hidden={!showSidebar}
         sx={{
@@ -192,7 +210,6 @@ const Layout = (props: React.PropsWithChildren) => {
               <ListItemText primary={"每日一言"} />
             </ListItemButton>
           </List>
-          <Box sx={{ height: 1000 }}></Box>
         </Box>
         <Divider />
         <Toolbar sx={{ gap: 1 }}>
@@ -210,27 +227,31 @@ const Layout = (props: React.PropsWithChildren) => {
       </Paper>
       <Box
         sx={{
+          minBlockSize: "100dvh",
+
+          flexDirection: "column",
+
           [theme.breakpoints.between("xs", "sm")]: {
             [`[aria-hidden=true] + &`]: {
-              display: "none",
+              display: "flex",
             },
             [`[aria-hidden=false] + &`]: {
-              display: "block",
+              display: "none",
             },
           },
 
           [theme.breakpoints.up("sm")]: {
-            display: "block",
+            display: "flex",
 
             [`[aria-hidden=false] + &`]: {
-              paddingInlineStart: 0,
+              paddingInlineStart: `var(--sidebar-width)`,
               transition: theme.transitions.create("padding-inline-start", {
                 duration: theme.transitions.duration.enteringScreen,
                 easing: theme.transitions.easing.sharp,
               }),
             },
             [`[aria-hidden=true] + &`]: {
-              paddingInlineStart: `var(--sidebar-width)`,
+              paddingInlineStart: 0,
               transition: theme.transitions.create("padding-inline-start", {
                 duration: theme.transitions.duration.leavingScreen,
                 easing: theme.transitions.easing.sharp,
@@ -246,11 +267,18 @@ const Layout = (props: React.PropsWithChildren) => {
             insetBlockStart: 0,
 
             backgroundColor: theme.palette.background.default,
+
+            boxShadow: headerDivider ? theme.shadows[0] : theme.shadows[1],
+            transition: theme.transitions.create("box-shadow"),
           }}
         >
           <IconButton
             onClick={() => {
-              setShowSidebarUpSmall((p) => !p);
+              if (isDownSmall) {
+                setShowSidebarDownSmall((p) => !p);
+              } else {
+                setShowSidebarUpSmall((p) => !p);
+              }
             }}
           >
             {showSidebarUpSmall ? <MenuOpen /> : <Menu />}
@@ -258,10 +286,29 @@ const Layout = (props: React.PropsWithChildren) => {
           <Box sx={{ mx: "auto" }}></Box>
           <ModeToggle />
         </Toolbar>
-        <Box>
-          <Container>
+        <Box
+          sx={{
+            flexGrow: 1,
+            flexShrink: 0,
+            flexBasis: 0,
+
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <div ref={scrollCursorRef} />
+          <Container
+            sx={{
+              flexGrow: 1,
+              flexShrink: 0,
+              flexBasis: 0,
+
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
             {props.children}
-            <Box sx={{ py: 1 }}>
+            <Box sx={{ py: 1, marginBlockStart: "auto" }}>
               <Typography variant="overline" color="textSecondary">
                 Copyright © 2026 Material UI SAS, trading as MUI.
               </Typography>
