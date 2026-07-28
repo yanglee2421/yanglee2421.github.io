@@ -16,6 +16,20 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
+import {
+  BehaviorSubject,
+  defaultIfEmpty,
+  distinctUntilChanged,
+  last,
+  NEVER,
+  of,
+  shareReplay,
+  startWith,
+  switchMap,
+  takeUntil,
+  tap,
+  using,
+} from "rxjs";
 import { Slider } from "./Slider";
 import "./border.css";
 
@@ -23,11 +37,67 @@ const calculateAssetsHref = (path: string) => {
   return new URL(path, import.meta.url).href;
 };
 
+const base$ = new BehaviorSubject("");
+const instance$ = base$.pipe(
+  distinctUntilChanged(),
+  switchMap((s) => {
+    if (!s) {
+      return of(null);
+    }
+
+    return using(
+      () => {
+        const obj = {
+          isOpen: true,
+          key: crypto.randomUUID(),
+        };
+
+        return {
+          unsubscribe: () => {
+            obj.isOpen = false;
+            console.log(obj);
+          },
+          obj,
+        };
+      },
+      (c) => {
+        const obj: {
+          isOpen: boolean;
+          key: string;
+        } = Reflect.get(Object(c), "obj");
+
+        return NEVER.pipe(
+          startWith(obj),
+          takeUntil(base$.pipe(last(), defaultIfEmpty(null))),
+        );
+      },
+    );
+  }),
+  shareReplay({ bufferSize: 1, refCount: true }),
+);
+
 const AnimateBorderButton = () => {
   const theme = useTheme();
 
+  React.useEffect(() => {
+    const sub = instance$
+      .pipe(
+        tap((obj) => {
+          console.log(obj);
+        }),
+      )
+      .subscribe();
+
+    return () => {
+      sub.unsubscribe();
+    };
+  }, []);
+
   return (
     <ButtonBase
+      onClick={() => {
+        base$.next(base$.getValue() ? "" : "xxx");
+      }}
       sx={{
         paddingInline: 2,
         paddingBlock: 1,
