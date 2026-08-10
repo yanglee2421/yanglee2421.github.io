@@ -3,6 +3,7 @@
     "source.organizeImports": "explicit"
   },
   "editor.fontSize": 20,
+  "editor.defaultFormatter": "esbenp.prettier-vscode",
   "editor.formatOnSave": true,
   "editor.linkedEditing": true,
   "git.autofetch": true,

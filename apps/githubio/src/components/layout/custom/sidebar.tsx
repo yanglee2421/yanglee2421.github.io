@@ -30,6 +30,7 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
+import { Link } from "react-router";
 
 export const Sidebar = (props: React.PropsWithChildren) => {
   const [open, setOpen] = React.useState(false);
@@ -114,7 +115,7 @@ export const Sidebar = (props: React.PropsWithChildren) => {
             </ListItemIcon>
             <ListItemText primary="Rank" />
           </ListItemButton>
-          <ListItemButton>
+          <ListItemButton component={Link} to={{ pathname: "/qrcode" }}>
             <ListItemIcon>
               <QrCodeScanner />
             </ListItemIcon>

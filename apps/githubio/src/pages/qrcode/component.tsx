@@ -1,7 +1,141 @@
-import { Box, Button, Typography, useTheme } from "@mui/material";
+import { LinkOutlined } from "@mui/icons-material";
+import {
+  Box,
+  Button,
+  Card,
+  CardActions,
+  CardContent,
+  CardHeader,
+  CircularProgress,
+  Grid,
+  IconButton,
+  InputAdornment,
+  Link,
+  Stack,
+  TextField,
+  Typography,
+  useTheme,
+} from "@mui/material";
+import { queryOptions, useQueries } from "@tanstack/react-query";
 import React from "react";
-import { type ReadResult } from "zxing-wasm";
+import type { ReadResult } from "zxing-wasm";
+import { prepareZXingModule, readBarcodes } from "zxing-wasm";
+import zxingWasmPath from "zxing-wasm/full/zxing_full.wasm?url";
 import ZXingWorker from "./zxing.worker?worker";
+
+prepareZXingModule({
+  overrides: {
+    locateFile: (path: string, prefix: string) => {
+      if (path.endsWith(".wasm")) {
+        return new URL(zxingWasmPath, import.meta.url).href;
+      }
+      return prefix + path;
+    },
+  },
+  fireImmediately: true,
+});
+
+type ElementOf<TList> = TList extends (infer TElement)[] ? TElement : never;
+
+const PasteInput = () => {
+  const [files, setFiles] = React.useState<File[]>([]);
+
+  const inputId = React.useId();
+
+  const queries = useQueries({
+    queries: files.map((file) => fetchBarcodeTextFromImage(file)),
+  });
+
+  const handlePaste = async (e: React.ClipboardEvent<HTMLDivElement>) => {
+    setFiles([...e.clipboardData.files]);
+  };
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const fileList = e.target.files;
+    if (!fileList) {
+      setFiles([]);
+      return;
+    }
+
+    setFiles([...fileList]);
+  };
+
+  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
+    e.preventDefault();
+    setFiles([...e.dataTransfer.files]);
+  };
+
+  type Query = ElementOf<typeof queries>;
+
+  const renderQuery = (query: Query) => {
+    if (query.isPending) {
+      return <CircularProgress />;
+    }
+
+    if (query.isError) {
+      return (
+        <Typography color="error">Error: {query.error.message}</Typography>
+      );
+    }
+
+    return query.data.map((text, index) => {
+      if (URL.canParse(text)) {
+        return (
+          <Link href={text} key={index} target="_blank">
+            {text}
+          </Link>
+        );
+      }
+
+      return <Typography key={index}>{text}</Typography>;
+    });
+  };
+
+  return (
+    <Stack spacing={1.5}>
+      <TextField
+        fullWidth
+        onPaste={handlePaste}
+        onDrop={handleDrop}
+        slotProps={{
+          input: {
+            endAdornment: (
+              <InputAdornment position="end">
+                <IconButton component="label" htmlFor={inputId}>
+                  <input
+                    id={inputId}
+                    type="file"
+                    hidden
+                    accept="image/*"
+                    multiple
+                    value={""}
+                    onChange={handleFileChange}
+                  />
+                  <LinkOutlined />
+                </IconButton>
+              </InputAdornment>
+            ),
+          },
+        }}
+        placeholder="Paste or drop an image here to read QR code"
+      />
+      {queries.map((query) => renderQuery(query))}
+    </Stack>
+  );
+};
+
+const fetchBarcodeTextFromImage = (file: File) => {
+  return queryOptions({
+    queryKey: [
+      "get qrcode text from image demo",
+      [file.lastModified, file.name, file.size, file.type],
+    ],
+    queryFn: async () => {
+      const barcodes = await readBarcodes(file);
+      return barcodes.map((i) => i.text);
+    },
+  });
+};
 
 class QRCodeScanner {
   listeners: Set<(_: ReadResult[]) => void> = new Set();
@@ -151,7 +285,7 @@ class Camera {
   }
 }
 
-export const Component = () => {
+const Scanner = () => {
   const [frontCamera, setFrontCamera] = React.useState(false);
   const [error, setError] = React.useState<Error | null>(null);
   const [result, setResult] = React.useState<string | null>(null);
@@ -232,6 +366,27 @@ export const Component = () => {
           <video ref={videoRef} width={375} height={667}></video>
         )}
       </Box>
+    </>
+  );
+};
+
+export const Component = () => {
+  const [showScanner] = React.useState(false);
+
+  return (
+    <>
+      {showScanner && <Scanner />}
+      <Card>
+        <CardHeader title="QRCode to link" />
+        <CardContent>
+          <Grid container>
+            <Grid size={12}>
+              <PasteInput />
+            </Grid>
+          </Grid>
+        </CardContent>
+        <CardActions></CardActions>
+      </Card>
     </>
   );
 };
