@@ -162,7 +162,9 @@ export const CustomLayout = (props: CustomLayoutProps) => {
             flexDirection: "column",
           }}
         >
-          {props.children}
+          <Box sx={{ flexGrow: 1, flexShrink: 0, flexBasis: 0 }}>
+            {props.children}
+          </Box>
           <Footer />
         </Container>
       </Box>

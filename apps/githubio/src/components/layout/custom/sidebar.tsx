@@ -75,7 +75,7 @@ export const Sidebar = (props: React.PropsWithChildren) => {
             <ListItemText primary="Overtime" />
             {open ? <ExpandLess /> : <ExpandMore />}
           </ListItemButton>
-          <Collapse in={open} timeout="auto" unmountOnExit>
+          <Collapse in={open} unmountOnExit>
             <List disablePadding>
               <ListItemButton sx={{ pl: 4 }}>
                 <ListItemIcon>

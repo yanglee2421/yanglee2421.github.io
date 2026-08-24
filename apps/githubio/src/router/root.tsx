@@ -1,19 +1,6 @@
 import { NprogressBar } from "@/components/layout/nprogress";
 import { ParticlesUI } from "@/components/layout/particles";
-import {
-  AddOutlined,
-  AlignHorizontalLeftOutlined,
-  Animation,
-  CalendarMonthOutlined,
-  DashboardOutlined,
-  DragIndicator,
-  HomeOutlined,
-  ListOutlined,
-  MessageOutlined,
-  Print,
-  QrCodeScanner,
-  ScienceOutlined,
-} from "@mui/icons-material";
+import { HomeOutlined } from "@mui/icons-material";
 import {
   Alert,
   AlertTitle,
@@ -31,74 +18,6 @@ import {
   ScrollRestoration,
   useRouteError,
 } from "react-router";
-
-const calculateSegment = (...args: unknown[]) => {
-  return args.join("/");
-};
-
-const createNavition = (lang: string) => [
-  { kind: "header", title: "Fontend" },
-  {
-    segment: calculateSegment(lang, "dashboard"),
-    title: "Dashboard",
-    icon: <DashboardOutlined />,
-  },
-  {
-    segment: calculateSegment(lang, "dnd"),
-    title: "Drag & Drop",
-    icon: <DragIndicator />,
-  },
-  { kind: "divider" },
-  { kind: "header", title: "Table" },
-  {
-    title: "Overtime",
-    icon: <CalendarMonthOutlined />,
-    children: [
-      {
-        segment: calculateSegment(lang, "overtime"),
-        title: "List",
-        icon: <ListOutlined />,
-      },
-      {
-        segment: calculateSegment(lang, "overtime", "new"),
-        title: "Add",
-        icon: <AddOutlined />,
-      },
-    ],
-  },
-  { kind: "divider" },
-  { kind: "header", title: "App" },
-  {
-    segment: calculateSegment(lang, "snackbar"),
-    title: "Snackbar",
-    icon: <MessageOutlined />,
-  },
-  {
-    segment: calculateSegment(lang, "lab"),
-    title: "Lab",
-    icon: <ScienceOutlined />,
-  },
-  {
-    segment: calculateSegment(lang, "Animate"),
-    title: "Animate",
-    icon: <Animation />,
-  },
-  {
-    segment: calculateSegment(lang, "rank"),
-    title: "Rank",
-    icon: <AlignHorizontalLeftOutlined />,
-  },
-  {
-    segment: calculateSegment(lang, "qrcode"),
-    title: "QR Code",
-    icon: <QrCodeScanner />,
-  },
-  {
-    title: "Print",
-    icon: <Print />,
-    segment: calculateSegment(lang, "print"),
-  },
-];
 
 interface ErrorContentProps {
   error: unknown;

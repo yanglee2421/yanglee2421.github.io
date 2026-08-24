@@ -155,10 +155,6 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/lab/component"),
                 },
                 {
-                  path: "snackbar",
-                  lazy: () => import("@/pages/snackbar/component"),
-                },
-                {
                   path: "dnd/:tab?",
                   lazy: () =>
                     import("@/pages/stories/1 - Core/Draggable/1-Draggable.story"),
