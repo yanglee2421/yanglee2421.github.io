@@ -32,7 +32,7 @@
     "import": "./dist/main.mjs",
     "require": "./dist/main.cjs"
   },
-  "packageManager": "pnpm@11.1.2+sha512.415a1cc25974731e75455c1468371be74c5aa5fb7621b50d4056d222451609f11412f23fd602e6169f1e060466641f798597e1be961a10688836a67b16569499",
+  "packageManager": "pnpm@12.0.0+sha512.9e2e3dc3911995868dc94b8175c217c27e95408fa03b4a22749778f2b34f773b77cdd3b39ede8171b22fcd53be6a35342e9fac9948a68ef58df6488ce89a7e67",
   "scripts": {
     "githubio": "pnpm -F githubio dev",
     "shadcnui": "pnpm -F shadcnui dev",
