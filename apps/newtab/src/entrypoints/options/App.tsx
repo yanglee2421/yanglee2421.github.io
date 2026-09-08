@@ -1,6 +1,5 @@
 import { MuiProvider } from "@/components/MuiProvider";
 import { QueryProvider } from "@/components/query";
-import "@/styles/global.css";
 import { browser } from "wxt/browser";
 import { z } from "zod";
 import { OptionsRouter } from "./router";
