@@ -9,7 +9,6 @@ import {
   CircularProgress,
   Typography,
 } from "@mui/material";
-import { DialogsProvider } from "@toolpad/core";
 import React from "react";
 import {
   isRouteErrorResponse,
@@ -92,9 +91,7 @@ export const RootHydrateFallback = () => {
 export const RootRoute = () => {
   return (
     <>
-      <DialogsProvider>
-        <Outlet />
-      </DialogsProvider>
+      <Outlet />
       <ParticlesUI preset="bubbles" />
       <Box sx={{ pointerEvents: "none" }}>
         <NprogressBar />
