@@ -1,14 +1,9 @@
 import {
-  AddOutlined,
   AlignHorizontalLeftOutlined,
   Animation,
-  CalendarMonthOutlined,
   DashboardOutlined,
   DragIndicator,
-  ExpandLess,
-  ExpandMore,
   KeyboardCommandKey,
-  ListOutlined,
   MessageOutlined,
   MoreVert,
   Print,
@@ -18,7 +13,6 @@ import {
 import {
   Avatar,
   Box,
-  Collapse,
   Divider,
   IconButton,
   List,
@@ -33,12 +27,6 @@ import React from "react";
 import { Link } from "react-router";
 
 export const Sidebar = (props: React.PropsWithChildren) => {
-  const [open, setOpen] = React.useState(false);
-
-  const handleClick = () => {
-    setOpen((p) => !p);
-  };
-
   return (
     <>
       <Toolbar sx={{ gap: 1 }}>
@@ -68,29 +56,6 @@ export const Sidebar = (props: React.PropsWithChildren) => {
             </ListItemIcon>
             <ListItemText primary="Drag & Drop" />
           </ListItemButton>
-          <ListItemButton onClick={handleClick}>
-            <ListItemIcon>
-              <CalendarMonthOutlined />
-            </ListItemIcon>
-            <ListItemText primary="Overtime" />
-            {open ? <ExpandLess /> : <ExpandMore />}
-          </ListItemButton>
-          <Collapse in={open} unmountOnExit>
-            <List disablePadding>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemIcon>
-                  <ListOutlined />
-                </ListItemIcon>
-                <ListItemText primary="List" />
-              </ListItemButton>
-              <ListItemButton sx={{ pl: 4 }}>
-                <ListItemIcon>
-                  <AddOutlined />
-                </ListItemIcon>
-                <ListItemText primary="Add" />
-              </ListItemButton>
-            </List>
-          </Collapse>
           <ListItemButton>
             <ListItemIcon>
               <MessageOutlined />

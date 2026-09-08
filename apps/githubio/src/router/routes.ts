@@ -4,7 +4,7 @@ import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { localeService } from "@/shared/LocaleContext";
 import type { RouteObject } from "react-router";
 import { redirect } from "react-router";
-import { AuthGuard, GuestGuard, LangRoute } from "./guard";
+import { GuestGuard, LangRoute } from "./guard";
 import { DashLayout } from "./layout";
 import { RootErrorBoundary, RootHydrateFallback, RootRoute } from "./root";
 
@@ -82,63 +82,6 @@ export const createRoutes = (): RouteObject[] => {
             {
               children: [
                 {
-                  children: [
-                    {
-                      path: "overtime",
-                      children: [
-                        {
-                          index: true,
-                          lazy: () => import("@/pages/overtime"),
-                        },
-                        {
-                          path: "new",
-                          lazy: () => import("@/pages/overtime_new/component"),
-                        },
-                      ],
-                    },
-                  ],
-                  Component: DashLayout,
-                },
-              ],
-              Component: AuthGuard,
-              loader: async () => {
-                if (import.meta.env.MODE !== "STG") {
-                  return;
-                }
-
-                const accessToken = useLocalStore.getState().accessToken;
-                const refreshToken = useLocalStore.getState().refreshToken;
-                const queryClient = QueryProvider.queryClient;
-
-                if (!refreshToken) {
-                  throw redirect(localeService.resolvePathname("/login"));
-                }
-
-                const loaderData = await queryClient.ensureQueryData({
-                  queryKey: ["me"],
-                  queryFn: async () => {
-                    const res = await fetch("/api/me", {
-                      headers: {
-                        Authorization: `Bearer ${accessToken}`,
-                      },
-                    });
-
-                    if (!res.ok) {
-                      throw redirect(localeService.resolvePathname("/login"));
-                    }
-
-                    return res.json();
-                  },
-                  staleTime: Infinity,
-                  gcTime: Infinity,
-                });
-
-                return loaderData;
-              },
-            },
-            {
-              children: [
-                {
                   path: "dashboard",
                   lazy: () => import("@/pages/dashboard/component"),
                 },
@@ -196,10 +139,6 @@ export const createRoutes = (): RouteObject[] => {
                 {
                   path: "print",
                   lazy: () => import("@/pages/pdf-report/component"),
-                },
-                {
-                  path: "lab",
-                  lazy: () => import("@/pages/lab/component"),
                 },
               ],
               Component: DashLayout,

@@ -71,7 +71,6 @@
     "axios": "^1.15.0",
     "classnames": "^2.5.1",
     "dayjs": "^1.11.20",
-    "dexie-react-hooks": "^4.4.0",
     "i18next": "^26.0.5",
     "immer": "^11.1.4",
     "mathjs": "^15.2.0",
