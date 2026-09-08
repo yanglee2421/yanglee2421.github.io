@@ -1,0 +1,10 @@
+{
+  "name": "vite-plugin-react-devtools",
+  "type": "module",
+  "exports": {
+    "import": "./src/index.ts"
+  },
+  "devDependencies": {
+    "vite": "^8.2.2"
+  }
+}
