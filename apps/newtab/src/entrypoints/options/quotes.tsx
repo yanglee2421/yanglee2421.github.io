@@ -1,3 +1,13 @@
+import { JustHer } from "@/components/JustHer";
+import { db } from "@/utils/db";
+import {
+  Delete,
+  FormatQuote,
+  HistoryEdu,
+  KeyboardReturn,
+  Restore,
+  Save,
+} from "@mui/icons-material";
 import {
   Button,
   Card,
@@ -15,19 +25,10 @@ import {
   Stack,
   TextField,
 } from "@mui/material";
-import {
-  Delete,
-  FormatQuote,
-  HistoryEdu,
-  KeyboardReturn,
-  Restore,
-  Save,
-} from "@mui/icons-material";
-import { z } from "zod";
-import React from "react";
+import { createFormHook, createFormHookContexts } from "@tanstack/react-form";
 import { useLiveQuery } from "dexie-react-hooks";
-import { createFormHookContexts, createFormHook } from "@tanstack/react-form";
-import { db } from "@/utils/db";
+import React from "react";
+import { z } from "zod";
 
 const calculatePageCount = (count: number, pageSize: number) => {
   return Math.ceil(count / pageSize);
@@ -110,139 +111,151 @@ export const Component = () => {
   };
 
   return (
-    <Stack spacing={3} sx={{ paddingBlock: 3 }}>
-      <Card>
-        <CardHeader title="每日一言" subheader="写不出的时候不硬写。--鲁迅" />
-        <CardContent>
-          <form
-            onSubmit={async (e) => {
-              e.preventDefault();
-              e.stopPropagation();
-              await form.handleSubmit();
-            }}
-            id={formId}
-            noValidate
-          >
-            <Grid container spacing={3}>
-              <Grid size={12}>
-                <form.AppField name="content">
-                  {(contentField) => (
-                    <contentField.TextField
-                      value={contentField.state.value}
-                      onChange={(e) => {
-                        contentField.handleChange(e.target.value);
-                      }}
-                      onBlur={contentField.handleBlur}
-                      error={contentField.state.meta.errors.length > 0}
-                      helperText={contentField.state.meta.errors.at(0)?.message}
-                      fullWidth
-                      slotProps={{
-                        input: {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                type="submit"
-                                form={formId}
-                                tabIndex={5}
-                              >
-                                <KeyboardReturn />
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <FormatQuote />
-                            </InputAdornment>
-                          ),
-                          slotProps: {
-                            input: {
-                              tabIndex: 1,
+    <>
+      <Stack spacing={1.5}>
+        <JustHer />
+        <Card>
+          <CardHeader title="每日一言" subheader="写不出的时候不硬写。--鲁迅" />
+          <CardContent>
+            <form
+              onSubmit={async (e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                await form.handleSubmit();
+              }}
+              id={formId}
+              noValidate
+            >
+              <Grid container spacing={3}>
+                <Grid size={12}>
+                  <form.AppField name="content">
+                    {(contentField) => (
+                      <contentField.TextField
+                        value={contentField.state.value}
+                        onChange={(e) => {
+                          contentField.handleChange(e.target.value);
+                        }}
+                        onBlur={contentField.handleBlur}
+                        error={contentField.state.meta.errors.length > 0}
+                        helperText={
+                          contentField.state.meta.errors.at(0)?.message
+                        }
+                        fullWidth
+                        slotProps={{
+                          input: {
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  type="submit"
+                                  form={formId}
+                                  tabIndex={5}
+                                >
+                                  <KeyboardReturn />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <FormatQuote />
+                              </InputAdornment>
+                            ),
+                            slotProps: {
+                              input: {
+                                tabIndex: 1,
+                              },
                             },
                           },
-                        },
-                      }}
-                      label="语录"
-                      placeholder="写不出的时候不硬写。"
-                    />
-                  )}
-                </form.AppField>
-              </Grid>
-              <Grid size={12}>
-                <form.AppField name="anthor">
-                  {(anthorField) => (
-                    <anthorField.TextField
-                      value={anthorField.state.value}
-                      onChange={(e) => {
-                        anthorField.handleChange(e.target.value);
-                      }}
-                      onBlur={anthorField.handleBlur}
-                      error={anthorField.state.meta.errors.length > 0}
-                      helperText={anthorField.state.meta.errors.at(0)?.message}
-                      fullWidth
-                      slotProps={{
-                        input: {
-                          endAdornment: (
-                            <InputAdornment position="end">
-                              <IconButton
-                                type="submit"
-                                form={formId}
-                                tabIndex={6}
-                              >
-                                <KeyboardReturn />
-                              </IconButton>
-                            </InputAdornment>
-                          ),
-                          startAdornment: (
-                            <InputAdornment position="start">
-                              <HistoryEdu />
-                            </InputAdornment>
-                          ),
-                          slotProps: {
-                            input: {
-                              tabIndex: 2,
+                        }}
+                        label="语录"
+                        placeholder="写不出的时候不硬写。"
+                      />
+                    )}
+                  </form.AppField>
+                </Grid>
+                <Grid size={12}>
+                  <form.AppField name="anthor">
+                    {(anthorField) => (
+                      <anthorField.TextField
+                        value={anthorField.state.value}
+                        onChange={(e) => {
+                          anthorField.handleChange(e.target.value);
+                        }}
+                        onBlur={anthorField.handleBlur}
+                        error={anthorField.state.meta.errors.length > 0}
+                        helperText={
+                          anthorField.state.meta.errors.at(0)?.message
+                        }
+                        fullWidth
+                        slotProps={{
+                          input: {
+                            endAdornment: (
+                              <InputAdornment position="end">
+                                <IconButton
+                                  type="submit"
+                                  form={formId}
+                                  tabIndex={6}
+                                >
+                                  <KeyboardReturn />
+                                </IconButton>
+                              </InputAdornment>
+                            ),
+                            startAdornment: (
+                              <InputAdornment position="start">
+                                <HistoryEdu />
+                              </InputAdornment>
+                            ),
+                            slotProps: {
+                              input: {
+                                tabIndex: 2,
+                              },
                             },
                           },
-                        },
-                      }}
-                      label="作者"
-                      placeholder="鲁迅"
-                    />
-                  )}
-                </form.AppField>
+                        }}
+                        label="作者"
+                        placeholder="鲁迅"
+                      />
+                    )}
+                  </form.AppField>
+                </Grid>
               </Grid>
-            </Grid>
-          </form>
-        </CardContent>
-        <CardActions>
-          <Button type="submit" form={formId} tabIndex={3} startIcon={<Save />}>
-            保存
-          </Button>
-          <Button
-            type="reset"
-            form={formId}
-            tabIndex={4}
-            startIcon={<Restore />}
-          >
-            重置
-          </Button>
-        </CardActions>
-      </Card>
-      <Card>
-        <CardHeader
-          title="已保存"
-          subheader="已保存的条目会在标签页打开时随机选择一条进行显示"
-        />
-        <List disablePadding>{renderListRows()}</List>
-        <CardActions>
-          <Pagination
-            page={pageIndex + 1}
-            count={calculatePageCount(count || 0, pageSize)}
-            onChange={(_, page) => {
-              setPageIndex(page - 1);
-            }}
+            </form>
+          </CardContent>
+          <CardActions>
+            <Button
+              type="submit"
+              form={formId}
+              tabIndex={3}
+              startIcon={<Save />}
+            >
+              保存
+            </Button>
+            <Button
+              type="reset"
+              form={formId}
+              tabIndex={4}
+              startIcon={<Restore />}
+            >
+              重置
+            </Button>
+          </CardActions>
+        </Card>
+        <Card>
+          <CardHeader
+            title="已保存"
+            subheader="已保存的条目会在标签页打开时随机选择一条进行显示"
           />
-        </CardActions>
-      </Card>
-    </Stack>
+          <List disablePadding>{renderListRows()}</List>
+          <CardActions>
+            <Pagination
+              page={pageIndex + 1}
+              count={calculatePageCount(count || 0, pageSize)}
+              onChange={(_, page) => {
+                setPageIndex(page - 1);
+              }}
+            />
+          </CardActions>
+        </Card>
+      </Stack>
+    </>
   );
 };

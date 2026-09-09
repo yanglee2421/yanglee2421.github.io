@@ -1,3 +1,4 @@
+import { JustHer } from "@/components/JustHer";
 import { ScrollToTopButton } from "@/components/scroll";
 import { useBackground } from "@/hooks/useBackground";
 import { db } from "@/utils/db";
@@ -923,7 +924,8 @@ export const Component = () => {
   return (
     <>
       <ScrollToTopButton />
-      <Stack spacing={3}>
+      <Stack spacing={1.5}>
+        <JustHer />
         <Card>
           <CardHeader
             title="背景类型"

@@ -7,7 +7,6 @@ import {
   ListItemText,
   Menu,
   MenuItem,
-  styled,
   Typography,
   useTheme,
 } from "@mui/material";
@@ -22,6 +21,13 @@ import { useLiveQuery } from "dexie-react-hooks";
 import React from "react";
 import { browser } from "wxt/browser";
 import snowVillage from "./snowVillage.jpg";
+import {
+  ColckWrapper,
+  ContentContainer,
+  StyledBackgroundImage,
+  StyledBackgroundImageWrapper,
+  StyledMask,
+} from "./styled";
 
 const calculateBackgroundId = (gallery: number[], wallpaperId: number) => {
   const isIncludesWallpaperId = gallery.includes(wallpaperId);
@@ -84,42 +90,6 @@ const init = async (engine: Engine): Promise<void> => {
   await loadLinksPreset(engine);
   await loadBubblesPreset(engine);
 };
-
-const StyledBackgroundImage = styled("div")({
-  position: "fixed",
-  zIndex: 1,
-
-  backgroundSize: "cover",
-  backgroundPosition: "50%",
-});
-
-const StyledBackgroundImageWrapper = styled("div")({
-  position: "relative",
-  zIndex: 0,
-  isolation: "isolate",
-  inset: 0,
-});
-
-const StyledMask = styled("div")({
-  position: "fixed",
-  inset: 0,
-  zIndex: 0,
-});
-
-const ContentContainer = styled("div")({
-  position: "relative",
-  zIndex: 1,
-  inlineSize: "100dvw",
-  blockSize: "100dvh",
-
-  display: "flex",
-  flexDirection: "column",
-});
-
-const ColckWrapper = styled("div")({
-  marginBlockStart: "calc(100dvh/55*21)",
-  transform: "translate3d(0,-50%,0)",
-});
 
 const useBackgroundImage = () => {
   const wallpaperId = useSyncStore((store) => store.wallpaperId);
@@ -315,9 +285,9 @@ const Background = (props: BackgroundProps) => {
   );
 };
 
-type ParticleMaskProps = {
+interface ParticleMaskProps {
   preset: string;
-};
+}
 
 const ParticleMask = ({ preset }: ParticleMaskProps) => {
   return <Particles options={{ preset, background: { opacity: 0 } }} />;

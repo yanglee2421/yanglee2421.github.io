@@ -1,5 +1,6 @@
 import { MuiProvider } from "@/components/MuiProvider";
 import { QueryProvider } from "@/components/query";
+import { ToastContainer } from "react-toastify";
 import { browser } from "wxt/browser";
 import { z } from "zod";
 import { OptionsRouter } from "./router";
@@ -25,6 +26,7 @@ export const App = () => {
     <QueryProvider>
       <MuiProvider>
         <OptionsRouter />
+        <ToastContainer />
       </MuiProvider>
     </QueryProvider>
   );

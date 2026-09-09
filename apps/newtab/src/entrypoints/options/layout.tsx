@@ -1,16 +1,29 @@
-import { Tab, Tabs, useTheme } from "@mui/material";
+import { FormatQuote, Photo } from "@mui/icons-material";
+import { Box, Tab, Tabs, useTheme } from "@mui/material";
 import React from "react";
 import { Outlet, ScrollRestoration, useNavigate } from "react-router";
+
+const calcPath = (tab: string) => {
+  switch (tab) {
+    case "quotes":
+      return "/quotes";
+    case "background":
+    default:
+      return "/";
+  }
+};
 
 export const MuiLayout = () => {
   const theme = useTheme();
   const [activeTab, setActiveTab] = React.useState("background");
   const navigate = useNavigate();
-  const [isPending, startTransition] = React.useTransition();
+  const [, startTransition] = React.useTransition();
 
-  React.useEffect(() => {}, [activeTab]);
-
-  React.useEffect(() => {}, [isPending]);
+  React.useEffect(() => {
+    startTransition(() => {
+      navigate(calcPath(activeTab));
+    });
+  }, [activeTab]);
 
   return (
     <>
@@ -20,10 +33,24 @@ export const MuiLayout = () => {
           setActiveTab(val);
         }}
       >
-        <Tab label="背景" value={"background"} />
-        <Tab label="每日一言" />
+        <Tab
+          icon={<Photo />}
+          iconPosition="start"
+          label="背景"
+          value={"background"}
+          sx={{ minHeight: 48 }}
+        />
+        <Tab
+          icon={<FormatQuote />}
+          iconPosition="start"
+          label="每日一言"
+          value={"quotes"}
+          sx={{ minHeight: 48 }}
+        />
       </Tabs>
-      <Outlet />
+      <Box sx={{ padding: 1.5 }}>
+        <Outlet />
+      </Box>
       <ScrollRestoration />
     </>
   );
