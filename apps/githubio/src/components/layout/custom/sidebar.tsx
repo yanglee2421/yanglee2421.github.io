@@ -3,6 +3,7 @@ import {
   Animation,
   DashboardOutlined,
   DragIndicator,
+  Gesture,
   KeyboardCommandKey,
   MessageOutlined,
   MoreVert,
@@ -32,7 +33,7 @@ export const Sidebar = (props: React.PropsWithChildren) => {
       <Toolbar sx={{ gap: 1 }}>
         <KeyboardCommandKey color="primary" />
         <Typography variant="h6" color="primary">
-          应用标题
+          Acme Inc.
         </Typography>
         <Box sx={{ mx: "auto" }} />
         {props.children}
@@ -91,6 +92,12 @@ export const Sidebar = (props: React.PropsWithChildren) => {
               <Print />
             </ListItemIcon>
             <ListItemText primary="Print" />
+          </ListItemButton>
+          <ListItemButton component={Link} to={{ pathname: "/canvas" }}>
+            <ListItemIcon>
+              <Gesture />
+            </ListItemIcon>
+            <ListItemText primary="Canvas" />
           </ListItemButton>
         </List>
       </Box>
