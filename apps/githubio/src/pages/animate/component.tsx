@@ -1,15 +1,15 @@
 import { Box, Button, ButtonGroup, useTheme } from "@mui/material";
 import React from "react";
 
-type Position = {
+interface Point {
   x: number;
   y: number;
-};
+}
 
 const listInitializer = () => Array.from({ length: 30 }, (_, index) => index);
 
-let positions: Position[] = [];
-let lastPositions: Position[] = [];
+let positions: Point[] = [];
+let lastPositions: Point[] = [];
 
 export const Component = () => {
   const [list, setList] = React.useState(listInitializer);

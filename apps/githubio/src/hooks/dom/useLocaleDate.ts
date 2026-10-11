@@ -1,9 +1,16 @@
-import { onAnimationFrame } from "@/lib/utils";
 import React from "react";
+import { animationFrames } from "rxjs";
 
 export const useLocaleDate = (locales?: Intl.LocalesArgument) => {
-  return React.useSyncExternalStore(onAnimationFrame, () =>
-    getDateString(locales),
+  return React.useSyncExternalStore(
+    (onStateChange) => {
+      const sub = animationFrames().subscribe(onStateChange);
+
+      return () => {
+        sub.unsubscribe();
+      };
+    },
+    () => getDateString(locales),
   );
 };
 

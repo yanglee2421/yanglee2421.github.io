@@ -1,11 +1,5 @@
 import React from "react";
-import {
-  animationFrameScheduler,
-  auditTime,
-  filter,
-  fromEventPattern,
-  tap,
-} from "rxjs";
+import { animationFrameScheduler, auditTime, filter, fromEvent } from "rxjs";
 import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
@@ -33,7 +27,7 @@ const storeInitializer = (): Store => {
     alpha: 15,
     blur: 4,
     lang: "en",
-    preset: "snow" as Preset,
+    preset: "snow",
     backgroundType: "gallery",
     wallpaperId: 0,
     gallery: [],
@@ -50,28 +44,23 @@ export const useSyncStore = create<Store>()(
   }),
 );
 
+const storage$ = fromEvent<StorageEvent>(window, "storage");
+const storeChange$ = storage$.pipe(
+  filter((e) => {
+    const storageKey = useSyncStore.persist.getOptions().name;
+
+    return e.key === storageKey;
+  }),
+  auditTime(0, animationFrameScheduler),
+);
+
 export const useSubscribeSyncStoreChange = () => {
   React.useEffect(() => {
-    const storage$ = fromEventPattern<StorageEvent>(
-      (f) => window.addEventListener("storage", f),
-      (f) => window.removeEventListener("storage", f),
-    );
-
-    const sub = storage$
-      .pipe(
-        filter((e) => {
-          const storageKey = useSyncStore.persist.getOptions().name;
-
-          return e.key === storageKey;
-        }),
-        auditTime(0, animationFrameScheduler),
-        tap(() => {
-          React.startTransition(() => {
-            useSyncStore.persist.rehydrate();
-          });
-        }),
-      )
-      .subscribe();
+    const sub = storeChange$.subscribe(() => {
+      React.startTransition(() => {
+        useSyncStore.persist.rehydrate();
+      });
+    });
 
     return () => {
       sub.unsubscribe();
