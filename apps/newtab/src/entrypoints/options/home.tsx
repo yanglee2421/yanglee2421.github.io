@@ -313,9 +313,9 @@ const useBorderBoxSize = <TEl extends Element>() => {
   return [ref, inlineSize, blockSize] as const;
 };
 
-type TrashProps = {
+interface TrashProps {
   id: string;
-};
+}
 
 const Trash = (props: TrashProps) => {
   const theme = useTheme();
@@ -347,9 +347,9 @@ const Trash = (props: TrashProps) => {
   );
 };
 
-type ImageCellProps = {
+interface ImageCellProps {
   id: number;
-};
+}
 
 const ImageCell = (props: ImageCellProps) => {
   const [boxRef, inlineSize, blockSize] = useBorderBoxSize<HTMLDivElement>();
@@ -386,10 +386,10 @@ const ImageCell = (props: ImageCellProps) => {
   );
 };
 
-type ColorPickerProps = {
+interface ColorPickerProps {
   value: string;
   onChange: (value: string) => void;
-};
+}
 
 const ColorPicker = (props: ColorPickerProps) => {
   const inputId = React.useId();
@@ -437,10 +437,10 @@ const ColorPanel = () => {
   );
 };
 
-type DroppableProps = {
+interface DroppableProps {
   id: UniqueIdentifier;
   children?: React.ReactNode;
-};
+}
 
 const Droppable = (props: DroppableProps) => {
   const droppable = useDroppable({
@@ -468,11 +468,11 @@ const Droppable = (props: DroppableProps) => {
   );
 };
 
-type SortableProps = {
+interface SortableProps {
   id: UniqueIdentifier;
   containerId: UniqueIdentifier;
   children?: React.ReactNode;
-};
+}
 
 const Sortable = (props: SortableProps) => {
   const theme = useTheme();
@@ -890,9 +890,9 @@ const GalleryPanel = () => {
   );
 };
 
-type BackgroundTypePanelProps = {
+interface BackgroundTypePanelProps {
   backgroundType: string;
-};
+}
 
 const BackgroundTypePanel = ({ backgroundType }: BackgroundTypePanelProps) => {
   switch (backgroundType) {

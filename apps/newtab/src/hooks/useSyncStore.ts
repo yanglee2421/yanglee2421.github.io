@@ -1,13 +1,20 @@
 import React from "react";
+import {
+  animationFrameScheduler,
+  auditTime,
+  filter,
+  fromEventPattern,
+  tap,
+} from "rxjs";
 import { create } from "zustand";
-import { immer } from "zustand/middleware/immer";
 import { createJSONStorage, persist } from "zustand/middleware";
+import { immer } from "zustand/middleware/immer";
 
 export type Preset = "links" | "snow" | "bubbles" | "";
 export type BackgroundType = "color" | "gallery";
 export type Mode = "system" | "light" | "dark";
 
-type Store = {
+interface Store {
   mode: Mode;
   lang: string;
 
@@ -19,7 +26,7 @@ type Store = {
   wallpaperId: number;
   gallery: number[];
   backgroundColor: string;
-};
+}
 
 const storeInitializer = (): Store => {
   return {
@@ -45,29 +52,29 @@ export const useSyncStore = create<Store>()(
 
 export const useSubscribeSyncStoreChange = () => {
   React.useEffect(() => {
-    const controller = new AbortController();
-    let animateId = 0;
-
-    window.addEventListener(
-      "storage",
-      (e) => {
-        const storageKey = useSyncStore.persist.getOptions().name;
-
-        if (e.key === storageKey) {
-          cancelAnimationFrame(animateId);
-          animateId = requestAnimationFrame(() => {
-            React.startTransition(() => {
-              useSyncStore.persist.rehydrate();
-            });
-          });
-        }
-      },
-      controller,
+    const storage$ = fromEventPattern<StorageEvent>(
+      (f) => window.addEventListener("storage", f),
+      (f) => window.removeEventListener("storage", f),
     );
 
+    const sub = storage$
+      .pipe(
+        filter((e) => {
+          const storageKey = useSyncStore.persist.getOptions().name;
+
+          return e.key === storageKey;
+        }),
+        auditTime(0, animationFrameScheduler),
+        tap(() => {
+          React.startTransition(() => {
+            useSyncStore.persist.rehydrate();
+          });
+        }),
+      )
+      .subscribe();
+
     return () => {
-      controller.abort();
-      cancelAnimationFrame(animateId);
+      sub.unsubscribe();
     };
   }, []);
 };

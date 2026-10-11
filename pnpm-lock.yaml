@@ -386,6 +386,9 @@ importers:
       react-toastify:
         specifier: ^11.1.0
         version: 11.1.0(react-dom@19.2.7(react@19.2.7))(react@19.2.7)
+      rxjs:
+        specifier: ^7.8.2
+        version: 7.8.2
       use-immer:
         specifier: ^0.11.0
         version: 0.11.0(immer@11.1.4)(react@19.2.7)
