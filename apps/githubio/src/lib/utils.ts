@@ -1,34 +1,3 @@
-export const onAnimationFrame = (cb: () => void) => {
-  let animate = 0;
-
-  const run = () => {
-    animate = requestAnimationFrame(run);
-    cb();
-  };
-
-  run();
-
-  return () => cancelAnimationFrame(animate);
-};
-
-export class AnimateController {
-  private readonly animate: () => void;
-
-  constructor(animate: () => void) {
-    this.animate = animate;
-  }
-
-  #animateId = 0;
-  play() {
-    this.#animateId = requestAnimationFrame(this.play.bind(this));
-
-    this.animate();
-  }
-  abort() {
-    cancelAnimationFrame(this.#animateId);
-  }
-}
-
 export class GetRandom {
   private readonly min: number;
   private readonly max: number;

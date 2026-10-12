@@ -1,22 +1,29 @@
 import { Box, useTheme } from "@mui/material";
 import React from "react";
-import { animationFrames, BehaviorSubject, interval, map, tap } from "rxjs";
-
-const createMockList = () => {
-  return Array.from({ length: 1024 }, () => Math.floor(255 * Math.random()));
-};
-
-const list$ = new BehaviorSubject<number[]>([]);
+import {
+  animationFrames,
+  animationFrameScheduler,
+  auditTime,
+  BehaviorSubject,
+  EMPTY,
+  fromEvent,
+  interval,
+  map,
+  merge,
+  switchMap,
+} from "rxjs";
 
 interface Point {
   x: number;
   y: number;
 }
 
-export const Component = () => {
+const createMockList = () => {
+  return Array.from({ length: 1024 }, () => Math.floor(255 * Math.random()));
+};
+
+const useBufferChartRef = () => {
   const ref = React.useRef<HTMLCanvasElement>(null);
-  const pointRef = React.useRef<Point>({ x: 0, y: 0 });
-  const enabledRef = React.useRef(false);
 
   const theme = useTheme();
 
@@ -33,56 +40,80 @@ export const Component = () => {
       return;
     }
 
+    const mouseMove$ = fromEvent<MouseEvent>(el, "mousemove");
+    const mouseEnter$ = fromEvent<MouseEvent>(el, "mouseenter");
+    const mouseLeave$ = fromEvent<MouseEvent>(el, "mouseleave");
+    const showAxis$ = new BehaviorSubject<boolean>(false);
+    const buffer$ = new BehaviorSubject<number[]>([]);
+    const point$ = new BehaviorSubject<Point>({ x: 0, y: 0 });
+
+    const sub = merge(
+      mouseEnter$.pipe(map(() => true)),
+      mouseLeave$.pipe(map(() => false)),
+    ).subscribe(showAxis$);
+
+    const sub0 = showAxis$
+      .pipe(
+        switchMap((enter) => {
+          if (!enter) {
+            return EMPTY;
+          }
+
+          return mouseMove$;
+        }),
+        auditTime(0, animationFrameScheduler),
+        map((e) => ({ x: e.clientX, y: e.clientY })),
+      )
+      .subscribe(point$);
+
     const sub1 = interval(200)
       .pipe(map(() => createMockList()))
-      .subscribe(list$);
+      .subscribe(buffer$);
 
-    const sub2 = animationFrames()
-      .pipe(
-        tap(() => {
-          ctx.clearRect(0, 0, 1024, 255);
+    const sub2 = animationFrames().subscribe(() => {
+      ctx.clearRect(0, 0, 1024, 255);
 
-          const rect = el.getBoundingClientRect();
-          const list = list$.getValue();
+      const rect = el.getBoundingClientRect();
+      const list = buffer$.getValue();
 
-          ctx.beginPath();
-          ctx.strokeStyle = theme.palette.primary.main;
-          ctx.moveTo(0, 0);
-          list.forEach((height, index) => {
-            ctx.lineTo(index, 255 - height);
-          });
-          ctx.stroke();
-          ctx.closePath();
+      ctx.beginPath();
+      ctx.strokeStyle = theme.palette.primary.main;
+      ctx.moveTo(0, 0);
+      list.forEach((height, index) => {
+        ctx.lineTo(index, 255 - height);
+      });
+      ctx.stroke();
 
-          if (enabledRef.current) {
-            const x = pointRef.current.x - rect.x;
-            const y = pointRef.current.y - rect.y;
-            ctx.strokeStyle = theme.palette.error.main;
-            ctx.fillStyle = theme.palette.text.primary;
-            ctx.font = "14px serif";
+      if (showAxis$.getValue()) {
+        const point = point$.getValue();
+        const x = point.x - rect.x;
+        const y = point.y - rect.y;
+        const height = 255 - y;
 
-            ctx.beginPath();
-            ctx.moveTo(x, 0);
-            ctx.lineTo(x, 255);
-            ctx.stroke();
-            ctx.closePath();
-            ctx.fillText(x.toString(), x, 255);
+        ctx.strokeStyle = theme.palette.error.main;
+        ctx.fillStyle = theme.palette.text.primary;
+        ctx.font = "14px serif";
 
-            const height = 255 - y;
-            ctx.beginPath();
-            ctx.moveTo(0, y);
-            ctx.lineTo(1024, y);
-            ctx.stroke();
-            ctx.closePath();
-            ctx.fillText(height.toString(), 0, y);
-          }
-        }),
-      )
-      .subscribe();
+        ctx.beginPath();
+        ctx.moveTo(x, 0);
+        ctx.lineTo(x, 255);
+        ctx.stroke();
+        ctx.fillText(x.toString(), x, 255);
+
+        ctx.beginPath();
+        ctx.moveTo(0, y);
+        ctx.lineTo(1024, y);
+        ctx.stroke();
+        ctx.fillText(height.toString(), 0, y);
+      }
+    });
+
+    const subscritions = [sub, sub0, sub1, sub2];
 
     return () => {
-      sub1.unsubscribe();
-      sub2.unsubscribe();
+      subscritions.forEach((sub) => {
+        sub.unsubscribe();
+      });
     };
   }, [
     theme.palette.primary.main,
@@ -90,26 +121,15 @@ export const Component = () => {
     theme.palette.text.primary,
   ]);
 
+  return ref;
+};
+
+export const Component = () => {
+  const ref = useBufferChartRef();
+
   return (
     <Box>
-      <canvas
-        ref={ref}
-        width={1024}
-        height={255}
-        style={{}}
-        onMouseMove={(e) => {
-          pointRef.current = {
-            x: e.clientX,
-            y: e.clientY,
-          };
-        }}
-        onMouseEnter={() => {
-          enabledRef.current = true;
-        }}
-        onMouseLeave={() => {
-          enabledRef.current = false;
-        }}
-      />
+      <canvas ref={ref} width={1024} height={255} style={{}} />
     </Box>
   );
 };

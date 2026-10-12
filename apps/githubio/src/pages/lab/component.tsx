@@ -16,21 +16,6 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
-import {
-  BehaviorSubject,
-  distinctUntilChanged,
-  last,
-  NEVER,
-  Observable,
-  of,
-  shareReplay,
-  startWith,
-  Subject,
-  switchMap,
-  takeUntil,
-  tap,
-  using,
-} from "rxjs";
 import { Slider } from "./Slider";
 import "./border.css";
 
@@ -38,150 +23,11 @@ const calculateAssetsHref = (path: string) => {
   return new URL(path, import.meta.url).href;
 };
 
-const base$ = new BehaviorSubject("");
-const instance$ = base$.pipe(
-  distinctUntilChanged(),
-  switchMap((s) => {
-    if (!s) {
-      return of(null);
-    }
-
-    return using(
-      () => {
-        const obj = {
-          isOpen: true,
-          key: crypto.randomUUID(),
-        };
-
-        return {
-          unsubscribe: () => {
-            obj.isOpen = false;
-            console.log(obj);
-          },
-          obj,
-        };
-      },
-      (c) => {
-        const obj: {
-          isOpen: boolean;
-          key: string;
-        } = Reflect.get(Object(c), "obj");
-
-        return NEVER.pipe(startWith(obj), takeUntil(base$.pipe(last())));
-      },
-    );
-  }),
-  shareReplay({ bufferSize: 1, refCount: true }),
-);
-
-const myShare = function <T>(source: Observable<T>) {
-  console.log("source", source);
-
-  const subject = new Subject();
-  let flag = false;
-
-  return new Observable<string>((subscriber) => {
-    console.log("sub", subscriber);
-
-    flag = true;
-
-    if (!flag) {
-      source.subscribe({
-        next: (val) => {
-          subject.next(val + "test");
-        },
-        error: (error) => {
-          subject.error(error);
-        },
-        complete: () => {
-          subject.complete();
-        },
-      });
-    }
-
-    subject.subscribe({
-      next: (val) => {
-        subscriber.next(val + "test");
-      },
-      error: (error) => {
-        subscriber.error(error);
-      },
-      complete: () => {
-        subscriber.complete();
-      },
-    });
-
-    return () => {
-      console.log("clean up");
-    };
-  });
-};
-
-const normal = function <T>(source: Observable<T>) {
-  return new Observable<T>((subscriber) => {
-    console.log("normal sub", subscriber);
-
-    source.subscribe({
-      next: (val) => {
-        subscriber.next(val);
-      },
-      error: (error) => {
-        subscriber.error(error);
-      },
-      complete: () => {
-        subscriber.complete();
-      },
-    });
-
-    return () => {
-      console.log("clean up");
-    };
-  });
-};
-
-const test$ = base$.pipe(normal, myShare);
-
 const AnimateBorderButton = () => {
   const theme = useTheme();
 
-  React.useEffect(() => {
-    const sub = test$.subscribe((val) => {
-      console.log(val);
-    });
-
-    return () => {
-      sub.unsubscribe();
-    };
-  }, []);
-
-  React.useEffect(() => {
-    const sub = instance$
-      .pipe(
-        tap((obj) => {
-          console.log(obj);
-        }),
-      )
-      .subscribe();
-
-    const sub2 = instance$
-      .pipe(
-        tap((obj) => {
-          console.log(obj);
-        }),
-      )
-      .subscribe();
-
-    return () => {
-      sub.unsubscribe();
-      sub2.unsubscribe();
-    };
-  }, []);
-
   return (
     <ButtonBase
-      onClick={() => {
-        base$.next(base$.getValue() ? "" : "xxx");
-      }}
       sx={{
         paddingInline: 2,
         paddingBlock: 1,
