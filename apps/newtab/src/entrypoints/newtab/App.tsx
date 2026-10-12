@@ -1,3 +1,4 @@
+import { MuiProvider } from "@/components/MuiProvider";
 import { db } from "@/utils/db";
 import { Settings, Wallpaper } from "@mui/icons-material";
 import {
@@ -402,7 +403,9 @@ export const App = () => {
 
   return (
     <QueryProvider>
-      <NewTab />
+      <MuiProvider>
+        <NewTab />
+      </MuiProvider>
     </QueryProvider>
   );
 };
