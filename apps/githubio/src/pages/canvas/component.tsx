@@ -1,18 +1,62 @@
-import { Box, Grid, styled, useTheme } from "@mui/material";
+import {
+  Box,
+  FormControlLabel,
+  Grid,
+  styled,
+  Switch,
+  useTheme,
+} from "@mui/material";
 import React from "react";
 import {
   animationFrames,
   animationFrameScheduler,
   auditTime,
   BehaviorSubject,
+  concatMap,
+  distinctUntilChanged,
   EMPTY,
+  from,
   fromEvent,
   interval,
   map,
   merge,
+  share,
   switchMap,
 } from "rxjs";
 import { useImmer } from "use-immer";
+import workerPath from "./worker?worker&url";
+
+const createMockList = () => {
+  const arr = new Uint8Array(1024);
+  crypto.getRandomValues(arr);
+
+  return arr;
+};
+
+interface State {
+  open: boolean;
+  interval: number;
+}
+const state$ = new BehaviorSubject<State>({ open: false, interval: 0 });
+const frame$ = state$.pipe(
+  distinctUntilChanged(
+    (p, c) => p.open === c.open && p.interval === c.interval,
+  ),
+  switchMap((state) => {
+    if (!state.open) {
+      return EMPTY;
+    }
+
+    return interval(state.interval);
+  }),
+  map(createMockList),
+  share(),
+);
+const saveToFile$ = frame$.pipe(
+  concatMap((data) => {
+    return from(Promise.resolve(data));
+  }),
+);
 
 const Input = styled("input")({
   display: "block",
@@ -23,10 +67,6 @@ interface Point {
   x: number;
   y: number;
 }
-
-const createMockList = () => {
-  return Array.from({ length: 1024 }, () => Math.floor(255 * Math.random()));
-};
 
 interface Gate {
   x: number;
@@ -81,7 +121,7 @@ const useBufferChartRef = () => {
       .subscribe(point$);
 
     const sub1 = interval(200)
-      .pipe(map(() => createMockList()))
+      .pipe(map(() => [...createMockList()]))
       .subscribe(buffer$);
 
     const sub2 = animationFrames().subscribe(() => {
@@ -154,26 +194,67 @@ export const Component = () => {
     width: 0,
   });
 
-  const ref = useBufferChartRef();
+  const [state, setState] = useImmer({
+    open: false,
+    interval: 200,
+  });
+
+  const ref = React.useRef<HTMLDivElement>(null);
 
   React.useEffect(() => {
-    gate$.next(gate);
-  }, [gate]);
+    const el = ref.current;
+
+    if (!el) {
+      return;
+    }
+
+    const canvas = document.createElement("canvas");
+    canvas.width = 1024;
+    canvas.height = 255;
+    el.appendChild(canvas);
+
+    const offscreen = canvas.transferControlToOffscreen();
+    const worker = new Worker(workerPath, { type: "module" });
+    const sub1 = frame$.subscribe((data) => {
+      worker.postMessage(data);
+    });
+    const subs = [sub1];
+
+    worker.postMessage(offscreen, [offscreen]);
+
+    return () => {
+      el.removeChild(canvas);
+
+      worker.terminate();
+      subs.forEach((sub) => {
+        sub.unsubscribe();
+      });
+    };
+  }, []);
+
+  React.useEffect(() => {
+    state$.next(state);
+  }, [state]);
 
   return (
     <Box>
-      <canvas
-        ref={ref}
-        width={1024}
-        height={255}
-        style={
-          {
-            // width: 512,
-            // height: 122,
-          }
-        }
-      />
+      <div ref={ref}></div>
       <Grid container spacing={1.5}>
+        <Grid size={{ xs: 12, sm: 6 }}>
+          <FormControlLabel
+            control={
+              <Switch
+                checked={state.open}
+                onChange={(_, checked) => {
+                  setState((draft) => {
+                    draft.open = checked;
+                  });
+                }}
+              />
+            }
+            label="启用"
+          />
+        </Grid>
         <Grid size={{ xs: 12, sm: 6 }}>
           <Input
             type="number"
