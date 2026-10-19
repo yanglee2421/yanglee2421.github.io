@@ -1,14 +1,57 @@
-import {
-  animationFrames,
-  BehaviorSubject,
-  EMPTY,
-  filter,
-  fromEventPattern,
-  map,
-  switchMap,
-  takeUntil,
-  tap,
-} from "rxjs";
+import { animationFrames, filter, fromEventPattern, map } from "rxjs";
+
+interface CursorState {
+  channel: string;
+  x: number;
+  y: number;
+}
+
+interface Gate {
+  x: number;
+  y: number;
+  width: number;
+}
+
+interface ChartState {
+  canvas: OffscreenCanvas;
+  gates: Gate[];
+  buffer: Uint8Array;
+}
+
+const renderChartFrame = (
+  channel: string,
+  chart: ChartState,
+  cursor: CursorState,
+) => {
+  const canvas = chart.canvas;
+  const ctx = canvas.getContext("2d");
+  const list = chart.buffer;
+
+  if (!ctx) {
+    return;
+  }
+
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  ctx.strokeStyle = "blue";
+  ctx.beginPath();
+  ctx.moveTo(0, 0);
+  list.forEach((height, index) => {
+    ctx.lineTo(index, canvas.height - height);
+  });
+  ctx.stroke();
+
+  ctx.strokeStyle = "red";
+  for (const gate of chart.gates) {
+    ctx.beginPath();
+    ctx.moveTo(gate.x, canvas.height - gate.y);
+    ctx.lineTo(gate.x + gate.width, canvas.height - gate.y);
+    ctx.stroke();
+  }
+
+  if (channel === cursor.channel) {
+  }
+};
 
 const message$ = fromEventPattern<MessageEvent<any>>(
   (h) => self.addEventListener("message", h),
@@ -20,52 +63,149 @@ const messageerror$ = fromEventPattern<MessageEvent<any>>(
 );
 
 const animate$ = animationFrames();
-const offscreen$ = new BehaviorSubject<OffscreenCanvas | null>(null);
-const buffer$ = new BehaviorSubject<Uint8Array>(new Uint8Array());
+const chartState = new Map<string, ChartState>();
+const cursorState: CursorState = {
+  channel: "",
+  x: 0,
+  y: 0,
+};
 
-message$
-  .pipe(
-    filter((e) => e.data instanceof OffscreenCanvas),
-    map((e) => e.data as OffscreenCanvas),
-  )
-  .subscribe(offscreen$);
+interface SetCursorActiion {
+  type: "set-cursor";
+  payload: CursorState;
+}
 
-message$
-  .pipe(
-    filter((e) => e.data instanceof Uint8Array),
-    map((e) => e.data as Uint8Array),
-  )
-  .subscribe(buffer$);
+interface SetBufferAction {
+  type: "set-buffer";
+  payload: {
+    channel: string;
+    buffer: Uint8Array;
+  };
+}
 
-offscreen$
-  .pipe(
-    switchMap((offscreen) => {
-      if (!offscreen) {
-        return EMPTY;
-      }
+interface SetGateAction {
+  type: "set-gate";
+  payload: {
+    channel: string;
+    gates: Gate[];
+  };
+}
 
-      const ctx = offscreen.getContext("2d");
+interface SetCanvasAction {
+  type: "set-canvas";
+  payload: {
+    channel: string;
+    canvas: OffscreenCanvas;
+  };
+}
 
-      if (!ctx) {
-        return EMPTY;
-      }
+interface RemoveCanvasAction {
+  type: "remove-canvas";
+  payload: { channel: string };
+}
 
-      return animate$.pipe(
-        tap(() => {
-          ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
+export type MessageAction =
+  | SetBufferAction
+  | SetGateAction
+  | SetCanvasAction
+  | RemoveCanvasAction
+  | SetCursorActiion;
 
-          const list = buffer$.getValue();
+const cursorChange$ = message$.pipe(
+  filter((e) => {
+    const type = e.data.type;
 
-          ctx.strokeStyle = "blue";
-          ctx.beginPath();
-          ctx.moveTo(0, 0);
-          list.forEach((height, index) => {
-            ctx.lineTo(index, 255 - height);
-          });
-          ctx.stroke();
-        }),
-      );
-    }),
-    takeUntil(messageerror$),
-  )
-  .subscribe();
+    return type === "set-cursor";
+  }),
+  map((e) => {
+    const data: SetCursorActiion = e.data;
+
+    return data.payload;
+  }),
+);
+
+const bufferChange$ = message$.pipe(
+  filter((e) => {
+    const type = e.data.type;
+
+    return type === "set-buffer";
+  }),
+  map((e) => {
+    const data: SetBufferAction = e.data;
+
+    return data.payload;
+  }),
+);
+
+const gateChange$ = message$.pipe(
+  filter((e) => {
+    const type = e.data.type;
+
+    return type === "set-gate";
+  }),
+  map((e) => {
+    const data: SetGateAction = e.data;
+
+    return data.payload;
+  }),
+);
+
+const canvasChange$ = message$.pipe(
+  filter((e) => {
+    const type = e.data.type;
+
+    return type === "set-canvas";
+  }),
+  map((e) => {
+    const data: SetCanvasAction = e.data;
+
+    return data.payload;
+  }),
+);
+
+cursorChange$.subscribe((state) => {
+  cursorState.channel = state.channel;
+  cursorState.x = state.x;
+  cursorState.y = state.y;
+});
+
+bufferChange$.subscribe((state) => {
+  const prev = chartState.get(state.channel);
+
+  if (!prev) {
+    return;
+  }
+
+  chartState.set(state.channel, { ...prev, buffer: state.buffer });
+});
+
+gateChange$.subscribe((state) => {
+  const prev = chartState.get(state.channel);
+
+  if (!prev) {
+    return;
+  }
+
+  chartState.set(state.channel, { ...prev, gates: state.gates });
+});
+
+canvasChange$.subscribe((state) => {
+  const prev = chartState.get(state.channel);
+
+  if (!prev) {
+    chartState.set(state.channel, {
+      canvas: state.canvas,
+      gates: [],
+      buffer: new Uint8Array(),
+    });
+    return;
+  }
+
+  chartState.set(state.channel, { ...prev, canvas: state.canvas });
+});
+
+animate$.subscribe(() => {
+  chartState.forEach((state, channel) => {
+    renderChartFrame(channel, state, cursorState);
+  });
+});
