@@ -53,6 +53,10 @@ export const createRoutes = (): RouteObject[] => {
                   path: "canvas",
                   lazy: () => import("@/pages/canvas/component"),
                 },
+                {
+                  path: "awilix",
+                  lazy: () => import("@/pages/awilix/component"),
+                },
               ],
               Component: DashLayout,
             },

@@ -10,6 +10,7 @@ import {
   Print,
   QrCodeScanner,
   ScienceOutlined,
+  Widgets,
 } from "@mui/icons-material";
 import {
   Avatar,
@@ -98,6 +99,12 @@ export const Sidebar = (props: React.PropsWithChildren) => {
               <Gesture />
             </ListItemIcon>
             <ListItemText primary="Canvas" />
+          </ListItemButton>
+          <ListItemButton component={Link} to={{ pathname: "/awilix" }}>
+            <ListItemIcon>
+              <Widgets />
+            </ListItemIcon>
+            <ListItemText primary="Awilix" />
           </ListItemButton>
         </List>
       </Box>
