@@ -57,6 +57,10 @@ export const createRoutes = (): RouteObject[] => {
                   path: "awilix",
                   lazy: () => import("@/pages/awilix/component"),
                 },
+                {
+                  path: "transition",
+                  lazy: () => import("@/pages/transition/component"),
+                },
               ],
               Component: DashLayout,
             },

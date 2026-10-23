@@ -26,9 +26,63 @@ import {
   Typography,
 } from "@mui/material";
 import React from "react";
-import { Link } from "react-router";
+import { Link, useLocation, useParams } from "react-router";
+
+const locales = ["en", "zh"];
+
+const normalizePathname = (pathname: string) => {
+  const segments = pathname.split("/").filter(Boolean);
+  const locale = segments[0];
+
+  if (locales.includes(locale)) {
+    segments.shift();
+  }
+
+  return `/${segments.join("/")}`;
+};
 
 export const Sidebar = (props: React.PropsWithChildren) => {
+  const location = useLocation();
+  const params = useParams();
+
+  const navList = [
+    {
+      icon: <DashboardOutlined />,
+      text: "Dashboard",
+      path: "/dashboard",
+    },
+    {
+      icon: <Animation />,
+      text: "Animate",
+      path: "/animate",
+    },
+    {
+      icon: <ScienceOutlined />,
+      text: "Lab",
+      path: "/lab",
+    },
+    {
+      icon: <QrCodeScanner />,
+      text: "QR Code",
+      path: "/qrcode",
+    },
+    {
+      icon: <Gesture />,
+      text: "Canvas",
+      path: "/canvas",
+    },
+    {
+      icon: <Widgets />,
+      text: "Awilix",
+      path: "/awilix",
+    },
+    {
+      text: "Transition",
+      icon: <Animation />,
+      path: "/transition",
+    },
+  ];
+
   return (
     <>
       <Toolbar sx={{ gap: 1 }}>
@@ -46,12 +100,17 @@ export const Sidebar = (props: React.PropsWithChildren) => {
             <ListSubheader disableSticky>Nested List Items</ListSubheader>
           }
         >
-          <ListItemButton selected>
-            <ListItemIcon>
-              <DashboardOutlined />
-            </ListItemIcon>
-            <ListItemText primary="Dashboard" />
-          </ListItemButton>
+          {navList.map((item) => (
+            <ListItemButton
+              key={item.path}
+              component={Link}
+              to={{ pathname: `/${params.lang}/${item.path}` }}
+              selected={normalizePathname(location.pathname) === item.path}
+            >
+              <ListItemIcon>{item.icon}</ListItemIcon>
+              <ListItemText primary={item.text} />
+            </ListItemButton>
+          ))}
           <ListItemButton>
             <ListItemIcon>
               <DragIndicator />
@@ -66,45 +125,15 @@ export const Sidebar = (props: React.PropsWithChildren) => {
           </ListItemButton>
           <ListItemButton>
             <ListItemIcon>
-              <ScienceOutlined />
-            </ListItemIcon>
-            <ListItemText primary="Lab" />
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemIcon>
-              <Animation />
-            </ListItemIcon>
-            <ListItemText primary="Animate" />
-          </ListItemButton>
-          <ListItemButton>
-            <ListItemIcon>
               <AlignHorizontalLeftOutlined />
             </ListItemIcon>
             <ListItemText primary="Rank" />
-          </ListItemButton>
-          <ListItemButton component={Link} to={{ pathname: "/qrcode" }}>
-            <ListItemIcon>
-              <QrCodeScanner />
-            </ListItemIcon>
-            <ListItemText primary="QR Code" />
           </ListItemButton>
           <ListItemButton>
             <ListItemIcon>
               <Print />
             </ListItemIcon>
             <ListItemText primary="Print" />
-          </ListItemButton>
-          <ListItemButton component={Link} to={{ pathname: "/canvas" }}>
-            <ListItemIcon>
-              <Gesture />
-            </ListItemIcon>
-            <ListItemText primary="Canvas" />
-          </ListItemButton>
-          <ListItemButton component={Link} to={{ pathname: "/awilix" }}>
-            <ListItemIcon>
-              <Widgets />
-            </ListItemIcon>
-            <ListItemText primary="Awilix" />
           </ListItemButton>
         </List>
       </Box>

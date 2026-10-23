@@ -12,7 +12,6 @@ import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import { LocalizationProvider } from "@mui/x-date-pickers/LocalizationProvider";
 import React from "react";
 import { useTranslation } from "react-i18next";
-import { ToastContainer } from "react-toastify";
 
 class MuiThemeBuilder {
   private options?: ThemeOptions;
@@ -80,7 +79,6 @@ export const MuiProvider = (props: React.PropsWithChildren) => {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <meta name="theme-color" content={themeColor} />
-      <ToastContainer theme={darkEnabled ? "dark" : "light"} />
       <GlobalStyles
         styles={{
           ".animate-spin": {
