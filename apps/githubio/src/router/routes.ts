@@ -61,6 +61,10 @@ export const createRoutes = (): RouteObject[] => {
                   path: "transition",
                   lazy: () => import("@/pages/transition/component"),
                 },
+                {
+                  path: "pdf",
+                  lazy: () => import("@/pages/pdf/component"),
+                },
               ],
               Component: DashLayout,
             },

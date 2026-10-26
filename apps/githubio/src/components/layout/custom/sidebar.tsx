@@ -2,6 +2,7 @@ import {
   AlignHorizontalLeftOutlined,
   Animation,
   DashboardOutlined,
+  Description,
   DragIndicator,
   Gesture,
   KeyboardCommandKey,
@@ -80,6 +81,11 @@ export const Sidebar = (props: React.PropsWithChildren) => {
       text: "Transition",
       icon: <Animation />,
       path: "/transition",
+    },
+    {
+      text: "pdf",
+      path: "/pdf",
+      icon: <Description />,
     },
   ];
 

@@ -1,10 +1,25 @@
 import babel from "@rolldown/plugin-babel";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
-import { dirname, resolve } from "node:path";
+import { createRequire } from "node:module";
+import path from "node:path";
 import { fileURLToPath } from "node:url";
-import { defineConfig } from "vite";
+import { defineConfig, normalizePath } from "vite";
+import { viteStaticCopy } from "vite-plugin-static-copy";
 
-const __dirname = dirname(fileURLToPath(import.meta.url));
+const require = createRequire(import.meta.url);
+const cMapsDir = normalizePath(
+  path.join(path.dirname(require.resolve("pdfjs-dist/package.json")), "cmaps"),
+);
+const standardFontsDir = normalizePath(
+  path.join(
+    path.dirname(require.resolve("pdfjs-dist/package.json")),
+    "standard_fonts",
+  ),
+);
+const wasmDir = normalizePath(
+  path.join(path.dirname(require.resolve("pdfjs-dist/package.json")), "wasm"),
+);
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
@@ -19,10 +34,29 @@ export default defineConfig(() => {
           }),
         ],
       }),
+      viteStaticCopy({
+        targets: [
+          {
+            src: cMapsDir,
+            dest: "cmaps",
+            rename: { stripBase: true },
+          },
+          {
+            src: standardFontsDir,
+            dest: "standard_fonts",
+            rename: { stripBase: true },
+          },
+          {
+            src: wasmDir,
+            dest: "wasm",
+            rename: { stripBase: true },
+          },
+        ],
+      }),
     ],
     resolve: {
       alias: {
-        "@": resolve(__dirname, "./src"),
+        "@": path.resolve(__dirname, "./src"),
       },
       preserveSymlinks: false,
     },
@@ -34,15 +68,15 @@ export default defineConfig(() => {
     },
     // experimental: { enableNativePlugin: true },
     base: "./",
-    envDir: resolve(__dirname, "./"),
+    envDir: path.resolve(__dirname, "./"),
     assetsInclude: [],
     build: {
-      outDir: resolve(__dirname, "./dist"),
+      outDir: path.resolve(__dirname, "./dist"),
       emptyOutDir: true,
 
       rolldownOptions: {
         input: {
-          index: resolve(__dirname, "./index.html"),
+          index: path.resolve(__dirname, "./index.html"),
         },
         external: [],
         output: {
@@ -84,7 +118,7 @@ export default defineConfig(() => {
         },
       },
       fs: {
-        allow: [resolve(__dirname, "../../")],
+        allow: [path.resolve(__dirname, "../../")],
       },
     },
   };
