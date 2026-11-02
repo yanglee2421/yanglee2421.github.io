@@ -1,15 +1,39 @@
 import {
+  Box,
   Button,
   Card,
   CardActions,
   CardContent,
   CardHeader,
   List,
-  ListItem,
-  ListItemText,
   Stack,
 } from "@mui/material";
+import {
+  amber,
+  blue,
+  brown,
+  cyan,
+  green,
+  indigo,
+  orange,
+  red,
+  teal,
+  yellow,
+} from "@mui/material/colors";
 import React from "react";
+
+const colors = [
+  blue[500],
+  green[500],
+  red[500],
+  indigo[500],
+  orange[500],
+  yellow[500],
+  amber[500],
+  teal[500],
+  cyan[500],
+  brown[500],
+];
 
 const ToggleAnimate = () => {
   const [isVisible, setIsVisible] = React.useState(true);
@@ -57,9 +81,25 @@ export const Component = () => {
       <List>
         {items.map((item) => (
           <React.ViewTransition key={item}>
-            <ListItem key={item}>
-              <ListItemText primary={item} />
-            </ListItem>
+            <Box
+              sx={{
+                marginBottom: 1,
+                backgroundColor: colors[item - 1],
+                height: 40,
+                padding: 1,
+                borderRadius: 1,
+              }}
+            >
+              <button
+                onClick={() => {
+                  React.startTransition(() => {
+                    setItems((p) => p.filter((i) => !Object.is(i, item)));
+                  });
+                }}
+              >
+                {item}
+              </button>
+            </Box>
           </React.ViewTransition>
         ))}
       </List>
@@ -69,7 +109,7 @@ export const Component = () => {
           <Button
             onClick={() => {
               React.startTransition(() => {
-                setItems((prev) => prev.toReversed().filter((i) => i !== 1));
+                setItems((prev) => prev.toReversed());
               });
             }}
           >
