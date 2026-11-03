@@ -59,11 +59,11 @@ watchPostEffect(() => {
   ctx.lineWidth = 16 * scale;
 
   ctx.beginPath();
-  ctx.ellipse(x, y, 48 * scale, 96 * scale, Math.PI / 4, 0, 2 * Math.PI);
+  ctx.ellipse(x, y, 42 * scale, 96 * scale, Math.PI / 4, 0, 2 * Math.PI);
   ctx.stroke();
 
   ctx.beginPath();
-  ctx.ellipse(x, y, 48 * scale, 96 * scale, -Math.PI / 4, 0, 2 * Math.PI);
+  ctx.ellipse(x, y, 42 * scale, 96 * scale, -Math.PI / 4, 0, 2 * Math.PI);
   ctx.stroke();
 
   ctx.fillStyle = "white";
