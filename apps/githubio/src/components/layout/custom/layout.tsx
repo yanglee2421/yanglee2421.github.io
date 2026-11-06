@@ -39,6 +39,7 @@ export const CustomLayout = (props: CustomLayoutProps) => {
         aria-hidden={!showAppSidebar}
         sx={{
           position: "fixed",
+          insetInlineStart: 0,
           insetBlockStart: 0,
           zIndex: theme.zIndex.drawer,
 
@@ -53,15 +54,15 @@ export const CustomLayout = (props: CustomLayoutProps) => {
             inlineSize: "100%",
 
             ["&:where([aria-hidden=true])"]: {
-              insetInlineStart: "-100%",
-              transition: theme.transitions.create("inset-inline-start", {
+              transform: "translate3d(-100%,0,0)",
+              transition: theme.transitions.create("transform", {
                 duration: theme.transitions.duration.leavingScreen,
                 easing: theme.transitions.easing.sharp,
               }),
             },
             ["&:where([aria-hidden=false])"]: {
-              insetInlineStart: 0,
-              transition: theme.transitions.create("inset-inline-start", {
+              transform: "translate3d(0,0,0)",
+              transition: theme.transitions.create("transform", {
                 duration: theme.transitions.duration.enteringScreen,
                 easing: theme.transitions.easing.sharp,
               }),
@@ -71,15 +72,15 @@ export const CustomLayout = (props: CustomLayoutProps) => {
             inlineSize: "var(--sidebar-width)",
 
             ["&:where([aria-hidden=true])"]: {
-              insetInlineStart: "calc(-1 * var(--sidebar-width))",
-              transition: theme.transitions.create("inset-inline-start", {
+              transform: "translate3d(calc(-1 * var(--sidebar-width)),0,0)",
+              transition: theme.transitions.create("transform", {
                 duration: theme.transitions.duration.leavingScreen,
                 easing: theme.transitions.easing.sharp,
               }),
             },
             ["&:where([aria-hidden=false])"]: {
-              insetInlineStart: 0,
-              transition: theme.transitions.create("inset-inline-start", {
+              transform: "translate3d(0,0,0)",
+              transition: theme.transitions.create("transform", {
                 duration: theme.transitions.duration.enteringScreen,
                 easing: theme.transitions.easing.sharp,
               }),
