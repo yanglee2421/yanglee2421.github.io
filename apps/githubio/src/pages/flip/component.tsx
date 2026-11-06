@@ -15,31 +15,36 @@ export const Component = () => {
   return (
     <div>
       <TestDemo />
-      <FlipLayout id={id}>
-        {list.map((i) => {
-          return (
-            <ButtonBase
-              key={i}
-              sx={{
-                height: 40,
-                borderWidth: 1,
-                borderColor: theme.palette.divider,
-                borderStyle: "solid",
+      <UpdateLifecycle
+        getSnapshotBeforeUpdate={() => {}}
+        componentDidUpdate={() => {}}
+      >
+        <Box sx={{ display: "flex", flexDirection: "column", gap: 1 }}>
+          {list.map((i) => {
+            return (
+              <ButtonBase
+                key={i}
+                sx={{
+                  height: 40,
+                  borderWidth: 1,
+                  borderColor: theme.palette.divider,
+                  borderStyle: "solid",
 
-                lineHeight: 40 + "px",
-                textIndent: 10,
-              }}
-              onClick={() => {
-                setTimeout(() => {
-                  setList((p) => p.filter((el) => !Object.is(el, i)));
-                }, 200);
-              }}
-            >
-              {i}
-            </ButtonBase>
-          );
-        })}
-      </FlipLayout>
+                  lineHeight: 40 + "px",
+                  textIndent: 10,
+                }}
+                onClick={() => {
+                  setTimeout(() => {
+                    setList((p) => p.filter((el) => !Object.is(el, i)));
+                  }, 200);
+                }}
+              >
+                {i}
+              </ButtonBase>
+            );
+          })}
+        </Box>
+      </UpdateLifecycle>
     </div>
   );
 };
@@ -131,5 +136,28 @@ class FlipLayout extends React.Component<FlipLayoutProps> {
         },
       );
     }
+  }
+}
+
+interface UpdateLifecycleProps {
+  getSnapshotBeforeUpdate: () => void;
+  componentDidUpdate: () => void;
+  children?: React.ReactNode;
+}
+
+class UpdateLifecycle extends React.Component<UpdateLifecycleProps> {
+  constructor(props: UpdateLifecycleProps) {
+    super(props);
+  }
+
+  render() {
+    return this.props.children;
+  }
+
+  getSnapshotBeforeUpdate() {
+    this.props.getSnapshotBeforeUpdate();
+  }
+  componentDidUpdate() {
+    this.props.componentDidUpdate();
   }
 }
