@@ -8,10 +8,6 @@ const initialList = () => {
 export const Component = () => {
   const [list, setList] = React.useState(initialList);
 
-  const scope = React.useRef<HTMLDivElement>(null);
-  const idToElRef = React.useRef<Map<string, HTMLElement>>(null);
-  const idToFirstRef = React.useRef<Map<string, DOMRect>>(null);
-
   const id = React.useId();
 
   const theme = useTheme();
