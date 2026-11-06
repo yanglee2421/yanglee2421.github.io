@@ -4,6 +4,7 @@ import {
   DashboardOutlined,
   Description,
   DragIndicator,
+  Flip,
   Gesture,
   KeyboardCommandKey,
   MessageOutlined,
@@ -86,6 +87,16 @@ export const Sidebar = (props: React.PropsWithChildren) => {
       text: "pdf",
       path: "/pdf",
       icon: <Description />,
+    },
+    {
+      text: "Motion",
+      icon: <Animation />,
+      path: "/motion",
+    },
+    {
+      text: "FLIP",
+      icon: <Flip />,
+      path: "/flip",
     },
   ];
 

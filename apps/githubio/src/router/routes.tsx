@@ -1,7 +1,7 @@
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { localeService } from "@/shared/LocaleContext";
 import type { RouteObject } from "react-router";
-import { redirect } from "react-router";
+import { Navigate, redirect } from "react-router";
 import { GuestGuard, LangRoute } from "./guard";
 import { DashLayout } from "./layout";
 import { RootErrorBoundary, RootHydrateFallback, RootRoute } from "./root";
@@ -34,16 +34,16 @@ export const createRoutes = (): RouteObject[] => {
             {
               children: [
                 {
+                  index: true,
+                  element: <Navigate to="/en/lab" />,
+                },
+                {
                   path: "dashboard",
                   lazy: () => import("@/pages/dashboard/component"),
                 },
                 {
                   path: "animate",
                   lazy: () => import("@/pages/animate/component"),
-                },
-                {
-                  index: true,
-                  lazy: () => import("@/pages/lab/component"),
                 },
                 {
                   path: "qrcode",
@@ -65,8 +65,24 @@ export const createRoutes = (): RouteObject[] => {
                   path: "pdf",
                   lazy: () => import("@/pages/pdf/component"),
                 },
+                {
+                  path: "lab",
+                  lazy: () => import("@/pages/lab/component"),
+                },
+                {
+                  path: "flip",
+                  lazy: () => import("@/pages/flip/component"),
+                },
               ],
               Component: DashLayout,
+            },
+            {
+              children: [
+                {
+                  path: "motion",
+                  lazy: () => import("@/pages/motion/component"),
+                },
+              ],
             },
           ],
           Component: LangRoute,
