@@ -42,6 +42,7 @@
     "@types/node": "^25.5.2",
     "prettier": "^3.9.6",
     "prettier-plugin-tailwindcss": "^0.8.1",
-    "typescript": "^7.0.2"
+    "typescript": "^7.0.2",
+    "vite-plus": "^1.6.0"
   }
 }

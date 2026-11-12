@@ -1,12 +1,14 @@
 import babel from "@rolldown/plugin-babel";
 import react, { reactCompilerPreset } from "@vitejs/plugin-react";
-import { createRequire } from "node:module";
+import module from "node:module";
 import path from "node:path";
-import { fileURLToPath } from "node:url";
+import url from "node:url";
 import { defineConfig, normalizePath } from "vite";
 import { viteStaticCopy } from "vite-plugin-static-copy";
 
-const require = createRequire(import.meta.url);
+const require = module.createRequire(import.meta.url);
+const __filename = url.fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 const cMapsDir = normalizePath(
   path.join(path.dirname(require.resolve("pdfjs-dist/package.json")), "cmaps"),
 );
@@ -19,7 +21,6 @@ const standardFontsDir = normalizePath(
 const wasmDir = normalizePath(
   path.join(path.dirname(require.resolve("pdfjs-dist/package.json")), "wasm"),
 );
-const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // https://vitejs.dev/config/
 export default defineConfig(() => {
