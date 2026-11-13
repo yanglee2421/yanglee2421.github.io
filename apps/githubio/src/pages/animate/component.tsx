@@ -1,4 +1,4 @@
-import { Box, Button, ButtonGroup, useTheme } from "@mui/material";
+import { Box, Button, ButtonGroup, Tab, Tabs, useTheme } from "@mui/material";
 import React from "react";
 
 interface Point {
@@ -12,6 +12,38 @@ let positions: Point[] = [];
 let lastPositions: Point[] = [];
 
 export const Component = () => {
+  const [activeTab, setActiveTab] = React.useState("flip-dom");
+
+  const defferdActiveTab = React.useDeferredValue(activeTab);
+
+  const renderTabContent = () => {
+    switch (defferdActiveTab) {
+      case "flip-dom":
+        return <FlipDOMExample />;
+      case "react-view-transition":
+        return <ViewTransitionExample />;
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <>
+      <Tabs
+        value={activeTab}
+        onChange={(_e, value) => {
+          setActiveTab(value);
+        }}
+      >
+        <Tab value="flip-dom" label="Flip DOM" />
+        <Tab value="react-view-transition" label="React View Transition" />
+      </Tabs>
+      <React.ViewTransition>{renderTabContent()}</React.ViewTransition>
+    </>
+  );
+};
+
+const FlipDOMExample = () => {
   const [list, setList] = React.useState(listInitializer);
   const [key, setKey] = React.useState(0);
 
@@ -114,4 +146,8 @@ export const Component = () => {
       </Box>
     </>
   );
+};
+
+const ViewTransitionExample = () => {
+  return <></>;
 };

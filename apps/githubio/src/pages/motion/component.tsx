@@ -29,7 +29,6 @@ export const Component = () => {
         }}
       >
         <button onClick={() => setCollapsed(!collapsed)}>Toggle</button>
-
         <motion.span
           animate={{
             opacity: collapsed ? 0 : 1,
@@ -55,7 +54,7 @@ export const Component = () => {
   );
 };
 
-function List() {
+const List = () => {
   const [items, setItems] = React.useState(["A", "B", "C", "D"]);
 
   return (
@@ -81,7 +80,7 @@ function List() {
       </AnimatePresence>
     </div>
   );
-}
+};
 
 const ReoderExample = () => {
   const [items, setItems] = React.useState([0, 1, 2, 3]);
