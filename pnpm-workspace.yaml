@@ -10,6 +10,9 @@ allowBuilds:
   spawn-sync: true
   vue-demi: true
 
+minimumReleaseAgeExclude:
+  - '@yanglee2421/utils@0.0.2'
+
 onlyBuiltDependencies:
   - '@firebase/util'
   - '@tsparticles/engine'

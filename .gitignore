@@ -7,3 +7,5 @@ dist/
 # newtab
 .output
 .wxt
+
+apps/vuespa/typed-router.d.ts

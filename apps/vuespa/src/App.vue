@@ -1,6 +1,6 @@
 <script setup lang="ts">
-import { RouterView } from "vue-router";
 import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
+import { RouterView } from "vue-router";
 </script>
 
 <template>
@@ -15,16 +15,6 @@ import { VueQueryDevtools } from "@tanstack/vue-query-devtools";
 </template>
 
 <style scoped>
-:global(:root) {
-  padding: 0;
-  margin: 0;
-}
-
-:global(body) {
-  padding: 0;
-  margin: 0;
-}
-
 .fade-enter-active,
 .fade-leave-active {
   transition: opacity 0.3s ease;

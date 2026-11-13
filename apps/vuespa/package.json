@@ -22,15 +22,7 @@
   },
   "homepage": "https://github.com/yanglee2421/yanglee2421.github.io/blob/main/README.md",
   "private": true,
-  "files": [
-    "dist"
-  ],
   "type": "module",
-  "exports": {
-    "types": "./dist/main.d.ts",
-    "import": "./dist/main.mjs",
-    "require": "./dist/main.cjs"
-  },
   "scripts": {
     "dev": "vite",
     "build": "vue-tsc -b && vite build",
@@ -41,11 +33,11 @@
     "@tanstack/vue-query": "^5.107.1",
     "@tanstack/vue-query-devtools": "^6.4.1",
     "@vueuse/core": "^15.0.0",
+    "@yanglee2421/utils": "^0.0.2",
     "@yotulee/run": "jsr:^0.0.15",
-    "axios": "^1.21.1",
-    "daisyui": "^5.7.50",
     "echarts": "^6.1.0",
     "pinia": "^4.1.0",
+    "rxjs": "^7.8.2",
     "vue": "^3.5.45",
     "vue-router": "^5.5.0",
     "zod": "^4.6.7"

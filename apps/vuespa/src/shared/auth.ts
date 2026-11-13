@@ -66,7 +66,7 @@ export const useUser = () => {
 
 export const ensureAuth = () => {
   const refreshTokenRef = useRefreshToken();
-  return queryClient.ensureQueryData(
+  return queryClient.query(
     fetchAuthStatus(Vue.computed(() => !!Vue.toValue(refreshTokenRef))),
   );
 };
