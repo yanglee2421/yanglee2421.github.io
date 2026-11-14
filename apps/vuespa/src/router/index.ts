@@ -1,3 +1,4 @@
+import { useAuth } from "@/hooks/use-auth";
 import { localeService } from "@/shared/locale";
 import { Observable } from "rxjs";
 import { createRouter, createWebHashHistory } from "vue-router";
@@ -14,15 +15,14 @@ if (import.meta.hot) {
 
 export default router;
 
-const beforeEach$ = new Observable((sub) => {
+const i18nGuard$ = new Observable((sub) => {
   const dispose = router.beforeEach((to, from) => {
     const path = localeService.resolvePathname(to.path);
+    sub.next({ to, from, path });
 
     if (Object.is(path, to.path)) {
       return true;
     }
-
-    sub.next({ to, from, path });
 
     return { path };
   });
@@ -32,6 +32,26 @@ const beforeEach$ = new Observable((sub) => {
   };
 });
 
-beforeEach$.subscribe((info) => {
+const authGuard$ = new Observable((sub) => {
+  const dispose = router.beforeEach((to, from) => {
+    const requireAuth = to.meta.requireAuth;
+    const store = useAuth();
+    sub.next({ to, from });
+
+    if (requireAuth) {
+      return store.isLoggIn ? true : { path: "/login" };
+    }
+
+    return true;
+  });
+
+  return () => {
+    dispose();
+  };
+});
+
+i18nGuard$.subscribe((info) => {
   console.log(info);
 });
+
+authGuard$.subscribe();
