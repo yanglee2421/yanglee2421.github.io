@@ -1,8 +1,38 @@
 <script lang="ts" setup>
-definePage({
-  meta: {
-    requireAuth: true,
-  },
+import { useAuth } from "@/hooks/use-auth";
+import { filter, Observable, tap } from "rxjs";
+import { watchPostEffect } from "vue";
+import { useRouter } from "vue-router";
+
+interface AuthState {
+  isLoggIn: boolean;
+}
+definePage({ meta: { requireAuth: true } });
+
+const router = useRouter();
+const auth = useAuth();
+
+watchPostEffect((cleanup) => {
+  const $ = new Observable<AuthState>((sub) => {
+    const unsubscribe = auth.$subscribe((_, state) => {
+      sub.next(state);
+    });
+
+    return () => {
+      unsubscribe();
+    };
+  }).pipe(
+    filter((state) => !state.isLoggIn),
+    tap(() => {
+      router.push({ path: "/login" });
+    }),
+  );
+
+  const subscription = $.subscribe();
+
+  cleanup(() => {
+    subscription.unsubscribe();
+  });
 });
 </script>
 

@@ -1,12 +1,12 @@
 <script lang="ts" setup>
-import { useLogout } from "@/shared/auth";
+import { useAuth } from "@/hooks/use-auth";
 
-const handleLogout = useLogout();
+const store = useAuth();
 </script>
 
 <template>
   <div>
-    <button @click="handleLogout" class="btn-error btn">LOGOUT</button>
+    <button @click="store.logout">LOGOUT</button>
   </div>
 </template>
 

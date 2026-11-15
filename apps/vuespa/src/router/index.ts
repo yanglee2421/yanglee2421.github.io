@@ -34,12 +34,26 @@ const i18nGuard$ = new Observable((sub) => {
 
 const authGuard$ = new Observable((sub) => {
   const dispose = router.beforeEach((to, from) => {
-    const requireAuth = to.meta.requireAuth;
-    const store = useAuth();
     sub.next({ to, from });
+    const requireAuth = to.meta.requireAuth;
+    const requireGuest = to.meta.requireGuest;
+    const store = useAuth();
 
     if (requireAuth) {
-      return store.isLoggIn ? true : { path: "/login" };
+      return store.isLoggIn
+        ? true
+        : {
+            path: "/login",
+            query: {
+              redirect_to: to.fullPath,
+            },
+          };
+    }
+    if (requireGuest) {
+      const redirect_to = to.query.redirect_to;
+      return store.isLoggIn
+        ? { path: typeof redirect_to === "string" ? redirect_to : "/home" }
+        : true;
     }
 
     return true;
@@ -50,8 +64,5 @@ const authGuard$ = new Observable((sub) => {
   };
 });
 
-i18nGuard$.subscribe((info) => {
-  console.log(info);
-});
-
+i18nGuard$.subscribe();
 authGuard$.subscribe();

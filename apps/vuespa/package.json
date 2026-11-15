@@ -32,7 +32,6 @@
     "@tanstack/vue-form": "^1.33.5",
     "@tanstack/vue-query": "^5.107.1",
     "@tanstack/vue-query-devtools": "^6.4.1",
-    "@vueuse/core": "^15.0.0",
     "@yanglee2421/utils": "^0.0.2",
     "@yotulee/run": "jsr:^0.0.15",
     "echarts": "^6.1.0",
