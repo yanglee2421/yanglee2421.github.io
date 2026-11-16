@@ -1,4 +1,5 @@
 import bg from "@/assets/images/justHer.jpg";
+import { authClient } from "@/shared/auth-client";
 import {
   alpha,
   Box,
@@ -16,6 +17,7 @@ import {
 } from "@mui/material";
 import { grey } from "@mui/material/colors";
 import React from "react";
+import { useNavigate } from "react-router";
 import { Slider } from "./Slider";
 import "./border.css";
 
@@ -25,9 +27,23 @@ const calculateAssetsHref = (path: string) => {
 
 const AnimateBorderButton = () => {
   const theme = useTheme();
+  const navigate = useNavigate();
+
+  React.useEffect(() => {
+    const s = authClient.when("signOut").subscribe(() => {
+      navigate("/login");
+    });
+
+    return () => {
+      s.unsubscribe();
+    };
+  }, []);
 
   return (
     <ButtonBase
+      onClick={() => {
+        authClient.signOut();
+      }}
       sx={{
         paddingInline: 2,
         paddingBlock: 1,

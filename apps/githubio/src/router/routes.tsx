@@ -1,10 +1,27 @@
 import { useLocalStore } from "@/hooks/store/useLocalStore";
+import { authClient } from "@/shared/auth-client";
 import { localeService } from "@/shared/LocaleContext";
-import type { RouteObject } from "react-router";
+import type { MiddlewareFunction, RouteObject } from "react-router";
 import { Navigate, redirect } from "react-router";
 import { GuestGuard, LangRoute } from "./guard";
 import { DashLayout } from "./layout";
 import { RootErrorBoundary, RootHydrateFallback, RootRoute } from "./root";
+
+const guestMiddleware: MiddlewareFunction = async () => {
+  const state = await authClient.waitForResolved();
+
+  if (state.status === "authenicated") {
+    throw redirect("/lab");
+  }
+};
+
+const authMiddleware: MiddlewareFunction = async () => {
+  const state = await authClient.waitForResolved();
+
+  if (state.status === "unauthenicated") {
+    throw redirect("/login");
+  }
+};
 
 export const createRoutes = (): RouteObject[] => {
   return [
@@ -28,7 +45,13 @@ export const createRoutes = (): RouteObject[] => {
               lazy: () => import("@/pages/not-fount/component"),
             },
             {
-              children: [],
+              middleware: [guestMiddleware],
+              children: [
+                {
+                  path: "login",
+                  lazy: () => import("@/pages/login/component"),
+                },
+              ],
               Component: GuestGuard,
             },
             {
@@ -66,6 +89,7 @@ export const createRoutes = (): RouteObject[] => {
                   lazy: () => import("@/pages/pdf/component"),
                 },
                 {
+                  middleware: [authMiddleware],
                   path: "lab",
                   lazy: () => import("@/pages/lab/component"),
                 },

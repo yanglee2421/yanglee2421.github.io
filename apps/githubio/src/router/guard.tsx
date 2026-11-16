@@ -1,4 +1,3 @@
-import { useCurrentUser } from "@/hooks/firebase/useCurrentUser";
 import { useLocalStore } from "@/hooks/store/useLocalStore";
 import { HOME_PATH, LOGIN_PATH } from "@/lib/constants";
 import { LocaleContext, useLocale } from "@/shared/LocaleContext";
@@ -98,13 +97,9 @@ export const NavigateToLogin = () => {
 };
 
 export const GuestGuard = () => {
-  const user = useCurrentUser();
-
-  return user ? <NavigateToHome /> : <Outlet />;
+  return <Outlet />;
 };
 
 export const AuthGuard = () => {
-  const user = useCurrentUser();
-
-  return user ? <Outlet /> : <NavigateToLogin />;
+  return <Outlet />;
 };

@@ -1,92 +1,130 @@
 import {
   BehaviorSubject,
+  filter,
   firstValueFrom,
+  map,
   Observable,
+  Subject,
   Subscription,
+  tap,
   timer,
 } from "rxjs";
 
-const createToken = () => {
-  return new Date().toLocaleString();
-};
+type AuthStatus = "authenicated" | "unauthenicated" | "unknown";
 
 interface User {
   id: string;
   nickname?: string;
 }
 
-interface WhenType {
-  at: { value: string };
-  rt: { value: string };
-  user: { value: User | null };
+interface AuthState {
+  at: string;
+  rt: string;
+  status: AuthStatus;
+  user: User | null;
 }
 
+interface WhenType {
+  signIn: {
+    value: null;
+  };
+  signOut: {
+    value: null;
+  };
+  state: {
+    value: AuthState;
+  };
+}
+
+const createToken = () => {
+  return new Date().toLocaleString();
+};
+
+const serverSideAuth = async (rt: string) => {
+  void rt;
+
+  const $ = timer(200).pipe(
+    map(() => {
+      return {
+        at: createToken(),
+        rt: createToken(),
+        status: "authenicated",
+        user: { id: crypto.randomUUID() },
+      } satisfies AuthState;
+    }),
+  );
+
+  return firstValueFrom($);
+};
+
 export class AuthClient {
-  private readyPromise: Promise<void>;
-  private refreshPromise: Promise<void> | null = null;
-  private at$ = new BehaviorSubject("");
-  private rt$ = new BehaviorSubject("");
-  private user$ = new BehaviorSubject<User | null>(null);
+  private refreshPromise: Promise<AuthState> | null = null;
+  private signIn$: Subject<null> = new Subject();
+  private signOut$: Subject<null> = new Subject();
+  private state$: BehaviorSubject<AuthState>;
   private subscriptions: Subscription[];
 
   constructor() {
-    const s1 = this.rt$.subscribe((value) => {
-      localStorage.setItem("refreshToken", value);
+    const rt = localStorage.getItem("refreshToken") || "";
+    const initialState: AuthState = this.createInitalState(rt);
+    this.state$ = new BehaviorSubject(initialState);
+
+    const s1 = this.state$.subscribe((state) => {
+      localStorage.setItem("refreshToken", state.rt);
     });
 
     this.subscriptions = [s1];
-    this.readyPromise = this.prepare();
   }
   dispose() {
     this.subscriptions.forEach((s) => s.unsubscribe());
-    this.at$.complete();
-    this.rt$.complete();
+    this.state$.complete();
+    this.signIn$.complete();
+    this.signOut$.complete();
   }
 
   when<TKey extends keyof WhenType>(key: TKey) {
-    type ReturnType = Observable<
-      WhenType[TKey] extends { value: infer TValue } ? TValue : never
-    >;
+    type ValueType = WhenType[TKey] extends { value: infer TValue }
+      ? TValue
+      : never;
+    type ReturnType = Observable<ValueType>;
 
     switch (key) {
-      case "at":
-        return this.at$.asObservable() as ReturnType;
-      case "rt":
-        return this.rt$.asObservable() as ReturnType;
-      case "user":
+      case "signIn":
+        return this.signIn$.asObservable() as ReturnType;
+      case "signOut":
+        return this.signOut$.asObservable() as ReturnType;
+      case "state":
       default:
-        return this.user$.asObservable() as ReturnType;
+        return this.state$.asObservable() as ReturnType;
     }
   }
 
   get accessToken() {
-    return this.at$.getValue();
+    return this.state$.getValue().at;
   }
   get refreshToken() {
-    return this.rt$.getValue();
+    return this.state$.getValue().rt;
   }
-  get ready() {
-    return this.readyPromise;
+  get status() {
+    return this.state$.getValue().status;
   }
 
-  private async refreshAccessToken() {
-    await firstValueFrom(timer(200));
-    this.at$.next(createToken());
-    this.rt$.next(createToken());
-    this.user$.next({ id: "test user" });
-  }
-  private async prepare() {
-    const rt = localStorage.getItem("refreshToken") || "";
+  private createInitalState(rt: string): AuthState {
+    if (rt) {
+      return {
+        at: "",
+        rt,
+        status: "unknown",
+        user: null,
+      };
+    }
 
-    if (!rt) return;
-
-    this.rt$.next(rt);
-    console.log("request whoami");
-    await firstValueFrom(timer(200));
-    console.log("request whoami ok");
-    this.at$.next(createToken());
-    this.rt$.next(createToken());
-    this.user$.next({ id: "test user" });
+    return {
+      at: "",
+      rt: "",
+      status: "unauthenicated",
+      user: null,
+    };
   }
 
   async refresh() {
@@ -95,24 +133,49 @@ export class AuthClient {
     }
 
     try {
-      this.refreshPromise = this.refreshAccessToken();
-      await this.refreshPromise;
+      this.refreshPromise = serverSideAuth(this.refreshToken);
+      const result = await this.refreshPromise;
+      // Unknown or Authenicated to Authenicated
+      this.state$.next(result);
+    } catch (error) {
+      if (error instanceof Error) {
+        // Authenicated to Unknown
+        this.state$.next({
+          ...this.state$.getValue(),
+          status: "unknown",
+        });
+      } else {
+        // Authenicated to Unauthenicated
+        const emptyState = this.createInitalState("");
+        this.state$.next(emptyState);
+      }
     } finally {
       this.refreshPromise = null;
     }
   }
   async signIn(): Promise<void> {
-    await firstValueFrom(timer(200));
-    this.at$.next(createToken());
-    this.rt$.next(createToken());
-    this.user$.next({ id: "test user" });
+    const result = await serverSideAuth(this.refreshToken);
+    this.state$.next(result);
+    this.signIn$.next(null);
   }
   async signOut(): Promise<void> {
     await firstValueFrom(timer(200));
-    this.at$.next("");
-    this.rt$.next("");
-    this.user$.next(null);
+    const emptyState = this.createInitalState("");
+    this.state$.next(emptyState);
+    this.signOut$.next(null);
+  }
+  waitForResolved() {
+    const $ = this.state$.pipe(
+      tap((state) => {
+        if (state.status !== "unknown") {
+          return;
+        }
+        this.refresh();
+      }),
+      filter((state) => state.status !== "unknown"),
+    );
+
+    return firstValueFrom($);
   }
 }
-export const authCLient = new AuthClient();
-authCLient.when("user").subscribe(() => {});
+export const authClient = new AuthClient();
