@@ -62,7 +62,7 @@ export class AuthClient {
   private signIn$: Subject<null> = new Subject();
   private signOut$: Subject<null> = new Subject();
   private state$: BehaviorSubject<AuthState>;
-  private subscriptions: Subscription[];
+  private subscription: Subscription;
 
   constructor() {
     const rt = localStorage.getItem("refreshToken") || "";
@@ -73,13 +73,16 @@ export class AuthClient {
       localStorage.setItem("refreshToken", state.rt);
     });
 
-    this.subscriptions = [s1];
+    this.subscription = new Subscription(() => {
+      this.state$.complete();
+      this.signIn$.complete();
+      this.signOut$.complete();
+    });
+
+    this.subscription.add(s1);
   }
   dispose() {
-    this.subscriptions.forEach((s) => s.unsubscribe());
-    this.state$.complete();
-    this.signIn$.complete();
-    this.signOut$.complete();
+    this.subscription.unsubscribe();
   }
 
   when<TKey extends keyof WhenType>(key: TKey) {
