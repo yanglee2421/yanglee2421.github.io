@@ -2,14 +2,10 @@ import {
   BehaviorSubject,
   filter,
   firstValueFrom,
-  from,
   map,
   Subject,
   Subscription,
-  tap,
-  timer,
 } from "rxjs";
-import { exhaustSwitch } from "./exhaust-switch";
 
 type AuthStatus = "authenicated" | "unauthenicated" | "unknown";
 
@@ -74,36 +70,87 @@ export class AuthHelper {
   }
 }
 
-const fakeRequest = (reason: string) => {
-  const $ = timer(200).pipe(
-    tap(() => {
-      console.log(reason);
-    }),
-  );
-
-  return firstValueFrom($);
+const fakeRequest = async (signal: AbortSignal, url: URL) => {
+  const res = await fetch(url, { signal });
+  await res.json();
 };
 
 export class AuthAction {
-  private $task: Subject<string>;
-  private subscriptions: Subscription;
+  private promise: Promise<void> | null = null;
+  private controller: AbortController | null = null;
+  private promiseType: "refresh" | "sign-in" | "sign-out" | "" = "";
 
-  constructor() {
-    this.$task = new Subject();
-    this.subscriptions = new Subscription(() => {
-      this.$task.complete();
+  constructor() {}
+  dispose() {}
+
+  private doRefresh() {
+    this.controller?.abort();
+
+    this.controller = new AbortController();
+    this.promiseType = "refresh";
+    const url = new URL("/mock/auth/refresh", "http://localhost:3000");
+    this.promise = fakeRequest(this.controller.signal, url).finally(() => {
+      this.controller = null;
+      this.promiseType = "";
+      this.promise = null;
     });
-
-    const s1 = this.$task
-      .pipe(exhaustSwitch((reason) => from(fakeRequest(reason))))
-      .subscribe(() => {});
-    this.subscriptions.add(s1);
   }
-  dispose() {
-    this.subscriptions.unsubscribe();
+  private doSignIn() {
+    this.controller?.abort();
+
+    this.controller = new AbortController();
+    this.promiseType = "sign-in";
+    const url = new URL("/mock/auth/sign-in", "http://localhost:3000");
+    this.promise = fakeRequest(this.controller.signal, url).finally(() => {
+      this.controller = null;
+      this.promiseType = "";
+      this.promise = null;
+    });
+  }
+  private doSignOut() {
+    this.controller?.abort();
+
+    this.controller = new AbortController();
+    this.promiseType = "sign-out";
+    const url = new URL("/mock/auth/sign-in", "http://localhost:3000");
+    this.promise = fakeRequest(this.controller.signal, url).finally(() => {
+      this.controller = null;
+      this.promiseType = "";
+      this.promise = null;
+    });
   }
 
-  signIn() {}
-  signOut() {}
-  refresh() {}
+  signIn() {
+    if (this.promiseType !== "sign-in") {
+      this.doSignIn();
+    }
+
+    if (!this.promise) {
+      this.doSignIn();
+    }
+
+    return this.promise!;
+  }
+  signOut() {
+    if (this.promiseType !== "sign-out") {
+      this.doSignOut();
+    }
+
+    if (!this.promise) {
+      this.doSignOut();
+    }
+
+    return this.promise!;
+  }
+  refresh() {
+    if (this.promiseType !== "refresh") {
+      this.doRefresh();
+    }
+
+    if (!this.promise) {
+      this.doRefresh();
+    }
+
+    return this.promise!;
+  }
 }
